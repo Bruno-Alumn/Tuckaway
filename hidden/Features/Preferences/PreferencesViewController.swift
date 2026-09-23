@@ -39,6 +39,10 @@ class PreferencesViewController: NSViewController {
 
     @IBOutlet weak var checkBoxNotchOverflow: NSButton!
 
+    private let accessibilityBanner = NSStackView()
+    // Makes room for the banner under the arrow; off while it is hidden.
+    private var accessibilityBannerSpacing: NSLayoutConstraint?
+
     public var listening = false {
         didSet {
             let isHighlight = listening
@@ -54,17 +58,26 @@ class PreferencesViewController: NSViewController {
         super.viewDidLoad()
         updateData()
         loadHotkey()
+        pinTutorialBelowToolbar()
         createTutorialView()
+        setupAccessibilityBanner()
         // The row lives in the storyboard alongside the other Settings
         // checkboxes; hide it on hardware where the feature can't apply.
         // The containing stack view (detachesHiddenViews) reflows on its own.
         checkBoxNotchOverflow.isHidden = !NotchOverflowController.hasNotch
         NotificationCenter.default.addObserver(self, selector: #selector(updateData), name: .prefsChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateAccessibilityBanner), name: .accessibilityPermissionChanged, object: nil)
+    }
+
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        updateAccessibilityBanner()
     }
 
     deinit {
-        // Balance the viewDidLoad observer (PRs #335/#346).
+        // Balance the viewDidLoad observers (PRs #335/#346).
         NotificationCenter.default.removeObserver(self, name: .prefsChanged, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .accessibilityPermissionChanged, object: nil)
     }
 
     static func initWithStoryboard() -> PreferencesViewController {
@@ -212,6 +225,44 @@ class PreferencesViewController: NSViewController {
     }
 }
 
+//MARK: - Accessibility permission (macOS 27)
+extension PreferencesViewController {
+
+    // Sits above the drag hint in the tutorial box, which has room to spare.
+    private func setupAccessibilityBanner() {
+        guard MenuBarEngineFactory.usesNativeVisibility, let container = textFieldTitle.superview else { return }
+
+        let icon = NSImageView(image: NSImage(systemSymbolName: "exclamationmark.triangle.fill", accessibilityDescription: nil) ?? NSImage())
+        icon.contentTintColor = .systemOrange
+        let label = NSTextField(labelWithString: "Hidden Bar needs Accessibility access to hide icons.".localized)
+        let button = NSButton(title: "Open Settings…".localized, target: self, action: #selector(grantAccessibilityPressed))
+        button.bezelStyle = .rounded
+
+        accessibilityBanner.orientation = .horizontal
+        accessibilityBanner.alignment = .centerY
+        accessibilityBanner.spacing = 8
+        [icon, label, button].forEach { accessibilityBanner.addArrangedSubview($0) }
+        accessibilityBanner.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(accessibilityBanner)
+        NSLayoutConstraint.activate([
+            accessibilityBanner.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            accessibilityBanner.bottomAnchor.constraint(equalTo: textFieldTitle.topAnchor, constant: -12)
+        ])
+        accessibilityBannerSpacing = accessibilityBanner.topAnchor.constraint(greaterThanOrEqualTo: arrowPointToHiddenImage.bottomAnchor, constant: 12)
+        updateAccessibilityBanner()
+    }
+
+    @objc private func updateAccessibilityBanner() {
+        let missing = Util.isAccessibilityPermissionMissing
+        accessibilityBanner.isHidden = !missing
+        accessibilityBannerSpacing?.isActive = missing
+    }
+
+    @objc private func grantAccessibilityPressed(_ sender: NSButton) {
+        Util.requestAccessibilityPermission()
+    }
+}
+
 //MARK: - Notch Overflow Section
 extension PreferencesViewController {
 
@@ -224,6 +275,27 @@ extension PreferencesViewController {
 //MARK: - Show tutorial
 extension PreferencesViewController {
     
+    // The storyboard pins the illustration 38pt below the top of the window,
+    // which the macOS 26+ toolbar now covers. Pin it to the safe area instead.
+    private func pinTutorialBelowToolbar() {
+        guard let container = statusBarStackView.superview,
+              let top = container.constraints.first(where: {
+                  $0.firstItem === statusBarStackView && $0.firstAttribute == .top
+              }) else { return }
+        top.isActive = false
+        NSLayoutConstraint.activate([
+            statusBarStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            // Moving it down must not push the arrow into the text under it.
+            textFieldTitle.topAnchor.constraint(greaterThanOrEqualTo: arrowPointToHiddenImage.bottomAnchor, constant: 12)
+        ])
+    }
+
+    // On macOS 27 the arrow itself is the boundary and the separator is taken
+    // out of the bar, so the illustration drops it and points at the arrow.
+    private var tutorialSeparator: [String] {
+        return MenuBarEngineFactory.usesNativeVisibility ? [] : ["seprated"]
+    }
+
     func createTutorialView() {
         if Preferences.alwaysHiddenSectionEnabled {
             alwayHideStatusBar()
@@ -239,7 +311,7 @@ extension PreferencesViewController {
         let imageWidth: CGFloat = 16
         
         
-        let images = ["ico_1","ico_2","ico_3","seprated", "ico_collapse","ico_4","ico_5","ico_6","ico_7"].map { imageName in
+        let images = (["ico_1","ico_2","ico_3"] + tutorialSeparator + ["ico_collapse","ico_4","ico_5","ico_6","ico_7"]).map { imageName in
             NSImageView(image: NSImage(named: imageName)!)
         }
         
@@ -277,7 +349,7 @@ extension PreferencesViewController {
         let imageWidth: CGFloat = 16
         
         
-        let images = ["ico_1","ico_2","ico_3","ico_4", "seprated_1","ico_5","ico_6","seprated", "ico_collapse","ico_7"].map { imageName in
+        let images = (["ico_1","ico_2","ico_3","ico_4", "seprated_1","ico_5","ico_6"] + tutorialSeparator + ["ico_collapse","ico_7"]).map { imageName in
             NSImageView(image: NSImage(named: imageName)!)
         }
         
