@@ -11,7 +11,7 @@
 "Enable Auto Collapse" = "Automatisch einklappen einschalten";
 "Disable Auto Collapse" = "Automatisch einklappen ausschalten";
 "Quit" = "Beenden";
-"Set Shortcut" = "Shortcut einstellen";
+"Set Shortcut" = "Kurzbefehl festlegen";
 "Tutorial text" = "
 Verwende die “permanent ausgeblendet“ Funktion um deine Menüleistensymbole aufgeräumt zu halten.. Und so funktioniert es..
 Zum einschalten:
@@ -32,8 +32,8 @@ Zum Anzeigen der permanent ausgeblendeten Symbole:
 "Enable always hidden section" = "Permanent ausgeblendeten Teil aktivieren";
 "Automatically hide icon after: " = "Symbol automatisch ausblenden nach: ";
 "Global Shortcut" = "Globaler Shortcut";
-"Hidden" = "Hidden";
-"Shown" = "Anzeigen";
+"Hidden" = "Ausgeblendet";
+"Shown" = "Sichtbar";
 "⭐️Always Hidden" = "⭐️Immer ausgeblendet";
 "In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "Halte ⌘ in der Menüleiste und verschiebe Symbole\nzwischen den Sektionen um Hidden Bar zu konfigurieren.";
 "5 seconds" = "5 Sekunden";
@@ -50,7 +50,7 @@ Zum Anzeigen der permanent ausgeblendeten Symbole:
 
 "About" = "Über";
 
-"Menu bar cleaner" = "Menüleisten Cleaner";
+"Menu bar cleaner" = "Aufgeräumte Menüleiste";
 
 "Version" = "Version";
 
@@ -66,3 +66,5 @@ Zum Anzeigen der permanent ausgeblendeten Symbole:
 "Menu Bar" = "Menüleiste";
 
 "Shortcut" = "Kurzbefehl";
+
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Symbole hinter der Notch anzeigen";
