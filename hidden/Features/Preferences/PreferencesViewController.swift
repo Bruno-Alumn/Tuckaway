@@ -9,145 +9,124 @@
 import Cocoa
 import Carbon
 import HotKey
+import SwiftUI
 
+// The General tab. The storyboard scene only provides the (empty) view the
+// tab controller displays; the content is the SwiftUI settings view below.
 class PreferencesViewController: NSViewController {
-    
-   
-    //MARK: - Outlets
-    @IBOutlet weak var checkBoxKeepLastState: NSButton!
-    @IBOutlet weak var textFieldTitle: NSTextField!
-    @IBOutlet weak var imageViewTop: NSImageView!
-    
-    @IBOutlet weak var statusBarStackView: NSStackView!
-    @IBOutlet weak var arrowPointToHiddenImage: NSImageView!
-    @IBOutlet weak var arrowPointToAlwayHiddenImage: NSImageView!
-    @IBOutlet weak var lblAlwayHidden: NSTextField!
-    
-    
-    
-    @IBOutlet weak var checkBoxAutoHide: NSButton!
-    @IBOutlet weak var checkBoxKeepInDock: NSButton!
-    @IBOutlet weak var checkBoxLogin: NSButton!
-    @IBOutlet weak var checkBoxShowPreferences: NSButton!
-    @IBOutlet weak var checkBoxShowAlwaysHiddenSection: NSButton!
-    
-    @IBOutlet weak var checkBoxUseFullStatusbar: NSButton!
-    @IBOutlet weak var timePopup: NSPopUpButton!
-    
-    @IBOutlet weak var btnClear: NSButton!
-    @IBOutlet weak var btnShortcut: NSButton!
 
-    @IBOutlet weak var checkBoxNotchOverflow: NSButton!
+    private let model = GeneralSettingsModel()
+    private lazy var heightConstraint = view.heightAnchor.constraint(equalToConstant: preferredHeight)
+    private var shortcutMonitor: Any?
 
-    private let accessibilityBanner = NSStackView()
-    // Makes room for the banner under the arrow; off while it is hidden.
-    private var accessibilityBannerSpacing: NSLayoutConstraint?
+    // The content scrolls for longer translations and smaller displays.
+    private var preferredHeight: CGFloat {
+        return Util.isAccessibilityPermissionMissing ? 395 : 340
+    }
 
     public var listening = false {
         didSet {
-            let isHighlight = listening
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.btnShortcut.highlight(isHighlight)
+            model.isRecordingShortcut = listening
+            if listening {
+                startShortcutMonitor()
+            } else if let shortcutMonitor {
+                NSEvent.removeMonitor(shortcutMonitor)
+                self.shortcutMonitor = nil
             }
         }
     }
-    
+
     //MARK: - VC Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateData()
-        loadHotkey()
-        pinTutorialBelowToolbar()
-        createTutorialView()
-        setupAccessibilityBanner()
-        // The row lives in the storyboard alongside the other Settings
-        // checkboxes; hide it on hardware where the feature can't apply.
-        // The containing stack view (detachesHiddenViews) reflows on its own.
-        checkBoxNotchOverflow.isHidden = !NotchOverflowController.hasNotch
-        NotificationCenter.default.addObserver(self, selector: #selector(updateData), name: .prefsChanged, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateAccessibilityBanner), name: .accessibilityPermissionChanged, object: nil)
+        model.onRecordShortcut = { [weak self] in self?.register() }
+        model.onClearShortcut = { [weak self] in self?.unregister() }
+        model.shortcutTitle = Preferences.globalKey?.description
+
+        let hostingView = NSHostingView(rootView: GeneralSettingsView(model: model))
+        hostingView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(hostingView)
+        NSLayoutConstraint.activate([
+            hostingView.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            hostingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            view.widthAnchor.constraint(equalToConstant: 460),
+            heightConstraint
+        ])
+
+        NotificationCenter.default.addObserver(model, selector: #selector(GeneralSettingsModel.refresh), name: .prefsChanged, object: nil)
+        NotificationCenter.default.addObserver(model, selector: #selector(GeneralSettingsModel.refresh), name: .accessibilityPermissionChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateHeight), name: .accessibilityPermissionChanged, object: nil)
     }
 
     override func viewWillAppear() {
         super.viewWillAppear()
-        updateAccessibilityBanner()
+        model.refresh()
+        updateHeight()
+    }
+
+    @objc private func updateHeight() {
+        heightConstraint.constant = preferredHeight
     }
 
     deinit {
+        if let shortcutMonitor { NSEvent.removeMonitor(shortcutMonitor) }
         // Balance the viewDidLoad observers (PRs #335/#346).
-        NotificationCenter.default.removeObserver(self, name: .prefsChanged, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .accessibilityPermissionChanged, object: nil)
+        NotificationCenter.default.removeObserver(model)
+        NotificationCenter.default.removeObserver(self)
     }
 
     static func initWithStoryboard() -> PreferencesViewController {
         let vc = NSStoryboard(name:"Main", bundle: nil).instantiateController(withIdentifier: "prefVC") as! PreferencesViewController
         return vc
     }
-    
-    //MARK: - Actions
-    @IBAction func loginCheckChanged(_ sender: NSButton) {
-        let wanted = sender.state == .on
-        Preferences.isAutoStart = wanted
-        // On failure the pref reverts (the checkbox already snapped back via
-        // prefsChanged); tell the user why instead of swallowing the error.
-        if Preferences.isAutoStart != wanted {
-            let alert = NSAlert()
-            alert.messageText = "Could not update the login item".localized
-            alert.informativeText = "Check System Settings > General > Login Items and make sure Hidden Bar is allowed.".localized
-            alert.alertStyle = .warning
-            alert.runModal()
-        }
-    }
-    
-    @IBAction func autoHideCheckChanged(_ sender: NSButton) {
-        Preferences.isAutoHide = sender.state == .on
-    }
-    
-    @IBAction func showPreferencesChanged(_ sender: NSButton) {
-        Preferences.isShowPreference = sender.state == .on
-    }
-    
-    
-    @IBAction func showAlwaysHiddenSectionChanged(_ sender: NSButton) {
-        Preferences.alwaysHiddenSectionEnabled = sender.state == .on
-        createTutorialView()
-    }
-    @IBAction func useFullStatusBarOnExpandChanged(_ sender: NSButton) {
-        Preferences.useFullStatusBarOnExpandEnabled = sender.state == .on
-    }
-    
-    
-    @IBAction func timePopupDidSelected(_ sender: NSPopUpButton) {
-        let selectedIndex = sender.indexOfSelectedItem
-        if let selectedInSecond = SelectedSecond(rawValue: selectedIndex)?.toSeconds() {
-            Preferences.numberOfSecondForAutoHide = selectedInSecond
-        }
-    }
-    
-    // When the set shortcut button is pressed start listening for the new shortcut
-    @IBAction func register(_ sender: Any) {
+
+    //MARK: - Global shortcut
+    // Recording goes through the window controller, which forwards keyDown and
+    // flagsChanged here while `listening` is set.
+
+    private func register() {
         listening = true
-        view.window?.makeFirstResponder(nil)
     }
-    
-    // If the shortcut is cleared, clear the UI and tell AppDelegate to stop listening to the previous keybind.
-    @IBAction func unregister(_ sender: Any?) {
+
+    private func startShortcutMonitor() {
+        guard shortcutMonitor == nil else { return }
+        shortcutMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .flagsChanged]) { [weak self] event in
+            guard let self, self.listening, self.view.window?.isKeyWindow == true else { return event }
+            if event.type == .flagsChanged {
+                self.updateModiferFlags(event)
+                return event
+            }
+            if event.keyCode == 53 { // Escape
+                self.cancelShortcutRecording()
+            } else {
+                self.updateGlobalShortcut(event)
+            }
+            return nil
+        }
+    }
+
+    func cancelShortcutRecording() {
+        listening = false
+    }
+
+    // Clear the shortcut and tell AppDelegate to stop listening to the previous keybind.
+    private func unregister() {
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
         appDelegate.hotKey = nil
-        btnShortcut.title = "Set Shortcut".localized
+        model.shortcutTitle = nil
         listening = false
-        btnClear.isEnabled = false
-        
+
         // Remove globalkey from userdefault
         Preferences.globalKey = nil
     }
-    
+
     public func updateGlobalShortcut(_ event: NSEvent) {
         self.listening = false
-        
+
         guard let characters = event.charactersIgnoringModifiers else {return}
-        
+
         let newGlobalKeybind = GlobalKeybindPreferences(
             function: event.modifierFlags.contains(.function),
             control: event.modifierFlags.contains(.control),
@@ -158,16 +137,19 @@ class PreferencesViewController: NSViewController {
             carbonFlags: event.modifierFlags.carbonFlags,
             characters: characters,
             keyCode: uint32(event.keyCode))
-        
+
+        // Reject unmodified typing without deleting the existing shortcut.
+        // Function keys are valid standalone global shortcuts.
+        guard newGlobalKeybind.isValidGlobalShortcut else { return }
+
         Preferences.globalKey = newGlobalKeybind
-        
-        updateKeybindButton(newGlobalKeybind)
-        btnClear.isEnabled = true
-        
+        model.shortcutTitle = newGlobalKeybind.description
+
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
         appDelegate.hotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: UInt32(event.keyCode), carbonModifiers: event.modifierFlags.carbonFlags))
     }
-    
+
+    // Shows the modifiers held so far while recording.
     public func updateModiferFlags(_ event: NSEvent) {
         let newGlobalKeybind = GlobalKeybindPreferences(
             function: event.modifierFlags.contains(.function),
@@ -179,240 +161,300 @@ class PreferencesViewController: NSViewController {
             carbonFlags: 0,
             characters: nil,
             keyCode: uint32(event.keyCode))
-        
-        updateModifierbindButton(newGlobalKeybind)
-        
-    }
-    
-    @objc private func updateData(){
-        checkBoxUseFullStatusbar.state = Preferences.useFullStatusBarOnExpandEnabled ? .on : .off
-        checkBoxLogin.state = Preferences.isAutoStart ? .on : .off
-        checkBoxAutoHide.state = Preferences.isAutoHide ? .on : .off
-        checkBoxShowPreferences.state = Preferences.isShowPreference ? .on : .off
-        checkBoxShowAlwaysHiddenSection.state = Preferences.alwaysHiddenSectionEnabled ? .on : .off
-        timePopup.selectItem(at: SelectedSecond.secondToPossition(seconds: Preferences.numberOfSecondForAutoHide))
-        checkBoxNotchOverflow.state = Preferences.notchOverflowEnabled ? .on : .off
-    }
-    
-    private func loadHotkey() {
-        if let globalKey = Preferences.globalKey {
-            updateKeybindButton(globalKey)
-            updateClearButton(globalKey)
-        }
-    }
-    
-    // Set the shortcut button to show the keys to press
-    private func updateKeybindButton(_ globalKeybindPreference : GlobalKeybindPreferences) {
-        btnShortcut.title = globalKeybindPreference.description
-        
-        if globalKeybindPreference.description.count <= 1 {
-            unregister(nil)
-        }
-    }
-    
-    // Set the shortcut button to show the modifier to press
-      private func updateModifierbindButton(_ globalKeybindPreference : GlobalKeybindPreferences) {
-          btnShortcut.title = globalKeybindPreference.description
-          
-          if globalKeybindPreference.description.isEmpty {
-              unregister(nil)
-          }
-      }
-    
-    // If a keybind is set, allow users to clear it by enabling the clear button.
-    private func updateClearButton(_ globalKeybindPreference : GlobalKeybindPreferences?) {
-        btnClear.isEnabled = globalKeybindPreference != nil
+
+        model.recordingPreview = newGlobalKeybind.description
     }
 }
 
-//MARK: - Accessibility permission (macOS 27)
-extension PreferencesViewController {
+//MARK: - Model
 
-    // Sits above the drag hint in the tutorial box, which has room to spare.
-    private func setupAccessibilityBanner() {
-        guard MenuBarEngineFactory.usesNativeVisibility, let container = textFieldTitle.superview else { return }
+// Reads straight from Preferences, so a change made elsewhere (the context
+// menu's auto-collapse toggle, a failed login-item update) shows up on refresh.
+final class GeneralSettingsModel: ObservableObject {
+    @Published var isRecordingShortcut = false {
+        didSet { if !isRecordingShortcut { recordingPreview = "" } }
+    }
+    @Published var recordingPreview = ""
+    @Published var shortcutTitle: String?
+    @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
 
-        let icon = NSImageView(image: NSImage(systemSymbolName: "exclamationmark.triangle.fill", accessibilityDescription: nil) ?? NSImage())
-        icon.contentTintColor = .systemOrange
-        let label = NSTextField(labelWithString: "Hidden Bar needs Accessibility access to hide icons.".localized)
-        let button = NSButton(title: "Open Settings…".localized, target: self, action: #selector(grantAccessibilityPressed))
-        button.bezelStyle = .rounded
+    var onRecordShortcut: () -> Void = {}
+    var onClearShortcut: () -> Void = {}
 
-        accessibilityBanner.orientation = .horizontal
-        accessibilityBanner.alignment = .centerY
-        accessibilityBanner.spacing = 8
-        [icon, label, button].forEach { accessibilityBanner.addArrangedSubview($0) }
-        accessibilityBanner.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(accessibilityBanner)
-        NSLayoutConstraint.activate([
-            accessibilityBanner.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-            accessibilityBanner.bottomAnchor.constraint(equalTo: textFieldTitle.topAnchor, constant: -12)
-        ])
-        accessibilityBannerSpacing = accessibilityBanner.topAnchor.constraint(greaterThanOrEqualTo: arrowPointToHiddenImage.bottomAnchor, constant: 12)
-        updateAccessibilityBanner()
+    @objc func refresh() {
+        isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
+        objectWillChange.send()
     }
 
-    @objc private func updateAccessibilityBanner() {
-        let missing = Util.isAccessibilityPermissionMissing
-        accessibilityBanner.isHidden = !missing
-        accessibilityBannerSpacing?.isActive = missing
+    func binding(_ get: @escaping () -> Bool, _ set: @escaping (Bool) -> Void) -> Binding<Bool> {
+        return Binding(get: get, set: { [weak self] value in
+            set(value)
+            self?.objectWillChange.send()
+        })
     }
 
-    @objc private func grantAccessibilityPressed(_ sender: NSButton) {
-        Util.requestAccessibilityPermission()
+    var autoStart: Binding<Bool> {
+        return binding({ Preferences.isAutoStart }) { wanted in
+            Preferences.isAutoStart = wanted
+            // On failure the pref reverts; tell the user why instead of swallowing the error.
+            if Preferences.isAutoStart != wanted {
+                let alert = NSAlert()
+                alert.messageText = "Could not update the login item".localized
+                alert.informativeText = "Check System Settings > General > Login Items and make sure Hidden Bar is allowed.".localized
+                alert.alertStyle = .warning
+                alert.runModal()
+            }
+        }
+    }
+
+    var showPreferencesOnLaunch: Binding<Bool> {
+        return binding({ Preferences.isShowPreference }) { Preferences.isShowPreference = $0 }
+    }
+
+    var autoHide: Binding<Bool> {
+        return binding({ Preferences.isAutoHide }) { Preferences.isAutoHide = $0 }
+    }
+
+    var autoHideDelay: Binding<Int> {
+        return Binding(get: { SelectedSecond.secondToPossition(seconds: Preferences.numberOfSecondForAutoHide) },
+                       set: { [weak self] index in
+                           if let seconds = SelectedSecond(rawValue: index)?.toSeconds() {
+                               Preferences.numberOfSecondForAutoHide = seconds
+                           }
+                           self?.objectWillChange.send()
+                       })
+    }
+
+    var useFullMenuBar: Binding<Bool> {
+        return binding({ Preferences.useFullStatusBarOnExpandEnabled }) { Preferences.useFullStatusBarOnExpandEnabled = $0 }
+    }
+
+    var alwaysHiddenSection: Binding<Bool> {
+        return binding({ Preferences.alwaysHiddenSectionEnabled }) { Preferences.alwaysHiddenSectionEnabled = $0 }
+    }
+
+    var notchOverflow: Binding<Bool> {
+        return binding({ Preferences.notchOverflowEnabled }) { Preferences.notchOverflowEnabled = $0 }
     }
 }
 
-//MARK: - Notch Overflow Section
-extension PreferencesViewController {
+//MARK: - Views
 
-    @IBAction func notchOverflowCheckChanged(_ sender: NSButton) {
-        Preferences.notchOverflowEnabled = sender.state == .on
+struct GeneralSettingsView: View {
+    @ObservedObject var model: GeneralSettingsModel
+    @State private var showsAlwaysHiddenHelp = false
+
+    // Strings shared with the old storyboard layout, trimmed of the punctuation
+    // that only made sense there, so existing translations keep working.
+    private static func label(_ key: String) -> String {
+        return key.localized.trimmingCharacters(in: CharacterSet(charactersIn: ": "))
     }
 
+    private let autoHideDelays = ["5 seconds", "10 seconds", "15 seconds", "30 seconds", "1 minute"]
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 18) {
+                tutorial
+                if model.isAccessibilityPermissionMissing {
+                    accessibilityNotice
+                }
+                Divider()
+                Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 20) {
+                    GridRow(alignment: .firstTextBaseline) {
+                        groupLabel("Startup")
+                        VStack(alignment: .leading, spacing: 8) {
+                            Toggle(Self.label("Start Hidden Bar when I log in"), isOn: model.autoStart)
+                            Toggle(Self.label("Show preferences on launch"), isOn: model.showPreferencesOnLaunch)
+                        }
+                    }
+                    GridRow(alignment: .firstTextBaseline) {
+                        groupLabel("Menu Bar")
+                        menuBarOptions
+                    }
+                    GridRow(alignment: .firstTextBaseline) {
+                        groupLabel("Shortcut")
+                        shortcutRecorder
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity)
+        }
+        .font(.system(size: 13))
+        .toggleStyle(.checkbox)
+        .controlSize(.small)
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    private func groupLabel(_ key: String) -> some View {
+        Text(verbatim: Self.label(key))
+            .foregroundStyle(.secondary)
+            .multilineTextAlignment(.trailing)
+            .frame(width: 74, alignment: .trailing)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var tutorial: some View {
+        VStack(spacing: 8) {
+            MenuBarPreview(alwaysHidden: Preferences.alwaysHiddenSectionEnabled)
+                .frame(maxWidth: .infinity)
+            Text(verbatim: MenuBarEngineFactory.usesNativeVisibility
+                 ? "Hold ⌘ and drag icons to the left of the arrow to hide them.".localized
+                 : Self.label("In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar.").replacingOccurrences(of: "\n", with: " "))
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var accessibilityNotice: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(.orange)
+            Text(verbatim: "Hidden Bar needs Accessibility access to hide icons.".localized)
+                .font(.callout)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+            Button("Open Settings…".localized) {
+                Util.requestAccessibilityPermission()
+            }
+        }
+    }
+
+    private var menuBarOptions: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Toggle(Self.label("Automatically hide icon after: "), isOn: model.autoHide)
+                Picker("", selection: model.autoHideDelay) {
+                    ForEach(autoHideDelays.indices, id: \.self) { index in
+                        Text(verbatim: autoHideDelays[index].localized).tag(index)
+                    }
+                }
+                .labelsHidden()
+                .frame(width: 100)
+                .disabled(!model.autoHide.wrappedValue)
+            }
+            Toggle(Self.label("Use the full MenuBar on expanding"), isOn: model.useFullMenuBar)
+            HStack(spacing: 6) {
+                Toggle(Self.label("Enable always hidden section"), isOn: model.alwaysHiddenSection)
+                Button {
+                    showsAlwaysHiddenHelp.toggle()
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Always-hidden section help".localized)
+                .popover(isPresented: $showsAlwaysHiddenHelp, arrowEdge: .trailing) {
+                    Text(verbatim: MenuBarEngineFactory.usesNativeVisibility
+                         ? "Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section.".localized
+                         : "Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section.".localized)
+                        .padding()
+                        .frame(width: 320)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            if NotchOverflowController.hasNotch {
+                Toggle(Self.label("Enable Notch Overflow (right-click ‹ to access hidden icons)"), isOn: model.notchOverflow)
+                    .help("Right-click the arrow to access icons behind the notch.".localized)
+            }
+        }
+    }
+
+    private var shortcutRecorder: some View {
+        HStack(spacing: 8) {
+            Button {
+                model.onRecordShortcut()
+            } label: {
+                Text(verbatim: shortcutButtonTitle)
+                    .frame(minWidth: 85)
+            }
+            if model.shortcutTitle != nil && !model.isRecordingShortcut {
+                Button {
+                    model.onClearShortcut()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear".localized)
+                .help("Clear".localized)
+            }
+        }
+    }
+
+    private var shortcutButtonTitle: String {
+        if model.isRecordingShortcut {
+            return model.recordingPreview.isEmpty ? "Type Shortcut…".localized : model.recordingPreview
+        }
+        return model.shortcutTitle ?? "Set Shortcut".localized
+    }
 }
 
-//MARK: - Show tutorial
-extension PreferencesViewController {
-    
-    // The storyboard pins the illustration 38pt below the top of the window,
-    // which the macOS 26+ toolbar now covers. Pin it to the safe area instead.
-    private func pinTutorialBelowToolbar() {
-        guard let container = statusBarStackView.superview,
-              let top = container.constraints.first(where: {
-                  $0.firstItem === statusBarStackView && $0.firstAttribute == .top
-              }) else { return }
-        top.isActive = false
-        NSLayoutConstraint.activate([
-            statusBarStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            // Moving it down must not push the arrow into the text under it.
-            textFieldTitle.topAnchor.constraint(greaterThanOrEqualTo: arrowPointToHiddenImage.bottomAnchor, constant: 12)
-        ])
+// A miniature menu bar: the icons left of the boundary are the hidden section.
+// On macOS 27 the arrow is the boundary; before that it is the separator.
+private struct MenuBarPreview: View {
+    let alwaysHidden: Bool
+
+    private let showsSeparator = !MenuBarEngineFactory.usesNativeVisibility
+
+    var body: some View {
+        HStack(spacing: 8) {
+            if alwaysHidden {
+                section(["ico_1", "ico_2"], title: GeneralSettingsView.labelAlwaysHidden, style: .tertiary)
+                onIconRow(icon("seprated_1").foregroundStyle(.secondary))
+            }
+            section(alwaysHidden ? ["ico_3", "ico_4"] : ["ico_1", "ico_2", "ico_3"], title: "Hidden".localized, style: .secondary)
+            if showsSeparator {
+                onIconRow(icon("seprated"))
+            }
+            onIconRow(icon("ico_collapse")
+                .frame(width: 22, height: 22)
+                .background(Color.accentColor.opacity(0.2), in: RoundedRectangle(cornerRadius: 5)))
+            section(["ico_5", "ico_6", "ico_7"], title: "Shown".localized, style: .primary, clock: true)
+        }
     }
 
-    // On macOS 27 the arrow itself is the boundary and the separator is taken
-    // out of the bar, so the illustration drops it and points at the arrow.
-    private var tutorialSeparator: [String] {
-        return MenuBarEngineFactory.usesNativeVisibility ? [] : ["seprated"]
+    // Keeps an uncaptioned item on the icons' row, above the section captions.
+    private func onIconRow<V: View>(_ content: V) -> some View {
+        VStack(spacing: 5) {
+            content.frame(height: 22)
+            Text(verbatim: " ").font(.caption)
+        }
     }
 
-    func createTutorialView() {
-        if Preferences.alwaysHiddenSectionEnabled {
-            alwayHideStatusBar()
-        }else {
-            hideStatusBar()
+    private func icon(_ name: String) -> some View {
+        Image(name)
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 15, height: 15)
+    }
+
+    private func section<S: ShapeStyle>(_ icons: [String], title: String, style: S, clock: Bool = false) -> some View {
+        VStack(spacing: 5) {
+            HStack(spacing: 10) {
+                ForEach(icons, id: \.self) { icon($0) }
+                if clock {
+                    Text(verbatim: Date.timeString())
+                        .font(.system(size: 12, weight: .medium))
+                        .monospacedDigit()
+                }
+            }
+            .foregroundStyle(style)
+            .frame(height: 22)
+            Text(verbatim: title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
     }
-    
-    func hideStatusBar() {
-        lblAlwayHidden.isHidden = true
-        arrowPointToAlwayHiddenImage.isHidden = true
-        statusBarStackView.removeAllSubViews()
-        let imageWidth: CGFloat = 16
-        
-        
-        let images = (["ico_1","ico_2","ico_3"] + tutorialSeparator + ["ico_collapse","ico_4","ico_5","ico_6","ico_7"]).map { imageName in
-            NSImageView(image: NSImage(named: imageName)!)
-        }
-        
-        
-        for image in images {
-            statusBarStackView.addArrangedSubview(image)
-            image.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                image.widthAnchor.constraint(equalToConstant: imageWidth),
-                image.heightAnchor.constraint(equalToConstant: imageWidth)
-                
-            ])
-            image.contentTintColor = .labelColor
-        }
-        let dateTimeLabel = NSTextField()
-        dateTimeLabel.stringValue = Date.dateString() + " " + Date.timeString()
-        dateTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        dateTimeLabel.isBezeled = false
-        dateTimeLabel.isEditable = false
-        dateTimeLabel.sizeToFit()
-        dateTimeLabel.backgroundColor = .clear
-        statusBarStackView.addArrangedSubview(dateTimeLabel)
-        NSLayoutConstraint.activate([dateTimeLabel.heightAnchor.constraint(equalToConstant: imageWidth)
-        ])
-       
-        NSLayoutConstraint.activate([
-            arrowPointToHiddenImage.centerXAnchor.constraint(equalTo: statusBarStackView.arrangedSubviews[3].centerXAnchor)
-        ])
-    }
-    
-    func alwayHideStatusBar() {
-        lblAlwayHidden.isHidden = false
-        arrowPointToAlwayHiddenImage.isHidden = false
-        statusBarStackView.removeAllSubViews()
-        let imageWidth: CGFloat = 16
-        
-        
-        let images = (["ico_1","ico_2","ico_3","ico_4", "seprated_1","ico_5","ico_6"] + tutorialSeparator + ["ico_collapse","ico_7"]).map { imageName in
-            NSImageView(image: NSImage(named: imageName)!)
-        }
-        
-        
-        for image in images {
-            statusBarStackView.addArrangedSubview(image)
-            image.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                image.widthAnchor.constraint(equalToConstant: imageWidth),
-                image.heightAnchor.constraint(equalToConstant: imageWidth)
-                
-            ])
-            image.contentTintColor = .labelColor
-        }
-        let dateTimeLabel = NSTextField()
-        dateTimeLabel.stringValue = Date.dateString() + " " + Date.timeString()
-        dateTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        dateTimeLabel.isBezeled = false
-        dateTimeLabel.isEditable = false
-        dateTimeLabel.sizeToFit()
-        dateTimeLabel.backgroundColor = .clear
-        statusBarStackView.addArrangedSubview(dateTimeLabel)
-        NSLayoutConstraint.activate([dateTimeLabel.heightAnchor.constraint(equalToConstant: imageWidth)
-        ])
-        
-        NSLayoutConstraint.activate([
-            arrowPointToAlwayHiddenImage.centerXAnchor.constraint(equalTo: statusBarStackView.arrangedSubviews[4].centerXAnchor)
-        ])
-        NSLayoutConstraint.activate([
-            arrowPointToHiddenImage.centerXAnchor.constraint(equalTo: statusBarStackView.arrangedSubviews[7].centerXAnchor)
-        ])
-    }
-    
-    @IBAction func btnAlwayHiddenHelpPressed(_ sender: NSButton) {
-        self.showHowToUseAlwayHiddenPopover(sender: sender)
-    }
-    
-    private func showHowToUseAlwayHiddenPopover(sender: NSButton) {
-        let controller = NSViewController()
-        let label = NSTextField()
-        let text = NSLocalizedString("Tutorial text", comment: "Step by step tutorial")
-        
-        label.stringValue = text
-        label.isBezeled = false
-        label.isEditable = false
-        let view = NSView()
-        view.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: view.topAnchor),
-            label.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            label.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            label.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-        label.translatesAutoresizingMaskIntoConstraints = false
-        controller.view = view
-        
-        let popover = NSPopover()
-        popover.contentViewController = controller
-        popover.contentSize = controller.view.frame.size
-        
-        popover.behavior = .transient
-        popover.animates = true
-        
-        popover.show(relativeTo: self.view.bounds, of: sender , preferredEdge: NSRectEdge.maxX)
+}
+
+private extension GeneralSettingsView {
+    static var labelAlwaysHidden: String {
+        return "⭐️Always Hidden".localized.replacingOccurrences(of: "⭐️", with: "")
     }
 }
