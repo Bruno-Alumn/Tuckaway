@@ -356,7 +356,7 @@ struct GeneralSettingsView: View {
                     }
                 }
                 .labelsHidden()
-                .accessibilityLabel(Self.label("Automatically hide icon after: "))
+                .accessibilityLabel("Auto-hide delay".localized)
                 .frame(width: 100)
                 .disabled(!model.autoHide.wrappedValue)
                 switchControl("Automatically hide icon after: ", isOn: model.autoHide)

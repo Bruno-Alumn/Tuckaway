@@ -33,10 +33,11 @@ private struct AboutSettingsView: View {
     var body: some View {
         VStack(spacing: 20) {
             HStack(spacing: 16) {
-                Image("ic_logo")
+                Image(nsImage: NSApp.applicationIconImage)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 60, height: 60)
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Hidden Bar").font(.title2).fontWeight(.semibold)
                     Text("Menu bar cleaner".localized).foregroundStyle(.secondary)

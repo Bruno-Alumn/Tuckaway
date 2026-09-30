@@ -48,3 +48,5 @@ Steps to view always hidden icons:
 
 "Start Hidden Bar when I log in" = "Launch at login";
 "Show preferences on launch" = "Open settings on launch";
+
+"Auto-hide delay" = "Auto-hide delay";

@@ -42,7 +42,20 @@ class PreferencesWindowController: NSWindowController, NSWindowDelegate, NSToolb
                                          trackingMode: .selectOne,
                                          target: self, action: #selector(selectTab(_:)))
         control.selectedSegment = 0
-        control.controlSize = .small
+        control.controlSize = .regular
+        control.segmentDistribution = .fillEqually
+        control.segmentStyle = .automatic
+        // Use the system capsule geometry; older SDKs keep their native appearance.
+        #if compiler(>=6.2)
+        if #available(macOS 26.0, *) {
+            control.borderShape = .capsule
+        }
+        #endif
+        #if compiler(>=6.4)
+        if #available(macOS 27.0, *) {
+            control.role = .tabs
+        }
+        #endif
         return control
     }()
 
@@ -63,6 +76,7 @@ class PreferencesWindowController: NSWindowController, NSWindowDelegate, NSToolb
         guard itemIdentifier == tabsIdentifier else { return nil }
         let item = NSToolbarItem(itemIdentifier: itemIdentifier)
         item.view = tabSelector
+        item.isBordered = false
         item.label = "Preferences...".localized
         return item
     }
