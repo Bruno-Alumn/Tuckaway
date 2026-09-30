@@ -26,11 +26,11 @@ Zum Anzeigen der permanent ausgeblendeten Symbole:
 "Open Settings…" = "Einstellungen öffnen…";
 
 /* General settings (moved from Main.storyboard) */
-"Start Hidden Bar when I log in" = "Hidden Bar beim Anmelden starten";
-"Show preferences on launch" = "Voreinstellungen beim Starten anzeigen";
+"Start Hidden Bar when I log in" = "Beim Anmelden starten";
+"Show preferences on launch" = "Einstellungen beim Start öffnen";
 "Use the full MenuBar on expanding" = "Beim Erweitern die gesamte Menübreite benutzen";
-"Enable always hidden section" = "Permanent ausgeblendeten Teil aktivieren";
-"Automatically hide icon after: " = "Symbol automatisch ausblenden nach: ";
+"Enable always hidden section" = "Dauerhaft ausgeblendeter Bereich";
+"Automatically hide icon after: " = "Ausblenden nach";
 "Global Shortcut" = "Globaler Shortcut";
 "Hidden" = "Ausgeblendet";
 "Shown" = "Sichtbar";

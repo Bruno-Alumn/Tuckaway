@@ -14,7 +14,7 @@ final class AboutViewController: NSViewController {
         view.addSubview(hostingView)
         NSLayoutConstraint.activate([
             view.widthAnchor.constraint(equalToConstant: 460),
-            view.heightAnchor.constraint(equalToConstant: 340),
+            view.heightAnchor.constraint(equalToConstant: 370),
             hostingView.topAnchor.constraint(equalTo: view.topAnchor),
             hostingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             hostingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

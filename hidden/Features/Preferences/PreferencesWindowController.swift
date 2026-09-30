@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class PreferencesWindowController: NSWindowController, NSWindowDelegate {
+class PreferencesWindowController: NSWindowController, NSWindowDelegate, NSToolbarDelegate {
     
     static let shared: PreferencesWindowController = {
         let wc = NSStoryboard(name:"Main", bundle: nil).instantiateController(withIdentifier: "MainWindow") as! PreferencesWindowController
@@ -19,8 +19,12 @@ class PreferencesWindowController: NSWindowController, NSWindowDelegate {
     private let aboutVC = AboutViewController.initWithStoryboard()
     private lazy var tabs: SettingsTabViewController = {
         let controller = SettingsTabViewController()
-        controller.tabStyle = .toolbar
-        controller.onSelectionChange = { [weak self] in self?.preferencesVC.cancelShortcutRecording() }
+        controller.tabStyle = .unspecified
+        controller.tabView.tabViewType = .noTabsNoBorder
+        controller.onSelectionChange = { [weak self] index in
+            self?.preferencesVC.cancelShortcutRecording()
+            self?.tabSelector.selectedSegment = index
+        }
         let general = NSTabViewItem(viewController: preferencesVC)
         general.label = "General".localized
         general.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: general.label)
@@ -32,6 +36,37 @@ class PreferencesWindowController: NSWindowController, NSWindowDelegate {
         return controller
     }()
 
+    private let tabsIdentifier = NSToolbarItem.Identifier("settingsTabs")
+    private lazy var tabSelector: NSSegmentedControl = {
+        let control = NSSegmentedControl(labels: ["General".localized, "About".localized],
+                                         trackingMode: .selectOne,
+                                         target: self, action: #selector(selectTab(_:)))
+        control.selectedSegment = 0
+        control.controlSize = .small
+        return control
+    }()
+
+    @objc private func selectTab(_ sender: NSSegmentedControl) {
+        tabs.selectedTabViewItemIndex = sender.selectedSegment
+    }
+
+    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        [.flexibleSpace, tabsIdentifier, .flexibleSpace]
+    }
+
+    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        [tabsIdentifier, .flexibleSpace]
+    }
+
+    func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
+                 willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+        guard itemIdentifier == tabsIdentifier else { return nil }
+        let item = NSToolbarItem(itemIdentifier: itemIdentifier)
+        item.view = tabSelector
+        item.label = "Preferences...".localized
+        return item
+    }
+
     private var activePreferences: PreferencesViewController? {
         tabs.selectedTabViewItemIndex == 0 ? preferencesVC : nil
     }
@@ -39,10 +74,15 @@ class PreferencesWindowController: NSWindowController, NSWindowDelegate {
     override func windowDidLoad() {
         super.windowDidLoad()
         guard let window else { return }
-        window.toolbar = nil
         window.styleMask.remove(.fullSizeContentView)
-        window.toolbarStyle = .preference
         window.contentViewController = tabs
+        let toolbar = NSToolbar(identifier: "preferences")
+        toolbar.delegate = self
+        toolbar.displayMode = .iconOnly
+        toolbar.sizeMode = .small
+        toolbar.centeredItemIdentifiers = [tabsIdentifier]
+        window.toolbarStyle = .unifiedCompact
+        window.toolbar = toolbar
     }
 
     func windowWillClose(_ notification: Notification) {
@@ -98,10 +138,12 @@ class PreferencesWindowController: NSWindowController, NSWindowDelegate {
 }
 
 private final class SettingsTabViewController: NSTabViewController {
-    var onSelectionChange: () -> Void = {}
+    var onSelectionChange: (Int) -> Void = { _ in }
 
     override func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
-        onSelectionChange()
+        if let tabViewItem {
+            onSelectionChange(tabView.indexOfTabViewItem(tabViewItem))
+        }
         super.tabView(tabView, didSelect: tabViewItem)
     }
 }

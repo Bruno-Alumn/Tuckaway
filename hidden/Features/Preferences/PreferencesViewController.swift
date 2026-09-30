@@ -21,7 +21,7 @@ class PreferencesViewController: NSViewController {
 
     // The content scrolls for longer translations and smaller displays.
     private var preferredHeight: CGFloat {
-        return Util.isAccessibilityPermissionMissing ? 395 : 340
+        return Util.isAccessibilityPermissionMissing ? 415 : 370
     }
 
     public var listening = false {
@@ -254,56 +254,76 @@ struct GeneralSettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 18) {
+            VStack(alignment: .leading, spacing: 12) {
                 tutorial
                 if model.isAccessibilityPermissionMissing {
                     accessibilityNotice
                 }
                 Divider()
-                Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 20) {
-                    GridRow(alignment: .firstTextBaseline) {
-                        groupLabel("Startup")
-                        VStack(alignment: .leading, spacing: 8) {
-                            Toggle(Self.label("Start Hidden Bar when I log in"), isOn: model.autoStart)
-                            Toggle(Self.label("Show preferences on launch"), isOn: model.showPreferencesOnLaunch)
+                VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        sectionLabel("Startup")
+                        VStack(spacing: 0) {
+                            settingsToggle("Start Hidden Bar when I log in", isOn: model.autoStart)
+                            settingsToggle("Show preferences on launch", isOn: model.showPreferencesOnLaunch)
                         }
                     }
-                    GridRow(alignment: .firstTextBaseline) {
-                        groupLabel("Menu Bar")
+                    VStack(alignment: .leading, spacing: 4) {
+                        sectionLabel("Menu Bar")
                         menuBarOptions
                     }
-                    GridRow(alignment: .firstTextBaseline) {
-                        groupLabel("Shortcut")
+                    Divider()
+                    HStack {
+                        Text(verbatim: Self.label("Shortcut"))
+                        Spacer()
                         shortcutRecorder
                     }
+                    .frame(minHeight: 28)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(20)
+            .padding(.horizontal, 20)
+            .padding(.top, 12)
+            .padding(.bottom, 16)
             .frame(maxWidth: .infinity)
         }
         .font(.system(size: 13))
-        .toggleStyle(.checkbox)
         .controlSize(.small)
         .background(Color(nsColor: .windowBackgroundColor))
     }
 
-    private func groupLabel(_ key: String) -> some View {
+    private func sectionLabel(_ key: String) -> some View {
         Text(verbatim: Self.label(key))
+            .font(.caption)
+            .fontWeight(.medium)
             .foregroundStyle(.secondary)
-            .multilineTextAlignment(.trailing)
-            .frame(width: 74, alignment: .trailing)
-            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func settingsToggle(_ key: String, isOn: Binding<Bool>) -> some View {
+        HStack {
+            Text(verbatim: Self.label(key))
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 16)
+            switchControl(key, isOn: isOn)
+        }
+        .frame(minHeight: 28)
+    }
+
+    private func switchControl(_ key: String, isOn: Binding<Bool>) -> some View {
+        Toggle("", isOn: isOn)
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .controlSize(.mini)
+            .accessibilityLabel(Self.label(key))
     }
 
     private var tutorial: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             MenuBarPreview(alwaysHidden: Preferences.alwaysHiddenSectionEnabled)
                 .frame(maxWidth: .infinity)
             Text(verbatim: MenuBarEngineFactory.usesNativeVisibility
                  ? "Hold ⌘ and drag icons to the left of the arrow to hide them.".localized
                  : Self.label("In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar.").replacingOccurrences(of: "\n", with: " "))
-                .font(.callout)
+                .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
@@ -325,21 +345,27 @@ struct GeneralSettingsView: View {
     }
 
     private var menuBarOptions: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 8) {
-                Toggle(Self.label("Automatically hide icon after: "), isOn: model.autoHide)
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                Text(verbatim: Self.label("Automatically hide icon after: "))
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 12)
                 Picker("", selection: model.autoHideDelay) {
                     ForEach(autoHideDelays.indices, id: \.self) { index in
                         Text(verbatim: autoHideDelays[index].localized).tag(index)
                     }
                 }
                 .labelsHidden()
+                .accessibilityLabel(Self.label("Automatically hide icon after: "))
                 .frame(width: 100)
                 .disabled(!model.autoHide.wrappedValue)
+                switchControl("Automatically hide icon after: ", isOn: model.autoHide)
             }
-            Toggle(Self.label("Use the full MenuBar on expanding"), isOn: model.useFullMenuBar)
+            .frame(minHeight: 28)
+            settingsToggle("Use the full MenuBar on expanding", isOn: model.useFullMenuBar)
             HStack(spacing: 6) {
-                Toggle(Self.label("Enable always hidden section"), isOn: model.alwaysHiddenSection)
+                Text(verbatim: Self.label("Enable always hidden section"))
+                    .fixedSize(horizontal: false, vertical: true)
                 Button {
                     showsAlwaysHiddenHelp.toggle()
                 } label: {
@@ -356,9 +382,12 @@ struct GeneralSettingsView: View {
                         .frame(width: 320)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+                Spacer(minLength: 16)
+                switchControl("Enable always hidden section", isOn: model.alwaysHiddenSection)
             }
+            .frame(minHeight: 28)
             if NotchOverflowController.hasNotch {
-                Toggle(Self.label("Enable Notch Overflow (right-click ‹ to access hidden icons)"), isOn: model.notchOverflow)
+                settingsToggle("Enable Notch Overflow (right-click ‹ to access hidden icons)", isOn: model.notchOverflow)
                     .help("Right-click the arrow to access icons behind the notch.".localized)
             }
         }
@@ -404,45 +433,43 @@ private struct MenuBarPreview: View {
     var body: some View {
         HStack(spacing: 8) {
             if alwaysHidden {
-                section(["ico_1", "ico_2"], title: GeneralSettingsView.labelAlwaysHidden, style: .tertiary)
+                section(["cloud", "headphones"], title: GeneralSettingsView.labelAlwaysHidden, style: .tertiary)
                 onIconRow(icon("seprated_1").foregroundStyle(.secondary))
             }
-            section(alwaysHidden ? ["ico_3", "ico_4"] : ["ico_1", "ico_2", "ico_3"], title: "Hidden".localized, style: .secondary)
+            section(alwaysHidden ? ["gamecontroller", "battery.100"] : ["cloud", "headphones", "gamecontroller"], title: "Hidden".localized, style: .secondary)
             if showsSeparator {
                 onIconRow(icon("seprated"))
             }
             onIconRow(icon("ico_collapse")
                 .frame(width: 22, height: 22)
                 .background(Color.accentColor.opacity(0.2), in: RoundedRectangle(cornerRadius: 5)))
-            section(["ico_5", "ico_6", "ico_7"], title: "Shown".localized, style: .primary, clock: true)
+            section(["wifi", "magnifyingglass", "switch.2"], title: "Shown".localized, style: .primary)
         }
     }
 
     // Keeps an uncaptioned item on the icons' row, above the section captions.
     private func onIconRow<V: View>(_ content: V) -> some View {
-        VStack(spacing: 5) {
+        VStack(spacing: 3) {
             content.frame(height: 22)
             Text(verbatim: " ").font(.caption)
         }
     }
 
     private func icon(_ name: String) -> some View {
-        Image(name)
+        let image = ["ico_collapse", "seprated", "seprated_1"].contains(name)
+            ? Image(name) : Image(systemName: name)
+        return image
             .renderingMode(.template)
             .resizable()
             .scaledToFit()
             .frame(width: 15, height: 15)
+            .accessibilityHidden(true)
     }
 
-    private func section<S: ShapeStyle>(_ icons: [String], title: String, style: S, clock: Bool = false) -> some View {
-        VStack(spacing: 5) {
+    private func section<S: ShapeStyle>(_ icons: [String], title: String, style: S) -> some View {
+        VStack(spacing: 3) {
             HStack(spacing: 10) {
                 ForEach(icons, id: \.self) { icon($0) }
-                if clock {
-                    Text(verbatim: Date.timeString())
-                        .font(.system(size: 12, weight: .medium))
-                        .monospacedDigit()
-                }
             }
             .foregroundStyle(style)
             .frame(height: 22)
