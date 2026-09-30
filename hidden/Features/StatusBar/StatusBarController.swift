@@ -12,6 +12,9 @@ class StatusBarController: MenuBarItemProvider {
     
     //MARK: - Variables
     private var timer:Timer? = nil
+    private var accessibilityPermission = AccessibilityPermissionTransition(
+        isTrusted: !Util.isAccessibilityPermissionMissing
+    )
 
     //MARK: - BarItems
 
@@ -134,7 +137,9 @@ class StatusBarController: MenuBarItemProvider {
     // Collapsing failed while the permission was missing; once it is granted,
     // hide straight away instead of waiting for the next click or relaunch.
     @objc private func handleAccessibilityPermissionChanged() {
-        guard !Util.isAccessibilityPermissionMissing else { return }
+        guard accessibilityPermission.permissionWasRestored(
+            isTrusted: !Util.isAccessibilityPermissionMissing
+        ) else { return }
         collapseMenuBar()
     }
 
