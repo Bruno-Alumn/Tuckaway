@@ -69,4 +69,19 @@ final class ExpandCollapseActionTests: XCTestCase {
             forAppKitPoint: CGPoint(x: 500, y: 900), desktopTop: 1200)
         XCTAssertEqual(point, CGPoint(x: 500, y: 300))
     }
+
+    func testVisiblePreferencesDoesNotDeferNormalAutoCollapse() {
+        XCTAssertFalse(ExpandCollapseActionResolver.shouldDeferAutoCollapse(
+            isMouseInMenuBar: false, isPreferencesVisible: true, usesFullMenuBar: false))
+    }
+
+    func testVisiblePreferencesDefersFullMenuBarAutoCollapse() {
+        XCTAssertTrue(ExpandCollapseActionResolver.shouldDeferAutoCollapse(
+            isMouseInMenuBar: false, isPreferencesVisible: true, usesFullMenuBar: true))
+    }
+
+    func testMenuBarPointerAlwaysDefersAutoCollapse() {
+        XCTAssertTrue(ExpandCollapseActionResolver.shouldDeferAutoCollapse(
+            isMouseInMenuBar: true, isPreferencesVisible: false, usesFullMenuBar: false))
+    }
 }
