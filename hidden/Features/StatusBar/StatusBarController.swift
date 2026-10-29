@@ -168,7 +168,7 @@ class StatusBarController: MenuBarItemProvider {
         restoreRemovedStatusItems()
         setupAlwayHideStatusBar()
         setupConfigurationDragMonitor()
-        setupHoverToExpandIfEnabled()
+        updateHoverMonitor()
         updateEmptyMenuBarMonitor()
         NotificationCenter.default.addObserver(self, selector: #selector(handleScreenParametersChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceMenuBarChange), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
@@ -213,10 +213,15 @@ class StatusBarController: MenuBarItemProvider {
         }
     }
 
-    // Opt-in via `defaults write com.dwarvesv.minimalbar hoverToExpand -bool true`.
-    // No monitor is installed at all unless the pref is true at launch.
-    private func setupHoverToExpandIfEnabled() {
-        guard Preferences.hoverToExpand else { return }
+    private func updateHoverMonitor() {
+        guard Preferences.hoverToExpand else {
+            hoverDwellTimer?.invalidate()
+            hoverDwellTimer = nil
+            if let hoverMonitor { NSEvent.removeMonitor(hoverMonitor) }
+            hoverMonitor = nil
+            return
+        }
+        guard hoverMonitor == nil else { return }
         NSLog("HoverToExpand: enabled, installing global mouse monitor")
         hoverMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] _ in
             guard let self = self else { return }
@@ -614,6 +619,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     @objc func updateAutoHide() {
+        updateHoverMonitor()
         updateEmptyMenuBarMonitor()
         if !Preferences.showHiddenItemsInSeparateBar {
             hiddenItemsCaptureShieldController.hide()
