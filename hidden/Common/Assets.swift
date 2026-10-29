@@ -9,18 +9,15 @@
 import AppKit
 
 struct Assets {
-    static var expandImage: NSImage? {
-        if (Constant.isUsingLTRLanguage) {
-            return NSImage(named: NSImage.Name("ic_expand"))
-        } else {
-            return NSImage(named: NSImage.Name("ic_collapse"))
-        }
+    private static var expandIcon: String {
+        Preferences.useTransparentExpandIconEnabled ? "ic_expand_hidden" : "ic_expand"
     }
+
+    static var expandImage: NSImage? {
+        NSImage(named: NSImage.Name(Constant.isUsingLTRLanguage ? expandIcon : "ic_collapse"))
+    }
+
     static var collapseImage: NSImage? {
-        if (Constant.isUsingLTRLanguage) {
-            return NSImage(named: NSImage.Name("ic_collapse"))
-        } else {
-            return NSImage(named: NSImage.Name("ic_expand"))
-        }
+        NSImage(named: NSImage.Name(Constant.isUsingLTRLanguage ? "ic_collapse" : expandIcon))
     }
 }
