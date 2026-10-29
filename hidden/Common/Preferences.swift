@@ -149,6 +149,21 @@ enum Preferences {
         }
     }
 
+    static var expandIconStyle: ExpandIconStyle {
+        get {
+            guard let rawValue = UserDefaults.standard.string(forKey: UserDefaults.Key.expandIconStyle),
+                  let style = ExpandIconStyle(rawValue: rawValue) else {
+                return useTransparentExpandIconEnabled ? .transparent : .standard
+            }
+            return style
+        }
+
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: UserDefaults.Key.expandIconStyle)
+            NotificationCenter.default.post(Notification(name: .transparentExpandIconToggle))
+        }
+    }
+
     static var useTransparentExpandIconEnabled: Bool {
         get {
             UserDefaults.standard.bool(forKey: UserDefaults.Key.useTransparentExpandIconEnabled)

@@ -227,8 +227,11 @@ final class GeneralSettingsModel: ObservableObject {
         return binding({ Preferences.notchOverflowEnabled }) { Preferences.notchOverflowEnabled = $0 }
     }
 
-    var transparentExpandIcon: Binding<Bool> {
-        return binding({ Preferences.useTransparentExpandIconEnabled }) { Preferences.useTransparentExpandIconEnabled = $0 }
+    var expandIconStyle: Binding<ExpandIconStyle> {
+        return Binding(get: { Preferences.expandIconStyle }, set: { [weak self] value in
+            Preferences.expandIconStyle = value
+            self?.objectWillChange.send()
+        })
     }
 
     var separateHiddenItemsBar: Binding<Bool> {
@@ -365,7 +368,19 @@ struct GeneralSettingsView: View {
                 switchControl("Automatically hide icon after: ", isOn: model.autoHide)
             }
             .frame(minHeight: 28)
-            settingsToggle("Use transparent expand icon", isOn: model.transparentExpandIcon)
+            HStack {
+                Text(verbatim: Self.label("Expand icon"))
+                Spacer(minLength: 16)
+                Picker("", selection: model.expandIconStyle) {
+                    ForEach(ExpandIconStyle.allCases, id: \.self) { style in
+                        Text(verbatim: style.rawValue.capitalized.localized).tag(style)
+                    }
+                }
+                .labelsHidden()
+                .accessibilityLabel("Expand icon".localized)
+                .frame(width: 120)
+            }
+            .frame(minHeight: 28)
             settingsToggle("Click empty menu bar to show or hide icons", isOn: model.clickEmptyMenuBarToToggle)
             settingsToggle("Show hidden items in separate bar", isOn: model.separateHiddenItemsBar)
             settingsToggle("Use the full MenuBar on expanding", isOn: model.useFullMenuBar)
