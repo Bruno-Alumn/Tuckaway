@@ -18,7 +18,10 @@ extension UserDefaults {
         static let areSeparatorsHidden = "areSeparatorsHidden"
         static let alwaysHiddenSectionEnabled = "alwaysHiddenSectionEnabled"
         static let useFullStatusBarOnExpandEnabled = "useFullStatusBarOnExpandEnabled"
+        static let showHiddenItemsInSeparateBar = "showHiddenItemsInSeparateBar"
         static let hoverToExpand = "hoverToExpand"
         static let notchOverflowEnabled = "notchOverflowEnabled"
+        static let useTransparentExpandIconEnabled = "useTransparentExpandIconEnabled"
+        static let didShowMacOS27HideUnavailableNotice = "didShowMacOS27HideUnavailableNotice"
     }
 }

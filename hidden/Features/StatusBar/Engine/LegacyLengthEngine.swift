@@ -12,21 +12,20 @@ import AppKit
 // be large enough to cover the widest attached display.
 final class LegacyLengthEngine: MenuBarEngine {
     private weak var items: MenuBarItemProvider?
+    private let screenWidths: () -> [CGFloat]
 
     private let expandedLength: CGFloat = 20
 
-    // SPEC-003 (macOS 27 hide-mechanism). macOS 27 re-architected the menu bar so
-    // inflating the separator length may no longer push items off-screen (#360).
-    // This is DIAGNOSTIC ONLY: on the first collapse with the menu-bar window
-    // ready, log the separator geometry so a macOS 27 run reveals which signal
-    // (if any) distinguishes "length honored" from "ignored". No behavior change.
-    // The degrade ACTION is deliberately NOT shipped: review found the trigger
-    // unverifiable without 27 hardware, and a false positive would disable hiding
-    // for a working user. The action lands once this log calibrates the signal.
+    // macOS 27 gives the separator its own backing window. If inflating it grows
+    // beyond the screen without displacing neighboring icons, restore the bar and
+    // stop trying the old mechanism (#360).
     private var hideMechanismChecked = false
+    private var hideDegraded = false
 
-    init(items: MenuBarItemProvider) {
+    init(items: MenuBarItemProvider,
+         screenWidths: @escaping () -> [CGFloat] = { NSScreen.screens.map { $0.frame.width } }) {
         self.items = items
+        self.screenWidths = screenWidths
     }
 
     // Derived from the live length rather than stored, and compared with > rather
@@ -42,13 +41,18 @@ final class LegacyLengthEngine: MenuBarEngine {
         // length must cover the WIDEST screen, not NSScreen.main (the focused one);
         // sizing from a narrower screen leaks hidden icons on wider displays.
         // frame.width, not visibleFrame: the menubar spans the full frame width.
-        let screenWidth = NSScreen.screens.map { $0.frame.width }.max() ?? 1728
+        let screenWidth = screenWidths().max() ?? 1728
         // Keep collapse length bounded to avoid pathological layout/memory behavior;
         // macOS enforces a hard 10,000pt maximum on NSStatusItem.length (PR #354).
         return max(500, min(screenWidth * 2, 10_000))
     }
 
     func collapse(completion: @escaping (CollapseResult) -> Void) {
+        if ProcessInfo.processInfo.isMacOS27OrLater,
+           hideDegraded || UserDefaults.standard.bool(forKey: "didShowMacOS27HideUnavailableNotice") {
+            degradeHideUnavailable()
+            return completion(.unavailable)
+        }
         items?.separatorItem.length = collapsedLength
         completion(.collapsed)
         verifyHideMechanismIfNeeded()
@@ -79,34 +83,66 @@ final class LegacyLengthEngine: MenuBarEngine {
     }
 
     func invalidateLayout() {
-        guard state == .collapsed else { return }
-        items?.separatorItem.length = collapsedLength
+        // Each section can be hidden independently. In particular, expanding
+        // the ordinary section leaves the always-hidden spacer inflated.
+        // Preserve each live item's presentation when a display changes.
+        let length = collapsedLength
+        if let separator = items?.separatorItem, separator.length > expandedLength {
+            separator.length = length
+        }
+        if let alwaysHidden = items?.alwaysHiddenItem, alwaysHidden.length > expandedLength {
+            alwaysHidden.length = length
+        }
     }
 
-    // After a collapse, confirm on the next runloop tick (so layout settles) that
-    // the separator actually claimed its inflated width. macOS <= 26 honors it;
-    // a macOS that ignores NSStatusItem.length leaves the slot narrow, meaning
-    // hiding did nothing. Checked once: cheap, and the OS behavior won't change
-    // mid-session.
+    // macOS <= 26 shares a screen-wide menu-bar window. On macOS 27, a separator
+    // window wider than the screen means inflation grew only our own item and did
+    // not hide its neighbors. Wait for a real window before latching the check.
     private func verifyHideMechanismIfNeeded() {
         guard !hideMechanismChecked else { return }
         DispatchQueue.main.async { [weak self] in
-            guard let self = self, self.state == .collapsed else { return }
-            // Need the separator's backing window to measure. If it is not up yet
-            // (early launch), do NOT burn the one-shot check: return and let a
-            // later collapse retry once the window exists.
+            guard let self = self, self.state == .collapsed, !self.hideMechanismChecked else { return }
             guard let separator = self.items?.separatorItem,
                   let separatorButton = separator.button,
                   let window = separatorButton.window else { return }
             self.hideMechanismChecked = true
-            // Log several geometry signals. On macOS <= 26 the inflation is
-            // honored; on macOS 27 it may be ignored. Which of these tracks the
-            // requested length is exactly what a 27 capture must reveal before any
-            // degrade action can trigger on a sound signal.
             let requested = self.collapsedLength
             let windowWidth = window.frame.width
             let buttonWidth = separatorButton.frame.width
-            NSLog("HideMechanism: requested=\(requested) windowWidth=\(windowWidth) buttonWidth=\(buttonWidth) length=\(separator.length)")
+            let screenWidth = self.screenWidths().max() ?? 0
+            NSLog("HideMechanism: requested=\(requested) windowWidth=\(windowWidth) buttonWidth=\(buttonWidth) length=\(separator.length) screenWidth=\(screenWidth) os=\(ProcessInfo.processInfo.operatingSystemVersionString)")
+            guard ProcessInfo.processInfo.isMacOS27OrLater else { return }
+            if screenWidth <= 0 || windowWidth > screenWidth * 1.1 {
+                self.degradeHideUnavailable()
+            }
+        }
+    }
+
+    private func degradeHideUnavailable() {
+        guard !hideDegraded else { return }
+        hideDegraded = true
+        expand()
+        if UserDefaults.standard.bool(forKey: "areSeparatorsHidden") {
+            items?.alwaysHiddenItem?.length = expandedLength
+        }
+        NSLog("HideMechanism: degraded - macOS 27 hide unavailable (#360)")
+        NotificationCenter.default.post(name: Notification.Name("legacyHideUnavailable"), object: nil)
+        guard !UserDefaults.standard.bool(forKey: "didShowMacOS27HideUnavailableNotice") else { return }
+        UserDefaults.standard.set(true, forKey: "didShowMacOS27HideUnavailableNotice")
+        presentHideUnavailableAlert()
+    }
+
+    private func presentHideUnavailableAlert() {
+        let alert = NSAlert()
+        alert.alertStyle = .informational
+        alert.messageText = NSLocalizedString("Menu bar hiding isn't available on macOS 27", comment: "")
+        alert.informativeText = NSLocalizedString("macOS 27 changed how the menu bar works, so Hidden Bar can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Hidden Bar will stay out of the way until a compatible method is available.", comment: "")
+        alert.addButton(withTitle: NSLocalizedString("Learn More", comment: ""))
+        alert.addButton(withTitle: NSLocalizedString("OK", comment: ""))
+        NSApp.activate(ignoringOtherApps: true)
+        if alert.runModal() == .alertFirstButtonReturn,
+           let url = URL(string: "https://github.com/dwarvesf/hidden/issues/360") {
+            NSWorkspace.shared.open(url)
         }
     }
 }

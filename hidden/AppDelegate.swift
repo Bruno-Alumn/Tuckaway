@@ -88,7 +88,9 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         UserDefaults.Key.numberOfSecondForAutoHide: 10.0,
         UserDefaults.Key.areSeparatorsHidden: false,
         UserDefaults.Key.alwaysHiddenSectionEnabled: false,
-        UserDefaults.Key.notchOverflowEnabled: true
+        UserDefaults.Key.notchOverflowEnabled: true,
+        UserDefaults.Key.useTransparentExpandIconEnabled: false,
+        UserDefaults.Key.showHiddenItemsInSeparateBar: false
     ]
 
     func registerDefaultValues() {
