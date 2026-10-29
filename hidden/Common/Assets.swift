@@ -9,15 +9,19 @@
 import AppKit
 
 struct Assets {
-    private static var expandIcon: String {
-        Preferences.useTransparentExpandIconEnabled ? "ic_expand_hidden" : "ic_expand"
-    }
-
     static var expandImage: NSImage? {
-        NSImage(named: NSImage.Name(Constant.isUsingLTRLanguage ? expandIcon : "ic_collapse"))
+        image(expanded: true)
     }
 
     static var collapseImage: NSImage? {
-        NSImage(named: NSImage.Name(Constant.isUsingLTRLanguage ? "ic_collapse" : expandIcon))
+        image(expanded: false)
+    }
+
+    private static func image(expanded: Bool) -> NSImage? {
+        let style = Preferences.expandIconStyle
+        guard let expandIcon = style.assetName else {
+            return NSImage(systemSymbolName: "ellipsis", accessibilityDescription: "Hidden Bar")
+        }
+        return NSImage(named: NSImage.Name(Constant.isUsingLTRLanguage == expanded ? expandIcon : "ic_collapse"))
     }
 }

@@ -7,6 +7,20 @@
 
 import AppKit
 
+enum ExpandIconStyle: String, CaseIterable {
+    case standard
+    case transparent
+    case ellipsis
+
+    var assetName: String? {
+        switch self {
+        case .standard: return "ic_expand"
+        case .transparent: return "ic_expand_hidden"
+        case .ellipsis: return nil
+        }
+    }
+}
+
 // StatusBarController decides WHAT the user wants (collapsed or expanded, which
 // sections exist); an engine decides HOW the menu bar is made to do it. Keeping
 // the mechanics here lets an OS release that changes menu-bar layout (#360) get

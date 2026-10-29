@@ -707,6 +707,15 @@ final class LegacyLengthEngineTests: XCTestCase {
     }
 }
 
+final class ExpandIconStyleTests: XCTestCase {
+    func testStylesCoverStandardTransparentAndEllipsis() {
+        XCTAssertEqual(ExpandIconStyle.allCases, [.standard, .transparent, .ellipsis])
+        XCTAssertEqual(ExpandIconStyle.standard.assetName, "ic_expand")
+        XCTAssertEqual(ExpandIconStyle.transparent.assetName, "ic_expand_hidden")
+        XCTAssertNil(ExpandIconStyle.ellipsis.assetName)
+    }
+}
+
 final class CaptureActivityMonitorTests: XCTestCase {
     func testAlwaysOnCoreSpeechListenerIsIgnored() {
         XCTAssertTrue(CaptureActivityMonitor.isAlwaysOnSpeechListener(

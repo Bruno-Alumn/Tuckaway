@@ -61,6 +61,10 @@ Steps to view always hidden icons:
 "Automatically hide icon after: " = "Hide after";
 "Use transparent expand icon" = "Transparent expand icon";
 "Click empty menu bar to show or hide icons" = "Toggle by clicking empty menu bar";
+"Expand icon" = "Expand icon";
+"Standard" = "Standard";
+"Transparent" = "Transparent";
+"Ellipsis" = "Ellipsis";
 "Use the full MenuBar on expanding" = "Expand across full menu bar";
 "Enable always hidden section" = "Always-hidden section";
 "Always-hidden section help" = "Always-hidden section help";
