@@ -20,8 +20,12 @@ final class ExpandCollapseActionTests: XCTestCase {
         XCTAssertEqual(ExpandCollapseActionResolver.action(eventType: .leftMouseUp, optionPressed: false), .toggle)
     }
 
-    func testRightClickShowsContextMenu() {
-        XCTAssertEqual(ExpandCollapseActionResolver.action(eventType: .rightMouseUp, optionPressed: false), .contextMenu)
+    func testRightClickToggles() {
+        XCTAssertEqual(ExpandCollapseActionResolver.action(eventType: .rightMouseUp, optionPressed: false), .toggle)
+    }
+
+    func testControlRightClickShowsContextMenu() {
+        XCTAssertEqual(ExpandCollapseActionResolver.action(eventType: .rightMouseUp, optionPressed: false, controlPressed: true), .contextMenu)
     }
 
     func testOptionLeftTogglesSeparators() {
