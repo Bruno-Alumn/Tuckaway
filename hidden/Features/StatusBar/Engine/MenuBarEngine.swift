@@ -27,8 +27,8 @@ protocol MenuBarEngine: AnyObject {
     // Whether the always-hidden separator sits beyond the regular hidden section.
     var isAlwaysHiddenSeparatorPlaced: Bool { get }
 
-    // Display geometry changed. Re-applies the collapse to the live items when
-    // collapsed, so a hot-plug does not leave a stale length behind (PR #354).
+    // Display geometry changed. Refreshes every hidden section independently,
+    // preserving each section's presentation when displays are reconfigured.
     func invalidateLayout()
 }
 
@@ -49,9 +49,10 @@ enum MenuBarOrder {
     // left-to-right layout, to its right otherwise. False when either is not on
     // screen, since nothing can be judged then.
     static func isItem(_ item: NSStatusItem?, onHiddenSideOf boundary: NSStatusItem?) -> Bool {
-        guard let itemX = item?.button?.window?.frame.origin.x,
-              let boundaryX = boundary?.button?.window?.frame.origin.x else { return false }
-        return Constant.isUsingLTRLanguage ? boundaryX >= itemX : boundaryX <= itemX
+        guard let itemOrigin = item?.button?.window?.frame.origin,
+              let boundaryOrigin = boundary?.button?.window?.frame.origin,
+              itemOrigin != .zero, boundaryOrigin != .zero else { return false }
+        return Constant.isUsingLTRLanguage ? boundaryOrigin.x >= itemOrigin.x : boundaryOrigin.x <= itemOrigin.x
     }
 }
 

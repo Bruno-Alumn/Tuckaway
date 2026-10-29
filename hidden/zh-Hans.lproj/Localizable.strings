@@ -10,6 +10,22 @@
 "Toggle Auto Collapse" = "切换自动折叠";
 "Enable Auto Collapse" = "开启自动折叠";
 "Disable Auto Collapse" = "关闭自动折叠";
+"Show hidden items in separate bar" = "在单独的浮动栏中显示隐藏项目";
+"Hidden items unavailable" = "无法读取隐藏项目";
+"Manage Menu Bar Items…" = "管理菜单栏项目…";
+"Manage Menu Bar Items" = "管理菜单栏项目";
+"Menu Bar Items" = "菜单栏项目";
+"Drag items within a list to reorder them, or between lists to change visibility." = "在列表内拖动可调整顺序，在两个列表之间拖动可切换显示或隐藏。";
+"Hidden" = "隐藏";
+"Visible" = "显示";
+"Refresh" = "刷新";
+"Grant Access" = "授予权限";
+"Enable Hidden Bar in System Settings, then return and refresh." = "请在系统设置中启用当前版本的 Hidden Bar，然后返回并刷新。";
+"Scanning menu bar items…" = "正在扫描菜单栏项目…";
+"Accessibility permission is required to list and move menu bar items." = "列出和移动菜单栏项目需要辅助功能权限。";
+"No manageable menu bar items were found." = "未找到可管理的菜单栏项目。";
+"Drop an item to apply the real menu bar position." = "拖放后将直接修改真实菜单栏位置。";
+"Unknown" = "未知应用";
 "Quit" = "退出";
 "Set Shortcut" = "设置快捷键";
 "Tutorial text" = "
@@ -19,7 +35,32 @@
 1. 启用持续隐藏功能 ”|“（半透明分割线）。
 2. 按住 ⌘ 并将持续隐藏区域拖至一般隐藏区域（不透明｜）的左侧。
 3. 接着将不想显示的图标移至持续隐藏区域中。
-4. 最后右键单击 “>” 按钮，就能隐藏'持续隐藏区域'中的图标。
-（再次右键单击 “>” 按钮恢复显示 “持续隐藏区域” 中的图标。）
+4. 最后按住 ⌥ Option 键单击 “>” 按钮，就能隐藏'持续隐藏区域'中的图标。
+（再次按住 ⌥ Option 键单击 “>” 按钮恢复显示 “持续隐藏区域” 中的图标。）
 祝您使用愉快 😉!
 ";
+
+/* General settings (moved from Main.storyboard) */
+"Start Hidden Bar when I log in" = "在登录时启动 Hidden Bar";
+"Show preferences on launch" = "在应用程序启动时显示偏好设置";
+"Use the full MenuBar on expanding" = "展开隐藏区域时使用完整的菜单栏";
+"Enable always hidden section" = "启用持续隐藏区域";
+"Automatically hide icon after: " = "等待";
+"Global Shortcut" = "全局快捷键";
+"Hidden" = "隐藏";
+"Shown" = "显示";
+"⭐️Always Hidden" = "⭐️持续隐藏";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "在 Mac 的菜单栏中，按住 ⌘ 并拖动图标\n以自定义菜单栏";
+"5 seconds" = "5 秒";
+"10 seconds" = "10 秒";
+"15 seconds" = "15 秒";
+"30 seconds" = "30 秒";
+"1 minute" = "1 分钟";
+
+"General" = "通用设置";
+
+"About" = "关于我们";
+
+"Menu bar cleaner" = "菜单栏管理器";
+
+"Version" = "版本";
