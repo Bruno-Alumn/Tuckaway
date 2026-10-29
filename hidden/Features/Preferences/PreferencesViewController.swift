@@ -201,6 +201,10 @@ final class GeneralSettingsModel: ObservableObject {
         return binding({ Preferences.isAutoHide }) { Preferences.isAutoHide = $0 }
     }
 
+    var autoCollapseOnFocusChange: Binding<Bool> {
+        return binding({ Preferences.autoCollapseOnFocusChange }) { Preferences.autoCollapseOnFocusChange = $0 }
+    }
+
     var autoHideDelay: Binding<Int> {
         return Binding(get: { SelectedSecond.secondToPossition(seconds: Preferences.numberOfSecondForAutoHide) },
                        set: { [weak self] index in
@@ -376,6 +380,7 @@ struct GeneralSettingsView: View {
                 switchControl("Automatically hide icon after: ", isOn: model.autoHide)
             }
             .frame(minHeight: 28)
+            settingsToggle("Collapse when another app becomes active", isOn: model.autoCollapseOnFocusChange)
             HStack {
                 Text(verbatim: Self.label("Expand icon"))
                 Spacer(minLength: 16)
