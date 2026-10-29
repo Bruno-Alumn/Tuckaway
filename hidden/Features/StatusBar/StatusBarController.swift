@@ -401,7 +401,7 @@ class StatusBarController: MenuBarItemProvider {
         menu.popUp(positioning: nil, at: NSPoint(x: 0, y: 0), in: button)
     }
     
-    func showHideSeparatorsAndAlwayHideArea() {
+    @objc func showHideSeparatorsAndAlwayHideArea() {
         Preferences.areSeparatorsHidden ? self.showSeparators() : self.hideSeparators()
         
         if self.isCollapsed {self.expandMenubar()}
@@ -602,6 +602,11 @@ class StatusBarController: MenuBarItemProvider {
             menu.addItem(noticeItem)
             menu.addItem(NSMenuItem.separator())
         }
+
+        let separatorTitle = Preferences.areSeparatorsHidden ? "Show separators" : "Hide separators"
+        let separatorItem = NSMenuItem(title: separatorTitle.localized, action: #selector(showHideSeparatorsAndAlwayHideArea), keyEquivalent: "s")
+        separatorItem.target = self
+        menu.addItem(separatorItem)
 
         let prefItem = NSMenuItem(title: "Preferences...".localized, action: #selector(openPreferenceViewControllerIfNeeded), keyEquivalent: "P")
         prefItem.target = self
