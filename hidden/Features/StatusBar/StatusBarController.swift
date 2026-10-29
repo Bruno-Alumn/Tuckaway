@@ -304,13 +304,12 @@ class StatusBarController: MenuBarItemProvider {
         // AXPress synthesis carries no NSEvent; the resolver maps nil to .toggle
         // so VoiceOver can operate the bar.
         let optionPressed = ExpandCollapseActionResolver.isOptionPressed(eventFlags: event?.modifierFlags, liveFlags: NSEvent.modifierFlags)
-        switch ExpandCollapseActionResolver.action(eventType: event?.type, optionPressed: optionPressed) {
+        let controlPressed = (event?.modifierFlags.contains(.control) ?? false) || NSEvent.modifierFlags.contains(.control)
+        switch ExpandCollapseActionResolver.action(eventType: event?.type, optionPressed: optionPressed, controlPressed: controlPressed) {
         case .toggle:
             self.expandCollapseIfNeeded()
         case .contextMenu:
-            // Right-click opens the same context menu the separator has (#356),
-            // making settings reachable from the control everyone clicks.
-            // The separators/always-hidden toggle stays on option-click.
+            // Control-right-click opens the menu; plain right-click toggles (#434).
             showContextMenu(from: sender)
         case .toggleSeparators:
             // Both option+left and option+right land here: separators toggle.
