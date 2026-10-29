@@ -117,6 +117,17 @@ enum Preferences {
         }
     }
 
+    static var expandWhenExternalDisplayConnected: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: UserDefaults.Key.expandWhenExternalDisplayConnected)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.expandWhenExternalDisplayConnected)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     static var useFullStatusBarOnExpandEnabled: Bool {
         get {
             UserDefaults.standard.bool(forKey: UserDefaults.Key.useFullStatusBarOnExpandEnabled)
