@@ -36,6 +36,10 @@ enum ExpandCollapseActionResolver {
         }
     }
 
+    static func shouldDeferAutoCollapse(isMouseInMenuBar: Bool, isPreferencesVisible: Bool, usesFullMenuBar: Bool) -> Bool {
+        return isMouseInMenuBar || (usesFullMenuBar && isPreferencesVisible)
+    }
+
     static func isEmptyMenuBar(role: String?) -> Bool {
         return role == "AXMenuBar"
     }

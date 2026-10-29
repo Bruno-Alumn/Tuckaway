@@ -578,11 +578,13 @@ class StatusBarController: MenuBarItemProvider {
         timer?.invalidate()
         self.timer = Timer.scheduledTimer(withTimeInterval: Preferences.numberOfSecondForAutoHide, repeats: false) { [weak self] _ in
             guard let self = self, Preferences.isAutoHide else { return }
-            // Don't yank the bar shut mid-interaction: while the pointer is in the
-            // menubar (hovering, clicking, dragging icons), defer and re-arm.
-            // Intentionally unbounded; each re-arm invalidates the previous timer,
-            // so deferral never accumulates timers.
-            if self.isMouseInMenuBar || self.isPreferencesWindowVisible {
+            // Don't yank the bar shut mid-interaction. Preferences only needs the
+            // same deferral when full-menu-bar activation could dismiss it (#170).
+            if ExpandCollapseActionResolver.shouldDeferAutoCollapse(
+                isMouseInMenuBar: self.isMouseInMenuBar,
+                isPreferencesVisible: self.isPreferencesWindowVisible,
+                usesFullMenuBar: Preferences.useFullStatusBarOnExpandEnabled
+            ) {
                 self.startTimerToAutoHide()
             } else {
                 self.collapseMenuBar()
