@@ -18,6 +18,23 @@ protocol LoginItemServing {
 
 extension SMAppService: LoginItemServing {}
 
+enum LegacyLoginItemMigration {
+    private static let migratedKey = "smAppServiceMigrated"
+
+    @discardableResult
+    static func migrate(defaults: UserDefaults = .standard,
+                        setEnabled: (CFString, Bool) -> Bool = SMLoginItemSetEnabled) -> Bool {
+        guard !defaults.bool(forKey: migratedKey) else { return true }
+        let succeeded = setEnabled("com.dwarvesv.LauncherApplication" as CFString, false)
+        if succeeded {
+            defaults.set(true, forKey: migratedKey)
+        } else {
+            NSLog("Legacy login-item cleanup failed; it will be retried on the next launch")
+        }
+        return succeeded
+    }
+}
+
 enum AutoStart {
     // Returns whether the system ended up in the desired state. A throw is one
     // failure mode; a register() that lands on .requiresApproval (or any status
