@@ -87,6 +87,7 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         UserDefaults.Key.alwaysHiddenSectionEnabled: false,
         UserDefaults.Key.notchOverflowEnabled: true,
         UserDefaults.Key.useTransparentExpandIconEnabled: false,
+        UserDefaults.Key.clickEmptyMenuBarToToggle: false,
         UserDefaults.Key.showHiddenItemsInSeparateBar: false
     ]
 

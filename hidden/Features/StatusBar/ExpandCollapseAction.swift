@@ -35,4 +35,12 @@ enum ExpandCollapseActionResolver {
         default: return .toggleSeparators
         }
     }
+
+    static func isEmptyMenuBar(role: String?) -> Bool {
+        return role == "AXMenuBar"
+    }
+
+    static func accessibilityPoint(forAppKitPoint point: CGPoint, desktopTop: CGFloat) -> CGPoint {
+        return CGPoint(x: point.x, y: desktopTop - point.y)
+    }
 }

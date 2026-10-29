@@ -106,6 +106,17 @@ enum Preferences {
         }
     }
 
+    static var clickEmptyMenuBarToToggle: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: UserDefaults.Key.clickEmptyMenuBarToToggle)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.clickEmptyMenuBarToToggle)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     static var useFullStatusBarOnExpandEnabled: Bool {
         get {
             UserDefaults.standard.bool(forKey: UserDefaults.Key.useFullStatusBarOnExpandEnabled)
