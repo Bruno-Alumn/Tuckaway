@@ -215,6 +215,10 @@ final class GeneralSettingsModel: ObservableObject {
         return binding({ Preferences.clickEmptyMenuBarToToggle }) { Preferences.clickEmptyMenuBarToToggle = $0 }
     }
 
+    var expandWhenExternalDisplayConnected: Binding<Bool> {
+        return binding({ Preferences.expandWhenExternalDisplayConnected }) { Preferences.expandWhenExternalDisplayConnected = $0 }
+    }
+
     var useFullMenuBar: Binding<Bool> {
         return binding({ Preferences.useFullStatusBarOnExpandEnabled }) { Preferences.useFullStatusBarOnExpandEnabled = $0 }
     }
@@ -384,6 +388,7 @@ struct GeneralSettingsView: View {
             settingsToggle("Click empty menu bar to show or hide icons", isOn: model.clickEmptyMenuBarToToggle)
             settingsToggle("Show hidden items in separate bar", isOn: model.separateHiddenItemsBar)
             settingsToggle("Use the full MenuBar on expanding", isOn: model.useFullMenuBar)
+            settingsToggle("Expand when an external display is connected", isOn: model.expandWhenExternalDisplayConnected)
             HStack(spacing: 6) {
                 Text(verbatim: Self.label("Enable always hidden section"))
                     .fixedSize(horizontal: false, vertical: true)

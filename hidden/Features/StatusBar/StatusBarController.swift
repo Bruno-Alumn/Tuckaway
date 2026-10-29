@@ -96,6 +96,7 @@ class StatusBarController: MenuBarItemProvider {
     private let hiddenItemsSeparatorOverlayController = HiddenItemsBarSeparatorOverlayController()
     private var activeExpandCollapseFrame: CGRect?
     private var activeStatusItemScreen: NSScreen?
+    private var didExpandForExternalDisplay = false
     private var configurationDragMonitor: Any?
     private var isTemporarilyExpandedForConfigurationDrag = false
     private var configurationDragCollapseWorkItem: DispatchWorkItem?
@@ -266,7 +267,9 @@ class StatusBarController: MenuBarItemProvider {
     @objc private func handleScreenParametersChanged() {
         activeExpandCollapseFrame = nil
         activeStatusItemScreen = nil
+        let wasCollapsed = isCollapsed
         invalidateNativeLayoutAfterEnvironmentChange()
+        applyExternalDisplayPreference(force: wasCollapsed)
     }
 
     // A new status item or a wake can change the Accessibility inventory just
@@ -286,6 +289,17 @@ class StatusBarController: MenuBarItemProvider {
         }
         if wasCollapsed && Preferences.areSeparatorsHidden {
             menuBarEngine.updateAlwaysHiddenSection(enabled: Preferences.alwaysHiddenSectionEnabled, separatorHidden: true)
+        }
+    }
+
+    private func applyExternalDisplayPreference(force: Bool = false) {
+        if Preferences.expandWhenExternalDisplayConnected && NSScreen.screens.count > 1 {
+            guard isCollapsed || force else { return }
+            didExpandForExternalDisplay = true
+            expandMenubar(force: true)
+        } else if didExpandForExternalDisplay {
+            didExpandForExternalDisplay = false
+            collapseMenuBar()
         }
     }
     
@@ -486,6 +500,7 @@ class StatusBarController: MenuBarItemProvider {
             NSApp.deactivate()
         }
         rescueArrowIfSwallowed()
+        applyExternalDisplayPreference()
     }
 
     // If collapsing hides the only control that can reopen the bar, undo it,
@@ -540,6 +555,7 @@ class StatusBarController: MenuBarItemProvider {
     
     private func autoCollapseIfNeeded() {
         guard Preferences.isAutoHide else {return}
+        guard !didExpandForExternalDisplay else { return }
         guard !isCollapsed || isSeparateHiddenItemsBarVisible else { return }
 
         startTimerToAutoHide()
@@ -605,6 +621,7 @@ class StatusBarController: MenuBarItemProvider {
             hiddenItemsSeparatorOverlayController.hide()
             updateExpandIcon()
         }
+        applyExternalDisplayPreference()
         autoCollapseIfNeeded()
     }
 
