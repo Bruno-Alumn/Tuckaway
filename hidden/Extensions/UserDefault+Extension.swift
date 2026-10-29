@@ -21,6 +21,7 @@ extension UserDefaults {
         static let showHiddenItemsInSeparateBar = "showHiddenItemsInSeparateBar"
         static let hoverToExpand = "hoverToExpand"
         static let clickEmptyMenuBarToToggle = "clickEmptyMenuBarToToggle"
+        static let expandWhenExternalDisplayConnected = "expandWhenExternalDisplayConnected"
         static let notchOverflowEnabled = "notchOverflowEnabled"
         static let useTransparentExpandIconEnabled = "useTransparentExpandIconEnabled"
         static let expandIconStyle = "expandIconStyle"
