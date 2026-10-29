@@ -23,6 +23,7 @@ extension UserDefaults {
         static let clickEmptyMenuBarToToggle = "clickEmptyMenuBarToToggle"
         static let notchOverflowEnabled = "notchOverflowEnabled"
         static let useTransparentExpandIconEnabled = "useTransparentExpandIconEnabled"
+        static let expandIconStyle = "expandIconStyle"
         static let didShowMacOS27HideUnavailableNotice = "didShowMacOS27HideUnavailableNotice"
     }
 }
