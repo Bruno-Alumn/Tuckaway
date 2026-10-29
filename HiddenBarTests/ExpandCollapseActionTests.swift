@@ -56,4 +56,17 @@ final class ExpandCollapseActionTests: XCTestCase {
         // separators toggle.
         XCTAssertEqual(ExpandCollapseActionResolver.action(eventType: .otherMouseUp, optionPressed: false), .toggleSeparators)
     }
+
+    func testOnlyTheMenuBarItselfCountsAsEmptySpace() {
+        XCTAssertTrue(ExpandCollapseActionResolver.isEmptyMenuBar(role: "AXMenuBar"))
+        XCTAssertFalse(ExpandCollapseActionResolver.isEmptyMenuBar(role: "AXMenuBarItem"))
+        XCTAssertFalse(ExpandCollapseActionResolver.isEmptyMenuBar(role: "AXGroup"))
+        XCTAssertFalse(ExpandCollapseActionResolver.isEmptyMenuBar(role: nil))
+    }
+
+    func testMenuBarClickCoordinatesUseDesktopTop() {
+        let point = ExpandCollapseActionResolver.accessibilityPoint(
+            forAppKitPoint: CGPoint(x: 500, y: 900), desktopTop: 1200)
+        XCTAssertEqual(point, CGPoint(x: 500, y: 300))
+    }
 }
