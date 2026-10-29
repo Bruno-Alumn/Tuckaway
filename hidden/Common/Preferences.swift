@@ -64,6 +64,17 @@ enum Preferences {
         }
     }
 
+    static var autoCollapseOnFocusChange: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: UserDefaults.Key.autoCollapseOnFocusChange)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.autoCollapseOnFocusChange)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     static var isShowPreference: Bool {
         get {
             UserDefaults.standard.bool(forKey: UserDefaults.Key.isShowPreference)

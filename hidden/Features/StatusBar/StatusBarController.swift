@@ -173,6 +173,7 @@ class StatusBarController: MenuBarItemProvider {
         NotificationCenter.default.addObserver(self, selector: #selector(handleScreenParametersChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceMenuBarChange), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceMenuBarChange), name: NSWorkspace.didWakeNotification, object: nil)
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleApplicationActivated), name: NSWorkspace.didActivateApplicationNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateAutoHide), name: .prefsChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateExpandIcon), name: .transparentExpandIconToggle, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleLegacyHideUnavailable), name: .legacyHideUnavailable, object: nil)
@@ -282,6 +283,13 @@ class StatusBarController: MenuBarItemProvider {
     // restriction here instead of applying a stale per-display classification.
     @objc private func handleWorkspaceMenuBarChange() {
         invalidateNativeLayoutAfterEnvironmentChange()
+    }
+
+    @objc private func handleApplicationActivated(_ notification: Notification) {
+        guard Preferences.autoCollapseOnFocusChange, !isCollapsed,
+              let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+              app.bundleIdentifier != Bundle.main.bundleIdentifier else { return }
+        collapseMenuBar()
     }
 
     private func invalidateNativeLayoutAfterEnvironmentChange() {
