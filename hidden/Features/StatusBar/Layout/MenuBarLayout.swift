@@ -28,6 +28,7 @@ enum MenuBarSection: Int, Comparable {
 struct MenuBarInventoryItem: Equatable {
     let bundleIdentifier: String?
     let frame: CGRect
+    var isUnreadable = false
 }
 
 // AppKit and Accessibility describe the same desktop with different vertical
@@ -84,6 +85,10 @@ enum MenuBarLayoutResolver {
             guard let bundle = item.bundleIdentifier,
                   bundle != ownBundle,
                   !systemItemOwners.contains(bundle) else { continue }
+            if item.isUnreadable {
+                sections[bundle] = .visible
+                continue
+            }
             // An unassigned third-party item must never be guessed into the
             // hidden side: the native API would otherwise hide an icon the user
             // intentionally kept visible.  The caller fails open in this case.
