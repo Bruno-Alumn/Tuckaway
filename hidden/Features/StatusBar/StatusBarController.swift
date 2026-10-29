@@ -487,7 +487,7 @@ class StatusBarController: MenuBarItemProvider {
             button.image = Assets.collapseImage
         }
         if Preferences.useFullStatusBarOnExpandEnabled {
-            NSApp.setActivationPolicy(.regular)
+            NSApp.setActivationPolicy(.accessory)
         }
     }
 
@@ -547,7 +547,7 @@ class StatusBarController: MenuBarItemProvider {
         autoCollapseIfNeeded()
         
         if Preferences.useFullStatusBarOnExpandEnabled {
-            NSApp.setActivationPolicy(.regular)
+            NSApp.setActivationPolicy(.accessory)
             NSApp.activate(ignoringOtherApps: true)
             
         }
@@ -794,7 +794,7 @@ extension StatusBarController {
         menuBarEngine.expand()
         btnExpandCollapse.button?.image = Assets.collapseImage
         if Preferences.useFullStatusBarOnExpandEnabled {
-            NSApp.setActivationPolicy(.regular)
+            NSApp.setActivationPolicy(.accessory)
             NSApp.activate(ignoringOtherApps: true)
         }
     }

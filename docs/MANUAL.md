@@ -70,7 +70,7 @@ Expanding the arrow ends all of this immediately.
 | Auto collapse | Re-hide automatically after the chosen delay |
 | Global shortcut | System-wide expand/collapse hotkey (F-keys display as F18, not Fn18) |
 | Enable always hidden section | A second zone whose icons stay hidden even when expanded; revealed by option-clicking the arrow |
-| Use full menu bar on expanding | App becomes briefly "regular" while expanded (helps on tight menubars) |
+| Use full menu bar on expanding | Activates the app's full menu bar while expanded without adding a Dock icon (helps on tight menubars) |
 | Show hidden items in separate bar | Captures hidden icons into a floating row below the menu bar; requires Screen Recording, and Accessibility for click forwarding |
 | Manage Menu Bar Items | Opens two sortable lists for hidden and visible items; drag within a list to reorder or across lists to change visibility; requires Accessibility permission |
 
