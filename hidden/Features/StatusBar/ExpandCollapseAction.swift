@@ -26,12 +26,12 @@ enum ExpandCollapseActionResolver {
     // A nil event type means there is no real NSEvent behind the press, which is
     // what assistive synthesis (VoiceOver AXPress) produces: treat it as a plain
     // left click so VoiceOver users can toggle the bar at all.
-    static func action(eventType: NSEvent.EventType?, optionPressed: Bool) -> ExpandCollapseAction {
+    static func action(eventType: NSEvent.EventType?, optionPressed: Bool, controlPressed: Bool = false) -> ExpandCollapseAction {
         guard let eventType = eventType else { return .toggle }
         if optionPressed { return .toggleSeparators }
         switch eventType {
         case .leftMouseUp: return .toggle
-        case .rightMouseUp: return .contextMenu
+        case .rightMouseUp: return controlPressed ? .contextMenu : .toggle
         default: return .toggleSeparators
         }
     }
