@@ -211,6 +211,10 @@ final class GeneralSettingsModel: ObservableObject {
                        })
     }
 
+    var clickEmptyMenuBarToToggle: Binding<Bool> {
+        return binding({ Preferences.clickEmptyMenuBarToToggle }) { Preferences.clickEmptyMenuBarToToggle = $0 }
+    }
+
     var useFullMenuBar: Binding<Bool> {
         return binding({ Preferences.useFullStatusBarOnExpandEnabled }) { Preferences.useFullStatusBarOnExpandEnabled = $0 }
     }
@@ -362,6 +366,7 @@ struct GeneralSettingsView: View {
             }
             .frame(minHeight: 28)
             settingsToggle("Use transparent expand icon", isOn: model.transparentExpandIcon)
+            settingsToggle("Click empty menu bar to show or hide icons", isOn: model.clickEmptyMenuBarToToggle)
             settingsToggle("Show hidden items in separate bar", isOn: model.separateHiddenItemsBar)
             settingsToggle("Use the full MenuBar on expanding", isOn: model.useFullMenuBar)
             HStack(spacing: 6) {
