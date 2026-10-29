@@ -134,6 +134,7 @@ class StatusBarController: MenuBarItemProvider {
 
     private var hoverMonitor: Any?
     private var hoverDwellTimer: Timer?
+    private var emptyMenuBarMonitor: Any?
 
     // True while the pointer sits in any screen's menubar band (the strip between
     // visibleFrame.maxY and frame.maxY, which is the menubar's exact height there).
@@ -167,6 +168,7 @@ class StatusBarController: MenuBarItemProvider {
         setupAlwayHideStatusBar()
         setupConfigurationDragMonitor()
         setupHoverToExpandIfEnabled()
+        updateEmptyMenuBarMonitor()
         NotificationCenter.default.addObserver(self, selector: #selector(handleScreenParametersChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceMenuBarChange), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceMenuBarChange), name: NSWorkspace.didWakeNotification, object: nil)
@@ -205,6 +207,9 @@ class StatusBarController: MenuBarItemProvider {
         if let monitor = hoverMonitor {
             NSEvent.removeMonitor(monitor)
         }
+        if let emptyMenuBarMonitor {
+            NSEvent.removeMonitor(emptyMenuBarMonitor)
+        }
     }
 
     // Opt-in via `defaults write com.dwarvesv.minimalbar hoverToExpand -bool true`.
@@ -229,6 +234,33 @@ class StatusBarController: MenuBarItemProvider {
                 }
             }
         }
+    }
+
+    private func updateEmptyMenuBarMonitor() {
+        if Preferences.clickEmptyMenuBarToToggle {
+            guard emptyMenuBarMonitor == nil else { return }
+            emptyMenuBarMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseUp) { [weak self] _ in
+                guard let self, self.isEmptyMenuBarClick() else { return }
+                self.expandCollapseIfNeeded()
+            }
+        } else if let emptyMenuBarMonitor {
+            NSEvent.removeMonitor(emptyMenuBarMonitor)
+            self.emptyMenuBarMonitor = nil
+        }
+    }
+
+    private func isEmptyMenuBarClick() -> Bool {
+        guard isMouseInMenuBar,
+              let desktopTop = NSScreen.screens.map(\.frame.maxY).max(),
+              !Util.isAccessibilityPermissionMissing else { return false }
+        let mouse = NSEvent.mouseLocation
+        let point = ExpandCollapseActionResolver.accessibilityPoint(forAppKitPoint: mouse, desktopTop: desktopTop)
+        var element: AXUIElement?
+        guard AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), Float(point.x), Float(point.y), &element) == .success,
+              let element else { return false }
+        var roleValue: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(element, kAXRoleAttribute as CFString, &roleValue) == .success else { return false }
+        return ExpandCollapseActionResolver.isEmptyMenuBar(role: roleValue as? String)
     }
     
     @objc private func handleScreenParametersChanged() {
@@ -566,6 +598,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     @objc func updateAutoHide() {
+        updateEmptyMenuBarMonitor()
         if !Preferences.showHiddenItemsInSeparateBar {
             hiddenItemsCaptureShieldController.hide()
             hiddenItemsBarController.hide()
