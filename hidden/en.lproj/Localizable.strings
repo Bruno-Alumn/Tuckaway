@@ -66,6 +66,7 @@ Steps to view always hidden icons:
 "Transparent" = "Transparent";
 "Ellipsis" = "Ellipsis";
 "Use the full MenuBar on expanding" = "Expand across full menu bar";
+"Expand when an external display is connected" = "Expand with an external display";
 "Enable always hidden section" = "Always-hidden section";
 "Always-hidden section help" = "Always-hidden section help";
 "Right-click the arrow to access icons behind the notch." = "Right-click the arrow to access icons behind the notch.";
