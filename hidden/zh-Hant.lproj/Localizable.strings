@@ -11,6 +11,22 @@
 "Toggle Auto Collapse" = "開關自動收合";
 "Enable Auto Collapse" = "開啟自動收合";
 "Disable Auto Collapse" = "關閉自動收合";
+"Show hidden items in separate bar" = "在獨立的浮動列中顯示隱藏項目";
+"Hidden items unavailable" = "無法讀取隱藏項目";
+"Manage Menu Bar Items…" = "管理選單列項目…";
+"Manage Menu Bar Items" = "管理選單列項目";
+"Menu Bar Items" = "選單列項目";
+"Drag items within a list to reorder them, or between lists to change visibility." = "在列表內拖曳可調整順序，在兩個列表之間拖曳可切換顯示或隱藏。";
+"Hidden" = "隱藏";
+"Visible" = "顯示";
+"Refresh" = "重新整理";
+"Grant Access" = "授予權限";
+"Enable Hidden Bar in System Settings, then return and refresh." = "請在系統設定中啟用目前版本的 Hidden Bar，然後返回並重新整理。";
+"Scanning menu bar items…" = "正在掃描選單列項目…";
+"Accessibility permission is required to list and move menu bar items." = "列出和移動選單列項目需要輔助使用權限。";
+"No manageable menu bar items were found." = "找不到可管理的選單列項目。";
+"Drop an item to apply the real menu bar position." = "拖放後將直接修改實際選單列位置。";
+"Unknown" = "未知應用程式";
 "Set Shortcut" = "設定快速鍵";
 "Tutorial text" = "
 「持續隱藏」功能讓您的圖示永保整潔。本文會引導您設定這個功能。
@@ -22,10 +38,35 @@
 2. 按住 ⌘，接著拖曳到「一般顯示區域」的左側（一般隱藏區域）
 接著將不想顯示的圖示移至「一般隱藏區域」的左側（持續隱藏區域）。
 
-3. 最後，對表示縮回的「<」圖示按下右鍵，就能隱藏「持續隱藏區域」中的圖示。
+3. 最後，按住 ⌥ Option 鍵並按一下表示縮回的「<」圖示，就能隱藏「持續隱藏區域」中的圖示。
 
 顯示「持續隱藏」圖示的步驟：
 
-1. 重新對「<」圖示按下右鍵就能顯示「持續隱藏區域」中的圖示，
+1. 重新按住 ⌥ Option 鍵並按一下「<」圖示就能顯示「持續隱藏區域」中的圖示，
 再按一次就能隱藏。試試看吧 😉！
 ";
+
+/* General settings (moved from Main.storyboard) */
+"Start Hidden Bar when I log in" = "登入時啟動 Hidden Bar";
+"Show preferences on launch" = "啟動時顯示偏好設定";
+"Use the full MenuBar on expanding" = "展開隱藏區時淨空選單列";
+"Enable always hidden section" = "啟用持續隱藏區域";
+"Automatically hide icon after: " = "自動隱藏圖示的時間間隔：";
+"Global Shortcut" = "全域快捷鍵";
+"Hidden" = "隱藏區";
+"Shown" = "顯示區";
+"⭐️Always Hidden" = "⭐️ 持續隱藏";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "按住 ⌘ 並在區塊間拖曳 Mac 選單列的圖示\n就是 Hidden Bar 的設定方法。";
+"5 seconds" = "5 秒";
+"10 seconds" = "10 秒";
+"15 seconds" = "15 秒";
+"30 seconds" = "30 秒";
+"1 minute" = "1 分鐘";
+
+"General" = "一般";
+
+"About" = "關於";
+
+"Menu bar cleaner" = "選單列清道夫";
+
+"Version" = "版本";

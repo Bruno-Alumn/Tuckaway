@@ -8,6 +8,26 @@
 import AppKit
 import ApplicationServices
 
+enum MenuBarDisplayInventory {
+    // AX uses a desktop-wide top-left origin; AppKit uses bottom-left.  Use the
+    // top of the entire desktop rather than the main display so stacked and
+    // offset external displays map to the same coordinate system as AX.
+    static func current() -> [MenuBarDisplay] {
+        let screens = NSScreen.screens
+        guard let desktopTop = screens.map(\.frame.maxY).max() else { return [] }
+        return screens.enumerated().map { index, screen in
+            let identifier = (screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)
+                .map { String($0.uint32Value) } ?? "screen-\(index)"
+            let frame = screen.frame
+            let accessibilityFrame = CGRect(x: frame.minX,
+                                            y: desktopTop - frame.maxY,
+                                            width: frame.width,
+                                            height: frame.height)
+            return MenuBarDisplay(identifier: identifier, appKitFrame: frame, accessibilityFrame: accessibilityFrame)
+        }
+    }
+}
+
 // Lists other apps' status items through public Accessibility API: every running
 // app's AXExtrasMenuBar children, with the owning bundle from the process.
 // Needs the Accessibility permission, and does not work inside the App Sandbox
@@ -42,35 +62,47 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
             .filter { $0.processIdentifier != ownPID && $0.bundleURL?.pathExtension == "app" }
             .map { (pid: $0.processIdentifier, bundleIdentifier: $0.bundleIdentifier) }
         DispatchQueue.global(qos: .userInitiated).async {
+            let start = Date()
             let items = Self.statusItems(of: apps)
+            NSLog("NativeVisibility: inventory of \(apps.count) apps took \(Int(Date().timeIntervalSince(start) * 1000)) ms")
             DispatchQueue.main.async { completion(items) }
         }
     }
 
+    // Each app is an independent IPC round-trip, so they run concurrently; serial
+    // walking made collapse lag by the sum of every app's latency. Results keep
+    // the running-app order.
     private static func statusItems(of apps: [(pid: pid_t, bundleIdentifier: String?)]) -> [MenuBarInventoryItem] {
-        var items: [MenuBarInventoryItem] = []
-        for app in apps {
-            let element = AXUIElementCreateApplication(app.pid)
-            // The default timeout is several seconds per app, and one busy or hung
-            // app then stalls the collapse (measured: ~18s on a normal session).
-            AXUIElementSetMessagingTimeout(element, messagingTimeout)
-            var barValue: CFTypeRef?
-            guard AXUIElementCopyAttributeValue(element, "AXExtrasMenuBar" as CFString, &barValue) == .success,
-                  let bar = barValue else { continue }
-            var childrenValue: CFTypeRef?
-            guard AXUIElementCopyAttributeValue(bar as! AXUIElement, kAXChildrenAttribute as CFString, &childrenValue) == .success,
-                  let children = childrenValue as? [AXUIElement] else { continue }
-            for child in children {
-                guard let frame = frame(of: child) else { continue }
-                items.append(MenuBarInventoryItem(bundleIdentifier: app.bundleIdentifier, frame: frame))
-            }
+        var perApp = [[MenuBarInventoryItem]](repeating: [], count: apps.count)
+        let lock = NSLock()
+        DispatchQueue.concurrentPerform(iterations: apps.count) { index in
+            let found = statusItems(of: apps[index])
+            lock.lock()
+            perApp[index] = found
+            lock.unlock()
         }
-        return items
+        return perApp.flatMap { $0 }
+    }
+
+    private static func statusItems(of app: (pid: pid_t, bundleIdentifier: String?)) -> [MenuBarInventoryItem] {
+        let element = AXUIElementCreateApplication(app.pid)
+        // The default timeout is several seconds per app, and one busy or hung
+        // app then stalls the collapse (measured: ~18s on a normal session).
+        AXUIElementSetMessagingTimeout(element, messagingTimeout)
+        var barValue: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(element, "AXExtrasMenuBar" as CFString, &barValue) == .success,
+              let bar = barValue else { return [] }
+        var childrenValue: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(bar as! AXUIElement, kAXChildrenAttribute as CFString, &childrenValue) == .success,
+              let children = childrenValue as? [AXUIElement] else { return [] }
+        return children.compactMap { child in
+            frame(of: child).map { MenuBarInventoryItem(bundleIdentifier: app.bundleIdentifier, frame: $0) }
+        }
     }
 
     // Accessibility frames use a top-left origin, AppKit's bottom-left. Only the
     // horizontal position matters for sections, and x is the same in both.
-    private static func frame(of element: AXUIElement) -> CGRect? {
+    static func frame(of element: AXUIElement) -> CGRect? {
         var positionValue: CFTypeRef?
         var sizeValue: CFTypeRef?
         guard AXUIElementCopyAttributeValue(element, kAXPositionAttribute as CFString, &positionValue) == .success,

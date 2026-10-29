@@ -24,9 +24,42 @@ section is enabled.
   Accessibility) to see where your icons are. Without it the bar stays
   expanded.
 - Hiding is per app: an app with several icons hides or shows them together.
-- macOS's own items (clock, Wi-Fi, Sound, Control Center) always stay visible.
+- These macOS items always stay visible: clock, Control Center, Wi-Fi,
+  Bluetooth, Sound, Battery, Display, Keyboard and Screen Mirroring.
+- With more than one display, an app stays visible if it is on the arrow's
+  visible side on **any** display. If Hidden Bar cannot read a complete display
+  layout after a monitor change, wake, or app launch, it leaves the bar expanded
+  until it can safely read it again.
+- Clicking the clock opens Notification Center as usual. macOS ignores the
+  clock while it hides icons this way, so Hidden Bar lifts the hiding for a
+  moment and clicks the clock for you; the hidden icons show for under a
+  second while it does.
 - Run Hidden Bar from `/Applications`; macOS only recognizes that copy as
   Hidden Bar, and a copy elsewhere hides its own arrow.
+
+#### While collapsed (macOS limitation, #437)
+
+macOS 27 offers this kind of hiding only as part of its exam-lockdown
+(assessment) mode, and turns on that mode's other restrictions too. Hidden Bar
+cannot opt out of them. While the arrow is collapsed:
+
+- **Now Playing and Live Activities are hidden**, even if you keep the app that
+  is playing to the right of the arrow.
+- **Clicking the clock briefly reveals hidden icons.** Hidden Bar lifts the
+  restriction, presses the clock to open Notification Center, then restores
+  hiding; the icons can remain visible for under a second.
+- **Recording indicators:** macOS hides the menu-bar indicator that names the
+  app using the microphone or camera (the orange or green capsule). The small
+  colored dot in the top-right corner of the screen still shows. To keep the
+  capsule too, Hidden Bar stops hiding and shows the whole bar as soon as an
+  app starts using the microphone or a camera, and resumes when that stops.
+  macOS's always-on CoreSpeech listener is ignored because it does not show a
+  recording indicator. The arrow keeps its collapsed look in the meantime.
+- **Screen recording: not covered.** macOS offers no public way to tell that
+  another app is recording the screen, so Hidden Bar keeps hiding. The purple
+  dot in the screen corner still shows.
+
+Expanding the arrow ends all of this immediately.
 
 ## Preferences window
 
@@ -38,6 +71,8 @@ section is enabled.
 | Global shortcut | System-wide expand/collapse hotkey (F-keys display as F18, not Fn18) |
 | Enable always hidden section | A second zone whose icons stay hidden even when expanded; revealed by option-clicking the arrow |
 | Use full menu bar on expanding | App becomes briefly "regular" while expanded (helps on tight menubars) |
+| Show hidden items in separate bar | Captures hidden icons into a floating row below the menu bar; requires Screen Recording, and Accessibility for click forwarding |
+| Manage Menu Bar Items | Opens two sortable lists for hidden and visible items; drag within a list to reorder or across lists to change visibility; requires Accessibility permission |
 
 > **Always-hidden section, current behavior:** items in the always-hidden zone
 > are reliably pushed off-screen only when "hide separators" is also on
@@ -78,7 +113,7 @@ To undo any of them: `defaults delete com.dwarvesv.minimalbar <key>`.
 
 | Symptom | Fix |
 |---|---|
-| Icons I want visible got hidden after an update | ⌘-drag them to the right of the separator |
+| Icons I want visible got hidden after an update | On macOS 27 direct builds, ⌘-drag them to the arrow's right; on earlier builds, drag them right of the separator |
 | Login item missing after denying it once | System Settings > General > Login Items: re-enable Hidden Bar, then toggle the pref off/on |
 | A ghost "LauncherApplication" login item from old versions | Launch the current version once; it deauthorizes the legacy item automatically |
 | App language stuck | See the `AppleLanguages` command above, or System Settings > General > Language & Region > Applications |

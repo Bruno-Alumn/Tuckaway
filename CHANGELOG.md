@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Preferences uses a native settings toolbar and compact controls; General and About keep the same width.
+- Shortcut recording cancels when the window closes, loses focus, or changes tabs. Invalid typing preserves the saved shortcut.
+- Always-hidden help now describes the correct boundary and Option-click behavior for the active engine.
+- macOS 27: without the Accessibility permission, clicking the arrow silently did nothing. Preferences now shows a banner with an "Open Settings…" button while the permission is missing, clicking the arrow opens Preferences instead of doing nothing, and hiding starts as soon as the permission is granted, without a relaunch.
+- macOS 26+: the menu-bar illustration in Preferences sat under the taller toolbar; it is now laid out below it.
+- macOS 27: the Preferences illustration no longer shows a separator that the native hiding takes out of the bar, and points at the arrow, which is the boundary there.
+- macOS 27 (direct download build): while any app uses the microphone or a camera, Hidden Bar stops hiding and shows the whole bar, then resumes when that stops. macOS 27's native hiding hides the menu-bar capsule that names the recording app (#437); the dot in the screen corner stays visible.
+- macOS 27 (direct download build): clicking the clock opens Notification Center again while icons are hidden (#410, #421, #435). Hidden Bar briefly lifts hiding and presses the clock; hidden icons show for under a second. This also covers the expanded bar when the always-hidden section is hidden.
+
+### Known / in progress
+- macOS 27 (direct download build): native hiding is part of macOS's exam (assessment) mode, and macOS applies that mode's other restrictions while the arrow is collapsed (#437). Now Playing and Live Activities are hidden; the manual lists the details.
+
+### Changed
+- Manual: macOS's own items that stay visible while collapsed on macOS 27 are the clock, Control Center, Wi-Fi, Bluetooth, Sound, Battery, Display, Keyboard and Screen Mirroring, not all of them as previously stated.
+
 ## v1.11.1 (2026-09-18)
 
 ### Fixed
