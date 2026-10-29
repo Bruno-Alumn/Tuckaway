@@ -35,6 +35,7 @@ enum MenuBarDisplayInventory {
 // permission is granted), so only the non-sandboxed direct build uses it.
 final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
     private static let messagingTimeout: Float = 0.1
+    private static let retryMessagingTimeout: Float = 1.0
 
     private var hasRequestedAuthorization = false
 
@@ -76,7 +77,10 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
         var perApp = [[MenuBarInventoryItem]](repeating: [], count: apps.count)
         let lock = NSLock()
         DispatchQueue.concurrentPerform(iterations: apps.count) { index in
-            let found = statusItems(of: apps[index])
+            let app = apps[index]
+            let found = statusItems(of: app, timeout: messagingTimeout)
+                ?? statusItems(of: app, timeout: retryMessagingTimeout)
+                ?? [MenuBarInventoryItem(bundleIdentifier: app.bundleIdentifier, frame: .zero, isUnreadable: true)]
             lock.lock()
             perApp[index] = found
             lock.unlock()
@@ -84,20 +88,24 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
         return perApp.flatMap { $0 }
     }
 
-    private static func statusItems(of app: (pid: pid_t, bundleIdentifier: String?)) -> [MenuBarInventoryItem] {
+    private static func statusItems(of app: (pid: pid_t, bundleIdentifier: String?),
+                                    timeout: Float) -> [MenuBarInventoryItem]? {
         let element = AXUIElementCreateApplication(app.pid)
-        // The default timeout is several seconds per app, and one busy or hung
-        // app then stalls the collapse (measured: ~18s on a normal session).
-        AXUIElementSetMessagingTimeout(element, messagingTimeout)
+        AXUIElementSetMessagingTimeout(element, timeout)
         var barValue: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(element, "AXExtrasMenuBar" as CFString, &barValue) == .success,
-              let bar = barValue else { return [] }
+        let barError = AXUIElementCopyAttributeValue(element, "AXExtrasMenuBar" as CFString, &barValue)
+        if barError == .noValue { return [] }
+        guard barError == .success, let bar = barValue else { return nil }
         var childrenValue: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(bar as! AXUIElement, kAXChildrenAttribute as CFString, &childrenValue) == .success,
-              let children = childrenValue as? [AXUIElement] else { return [] }
-        return children.compactMap { child in
-            frame(of: child).map { MenuBarInventoryItem(bundleIdentifier: app.bundleIdentifier, frame: $0) }
+        let childrenError = AXUIElementCopyAttributeValue(bar as! AXUIElement, kAXChildrenAttribute as CFString, &childrenValue)
+        if childrenError == .noValue { return [] }
+        guard childrenError == .success, let children = childrenValue as? [AXUIElement] else { return nil }
+        var items: [MenuBarInventoryItem] = []
+        for child in children {
+            guard let frame = frame(of: child) else { return nil }
+            items.append(MenuBarInventoryItem(bundleIdentifier: app.bundleIdentifier, frame: frame))
         }
+        return items
     }
 
     // Accessibility frames use a top-left origin, AppKit's bottom-left. Only the

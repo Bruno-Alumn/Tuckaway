@@ -211,6 +211,27 @@ final class MenuBarLayoutResolverTests: XCTestCase {
             displays: [mainDisplay], isLTR: true, excludingBundle: nil)
         XCTAssertNil(layout)
     }
+
+    func testUnreadableAppFailsOpenToVisible() {
+        let unreadable = MenuBarInventoryItem(bundleIdentifier: "com.busy.app", frame: .zero, isUnreadable: true)
+        let layout = MenuBarLayoutResolver.resolve(
+            inventory: [unreadable, item("com.hidden", x: 1100)],
+            separatorFrame: separator, alwaysHiddenSeparatorFrame: nil,
+            displays: [mainDisplay], isLTR: true, excludingBundle: nil)
+
+        XCTAssertEqual(layout?.sections["com.busy.app"], .visible)
+        XCTAssertEqual(layout?.sections["com.hidden"], .hidden)
+    }
+
+    func testUnreadableAppWinsOverAReadableHiddenItem() {
+        let unreadable = MenuBarInventoryItem(bundleIdentifier: "com.busy.app", frame: .zero, isUnreadable: true)
+        let layout = MenuBarLayoutResolver.resolve(
+            inventory: [item("com.busy.app", x: 1100), unreadable],
+            separatorFrame: separator, alwaysHiddenSeparatorFrame: nil,
+            displays: [mainDisplay], isLTR: true, excludingBundle: nil)
+
+        XCTAssertEqual(layout?.sections["com.busy.app"], .visible)
+    }
 }
 
 // MARK: - Native engine
