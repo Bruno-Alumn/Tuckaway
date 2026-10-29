@@ -96,3 +96,59 @@ private final class TransitioningLoginItem: LoginItemServing {
     func register() throws { status = finalStatus }
     func unregister() throws { status = finalStatus }
 }
+
+final class LegacyLoginItemMigrationTests: XCTestCase {
+    private var defaults: UserDefaults!
+    private var suiteName: String!
+
+    override func setUp() {
+        super.setUp()
+        suiteName = "LegacyLoginItemMigrationTests.\(UUID().uuidString)"
+        defaults = UserDefaults(suiteName: suiteName)
+    }
+
+    override func tearDown() {
+        defaults.removePersistentDomain(forName: suiteName)
+        super.tearDown()
+    }
+
+    func testSuccessfulCleanupDisablesHelperAndRecordsMigration() {
+        var disabledIdentifier: String?
+        let succeeded = LegacyLoginItemMigration.migrate(defaults: defaults) { identifier, enabled in
+            disabledIdentifier = identifier as String
+            XCTAssertFalse(enabled)
+            return true
+        }
+
+        XCTAssertTrue(succeeded)
+        XCTAssertEqual(disabledIdentifier, "com.dwarvesv.LauncherApplication")
+        XCTAssertTrue(defaults.bool(forKey: "smAppServiceMigrated"))
+    }
+
+    func testFailedCleanupIsNotRecordedAndCanBeRetried() {
+        var attempts = 0
+        let succeeded = LegacyLoginItemMigration.migrate(defaults: defaults) { _, _ in
+            attempts += 1
+            return false
+        }
+
+        XCTAssertFalse(succeeded)
+        XCTAssertFalse(defaults.bool(forKey: "smAppServiceMigrated"))
+        _ = LegacyLoginItemMigration.migrate(defaults: defaults) { _, _ in
+            attempts += 1
+            return true
+        }
+        XCTAssertEqual(attempts, 2)
+        XCTAssertTrue(defaults.bool(forKey: "smAppServiceMigrated"))
+    }
+
+    func testCompletedMigrationDoesNotTouchLegacyRegistration() {
+        defaults.set(true, forKey: "smAppServiceMigrated")
+        var calls = 0
+        XCTAssertTrue(LegacyLoginItemMigration.migrate(defaults: defaults) { _, _ in
+            calls += 1
+            return false
+        })
+        XCTAssertEqual(calls, 0)
+    }
+}
