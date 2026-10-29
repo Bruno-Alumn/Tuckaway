@@ -68,6 +68,7 @@ Expanding the arrow ends all of this immediately.
 | Start Hidden Bar when I log in | Login item via System Settings (macOS 13+ `SMAppService`); revocable in System Settings > General > Login Items |
 | Show preferences on launch | Open this window at app start |
 | Auto collapse | Re-hide automatically after the chosen delay |
+| Hover to expand | Expand after hovering over the menu bar for about half a second |
 | Global shortcut | System-wide expand/collapse hotkey (F-keys display as F18, not Fn18) |
 | Enable always hidden section | A second zone whose icons stay hidden even when expanded; revealed by option-clicking the arrow |
 | Use full menu bar on expanding | Activates the app's full menu bar while expanded without adding a Dock icon (helps on tight menubars) |
@@ -97,9 +98,6 @@ Expanding the arrow ends all of this immediately.
 All via `defaults`; quit and relaunch the app after changing them.
 
 ```sh
-# expand by hovering the menu bar for ~0.5s (off by default)
-defaults write com.dwarvesv.minimalbar hoverToExpand -bool true
-
 # auto-collapse delay in seconds (the UI offers a fixed list; any value works)
 defaults write com.dwarvesv.minimalbar numberOfSecondForAutoHide -float 5
 
