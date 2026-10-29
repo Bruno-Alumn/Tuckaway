@@ -61,6 +61,7 @@ Steps to view always hidden icons:
 "Clear" = "Clear";
 
 "Automatically hide icon after: " = "Hide after";
+"Collapse when another app becomes active" = "Collapse on app switch";
 "Use transparent expand icon" = "Transparent expand icon";
 "Click empty menu bar to show or hide icons" = "Toggle by clicking empty menu bar";
 "Expand by hovering over the menu bar" = "Hover to expand";
