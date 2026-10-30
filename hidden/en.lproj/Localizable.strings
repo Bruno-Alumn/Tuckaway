@@ -60,7 +60,7 @@ Steps to view always hidden icons:
 "Type Shortcut…" = "Type Shortcut…";
 "Clear" = "Clear";
 
-"Automatically hide icon after: " = "Hide after";
+"Automatically hide icon after: " = "Collapse after";
 "Collapse when another app becomes active" = "Collapse on app switch";
 "Use transparent expand icon" = "Transparent expand icon";
 "Click empty menu bar to show or hide icons" = "Toggle by clicking empty menu bar";
@@ -84,3 +84,14 @@ Steps to view always hidden icons:
 "Show preferences on launch" = "Open settings on launch";
 
 "Auto-hide delay" = "Auto-hide delay";
+
+/* Compact settings redesign */
+"Settings…" = "Settings…";
+"Quit Tuckaway" = "Quit Tuckaway";
+"Auto-collapse" = "Auto-collapse";
+"Hiding" = "Hiding";
+"Revealing" = "Revealing";
+"Appearance" = "Appearance";
+"Extra Sections" = "Extra Sections";
+"Drop items here" = "Drop items here";
+"Moving %@…" = "Moving %@…";

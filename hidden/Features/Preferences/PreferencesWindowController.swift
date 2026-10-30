@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class PreferencesWindowController: NSWindowController, NSWindowDelegate, NSToolbarDelegate {
+class PreferencesWindowController: NSWindowController, NSWindowDelegate {
     
     private static var sharedInstance: PreferencesWindowController?
 
@@ -28,95 +28,52 @@ class PreferencesWindowController: NSWindowController, NSWindowDelegate, NSToolb
     private lazy var preferencesVC = PreferencesViewController.initWithStoryboard()
     private lazy var itemManagerVC = MenuBarItemManagerViewController()
     private lazy var aboutVC = AboutViewController.initWithStoryboard()
+
+    enum Tab: Int {
+        case general, items, about
+    }
+
+    // Native settings tabs: icons in the toolbar, the window titled after the
+    // selected tab and resized to that tab's preferredContentSize.
     private lazy var tabs: SettingsTabViewController = {
         let controller = SettingsTabViewController()
-        controller.tabStyle = .unspecified
-        controller.tabView.tabViewType = .noTabsNoBorder
-        controller.onSelectionChange = { [weak self] index in
+        controller.tabStyle = .toolbar
+        controller.canPropagateSelectedChildViewControllerTitle = true
+        controller.onSelectionChange = { [weak self] _ in
             self?.preferencesVC.cancelShortcutRecording()
-            self?.tabSelector.selectedSegment = index
         }
-        let general = NSTabViewItem(viewController: preferencesVC)
-        general.label = "General".localized
-        general.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: general.label)
-        let items = NSTabViewItem(viewController: itemManagerVC)
-        items.label = "Menu Bar Items".localized
-        items.image = NSImage(systemSymbolName: "menubar.rectangle", accessibilityDescription: items.label)
-        let about = NSTabViewItem(viewController: aboutVC)
-        about.label = "About".localized
-        about.image = NSImage(systemSymbolName: "info.circle", accessibilityDescription: about.label)
-        controller.addTabViewItem(general)
-        controller.addTabViewItem(items)
-        controller.addTabViewItem(about)
+        controller.addTabViewItem(tabItem(preferencesVC, label: "General", symbol: "gearshape"))
+        controller.addTabViewItem(tabItem(itemManagerVC, label: "Menu Bar Items", symbol: "menubar.rectangle"))
+        controller.addTabViewItem(tabItem(aboutVC, label: "About", symbol: "info.circle"))
         return controller
     }()
 
-    private let tabsIdentifier = NSToolbarItem.Identifier("settingsTabs")
-    private lazy var tabSelector: NSSegmentedControl = {
-        let control = NSSegmentedControl(labels: ["General".localized, "Menu Bar Items".localized, "About".localized],
-                                         trackingMode: .selectOne,
-                                         target: self, action: #selector(selectTab(_:)))
-        control.selectedSegment = 0
-        control.controlSize = .regular
-        control.segmentDistribution = .fillEqually
-        control.segmentStyle = .automatic
-        // Use the system capsule geometry; older SDKs keep their native appearance.
-        #if compiler(>=6.2)
-        if #available(macOS 26.0, *) {
-            control.borderShape = .capsule
-        }
-        #endif
-        #if compiler(>=6.4)
-        if #available(macOS 27.0, *) {
-            control.role = .tabs
-        }
-        #endif
-        return control
-    }()
-
-    @objc private func selectTab(_ sender: NSSegmentedControl) {
-        tabs.selectedTabViewItemIndex = sender.selectedSegment
-    }
-
-    private let contentSize = NSSize(width: 720, height: 600)
-
-    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-        [.flexibleSpace, tabsIdentifier, .flexibleSpace]
-    }
-
-    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-        [tabsIdentifier, .flexibleSpace]
-    }
-
-    func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
-                 willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
-        guard itemIdentifier == tabsIdentifier else { return nil }
-        let item = NSToolbarItem(itemIdentifier: itemIdentifier)
-        item.view = tabSelector
-        item.isBordered = false
-        item.label = "Preferences...".localized
+    private func tabItem(_ viewController: NSViewController, label: String, symbol: String) -> NSTabViewItem {
+        let item = NSTabViewItem(viewController: viewController)
+        item.label = label.localized
+        item.image = NSImage(systemSymbolName: symbol, accessibilityDescription: item.label)
+        viewController.title = item.label
         return item
     }
 
+    func show(tab: Tab) {
+        _ = window
+        tabs.selectedTabViewItemIndex = tab.rawValue
+        window?.bringToFront()
+    }
+
     private var activePreferences: PreferencesViewController? {
-        tabs.selectedTabViewItemIndex == 0 ? preferencesVC : nil
+        tabs.selectedTabViewItemIndex == Tab.general.rawValue ? preferencesVC : nil
     }
 
     override func windowDidLoad() {
         super.windowDidLoad()
         guard let window else { return }
-        window.styleMask.remove(.fullSizeContentView)
+        window.titlebarAppearsTransparent = false
+        window.titleVisibility = .visible
+        window.toolbarStyle = .preference
         window.contentViewController = tabs
-        window.setContentSize(contentSize)
-        window.contentMinSize = contentSize
-        window.contentMaxSize = contentSize
-        let toolbar = NSToolbar(identifier: "preferences")
-        toolbar.delegate = self
-        toolbar.displayMode = .iconOnly
-        toolbar.sizeMode = .small
-        toolbar.centeredItemIdentifiers = [tabsIdentifier]
-        window.toolbarStyle = .unifiedCompact
-        window.toolbar = toolbar
+        window.center()
     }
 
     func windowWillClose(_ notification: Notification) {

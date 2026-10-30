@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Changed
+- Redesigned Settings: a smaller 480pt window with standard toolbar tabs (General, Menu Bar Items, About) that resizes to each tab.
+- General is now a grouped form ordered by intent — Hiding, Revealing, Appearance, Extra Sections, Startup. The collapse delay only appears while auto-collapse is on, and the always-hidden help is an inline footer instead of a popover.
+- Menu Bar Items uses lighter inset lists with section icons, item counts, a "Drop items here" hint on empty lists, and a compact footer.
+- About is a compact centered card.
+- The arrow's context menu: "Auto-collapse" is a checkmark item, "Settings…" uses ⌘, , "Manage Menu Bar Items…" opens that tab directly, and Quit reads "Quit Tuckaway".
+
 ### Fixed
 - Preferences uses a native settings toolbar and compact controls; General and About keep the same width.
 - Shortcut recording cancels when the window closes, loses focus, or changes tabs. Invalid typing preserves the saved shortcut.

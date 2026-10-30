@@ -613,22 +613,28 @@ class StatusBarController: MenuBarItemProvider {
             menu.addItem(NSMenuItem.separator())
         }
 
+        let toggleAutoHideItem = NSMenuItem(title: "Auto-collapse".localized, action: #selector(toggleAutoHide), keyEquivalent: "t")
+        toggleAutoHideItem.state = Preferences.isAutoHide ? .on : .off
+        toggleAutoHideItem.target = self
+        menu.addItem(toggleAutoHideItem)
+
         let separatorTitle = Preferences.areSeparatorsHidden ? "Show separators" : "Hide separators"
         let separatorItem = NSMenuItem(title: separatorTitle.localized, action: #selector(showHideSeparatorsAndAlwayHideArea), keyEquivalent: "s")
         separatorItem.target = self
         menu.addItem(separatorItem)
 
-        let prefItem = NSMenuItem(title: "Preferences...".localized, action: #selector(openPreferenceViewControllerIfNeeded), keyEquivalent: "P")
+        menu.addItem(NSMenuItem.separator())
+
+        let itemsItem = NSMenuItem(title: "Manage Menu Bar Items…".localized, action: #selector(openMenuBarItemManager), keyEquivalent: "")
+        itemsItem.target = self
+        menu.addItem(itemsItem)
+
+        let prefItem = NSMenuItem(title: "Settings…".localized, action: #selector(openPreferenceViewControllerIfNeeded), keyEquivalent: ",")
         prefItem.target = self
         menu.addItem(prefItem)
 
-        let toggleAutoHideTitle = Preferences.isAutoHide ? "Disable Auto Collapse" : "Enable Auto Collapse"
-        let toggleAutoHideItem = NSMenuItem(title: toggleAutoHideTitle.localized, action: #selector(toggleAutoHide), keyEquivalent: "t")
-        toggleAutoHideItem.target = self
-        menu.addItem(toggleAutoHideItem)
-
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Quit".localized, action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: "Quit Tuckaway".localized, action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
 
         return menu
     }
@@ -662,7 +668,11 @@ class StatusBarController: MenuBarItemProvider {
     }
     
     @objc func openPreferenceViewControllerIfNeeded() {
-        Util.showPrefWindow()
+        PreferencesWindowController.shared.show(tab: .general)
+    }
+
+    @objc func openMenuBarItemManager() {
+        PreferencesWindowController.shared.show(tab: .items)
     }
 
     @objc func showNotchOverflow() {
