@@ -1,27 +1,34 @@
 # Upstream issue integration status
 
-Tracks the open-issue queue from `dwarvesf/hidden` and the corresponding pull
-requests in `Bruno-Alumn/Tuckaway`. It does not modify or close upstream issues.
+Tracks the open-issue queue from `dwarvesf/hidden` and where each fix landed in
+Tuckaway. It does not modify or close upstream issues. Issue numbers (`#123`)
+refer to `dwarvesf/hidden` unless a link says otherwise.
 
-## Merged fix PRs
+## Merged fixes
 
-| Fork PR | Upstream issues addressed |
+The first round of fixes was merged before the repository was recreated, so
+those pull-request numbers no longer resolve on GitHub (and today's #1–#7 are
+different PRs). The branches and merge commits below are the stable references.
+
+| Branch (merge commit) | Upstream issues addressed |
 |---|---|
-| #1 | Existing local macOS 27, native-hiding, localization, and CoreSpeech fixes |
-| #2 | All 23 upstream PRs open at integration time |
-| #3 | #456 legacy login-item cleanup retry |
-| #4 | #429 Accessibility timeout / fail-open inventory |
-| #5 | #434 right-click toggling |
-| #6 | #457 empty-menu-bar toggling |
-| #7 | #310 selectable expand icons, also covers #173 and the icon part of #332 |
-| #8 | #286 and #304 app-icon proportions, also covers #198 |
-| #9 | #232 external-display behavior |
-| #10 | #423 Dock icon during expansion |
-| #11 | #248 hover-to-expand preference |
-| #12 | #299 separator visibility command, also covers #168 and #212 |
-| #13 | #182 collapse on application focus change |
+| `integration/community-prs-and-local-fixes` (`b8ca9eb`) | Existing local macOS 27, native-hiding, localization, and CoreSpeech fixes |
+| `integration/upstream-pr-attribution` (`97212bf`) | All 23 upstream PRs open at integration time, with author attribution |
+| `fix/issue-456-legacy-login-item` (`22e1033`) | #456 legacy login-item cleanup retry |
+| `fix/issue-429-inventory-fail-open` (`2469aea`) | #429 Accessibility timeout / fail-open inventory |
+| `fix/issue-434-right-click-toggle` (`ab4d4a2`) | #434 right-click toggling |
+| `feature/issue-457-empty-menu-bar-toggle` (`64bbdf1`) | #457 empty-menu-bar toggling |
+| `feature/issue-310-expand-icon-styles` (`e870154`) | #310 selectable expand icons, also covers #173 and the icon part of #332 |
+| `fix/issue-286-app-icon-padding` (`5c1bcf1`) | #286 and #304 app-icon proportions, also covers #198 |
+| `feature/issue-232-external-display-preference` (`6d5aa31`) | #232 external-display behavior |
+| `fix/issue-423-dock-icon-expansion` (`2461c71`) | #423 Dock icon during expansion |
+| `feature/issue-248-hover-preference` (`af9fc02`) | #248 hover-to-expand preference |
+| `feature/issue-299-separator-menu-toggle` (`0f77684`) | #299 separator visibility command, also covers #168 and #212 |
+| `feature/issue-182-collapse-on-focus-change` (`0b09b06`) | #182 collapse on application focus change |
+| [Bruno-Alumn/Tuckaway#1](https://github.com/Bruno-Alumn/Tuckaway/pull/1) | #355 settings layout overlap (compact Settings redesign) |
+| [Bruno-Alumn/Tuckaway#3](https://github.com/Bruno-Alumn/Tuckaway/pull/3), [#7](https://github.com/Bruno-Alumn/Tuckaway/pull/7) | #220 and #197 automatic updates (GitHub releases updater, DMG releases) |
 
-PRs #1 and #2 also cover the existing native macOS 27 fixes (#409, #410, #411,
+The two integration branches also cover the existing native macOS 27 fixes (#409, #410, #411,
 #412, #413, #414, #421, #424, #426, #428, #430, #431, #435, #436's documented
 limitation, #439, #440, #442, #443, #444, #446, #448, #451, #454, and #458),
 notch and overflow requests (#174, #206, #225, #228, #245, #267, #269, #280,
@@ -51,10 +58,10 @@ notch and overflow requests (#174, #206, #225, #228, #245, #267, #269, #280,
   indicator independently is not available through the current native API.
 - **#393 App Store version:** requires the upstream App Store account and a
   release decision. The fork cannot publish to the original listing.
-- **#219 notarization and #220/#197 automatic updates:** require Developer ID
-  signing, notarization credentials, and a signed update feed. The local Mac has
-  no valid code-signing identity, so these cannot be completed safely as local
-  code-only changes.
+- **#219 notarization:** requires a Developer ID and notarization credentials.
+  Until then releases are ad-hoc signed, so macOS treats every update as a new
+  app and may ask for Accessibility again. (Automatic updates, #220/#197, now
+  ship without them; see above.)
 - **#326, #361, and #386 memory reports:** the latest merged build completed 40
   real expand/collapse cycles with zero leaked bytes, a 40.5 MB physical
   footprint, and no swapped memory. A long-uptime footprint sample is still
