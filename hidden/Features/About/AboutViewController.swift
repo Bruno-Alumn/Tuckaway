@@ -28,8 +28,6 @@ private struct AboutSettingsView: View {
         return "\("Version".localized) \(version) (\(build))"
     }
 
-    private let brandPurple = Color(red: 0.55, green: 0.25, blue: 0.86)
-
     var body: some View {
         VStack(spacing: 22) {
             VStack(spacing: 12) {
@@ -49,12 +47,12 @@ private struct AboutSettingsView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(22)
-            .background(brandPurple.opacity(0.10), in: RoundedRectangle(cornerRadius: 16))
+            .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 16))
             HStack(spacing: 20) {
                 Link("Source code".localized, destination: URL(string: "https://github.com/Bruno-Alumn/Tuckaway")!)
                 Link("Report an issue".localized, destination: URL(string: "https://github.com/Bruno-Alumn/Tuckaway/issues")!)
             }
-            .tint(brandPurple)
+            .tint(.accentColor)
             VStack(spacing: 6) {
                 Text("Independent MIT-licensed fork of Hidden Bar")
                 Text("Original work © Dwarves Foundation")
