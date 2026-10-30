@@ -60,7 +60,11 @@ mkdir -p "$STAGING" dist
 ditto "$APP" "$STAGING/Tuckaway.app"
 ln -s /Applications "$STAGING/Applications"
 rm -f "$DMG"
-hdiutil create -volname "Tuckaway $VERSION" -srcfolder "$STAGING" -fs HFS+ -format UDZO -ov "$DMG" >/dev/null
+if diskutil image create from --help >/dev/null 2>&1; then
+  diskutil image create from --format UDZO --volumeName "Tuckaway $VERSION" "$STAGING" "$DMG" >/dev/null
+else
+  hdiutil create -volname "Tuckaway $VERSION" -srcfolder "$STAGING" -fs HFS+ -format UDZO -ov "$DMG" >/dev/null
+fi
 rm -rf "$STAGING"
 
 echo "Built $DMG (Tuckaway $VERSION, signed by \"$IDENTITY\"). Publish it as the release asset, tagged v$VERSION."
