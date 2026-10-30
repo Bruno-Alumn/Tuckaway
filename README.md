@@ -85,8 +85,9 @@ daily update check to GitHub, which you can turn off in Settings. The
 | Accessibility (Device Control and Data Access on macOS 27) | Finding where menu-bar icons are, detecting clicks on empty menu-bar space, and passing clicks to hidden icons |
 | Screen Recording | Only the separate bar, which shows pictures of hidden icons. They stay on your Mac. |
 
-Each release has a new ad-hoc signature, so after an update macOS may ask you
-to turn Accessibility on again.
+Releases are signed with the same certificate every time, so macOS keeps these
+permissions when Tuckaway updates. The one exception is updating from 1.1.0 or
+earlier, which asks once more.
 
 ## Built with AI
 

@@ -59,9 +59,9 @@ notch and overflow requests (#174, #206, #225, #228, #245, #267, #269, #280,
 - **#393 App Store version:** requires the upstream App Store account and a
   release decision. The fork cannot publish to the original listing.
 - **#219 notarization:** requires a Developer ID and notarization credentials.
-  Until then releases are ad-hoc signed, so macOS treats every update as a new
-  app and may ask for Accessibility again. (Automatic updates, #220/#197, now
-  ship without them; see above.)
+  Releases are signed with a stable self-signed certificate instead, so
+  permissions survive updates, but Gatekeeper still shows "Open Anyway" on first
+  launch. (Automatic updates, #220/#197, ship without notarization; see above.)
 - **#326, #361, and #386 memory reports:** the latest merged build completed 40
   real expand/collapse cycles with zero leaked bytes, a 40.5 MB physical
   footprint, and no swapped memory. A long-uptime footprint sample is still

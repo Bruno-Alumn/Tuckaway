@@ -138,8 +138,12 @@ The direct-download build updates itself from
     check still offers it.
 - If Tuckaway is running from a read-only location (for example straight from
   the disk image), the button becomes **Download** and opens the release page.
-- Releases are ad-hoc signed for now, so macOS may ask you to re-enable
-  Accessibility after an update.
+- Updates only install if they're signed with the same certificate as the
+  copy you're running, so a tampered download is refused.
+- Releases are all signed with that one certificate, so macOS keeps
+  Tuckaway's permissions (and firewalls such as LuLu keep their rules) across
+  updates. Updating from 1.1.0 or earlier is the exception: those releases
+  weren't signed this way, so macOS asks once more.
 
 The App Store build has no network access and no updater.
 
@@ -179,7 +183,7 @@ To undo any of them: `defaults delete com.brunoalumn.tuckaway <key>`.
 | A ghost "LauncherApplication" login item from old versions | Launch the current version once; it deauthorizes the legacy item automatically |
 | App language stuck | See the `AppleLanguages` command above, or System Settings > General > Language & Region > Applications |
 | Nothing hides on macOS 27 | Use the [direct-download build](https://github.com/Bruno-Alumn/Tuckaway/releases/latest) and grant **Device Control and Data Access**. The App Store build can't hide on macOS 27 and says so once. |
-| Hiding stopped after an update | Re-enable Tuckaway in System Settings › Privacy & Security › Accessibility (Device Control and Data Access on macOS 27); each ad-hoc signed build counts as a new app |
+| Hiding stopped after an update | Expected once, when updating from 1.1.0 or earlier. In System Settings › Privacy & Security › Accessibility (Device Control and Data Access on macOS 27), remove Tuckaway with the − button, then open Tuckaway and allow it again |
 | "Check for Updates" says it couldn't check | Check your internet connection. GitHub's API also limits anonymous requests per hour, so try again later. |
 | A new or just-updated app's icon shows up already hidden | Expected, see "Why new icons start hidden" below; ⌘-drag it to the right of the separator (the arrow on macOS 27) once, or move it in Settings › Menu Bar Items |
 

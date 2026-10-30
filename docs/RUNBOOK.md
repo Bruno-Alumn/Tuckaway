@@ -76,9 +76,11 @@ installed app, test the dev build, then re-import and relaunch.
 2. Bump `MARKETING_VERSION` (all four Tuckaway configurations) and
    `CURRENT_PROJECT_VERSION` in the project file.
 3. Build the GitHub release with `scripts/package-dmg.sh`. It builds
-   `Release-Direct` (universal), refuses Debug or sandboxed builds, and writes
-   `dist/Tuckaway.dmg`. Set `SIGN_IDENTITY` to a Developer ID to sign, then
-   notarize and staple the DMG. Publish a GitHub release tagged `v<version>`
+   `Release-Direct` (universal), refuses Debug or sandboxed builds, signs the
+   app with the **Tuckaway Release Signing** certificate (see
+   [Release signing](#release-signing)), and writes `dist/Tuckaway.dmg`. It
+   refuses to run without that certificate. With a Developer ID later, set
+   `SIGN_IDENTITY`, then notarize and staple the DMG. Publish a GitHub release tagged `v<version>`
    with **`Tuckaway.dmg`** as the asset (no zip) and notes listing closed
    issues. Never publish a build from the **Tuckaway App Store** scheme there:
    it is the sandboxed build, which can't hide on macOS 27 (a past release made
@@ -102,6 +104,40 @@ installed app, test the dev build, then re-import and relaunch.
 6. Before a public release: one upgrade-path run from a launcher-era Hidden Bar
    (v1.9 or older) verifying System Settings shows no ghost
    LauncherApplication login item.
+
+## Release signing
+
+Every release from 1.2 on is signed with one self-signed certificate,
+**Tuckaway Release Signing**, kept in the maintainer's login keychain. macOS
+then identifies Tuckaway as `identifier "com.brunoalumn.tuckaway" and
+certificate root = H"0105a9f1aad750cf7de24f2c5fbe2ed2483780e8"` instead of a
+per-build hash. That identity stays the same across releases, so:
+
+- Accessibility and Screen Recording grants, and firewall rules, survive updates;
+- the updater only installs an update that satisfies the running app's
+  designated requirement, so a tampered or differently signed download is refused.
+
+Releases up to 1.1.0 were ad-hoc signed. Updating from one of them to the first
+certificate-signed release still asks for permissions once; after that, never.
+
+**Back up the key now.** If it is lost, the next release has to use a new
+certificate. Every user then gets asked for permissions again, and the updaters
+already installed refuse that release, so everyone has to download it by hand.
+
+1. Open Keychain Access, choose **login**, then **My Certificates**.
+2. Right-click **Tuckaway Release Signing**, choose **Export…**, and save it as
+   a `.p12` with a strong password.
+3. Keep the `.p12` and its password somewhere safe and offline, such as a
+   password manager or an encrypted drive. Never commit it.
+
+To sign on another Mac, double-click the `.p12` there and enter the password.
+`security find-identity -p codesigning` should then list the certificate.
+"CSSMERR_TP_NOT_TRUSTED" is expected for a self-signed certificate and doesn't
+stop signing.
+
+The certificate is valid until October 2046. A Developer ID (#219) would also
+remove the first-launch "Open Anyway" step. Switching to one later changes the
+identity once, with the same one-time re-grant.
 
 ## Stacked-PR hygiene
 
