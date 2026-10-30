@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- ⌘-dragging icons in the menu bar could stutter and misbehave. If your hand drifted below the menu bar mid-drag, auto-collapse saw the pointer "leave" and collapsed the bar under the drag. Auto-collapse, hover-to-expand and collapse-on-app-switch now wait until no mouse button is held.
+
 ### Changed
 - Releases are signed with a single certificate, "Tuckaway Release Signing", instead of a different ad-hoc signature each time. macOS now keeps Tuckaway's Accessibility and Screen Recording permissions, and firewall rules, across updates. Updating from 1.1.0 or earlier asks once more.
 - The updater only installs an update signed with the same certificate as the running copy, so a tampered or differently signed download is refused.
