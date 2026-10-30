@@ -2,23 +2,124 @@
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Keys are the English source text used in code (some keys are older wording;
+  the value is what's shown). Every key here is used; keep the 12 other
+  languages in step when adding one.
 */
 
-"Preferences..." = "Tercihler…";
-"Toggle Auto Collapse" = "Otomatik daralt";
-"Enable Auto Collapse" = "Otomatik daraltmayı etkinleştir";
-"Disable Auto Collapse" = "Otomatik daraltmayı devre dışı bırak";
-"Quit" = "Çıkış";
-"Set Shortcut" = "Kısayol ayarla";
-"Tutorial text" = "
-Her zaman gizli (“Always Hidden”) özelliğiyle menü çubuğu simgelerinizi derli toplu tutabilirsiniz. Nasıl kullanılır?
-Özelliği etkinleştirmek için:
-1. Her zaman gizli “􀥤” (yarı saydam renk çubuğu) seçeneğini etkinleştirin
-2. 􀆔 tuşuna basılı tutun ve bu çubuğu normal çubuğun soluna sürükleyin, ardından gizlemek istediğiniz simgeleri bu çubuğun soluna taşıyın.
-3. Son olarak “􀆊” daraltma simgesine sağ tıklayarak simgeleri gizleyin.
-Her zaman gizli simgeleri göstermek için:
-1. Daraltma simgesine tekrar sağ tıklayın
-2. Özelliği kapatmak için aynı adımı tekrarlayın. Keyfini çıkarın 😉!
-";
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "Otomatik daralt";
+"Show separators" = "Ayırıcıları göster";
+"Hide separators" = "Ayırıcıları gizle";
+"Manage Menu Bar Items…" = "Menü Çubuğu Öğelerini Yönet…";
+"Check for Updates…" = "Güncellemeleri Denetle…";
+"Settings…" = "Ayarlar…";
+"Quit Tuckaway" = "Tuckaway’den Çık";
+"Show Notch Items" = "Çentik Öğelerini Göster";
+"Notch Overflow" = "Çentik Taşması";
+"Hidden Behind Notch (%d)" = "Çentiğin Arkasında Gizli (%d)";
+"Visible (%d)" = "Görünür (%d)";
+"No items found (grant Accessibility permission)" = "Öğe bulunamadı (Erişilebilirlik izni verin)";
+"Hidden items unavailable" = "Gizli öğeler kullanılamıyor";
+"Show hidden items in separate bar" = "Gizli öğeleri ayrı çubukta göster";
+
+/* Settings window tabs */
+"General" = "Genel";
+"Menu Bar Items" = "Menü Çubuğu Öğeleri";
+"About" = "Hakkında";
+
+/* General settings */
+"Hiding" = "Gizleme";
+"Automatically hide icon after: " = "Daraltma süresi";
+"5 seconds" = "5 saniye";
+"10 seconds" = "10 saniye";
+"15 seconds" = "15 saniye";
+"30 seconds" = "30 saniye";
+"1 minute" = "1 dakika";
+"Collapse when another app becomes active" = "Uygulama değişince daralt";
+"Revealing" = "Gösterme";
+"Expand by hovering over the menu bar" = "Üzerine gelince genişlet";
+"Click empty menu bar to show or hide icons" = "Boş menü çubuğuna tıklayınca aç/kapat";
+"Expand when an external display is connected" = "Harici ekran bağlanınca genişlet";
+"Shortcut" = "Kısayol";
+"Set Shortcut" = "Kısayol Ayarla";
+"Type Shortcut…" = "Kısayolu Yazın…";
+"Clear" = "Temizle";
+"Appearance" = "Görünüm";
+"Expand icon" = "Genişletme simgesi";
+"Standard" = "Standart";
+"Transparent" = "Saydam";
+"Ellipsis" = "Üç nokta";
+"Use the full MenuBar on expanding" = "Tüm menü çubuğu boyunca genişlet";
+"Extra Sections" = "Ek Bölümler";
+"Enable always hidden section" = "Her zaman gizli bölüm";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Çentiğin arkasındaki simgeler";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Her zaman gizli ayırıcıyı okun soluna yerleştirin, ardından simgeleri ⌘ tuşuyla sürükleyerek onun soluna taşıyın. Bu bölümü gizlemek veya göstermek için oka Option tuşuyla tıklayın.";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Her zaman gizli ayırıcıyı normal ayırıcının soluna yerleştirin, ardından simgeleri ⌘ tuşuyla sürükleyerek onun soluna taşıyın. Bu bölümü gizlemek veya göstermek için oka Option tuşuyla tıklayın.";
+"Startup" = "Başlangıç";
+"Start Tuckaway when I log in" = "Girişte başlat";
+"Show preferences on launch" = "Açılışta ayarları aç";
+"Could not update the login item" = "Giriş öğesi güncellenemedi";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "Sistem Ayarları > Genel > Giriş Öğeleri’ni açın ve Tuckaway’e izin verildiğinden emin olun.";
+"Updates" = "Güncellemeler";
+"Check for updates automatically" = "Güncellemeleri otomatik olarak denetle";
+"Check Now" = "Şimdi Denetle";
+
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️Her Zaman Gizli";
+"Hidden" = "Gizli";
+"Shown" = "Gösterilen";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "Simgeleri gizlemek için ⌘ tuşunu basılı tutup okun soluna sürükleyin.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Tuckaway’i yapılandırmak için Mac’inizin menü çubuğunda ⌘ tuşunu basılı tutun\nve simgeleri bölümler arasında sürükleyin.";
+"Tuckaway needs Accessibility access to hide icons." = "Tuckaway’in simgeleri gizlemek için Erişilebilirlik iznine ihtiyacı var.";
+"Open Settings…" = "Ayarları Aç…";
+
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "Sıralamayı değiştirmek için öğeleri liste içinde, görünürlüğü değiştirmek için listeler arasında sürükleyin.";
+"Visible" = "Görünür";
+"Refresh" = "Yenile";
+"Grant Access" = "Erişim İzni Ver";
+"Enable Tuckaway in System Settings, then return and refresh." = "Sistem Ayarları’nda Tuckaway’i etkinleştirin, sonra geri dönüp yenileyin.";
+"Scanning menu bar items…" = "Menü çubuğu öğeleri taranıyor…";
+"Accessibility permission is required to list and move menu bar items." = "Menü çubuğu öğelerini listelemek ve taşımak için Erişilebilirlik izni gerekir.";
+"No manageable menu bar items were found." = "Yönetilebilir menü çubuğu öğesi bulunamadı.";
+"Drop an item to apply the real menu bar position." = "Değişiklikler bıraktığınız anda menü çubuğunuza uygulanır.";
+"Drop items here" = "Öğeleri buraya bırakın";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "%@ tam olarak yerleştirilemedi; listeler nereye yerleştiğini gösteriyor.";
+"Unknown" = "Bilinmiyor";
+
+/* About tab */
+"Version" = "Sürüm";
+"Tidy your Mac’s menu bar." = "Mac’inizin menü çubuğunu toparlayın.";
+"Source code" = "Kaynak kodu";
+"Report an issue" = "Sorun bildir";
+"Independent MIT-licensed fork of Hidden Bar" = "Hidden Bar’ın MIT lisanslı bağımsız çatalı";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "Orijinal çalışma © Dwarves Foundation · Tuckaway değişiklikleri © Bruno-Alumn";
+
+/* App Store build on macOS 27 (#360) */
+"Hiding unavailable on macOS 27 - Learn more" = "Bu sürüm macOS 27’de simgeleri gizleyemez – Doğrudan indirilen sürümü edinin";
+"Menu bar hiding isn't available on macOS 27" = "Tuckaway’in bu sürümü macOS 27’de simgeleri gizleyemez";
+"macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "macOS 27, menü çubuğu simgelerini korumalı alanda çalışan App Store sürümünün kullanamadığı yeni bir yöntemle gizliyor. Tuckaway’in doğrudan indirilen sürümü bunu destekliyor; simgeleri gizlemeye devam etmek için GitHub’dan indirin.";
+"Learn More" = "Doğrudan İndir";
+"OK" = "Tamam";
+
+/* Updater */
+"Version %@" = "Sürüm %@";
+"Couldn’t check for updates" = "Güncellemeler denetlenemedi";
+"Make sure you’re connected to the internet, then try again." = "İnternete bağlı olduğunuzdan emin olun ve yeniden deneyin.";
+"You’re up to date" = "En son sürümü kullanıyorsunuz";
+"Tuckaway %@ is the latest version." = "Tuckaway %@ en son sürümdür.";
+"Tuckaway %@ is available" = "Tuckaway %@ kullanılabilir";
+"You have version %@." = "Sürümünüz: %@.";
+"Install and Relaunch" = "Yükle ve Yeniden Başlat";
+"Download" = "İndir";
+"Later" = "Daha Sonra";
+"Skip This Version" = "Bu Sürümü Atla";
+"Update installed" = "Güncelleme yüklendi";
+"Quit and reopen Tuckaway to finish updating." = "Güncellemeyi tamamlamak için Tuckaway’den çıkıp yeniden açın.";
+"The update couldn’t be installed" = "Güncelleme yüklenemedi";
+"The download didn’t finish. You can download the update from GitHub instead." = "İndirme tamamlanmadı. Güncellemeyi bunun yerine GitHub’dan indirebilirsiniz.";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "İndirilen dosya geçerli bir Tuckaway kopyası içermediğinden hiçbir şey değiştirilmedi. Güncellemeyi bunun yerine GitHub’dan indirebilirsiniz.";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway geçerli klasöründe kendini değiştiremedi. Güncellemeyi bunun yerine GitHub’dan indirebilirsiniz.";
+"Open Release Page" = "Sürüm Sayfasını Aç";
+"Cancel" = "Vazgeç";

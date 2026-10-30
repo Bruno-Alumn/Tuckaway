@@ -1,48 +1,125 @@
-/* 
+/*
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Keys are the English source text used in code (some keys are older wording;
+  the value is what's shown). Every key here is used; keep the 12 other
+  languages in step when adding one.
 */
 
-"Preferences..." = "Postavke …";
-"Toggle Auto Collapse" = "Uklj/Isklj automatsko sklapanje";
-"Enable Auto Collapse" = "Uključi automatsko sklapanje";
-"Disable Auto Collapse" = "Isključi automatsko sklapanje";
-"Quit" = "Zatvori program";
-"Set Shortcut" = "Postavi prečac";
-"Tutorial text" = "
- Koristi funkciju skrivanja ikona za održavanje reda u traci izbornika. Postavlja se na sljedeći način
- Koraci za uključivanje:
- 1. Uključi uvijek skriveno „|” (poluprozirna okomita crta)
- 2. Pritisni i povuci ⌘ na lijevu stranu standardne trake, zatim premjesti ikone koje želiš sakriti na lijevu stranu te trake.
- 3. Na kraju drži ⌥ Option i pritisni ikonu za sklapanje „<” kako bi se ikone sakrile.
- Koraci za prikazivanje uvijek skrivenih ikona:
- 1. Ponovo drži ⌥ Option i pritisni ikonu „<” i ponovi radnju za uključivanje funkcije. Uživaj 😉!
-";
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "Automatsko sklapanje";
+"Show separators" = "Prikaži razdjelnike";
+"Hide separators" = "Sakrij razdjelnike";
+"Manage Menu Bar Items…" = "Upravljaj stavkama trake s izbornicima…";
+"Check for Updates…" = "Provjeri ima li ažuriranja…";
+"Settings…" = "Postavke…";
+"Quit Tuckaway" = "Zatvori Tuckaway";
+"Show Notch Items" = "Prikaži stavke iza ureza";
+"Notch Overflow" = "Preljev ureza";
+"Hidden Behind Notch (%d)" = "Skriveno iza ureza (%d)";
+"Visible (%d)" = "Vidljivo (%d)";
+"No items found (grant Accessibility permission)" = "Nema stavki (dodijelite dopuštenje za Pristupačnost)";
+"Hidden items unavailable" = "Skrivene stavke nisu dostupne";
+"Show hidden items in separate bar" = "Prikaži skrivene stavke u zasebnoj traci";
 
-/* General settings (moved from Main.storyboard) */
-"Start Tuckaway when I log in" = "Pokreni Tuckaway nakon prijave";
-"Show preferences on launch" = "Prikaži postavke nakon pokretanja";
-"Use the full MenuBar on expanding" = "Koristi cijelu traku izbornika pri rasklapanju";
-"Enable always hidden section" = "Uključi uvijek skriveni odjeljak";
-"Automatically hide icon after: " = "Sakrij ikone automatski nakon: ";
-"Global Shortcut" = "Globalni prečac";
-"Hidden" = "Skriveno";
-"Shown" = "Prikazano";
-"⭐️Always Hidden" = "⭐️Uvijek skriveno";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Za konfiguriranje programa Tuckaway, u traci izbornika pritisni tipku ⌘ i povuci ikone između odjeljaka.";
-"5 seconds" = "5 s";
-"10 seconds" = "10 s";
-"15 seconds" = "15 s";
-"30 seconds" = "30 s";
-"1 minute" = "1 min";
-
-"General" = "Opće";
-
+/* Settings window tabs */
+"General" = "Općenito";
+"Menu Bar Items" = "Stavke trake s izbornicima";
 "About" = "Informacije";
 
-"Menu bar cleaner" = "Čistač trake izbornika";
+/* General settings */
+"Hiding" = "Skrivanje";
+"Automatically hide icon after: " = "Sklopi nakon";
+"5 seconds" = "5 sekundi";
+"10 seconds" = "10 sekundi";
+"15 seconds" = "15 sekundi";
+"30 seconds" = "30 sekundi";
+"1 minute" = "1 minuta";
+"Collapse when another app becomes active" = "Sklopi pri promjeni aplikacije";
+"Revealing" = "Prikazivanje";
+"Expand by hovering over the menu bar" = "Rasklopi prelaskom pokazivača";
+"Click empty menu bar to show or hide icons" = "Uklj./isklj. klikom na praznu traku";
+"Expand when an external display is connected" = "Rasklopi uz vanjski zaslon";
+"Shortcut" = "Prečac";
+"Set Shortcut" = "Postavi prečac";
+"Type Shortcut…" = "Unesite prečac…";
+"Clear" = "Očisti";
+"Appearance" = "Izgled";
+"Expand icon" = "Ikona rasklapanja";
+"Standard" = "Standardna";
+"Transparent" = "Prozirna";
+"Ellipsis" = "Tri točke";
+"Use the full MenuBar on expanding" = "Rasklopi preko cijele trake";
+"Extra Sections" = "Dodatni odjeljci";
+"Enable always hidden section" = "Uvijek skriveni odjeljak";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Ikone iza ureza";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Postavite uvijek skriveni razdjelnik lijevo od strelice, a zatim povucite ikone lijevo od njega držeći ⌘. Kliknite strelicu držeći Option da biste sakrili ili prikazali taj odjeljak.";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Postavite uvijek skriveni razdjelnik lijevo od običnog razdjelnika, a zatim povucite ikone lijevo od njega držeći ⌘. Kliknite strelicu držeći Option da biste sakrili ili prikazali taj odjeljak.";
+"Startup" = "Pokretanje";
+"Start Tuckaway when I log in" = "Pokreni pri prijavi";
+"Show preferences on launch" = "Otvori postavke pri pokretanju";
+"Could not update the login item" = "Nije moguće ažurirati stavku za prijavu";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "Otvorite Postavke sustava > Općenito > Stavke za prijavu i provjerite je li Tuckaway dopušten.";
+"Updates" = "Ažuriranja";
+"Check for updates automatically" = "Automatski provjeravaj ažuriranja";
+"Check Now" = "Provjeri sada";
 
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️Uvijek skriveno";
+"Hidden" = "Skriveno";
+"Shown" = "Prikazano";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "Držite ⌘ i povucite ikone lijevo od strelice da biste ih sakrili.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "U traci s izbornicima Maca držite ⌘ i povlačite ikone\nizmeđu odjeljaka da biste konfigurirali Tuckaway.";
+"Tuckaway needs Accessibility access to hide icons." = "Za skrivanje ikona Tuckaway treba dopuštenje za Pristupačnost.";
+"Open Settings…" = "Otvori Postavke…";
+
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "Povucite stavke unutar popisa da biste promijenili redoslijed ili između popisa da biste promijenili vidljivost.";
+"Visible" = "Vidljivo";
+"Refresh" = "Osvježi";
+"Grant Access" = "Dodijeli pristup";
+"Enable Tuckaway in System Settings, then return and refresh." = "Uključite Tuckaway u Postavkama sustava, a zatim se vratite i osvježite.";
+"Scanning menu bar items…" = "Pretraživanje stavki trake s izbornicima…";
+"Accessibility permission is required to list and move menu bar items." = "Za prikaz i premještanje stavki trake s izbornicima potrebno je dopuštenje za Pristupačnost.";
+"No manageable menu bar items were found." = "Nisu pronađene stavke trake s izbornicima kojima se može upravljati.";
+"Drop an item to apply the real menu bar position." = "Promjene se primjenjuju na traku s izbornicima čim ispustite stavku.";
+"Drop items here" = "Ispustite stavke ovdje";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "Stavku %@ nije bilo moguće točno postaviti; popisi prikazuju gdje se nalazi.";
+"Unknown" = "Nepoznato";
+
+/* About tab */
 "Version" = "Verzija";
+"Tidy your Mac’s menu bar." = "Pospremite traku s izbornicima na Macu.";
+"Source code" = "Izvorni kod";
+"Report an issue" = "Prijavi problem";
+"Independent MIT-licensed fork of Hidden Bar" = "Neovisni fork aplikacije Hidden Bar pod licencom MIT";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "Izvorni rad © Dwarves Foundation · Izmjene za Tuckaway © Bruno-Alumn";
+
+/* App Store build on macOS 27 (#360) */
+"Hiding unavailable on macOS 27 - Learn more" = "Ova verzija ne može skrivati ikone u sustavu macOS 27 – preuzmite izravnu verziju";
+"Menu bar hiding isn't available on macOS 27" = "Ova verzija aplikacije Tuckaway ne može skrivati ikone u sustavu macOS 27";
+"macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "macOS 27 skriva ikone trake s izbornicima na nov način koji verzija iz trgovine App Store, zbog izoliranog okruženja, ne može koristiti. Verzija aplikacije Tuckaway za izravno preuzimanje to podržava – preuzmite je sa stranice GitHub da biste nastavili skrivati ikone.";
+"Learn More" = "Preuzmi izravnu verziju";
+"OK" = "U redu";
+
+/* Updater */
+"Version %@" = "Verzija %@";
+"Couldn’t check for updates" = "Nije moguće provjeriti ažuriranja";
+"Make sure you’re connected to the internet, then try again." = "Provjerite jeste li povezani s internetom, a zatim pokušajte ponovno.";
+"You’re up to date" = "Imate najnoviju verziju";
+"Tuckaway %@ is the latest version." = "Tuckaway %@ najnovija je verzija.";
+"Tuckaway %@ is available" = "Dostupan je Tuckaway %@";
+"You have version %@." = "Imate verziju %@.";
+"Install and Relaunch" = "Instaliraj i ponovno pokreni";
+"Download" = "Preuzmi";
+"Later" = "Kasnije";
+"Skip This Version" = "Preskoči ovu verziju";
+"Update installed" = "Ažuriranje je instalirano";
+"Quit and reopen Tuckaway to finish updating." = "Zatvorite i ponovno otvorite Tuckaway da biste dovršili ažuriranje.";
+"The update couldn’t be installed" = "Ažuriranje nije moguće instalirati";
+"The download didn’t finish. You can download the update from GitHub instead." = "Preuzimanje nije dovršeno. Ažuriranje umjesto toga možete preuzeti sa stranice GitHub.";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "Preuzeta datoteka ne sadrži valjanu kopiju aplikacije Tuckaway pa ništa nije promijenjeno. Ažuriranje umjesto toga možete preuzeti sa stranice GitHub.";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway se ne može zamijeniti u trenutačnoj mapi. Ažuriranje umjesto toga možete preuzeti sa stranice GitHub.";
+"Open Release Page" = "Otvori stranicu izdanja";
+"Cancel" = "Odustani";

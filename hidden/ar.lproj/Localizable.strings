@@ -1,49 +1,125 @@
-/* 
+/*
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Keys are the English source text used in code (some keys are older wording;
+  the value is what's shown). Every key here is used; keep the 12 other
+  languages in step when adding one.
 */
 
-"Preferences..." = "تفضيلات...";
-"Toggle Auto Collapse" = "بدل حالة الطي التلقائي";
-"Enable Auto Collapse" = "مكن الطي التلقائي";
-"Disable Auto Collapse" = "عطل الطي التلقائي";
-"Quit" = "إنهاء";
-"Set Shortcut" = "عين اختصارا";
-"Tutorial text" = "
-استخدم ميزة مخفي دائما لتبقي أيقوناتك مرتبة. إليك كيفية تعيينها
-خطوات التمكين:
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "طي تلقائي";
+"Show separators" = "إظهار الفواصل";
+"Hide separators" = "إخفاء الفواصل";
+"Manage Menu Bar Items…" = "إدارة عناصر شريط القائمة…";
+"Check for Updates…" = "التحقق من وجود تحديثات…";
+"Settings…" = "الإعدادات…";
+"Quit Tuckaway" = "إنهاء Tuckaway";
+"Show Notch Items" = "إظهار عناصر الشق";
+"Notch Overflow" = "تجاوز الشق";
+"Hidden Behind Notch (%d)" = "مخفية خلف الشق (%d)";
+"Visible (%d)" = "ظاهرة (%d)";
+"No items found (grant Accessibility permission)" = "لم يتم العثور على عناصر (امنح إذن تسهيلات الاستخدام)";
+"Hidden items unavailable" = "العناصر المخفية غير متاحة";
+"Show hidden items in separate bar" = "إظهار العناصر المخفية في شريط منفصل";
 
-مكن “|” الخاص بمخفي دائما (شريط اللون الشفاف)
-استمر بالضغط على ⌘ واسحبه إلى الجانب الأيمن من الشريط العادي، قم حرك أي أيقونات تريد إخفائها إلى يمين هذا الشريط.
-أخيرا، اضغط مع الاستمرار على ⌥ Option وانقر على أيقونة الطي “<” لجعلها تختفي.
-خطوات عرض الأيقونات المخفية دائما:
-انقر مع الضغط على ⌥ Option على أيقونة “<” ثانية للعرض وكرر الإجراء لتمكين الميزة. استمتع 😉!
-";
-
-/* General settings (moved from Main.storyboard) */
-"Start Tuckaway when I log in" = "شغل الشريط المخفي عندما أقوم بتسجيل الدخول";
-"Show preferences on launch" = "إعرض التفضيلات عند بدء التشغيل";
-"Use the full MenuBar on expanding" = "استخدم كامل شريط القائمة عند التوسيع";
-"Enable always hidden section" = "تمكين القسم المخفي دائما";
-"Automatically hide icon after: " = "أخف الأيقونة تلقائيا بعد: ";
-"Global Shortcut" = "الاختصارات المعممة";
-"Hidden" = "مخفي";
-"Shown" = "ظاهر";
-"⭐️Always Hidden" = "⭐️مخفي دائما";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "في شريط القائمة الخاص بـMac الخاص بك، استمر بالضغط على ⌘ واسحب الأيقونات\nبين الأقسام لتكوين الشريط المخفي.";
-"5 seconds" = "5 ثوان";
-"10 seconds" = "١٠ ثوان";
-"15 seconds" = "١٥ ثانية";
-"30 seconds" = "30 ثانية";
-"1 minute" = "دقيقة واحدة";
-
+/* Settings window tabs */
 "General" = "عام";
-
+"Menu Bar Items" = "عناصر شريط القائمة";
 "About" = "حول";
 
-"Menu bar cleaner" = "منظف شريط القائمة";
+/* General settings */
+"Hiding" = "الإخفاء";
+"Automatically hide icon after: " = "الطي بعد";
+"5 seconds" = "٥ ثوانٍ";
+"10 seconds" = "١٠ ثوانٍ";
+"15 seconds" = "١٥ ثانية";
+"30 seconds" = "٣٠ ثانية";
+"1 minute" = "دقيقة واحدة";
+"Collapse when another app becomes active" = "الطي عند التبديل بين التطبيقات";
+"Revealing" = "الإظهار";
+"Expand by hovering over the menu bar" = "التوسيع عند التمرير فوقه";
+"Click empty menu bar to show or hide icons" = "التبديل بالنقر على مساحة فارغة في شريط القائمة";
+"Expand when an external display is connected" = "التوسيع عند توصيل شاشة خارجية";
+"Shortcut" = "الاختصار";
+"Set Shortcut" = "تعيين اختصار";
+"Type Shortcut…" = "اكتب الاختصار…";
+"Clear" = "مسح";
+"Appearance" = "المظهر";
+"Expand icon" = "أيقونة التوسيع";
+"Standard" = "قياسي";
+"Transparent" = "شفاف";
+"Ellipsis" = "ثلاث نقاط";
+"Use the full MenuBar on expanding" = "التوسيع عبر شريط القائمة بالكامل";
+"Extra Sections" = "أقسام إضافية";
+"Enable always hidden section" = "قسم مخفي دائمًا";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "الأيقونات خلف الشق";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "ضع فاصل القسم المخفي دائمًا على يسار السهم، ثم اسحب الأيقونات مع الضغط على ⌘ إلى يساره. انقر على السهم مع الضغط على Option لإخفاء هذا القسم أو إظهاره.";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "ضع فاصل القسم المخفي دائمًا على يسار الفاصل العادي، ثم اسحب الأيقونات مع الضغط على ⌘ إلى يساره. انقر على السهم مع الضغط على Option لإخفاء هذا القسم أو إظهاره.";
+"Startup" = "بدء التشغيل";
+"Start Tuckaway when I log in" = "الفتح عند تسجيل الدخول";
+"Show preferences on launch" = "فتح الإعدادات عند بدء التشغيل";
+"Could not update the login item" = "تعذر تحديث عنصر تسجيل الدخول";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "افتح إعدادات النظام > عام > عناصر تسجيل الدخول وتأكد من السماح لـ Tuckaway.";
+"Updates" = "التحديثات";
+"Check for updates automatically" = "التحقق من وجود تحديثات تلقائيًا";
+"Check Now" = "التحقق الآن";
 
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️مخفية دائمًا";
+"Hidden" = "مخفية";
+"Shown" = "ظاهرة";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "اضغط مطولًا على ⌘ واسحب الأيقونات إلى يسار السهم لإخفائها.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "في شريط القائمة على Mac، اضغط مطولًا على ⌘ واسحب الأيقونات\nبين الأقسام لتكوين Tuckaway.";
+"Tuckaway needs Accessibility access to hide icons." = "يحتاج Tuckaway إلى إذن تسهيلات الاستخدام لإخفاء الأيقونات.";
+"Open Settings…" = "فتح الإعدادات…";
+
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "اسحب العناصر داخل القائمة لإعادة ترتيبها، أو بين القوائم لتغيير ظهورها.";
+"Visible" = "ظاهرة";
+"Refresh" = "تحديث";
+"Grant Access" = "منح الوصول";
+"Enable Tuckaway in System Settings, then return and refresh." = "قم بتمكين Tuckaway في إعدادات النظام، ثم عُد وانقر على تحديث.";
+"Scanning menu bar items…" = "جارٍ فحص عناصر شريط القائمة…";
+"Accessibility permission is required to list and move menu bar items." = "يلزم إذن تسهيلات الاستخدام لعرض عناصر شريط القائمة ونقلها.";
+"No manageable menu bar items were found." = "لم يتم العثور على عناصر في شريط القائمة يمكن إدارتها.";
+"Drop an item to apply the real menu bar position." = "تُطبَّق التغييرات على شريط القائمة فور الإفلات.";
+"Drop items here" = "أفلت العناصر هنا";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "تعذر وضع %@ بدقة؛ تعرض القوائم المكان الذي استقر فيه.";
+"Unknown" = "غير معروف";
+
+/* About tab */
 "Version" = "الإصدار";
+"Tidy your Mac’s menu bar." = "رتّب شريط القائمة على Mac.";
+"Source code" = "الشفرة المصدرية";
+"Report an issue" = "الإبلاغ عن مشكلة";
+"Independent MIT-licensed fork of Hidden Bar" = "نسخة مستقلة من Hidden Bar مرخصة بموجب MIT";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "العمل الأصلي © Dwarves Foundation · تعديلات Tuckaway © Bruno-Alumn";
+
+/* App Store build on macOS 27 (#360) */
+"Hiding unavailable on macOS 27 - Learn more" = "لا يمكن لهذا الإصدار إخفاء الأيقونات على macOS 27 – احصل على إصدار التنزيل المباشر";
+"Menu bar hiding isn't available on macOS 27" = "لا يمكن لهذا الإصدار من Tuckaway إخفاء الأيقونات على macOS 27";
+"macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "يُخفي macOS 27 أيقونات شريط القائمة بطريقة جديدة لا يستطيع إصدار App Store المعزول استخدامها. يدعمها إصدار التنزيل المباشر من Tuckaway — نزّله من GitHub لمواصلة إخفاء الأيقونات.";
+"Learn More" = "الحصول على التنزيل المباشر";
+"OK" = "حسنًا";
+
+/* Updater */
+"Version %@" = "الإصدار %@";
+"Couldn’t check for updates" = "تعذر التحقق من وجود تحديثات";
+"Make sure you’re connected to the internet, then try again." = "تأكد من اتصالك بالإنترنت، ثم حاول مرة أخرى.";
+"You’re up to date" = "لديك أحدث إصدار";
+"Tuckaway %@ is the latest version." = "Tuckaway %@ هو أحدث إصدار.";
+"Tuckaway %@ is available" = "Tuckaway %@ متوفر";
+"You have version %@." = "لديك الإصدار %@.";
+"Install and Relaunch" = "تثبيت وإعادة التشغيل";
+"Download" = "تنزيل";
+"Later" = "لاحقًا";
+"Skip This Version" = "تخطي هذا الإصدار";
+"Update installed" = "تم تثبيت التحديث";
+"Quit and reopen Tuckaway to finish updating." = "قم بإنهاء Tuckaway وإعادة فتحه لإكمال التحديث.";
+"The update couldn’t be installed" = "تعذر تثبيت التحديث";
+"The download didn’t finish. You can download the update from GitHub instead." = "لم يكتمل التنزيل. يمكنك تنزيل التحديث من GitHub بدلاً من ذلك.";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "الملف الذي تم تنزيله لا يحتوي على نسخة صالحة من Tuckaway، لذا لم يتم تغيير أي شيء. يمكنك تنزيل التحديث من GitHub بدلاً من ذلك.";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "تعذر على Tuckaway استبدال نفسه في مجلده الحالي. يمكنك تنزيل التحديث من GitHub بدلاً من ذلك.";
+"Open Release Page" = "فتح صفحة الإصدار";
+"Cancel" = "إلغاء";

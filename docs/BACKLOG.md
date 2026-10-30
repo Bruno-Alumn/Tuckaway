@@ -33,21 +33,12 @@ before merging.
 
 ## Releases and distribution
 
-- **Publish the first certificate-signed release (1.2).** From then on permissions
-  survive updates; 1.1.0 users re-grant once.
 - **Developer ID signing and notarization (#219).** Removes the Open Anyway step.
   Permissions already survive updates through the self-signed release certificate.
 - **Homebrew cask** pointing at the GitHub DMG, once notarized.
 - **Upgrade-path login-item check.** Install a launcher-era Hidden Bar (v1.9 or older),
   then Tuckaway, and confirm Login Items shows no leftover `LauncherApplication` row.
   The one-time deauthorization has never been run on hardware.
-
-## Translations
-
-- **New strings are English-only.** The Settings redesign (Hiding, Revealing, Extra
-  Sections…), the updater alerts and the macOS 27 notice need translating into the 12
-  other languages in `hidden/*.lproj/Localizable.strings`. Unused legacy keys
-  ("Tutorial text", "Enable Auto Collapse"…) can be removed at the same time.
 
 ## Verification still owed
 
@@ -72,4 +63,6 @@ Kept here so they aren't re-filed: hover-to-expand checkbox; login-item failures
 surfaced in Settings; VoiceOver can toggle the arrow (`AXPress` with no event);
 macOS 27 tutorial text; single-instance guard (#324); ⌘W closes Settings (#276);
 settings layout overlap (#355, Settings redesign); notch overflow and the separate
-hidden-items bar; native macOS 27 hiding (#360); automatic updates (#220, #197).
+hidden-items bar; native macOS 27 hiding (#360); automatic updates (#220, #197);
+certificate-signed releases (1.2.0); every string translated into all 13 languages,
+enforced by `LocalizationTests`.

@@ -1,47 +1,123 @@
-/* 
+/*
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Translated from en.lproj/Localizable.strings; keep keys and order in step.
 */
 
-"Preferences..." = "環境設定...";
-"Quit" = "終了";
-"Toggle Auto Collapse" = "自動折りたたみを切り替える";
-"Enable Auto Collapse" = "自動折りたたみオン";
-"Disable Auto Collapse" = "自動折りたたみオフ";
-"Set Shortcut" = "ショットキーを設定";
-"Tutorial text" = "
-「アイコンを常に非表示機能」でメニューバーをスッキリできる.
-設定方法:
-1. 「アイコンを常に非表示機能」を有効にする（半透明の｜が表示される）．
-2. Command(⌘)キーを押しながら，半透明の「｜」を不透明「｜」の左側に移動して，さらに常に非表示したいアイコンを半透明の「｜」の左側に移動する．
-3. 最後はOption(⌥)キーを押しながら「＞」をクリックすると，半透明「｜」より左にあるアイコンが常に非表示される．
-（もう一回Option(⌥)キーを押しながら「＞」をクリックすると，常に非表示されたアイコンが表示される）
-";
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "自動的に折りたたむ";
+"Show separators" = "区切りを表示";
+"Hide separators" = "区切りを非表示";
+"Manage Menu Bar Items…" = "メニューバー項目を管理…";
+"Check for Updates…" = "アップデートを確認…";
+"Settings…" = "設定…";
+"Quit Tuckaway" = "Tuckawayを終了";
+"Show Notch Items" = "ノッチ裏の項目を表示";
+"Notch Overflow" = "ノッチに隠れた項目";
+"Hidden Behind Notch (%d)" = "ノッチの裏に隠れた項目（%d）";
+"Visible (%d)" = "表示中（%d）";
+"No items found (grant Accessibility permission)" = "項目が見つかりません（アクセシビリティの許可が必要です）";
+"Hidden items unavailable" = "非表示の項目を取得できません";
+"Show hidden items in separate bar" = "非表示の項目を別のバーに表示";
 
-/* General settings (moved from Main.storyboard) */
-"Start Tuckaway when I log in" = "ログインする時 Tuckaway を起動";
-"Show preferences on launch" = "起動時に環境設定を開く";
-"Use the full MenuBar on expanding" = "アイコンを表示する時に Hidden のメニューバーも表示";
-"Enable always hidden section" = "「アイコンを常に非表示機能」を有効にする";
-"Automatically hide icon after: " = "一定時間を経つと自動的にアイコンを非表示する: ";
-"Global Shortcut" = "グローバルショットキー";
-"Hidden" = "非表示";
-"Shown" = "表示";
-"⭐️Always Hidden" = "⭐️常に非表示";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Mac のメニューバーに  ⌘ を押しながらアイコンを移動して \nメニューバーをカスタマイズする";
+/* Settings window tabs */
+"General" = "一般";
+"Menu Bar Items" = "メニューバー項目";
+"About" = "情報";
+
+/* General settings */
+"Hiding" = "非表示";
+"Automatically hide icon after: " = "折りたたむまでの時間";
 "5 seconds" = "5秒";
 "10 seconds" = "10秒";
 "15 seconds" = "15秒";
 "30 seconds" = "30秒";
 "1 minute" = "1分";
+"Collapse when another app becomes active" = "アプリ切り替え時に折りたたむ";
+"Revealing" = "表示";
+"Expand by hovering over the menu bar" = "ポインタを置いて展開";
+"Click empty menu bar to show or hide icons" = "メニューバーの空き領域をクリックで切り替え";
+"Expand when an external display is connected" = "外部ディスプレイ接続時に展開";
+"Shortcut" = "ショートカット";
+"Set Shortcut" = "ショートカットを設定";
+"Type Shortcut…" = "ショートカットを入力…";
+"Clear" = "消去";
+"Appearance" = "外観";
+"Expand icon" = "展開アイコン";
+"Standard" = "標準";
+"Transparent" = "透明";
+"Ellipsis" = "省略記号";
+"Use the full MenuBar on expanding" = "メニューバー全体に展開";
+"Extra Sections" = "追加のセクション";
+"Enable always hidden section" = "常に非表示のセクション";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "ノッチ裏のアイコン";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "常に非表示の区切りを矢印の左に置き、⌘キーを押しながらアイコンをその左側にドラッグします。Optionキーを押しながら矢印をクリックすると、そのセクションの表示／非表示を切り替えられます。";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "常に非表示の区切りを通常の区切りの左に置き、⌘キーを押しながらアイコンをその左側にドラッグします。Optionキーを押しながら矢印をクリックすると、そのセクションの表示／非表示を切り替えられます。";
+"Startup" = "起動";
+"Start Tuckaway when I log in" = "ログイン時に起動";
+"Show preferences on launch" = "起動時に設定を開く";
+"Could not update the login item" = "ログイン項目を更新できませんでした";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "「システム設定」>「一般」>「ログイン項目」で、Tuckawayが許可されていることを確認してください。";
+"Updates" = "アップデート";
+"Check for updates automatically" = "アップデートを自動的に確認";
+"Check Now" = "今すぐ確認";
 
-"General" = "一般";
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️常に非表示";
+"Hidden" = "非表示";
+"Shown" = "表示";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "⌘キーを押しながらアイコンを矢印の左側にドラッグすると非表示になります。";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Macのメニューバーで⌘キーを押しながら、アイコンを\nセクション間でドラッグしてTuckawayを設定します。";
+"Tuckaway needs Accessibility access to hide icons." = "アイコンを非表示にするには、Tuckawayにアクセシビリティへのアクセスを許可する必要があります。";
+"Open Settings…" = "設定を開く…";
 
-"About" = "About";
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "リスト内でドラッグすると並べ替え、リスト間でドラッグすると表示／非表示を切り替えます。";
+"Visible" = "表示";
+"Refresh" = "更新";
+"Grant Access" = "アクセスを許可";
+"Enable Tuckaway in System Settings, then return and refresh." = "システム設定でTuckawayを有効にしてから、戻って更新してください。";
+"Scanning menu bar items…" = "メニューバー項目をスキャン中…";
+"Accessibility permission is required to list and move menu bar items." = "メニューバー項目の一覧表示と移動には、アクセシビリティの許可が必要です。";
+"No manageable menu bar items were found." = "管理できるメニューバー項目が見つかりませんでした。";
+"Drop an item to apply the real menu bar position." = "ドロップするとすぐにメニューバーに反映されます。";
+"Drop items here" = "ここに項目をドロップ";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "%@を正確な位置に配置できませんでした。実際の位置はリストで確認できます。";
+"Unknown" = "不明";
 
-"Menu bar cleaner" = "Menu bar cleaner";
+/* About tab */
+"Version" = "バージョン";
+"Tidy your Mac’s menu bar." = "Macのメニューバーをすっきり整理。";
+"Source code" = "ソースコード";
+"Report an issue" = "問題を報告";
+"Independent MIT-licensed fork of Hidden Bar" = "Hidden BarのMITライセンスによる独立したフォーク";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "オリジナル © Dwarves Foundation · Tuckawayの変更 © Bruno-Alumn";
 
-"Version" = "Version";
+/* App Store build on macOS 27 (#360) */
+"Hiding unavailable on macOS 27 - Learn more" = "このバージョンはmacOS 27でアイコンを非表示にできません – 直接ダウンロード版を入手";
+"Menu bar hiding isn't available on macOS 27" = "このバージョンのTuckawayはmacOS 27でアイコンを非表示にできません";
+"macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "macOS 27ではメニューバーのアイコンを隠す方法が変わり、サンドボックス化されたApp Store版ではその方法を使えません。直接ダウンロード版のTuckawayは対応しているので、GitHubからダウンロードすれば引き続きアイコンを非表示にできます。";
+"Learn More" = "直接ダウンロード版を入手";
+"OK" = "OK";
+
+/* Updater */
+"Version %@" = "バージョン %@";
+"Couldn’t check for updates" = "アップデートを確認できませんでした";
+"Make sure you’re connected to the internet, then try again." = "インターネットに接続されていることを確認してから、もう一度お試しください。";
+"You’re up to date" = "最新の状態です";
+"Tuckaway %@ is the latest version." = "Tuckaway %@は最新バージョンです。";
+"Tuckaway %@ is available" = "Tuckaway %@が利用可能です";
+"You have version %@." = "現在のバージョンは%@です。";
+"Install and Relaunch" = "インストールして再起動";
+"Download" = "ダウンロード";
+"Later" = "あとで";
+"Skip This Version" = "このバージョンをスキップ";
+"Update installed" = "アップデートをインストールしました";
+"Quit and reopen Tuckaway to finish updating." = "アップデートを完了するには、Tuckawayを終了してもう一度開いてください。";
+"The update couldn’t be installed" = "アップデートをインストールできませんでした";
+"The download didn’t finish. You can download the update from GitHub instead." = "ダウンロードが完了しませんでした。代わりにGitHubからアップデートをダウンロードできます。";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "ダウンロードしたファイルに有効なTuckawayが含まれていなかったため、何も変更されていません。代わりにGitHubからアップデートをダウンロードできます。";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckawayを現在のフォルダで置き換えられませんでした。代わりにGitHubからアップデートをダウンロードできます。";
+"Open Release Page" = "リリースページを開く";
+"Cancel" = "キャンセル";

@@ -1,66 +1,123 @@
-/* 
+/*
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Translated from en.lproj/Localizable.strings; keep keys and order in step.
 */
 
-"Preferences..." = "偏好设置...";
-"Toggle Auto Collapse" = "切换自动折叠";
-"Enable Auto Collapse" = "开启自动折叠";
-"Disable Auto Collapse" = "关闭自动折叠";
-"Show hidden items in separate bar" = "在单独的浮动栏中显示隐藏项目";
-"Hidden items unavailable" = "无法读取隐藏项目";
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "自动折叠";
+"Show separators" = "显示分隔符";
+"Hide separators" = "隐藏分隔符";
 "Manage Menu Bar Items…" = "管理菜单栏项目…";
-"Manage Menu Bar Items" = "管理菜单栏项目";
+"Check for Updates…" = "检查更新…";
+"Settings…" = "设置…";
+"Quit Tuckaway" = "退出 Tuckaway";
+"Show Notch Items" = "显示刘海后的项目";
+"Notch Overflow" = "刘海遮挡的项目";
+"Hidden Behind Notch (%d)" = "被刘海遮挡（%d）";
+"Visible (%d)" = "可见（%d）";
+"No items found (grant Accessibility permission)" = "未找到项目（请授予辅助功能权限）";
+"Hidden items unavailable" = "无法读取隐藏项目";
+"Show hidden items in separate bar" = "在单独的栏中显示隐藏项目";
+
+/* Settings window tabs */
+"General" = "通用";
 "Menu Bar Items" = "菜单栏项目";
-"Drag items within a list to reorder them, or between lists to change visibility." = "在列表内拖动可调整顺序，在两个列表之间拖动可切换显示或隐藏。";
-"Hidden" = "隐藏";
-"Visible" = "显示";
-"Refresh" = "刷新";
-"Grant Access" = "授予权限";
-"Enable Tuckaway in System Settings, then return and refresh." = "请在系统设置中启用当前版本的 Tuckaway，然后返回并刷新。";
-"Scanning menu bar items…" = "正在扫描菜单栏项目…";
-"Accessibility permission is required to list and move menu bar items." = "列出和移动菜单栏项目需要辅助功能权限。";
-"No manageable menu bar items were found." = "未找到可管理的菜单栏项目。";
-"Drop an item to apply the real menu bar position." = "拖放后将直接修改真实菜单栏位置。";
-"Unknown" = "未知应用";
-"Quit" = "退出";
-"Set Shortcut" = "设置快捷键";
-"Tutorial text" = "
-使用 '持续隐藏' 功能让您的菜单栏保持整洁。这个教程将会帮助您设置这个功能。
+"About" = "关于";
 
-启用步骤：
-1. 启用持续隐藏功能 ”|“（半透明分割线）。
-2. 按住 ⌘ 并将持续隐藏区域拖至一般隐藏区域（不透明｜）的左侧。
-3. 接着将不想显示的图标移至持续隐藏区域中。
-4. 最后按住 ⌥ Option 键单击 “>” 按钮，就能隐藏'持续隐藏区域'中的图标。
-（再次按住 ⌥ Option 键单击 “>” 按钮恢复显示 “持续隐藏区域” 中的图标。）
-祝您使用愉快 😉!
-";
-
-/* General settings (moved from Main.storyboard) */
-"Start Tuckaway when I log in" = "在登录时启动 Tuckaway";
-"Show preferences on launch" = "在应用程序启动时显示偏好设置";
-"Use the full MenuBar on expanding" = "展开隐藏区域时使用完整的菜单栏";
-"Enable always hidden section" = "启用持续隐藏区域";
-"Automatically hide icon after: " = "等待";
-"Global Shortcut" = "全局快捷键";
-"Hidden" = "隐藏";
-"Shown" = "显示";
-"⭐️Always Hidden" = "⭐️持续隐藏";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "在 Mac 的菜单栏中，按住 ⌘ 并拖动图标\n以自定义菜单栏";
+/* General settings */
+"Hiding" = "隐藏";
+"Automatically hide icon after: " = "折叠等待时间";
 "5 seconds" = "5 秒";
 "10 seconds" = "10 秒";
 "15 seconds" = "15 秒";
 "30 seconds" = "30 秒";
 "1 minute" = "1 分钟";
+"Collapse when another app becomes active" = "切换 App 时折叠";
+"Revealing" = "显示";
+"Expand by hovering over the menu bar" = "悬停以展开";
+"Click empty menu bar to show or hide icons" = "点按菜单栏空白处切换";
+"Expand when an external display is connected" = "连接外接显示器时展开";
+"Shortcut" = "快捷键";
+"Set Shortcut" = "设置快捷键";
+"Type Shortcut…" = "键入快捷键…";
+"Clear" = "清除";
+"Appearance" = "外观";
+"Expand icon" = "展开图标";
+"Standard" = "标准";
+"Transparent" = "透明";
+"Ellipsis" = "省略号";
+"Use the full MenuBar on expanding" = "在整个菜单栏中展开";
+"Extra Sections" = "额外区域";
+"Enable always hidden section" = "始终隐藏区域";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "刘海后的图标";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "将始终隐藏分隔符放在箭头左侧，然后按住 ⌘ 将图标拖到其左侧。按住 Option 键点按箭头可隐藏或显示该区域。";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "将始终隐藏分隔符放在普通分隔符左侧，然后按住 ⌘ 将图标拖到其左侧。按住 Option 键点按箭头可隐藏或显示该区域。";
+"Startup" = "启动";
+"Start Tuckaway when I log in" = "登录时打开";
+"Show preferences on launch" = "启动时打开设置";
+"Could not update the login item" = "无法更新登录项";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "请前往“系统设置”>“通用”>“登录项”，确保已允许 Tuckaway。";
+"Updates" = "更新";
+"Check for updates automatically" = "自动检查更新";
+"Check Now" = "立即检查";
 
-"General" = "通用设置";
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️始终隐藏";
+"Hidden" = "隐藏";
+"Shown" = "显示";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "按住 ⌘ 并将图标拖到箭头左侧即可隐藏。";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "在 Mac 的菜单栏中，按住 ⌘ 并在区域之间\n拖动图标以配置 Tuckaway。";
+"Tuckaway needs Accessibility access to hide icons." = "Tuckaway 需要辅助功能权限才能隐藏图标。";
+"Open Settings…" = "打开设置…";
 
-"About" = "关于我们";
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "在列表内拖动可调整顺序，在列表之间拖动可更改显示状态。";
+"Visible" = "显示";
+"Refresh" = "刷新";
+"Grant Access" = "授予权限";
+"Enable Tuckaway in System Settings, then return and refresh." = "请在“系统设置”中启用 Tuckaway，然后返回并刷新。";
+"Scanning menu bar items…" = "正在扫描菜单栏项目…";
+"Accessibility permission is required to list and move menu bar items." = "需要辅助功能权限才能列出和移动菜单栏项目。";
+"No manageable menu bar items were found." = "未找到可管理的菜单栏项目。";
+"Drop an item to apply the real menu bar position." = "松开后更改会立即应用到菜单栏。";
+"Drop items here" = "将项目拖到此处";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "无法将 %@ 放到确切位置；列表中显示了它的实际位置。";
+"Unknown" = "未知";
 
-"Menu bar cleaner" = "菜单栏管理器";
-
+/* About tab */
 "Version" = "版本";
+"Tidy your Mac’s menu bar." = "让 Mac 菜单栏井然有序。";
+"Source code" = "源代码";
+"Report an issue" = "报告问题";
+"Independent MIT-licensed fork of Hidden Bar" = "基于 MIT 许可证的 Hidden Bar 独立分支";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "原作 © Dwarves Foundation · Tuckaway 修改 © Bruno-Alumn";
+
+/* App Store build on macOS 27 (#360) */
+"Hiding unavailable on macOS 27 - Learn more" = "此版本无法在 macOS 27 上隐藏图标 – 获取直接下载版";
+"Menu bar hiding isn't available on macOS 27" = "此版本的 Tuckaway 无法在 macOS 27 上隐藏图标";
+"macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "macOS 27 采用了新的菜单栏图标隐藏方式，沙盒化的 App Store 版本无法使用。直接下载版 Tuckaway 支持这一方式——从 GitHub 下载即可继续隐藏图标。";
+"Learn More" = "获取直接下载版";
+"OK" = "好";
+
+/* Updater */
+"Version %@" = "版本 %@";
+"Couldn’t check for updates" = "无法检查更新";
+"Make sure you’re connected to the internet, then try again." = "请确保已连接到互联网，然后重试。";
+"You’re up to date" = "已是最新版本";
+"Tuckaway %@ is the latest version." = "Tuckaway %@ 是最新版本。";
+"Tuckaway %@ is available" = "Tuckaway %@ 现已推出";
+"You have version %@." = "你的版本是 %@。";
+"Install and Relaunch" = "安装并重新启动";
+"Download" = "下载";
+"Later" = "以后";
+"Skip This Version" = "跳过此版本";
+"Update installed" = "更新已安装";
+"Quit and reopen Tuckaway to finish updating." = "退出并重新打开 Tuckaway 以完成更新。";
+"The update couldn’t be installed" = "无法安装更新";
+"The download didn’t finish. You can download the update from GitHub instead." = "下载未完成。你可以改从 GitHub 下载更新。";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "下载的文件不包含有效的 Tuckaway，因此未做任何更改。你可以改从 GitHub 下载更新。";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway 无法在当前文件夹中替换自身。你可以改从 GitHub 下载更新。";
+"Open Release Page" = "打开发布页面";
+"Cancel" = "取消";
