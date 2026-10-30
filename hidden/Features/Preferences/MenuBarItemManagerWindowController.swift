@@ -44,6 +44,11 @@ struct ManagedMenuBarItem {
     var center: CGPoint {
         CGPoint(x: position.x + size.width / 2, y: position.y + size.height / 2)
     }
+
+    func moved(to section: Section) -> ManagedMenuBarItem {
+        ManagedMenuBarItem(id: id, element: element, appName: appName, title: title, icon: icon,
+                           position: position, size: size, section: section)
+    }
 }
 
 struct MenuBarManagementLayout {
@@ -75,6 +80,9 @@ final class MenuBarItemManagerViewController: NSViewController {
     private var visibleItems: [ManagedMenuBarItem] = []
     private var layout: MenuBarManagementLayout?
     private var isScanning = false
+    // Real menu-bar moves run one at a time, in drop order, off the main thread.
+    private let moveQueue = DispatchQueue(label: "com.brunoalumn.tuckaway.item-moves")
+    private var movesInFlight = 0
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -254,14 +262,18 @@ final class MenuBarItemManagerViewController: NSViewController {
         statusLabel.stringValue = "Enable Tuckaway in System Settings, then return and refresh.".localized
     }
 
-    private func refresh() {
+    // `quiet` re-checks the real menu bar after a move without the scanning
+    // status, and leaves the lists alone unless they turned out to be wrong.
+    private func refresh(quiet: Bool = false) {
         guard !isScanning,
               let appDelegate = NSApp.delegate as? AppDelegate
         else { return }
         isScanning = true
-        permissionButton.isHidden = AXIsProcessTrusted()
-        refreshButton.isEnabled = false
-        statusLabel.stringValue = "Scanning menu bar items…".localized
+        if !quiet {
+            permissionButton.isHidden = AXIsProcessTrusted()
+            refreshButton.isEnabled = false
+            statusLabel.stringValue = "Scanning menu bar items…".localized
+        }
         appDelegate.statusBarController.prepareForItemManagement { [weak self] layout in
             guard let self = self else { return }
             self.layout = layout
@@ -279,7 +291,13 @@ final class MenuBarItemManagerViewController: NSViewController {
             DispatchQueue.global(qos: .userInitiated).async {
                 let found = Self.scanItems(layout: layout, apps: apps)
                 DispatchQueue.main.async { [weak self] in
-                    self?.apply(found: found, accessibilityTrusted: AXIsProcessTrusted())
+                    guard let self else { return }
+                    // A drop that landed while scanning makes this result stale.
+                    if quiet && self.movesInFlight > 0 {
+                        self.isScanning = false
+                        return
+                    }
+                    self.apply(found: found, accessibilityTrusted: AXIsProcessTrusted(), onlyIfChanged: quiet)
                 }
             }
         }
@@ -311,7 +329,7 @@ final class MenuBarItemManagerViewController: NSViewController {
                     ?? ""
                 let section: ManagedMenuBarItem.Section = position.x + size.width / 2 < separatorQuartzX ? .hidden : .visible
                 found.append(ManagedMenuBarItem(
-                    id: "\(app.pid)-\(index)-\(Int(position.x))",
+                    id: "\(app.pid)-\(index)",
                     element: element,
                     appName: app.name,
                     title: title,
@@ -325,22 +343,28 @@ final class MenuBarItemManagerViewController: NSViewController {
         return found
     }
 
-    private func apply(found: [ManagedMenuBarItem], accessibilityTrusted: Bool) {
-        hiddenItems = found.filter { $0.section == .hidden }.sorted { $0.position.x < $1.position.x }
-        visibleItems = found.filter { $0.section == .visible }.sorted { $0.position.x < $1.position.x }
-        hiddenTable.reloadData()
-        visibleTable.reloadData()
-        hiddenCountLabel.stringValue = "\(hiddenItems.count)"
-        visibleCountLabel.stringValue = "\(visibleItems.count)"
-        hiddenEmptyLabel.isHidden = !hiddenItems.isEmpty
-        visibleEmptyLabel.isHidden = !visibleItems.isEmpty
+    private func apply(found: [ManagedMenuBarItem], accessibilityTrusted: Bool, onlyIfChanged: Bool = false) {
+        let newHidden = found.filter { $0.section == .hidden }.sorted { $0.position.x < $1.position.x }
+        let newVisible = found.filter { $0.section == .visible }.sorted { $0.position.x < $1.position.x }
+        let changed = newHidden.map(\.id) != hiddenItems.map(\.id) || newVisible.map(\.id) != visibleItems.map(\.id)
+        // Fresh frames either way, so the next move aims at where items really are.
+        hiddenItems = newHidden
+        visibleItems = newVisible
+        if changed || !onlyIfChanged {
+            hiddenTable.reloadData()
+            visibleTable.reloadData()
+        }
+        updateCounts()
         if found.isEmpty, !accessibilityTrusted {
             statusLabel.stringValue = "Accessibility permission is required to list and move menu bar items.".localized
             permissionButton.isHidden = false
         } else {
-            statusLabel.stringValue = found.isEmpty
-                ? "No manageable menu bar items were found.".localized
-                : "Drop an item to apply the real menu bar position.".localized
+            // A quiet re-check keeps any message a failed move just showed.
+            if !onlyIfChanged || found.isEmpty {
+                statusLabel.stringValue = found.isEmpty
+                    ? "No manageable menu bar items were found.".localized
+                    : "Drop an item to apply the real menu bar position.".localized
+            }
             permissionButton.isHidden = true
         }
         isScanning = false
@@ -379,47 +403,79 @@ final class MenuBarItemManagerViewController: NSViewController {
         table === hiddenTable ? hiddenItems : visibleItems
     }
 
-    private func move(_ item: ManagedMenuBarItem, to table: NSTableView, row: Int) {
-        guard let layout = layout else { return }
-        let destination = items(for: table).filter { $0.id != item.id }
-        let clampedRow = max(0, min(row, destination.count))
-        let targetX: CGFloat
-        if destination.isEmpty {
-            targetX = table === hiddenTable
-                ? layout.separatorFrame.minX - 12
-                : layout.expandCollapseFrame.maxX + 12
-        } else if clampedRow == destination.count {
-            targetX = destination[destination.count - 1].center.x + 8
-        } else {
-            targetX = destination[clampedRow].center.x - 8
-        }
+    private func updateCounts() {
+        hiddenCountLabel.stringValue = "\(hiddenItems.count)"
+        visibleCountLabel.stringValue = "\(visibleItems.count)"
+        hiddenEmptyLabel.isHidden = !hiddenItems.isEmpty
+        visibleEmptyLabel.isHidden = !visibleItems.isEmpty
+    }
 
-        statusLabel.stringValue = String(format: "Moving %@…".localized, item.primaryName)
-        refreshButton.isEnabled = false
-        postCommandDrag(from: item.center, to: CGPoint(x: targetX, y: item.center.y)) { [weak self] in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                self?.refresh()
+    // Updates the lists at once, then makes the real menu bar match in the
+    // background. A quiet re-scan afterwards corrects the lists if macOS put
+    // the item somewhere else.
+    private func move(_ item: ManagedMenuBarItem, to table: NSTableView, row: Int) {
+        let toHidden = table === hiddenTable
+        let fromTable = item.section == .hidden ? hiddenTable : visibleTable
+        let destinationIDs = MenuBarItemMovePlan.inserting(item.id, into: items(for: table).map(\.id), aboveRow: row)
+        guard let newIndex = destinationIDs.firstIndex(of: item.id) else { return }
+        let oldIndex = items(for: fromTable).firstIndex { $0.id == item.id }
+        if fromTable === table && oldIndex == newIndex { return }
+
+        let movedItem = item.moved(to: toHidden ? .hidden : .visible)
+        let lookup = Dictionary((hiddenItems + visibleItems).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let destination = destinationIDs.compactMap { $0 == item.id ? movedItem : lookup[$0] }
+        let anchor = MenuBarItemMovePlan.anchor(for: item.id, in: destinationIDs)
+        let anchorElement: AXUIElement? = {
+            switch anchor {
+            case .before(let id), .after(let id): return lookup[id]?.element
+            case .emptyList: return nil
+            }
+        }()
+
+        if fromTable === table {
+            setItems(destination, for: table)
+            if let oldIndex { table.moveRow(at: oldIndex, to: newIndex) }
+        } else {
+            setItems(items(for: fromTable).filter { $0.id != item.id }, for: fromTable)
+            setItems(destination, for: table)
+            if let oldIndex { fromTable.removeRows(at: IndexSet(integer: oldIndex), withAnimation: .effectFade) }
+            table.insertRows(at: IndexSet(integer: newIndex), withAnimation: .effectGap)
+        }
+        updateCounts()
+
+        movesInFlight += 1
+        let element = item.element
+        // An empty list has no neighbour; aim at Tuckaway's own boundary item
+        // instead: the separator (or, on macOS 27, the arrow) for Hidden, the
+        // arrow for Visible.
+        let side: MenuBarDropSide
+        switch anchor {
+        case .before: side = .before
+        case .after: side = .after
+        case .emptyList: side = toHidden ? .before : .after
+        }
+        moveQueue.async { [weak self] in
+            let settled = MenuBarItemDragger.move(element, side, of: anchorElement) {
+                DispatchQueue.main.sync {
+                    let layout = (NSApp.delegate as? AppDelegate)?.statusBarController.currentManagementLayout()
+                    return toHidden ? layout?.separatorFrame : layout?.expandCollapseFrame
+                }
+            }
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.movesInFlight -= 1
+                if !settled {
+                    self.statusLabel.stringValue = String(format: "Couldn’t place %@ exactly; the lists show where it ended up.".localized, item.primaryName)
+                }
+                if self.movesInFlight == 0 {
+                    self.refresh(quiet: true)
+                }
             }
         }
     }
 
-    private func postCommandDrag(from source: CGPoint, to target: CGPoint, completion: @escaping () -> Void) {
-        let sourcePoint = source
-        let targetPoint = target
-        let events: [(CGEventType, CGPoint)] = [
-            (.mouseMoved, sourcePoint),
-            (.leftMouseDown, sourcePoint),
-            (.leftMouseDragged, targetPoint),
-            (.leftMouseUp, targetPoint)
-        ]
-        for (index, eventSpec) in events.enumerated() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.08) {
-                guard let event = CGEvent(mouseEventSource: nil, mouseType: eventSpec.0, mouseCursorPosition: eventSpec.1, mouseButton: .left) else { return }
-                event.flags = .maskCommand
-                event.post(tap: .cghidEventTap)
-                if index == events.count - 1 { completion() }
-            }
-        }
+    private func setItems(_ items: [ManagedMenuBarItem], for table: NSTableView) {
+        if table === hiddenTable { hiddenItems = items } else { visibleItems = items }
     }
 }
 
