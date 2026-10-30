@@ -25,6 +25,7 @@
 		3CF14C82221FA49D0083D42B /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF14C81221FA49D0083D42B /* PreferencesWindowController.swift */; };
 		4D8C4B09D62D4884B34E1A14 /* NotchOverflowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE73DB4E0664488997EEB6DE /* NotchOverflowController.swift */; };
 		70F996B8AD634F42175AE89C /* NotchOverflowPreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06495EE4F823D325A44A357C /* NotchOverflowPreferencesTests.swift */; };
+		C3D4E5F6071829304A5B6C07 /* LaunchPreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6071829304A5B6C03 /* LaunchPreferencesTests.swift */; };
 		73B9E6554B24487EA995C7C3 /* MenuBarLayoutResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE30458A6074188B93CD466 /* MenuBarLayoutResolverTests.swift */; };
 		8557996B406181A91CBF5917 /* MenuBarExtraClassifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6D80CB37CBB7622AC8455D /* MenuBarExtraClassifierTests.swift */; };
 		6C0A10012DEBF00100A5E001 /* HiddenItemsBarPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C0A10002DEBF00100A5E001 /* HiddenItemsBarPanelController.swift */; };
@@ -95,6 +96,7 @@
 		00117C4326600671005E517C /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
 		00137CDE24A63DB1004AC855 /* Notification.Name+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification.Name+Extension.swift"; sourceTree = "<group>"; };
 		06495EE4F823D325A44A357C /* NotchOverflowPreferencesTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotchOverflowPreferencesTests.swift; sourceTree = "<group>"; };
+		C3D4E5F6071829304A5B6C03 /* LaunchPreferencesTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LaunchPreferencesTests.swift; sourceTree = "<group>"; };
 		0842CDFA23A9FDD000D14BD4 /* GlobalKeybindingPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalKeybindingPreferences.swift; sourceTree = "<group>"; };
 		08A5F85923AA007A00981CA5 /* PreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 		7A4D10002E10000100B4A001 /* MenuBarItemManagerWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItemManagerWindowController.swift; sourceTree = "<group>"; };
@@ -305,6 +307,7 @@
 				ACE30458A6074188B93CD466 /* MenuBarLayoutResolverTests.swift */,
 				E3BF69BE15B7DE0272612470 /* NotchOverflowMenuBuilderTests.swift */,
 				06495EE4F823D325A44A357C /* NotchOverflowPreferencesTests.swift */,
+				C3D4E5F6071829304A5B6C03 /* LaunchPreferencesTests.swift */,
                 AABBDD112233445566778802 /* GlobalShortcutTests.swift */,
 			);
 			name = TuckawayTests;
@@ -578,6 +581,7 @@
 				73B9E6554B24487EA995C7C3 /* MenuBarLayoutResolverTests.swift in Sources */,
 				0C57EC38D13980EBF7C9BBDA /* NotchOverflowMenuBuilderTests.swift in Sources */,
 				70F996B8AD634F42175AE89C /* NotchOverflowPreferencesTests.swift in Sources */,
+				C3D4E5F6071829304A5B6C07 /* LaunchPreferencesTests.swift in Sources */,
                 AABBDD112233445566778801 /* GlobalShortcutTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
