@@ -173,7 +173,7 @@ class StatusBarController: MenuBarItemProvider {
         setupUI()
         restoreRemovedStatusItems()
         setupAlwayHideStatusBar()
-        setupConfigurationDragMonitor()
+        updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
         NotificationCenter.default.addObserver(self, selector: #selector(handleScreenParametersChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
@@ -679,6 +679,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     @objc func updateAutoHide() {
+        updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
         if !Preferences.showHiddenItemsInSeparateBar {
@@ -726,11 +727,19 @@ class StatusBarController: MenuBarItemProvider {
 
 //MARK: - Configuration drag support
 extension StatusBarController {
-    private func setupConfigurationDragMonitor() {
-        configurationDragMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDragged, .leftMouseUp]) { [weak self] event in
-            DispatchQueue.main.async {
+    // Only the separate hidden-items bar needs to see drags, and this monitor
+    // sees every left drag in every app, so install it only while that's on.
+    // Global monitors already run on the main thread.
+    private func updateConfigurationDragMonitor() {
+        if Preferences.showHiddenItemsInSeparateBar {
+            guard configurationDragMonitor == nil else { return }
+            configurationDragMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDragged, .leftMouseUp]) { [weak self] event in
                 self?.handleConfigurationDragEvent(event)
             }
+        } else if let configurationDragMonitor {
+            NSEvent.removeMonitor(configurationDragMonitor)
+            self.configurationDragMonitor = nil
+            isTemporarilyExpandedForConfigurationDrag = false
         }
     }
 
@@ -850,10 +859,7 @@ extension StatusBarController {
     }
 
     private func canCaptureScreenForSeparatePanel() -> Bool {
-        if #available(OSX 10.15, *) {
-            return CGPreflightScreenCaptureAccess()
-        }
-        return true
+        CGPreflightScreenCaptureAccess()
     }
 
     private func restoreInlineMenuBarAfterInvalidSeparatePosition() {
