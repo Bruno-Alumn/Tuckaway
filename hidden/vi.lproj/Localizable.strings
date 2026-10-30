@@ -6,6 +6,8 @@
 */
 
 /* Menu bar: arrow and separator menu */
+"Show hidden icons" = "Hiện biểu tượng bị ẩn";
+"Hide icons" = "Ẩn biểu tượng";
 "Auto-collapse" = "Tự động thu gọn";
 "Show separators" = "Hiện dấu phân cách";
 "Hide separators" = "Ẩn dấu phân cách";
