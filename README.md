@@ -44,9 +44,9 @@ affiliated with or endorsed by Hidden Bar's maintainers.
 
 ## Install
 
-1. Download **Tuckaway.zip** from the
+1. Download **Tuckaway.dmg** from the
    [latest release](https://github.com/Bruno-Alumn/Tuckaway/releases/latest).
-2. Unzip it and drag **Tuckaway.app** into **Applications**.
+2. Open it and drag **Tuckaway** onto the **Applications** folder.
 3. Open it. If macOS says it can't verify the developer, go to
    **System Settings › Privacy & Security** and choose **Open Anyway**.
    Releases are ad-hoc signed for now; notarization is planned.
