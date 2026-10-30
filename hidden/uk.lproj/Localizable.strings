@@ -2,22 +2,124 @@
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Keys are the English source text used in code (some keys are older wording;
+  the value is what's shown). Every key here is used; keep the 12 other
+  languages in step when adding one.
 */
 
-"Preferences..." = "Налаштування...";
-"Toggle Auto Collapse" = "Перемкнути Авто Згортання";
-"Enable Auto Collapse" = "Ввімкнути Авто Згортання";
-"Disable Auto Collapse" = "Вимкнути Авто Згортання";
-"Quit" = "Вийти";
-"Set Shortcut" = "Введіть шорткат";
-"Tutorial text" = "
-Використовуйте функцію 'завжди згорнено' для порядку у менюбарі. Ось як її ввімкнути
-Кроки для ввімкнення:
-1. Ввімкніть завжди заховану “􀥤” (напівпрозора вертикальна смуга)
-2. Зажміть 􀆔 і перетягніть її до лівої частини смуги меню, потім перетягніть іконки які ви хочете щоб були сховані до ліва від вертикальної смуги.
-3. І накінець, натисніть на іконку ховання “􀆊” правою кнопкою миші щоб її сховати.
-Кроки для перегляду завжди схованих іконок:
-1. Ви натискаєте на “􀆊” іконку для перегляду і повторіть дію для ввімкнення функції. Насолоджуйтесь 😉!
-";
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "Автозгортання";
+"Show separators" = "Показати роздільники";
+"Hide separators" = "Сховати роздільники";
+"Manage Menu Bar Items…" = "Керувати елементами смуги меню…";
+"Check for Updates…" = "Перевірити наявність оновлень…";
+"Settings…" = "Параметри…";
+"Quit Tuckaway" = "Вийти з Tuckaway";
+"Show Notch Items" = "Показати елементи за вирізом";
+"Notch Overflow" = "Переповнення вирізу";
+"Hidden Behind Notch (%d)" = "Сховано за вирізом (%d)";
+"Visible (%d)" = "Видимі (%d)";
+"No items found (grant Accessibility permission)" = "Елементів не знайдено (надайте дозвіл «Доступність»)";
+"Hidden items unavailable" = "Сховані елементи недоступні";
+"Show hidden items in separate bar" = "Показувати сховані елементи в окремій смузі";
+
+/* Settings window tabs */
+"General" = "Загальні";
+"Menu Bar Items" = "Елементи смуги меню";
+"About" = "Про програму";
+
+/* General settings */
+"Hiding" = "Приховування";
+"Automatically hide icon after: " = "Згортати через";
+"5 seconds" = "5 секунд";
+"10 seconds" = "10 секунд";
+"15 seconds" = "15 секунд";
+"30 seconds" = "30 секунд";
+"1 minute" = "1 хвилину";
+"Collapse when another app becomes active" = "Згортати при зміні програми";
+"Revealing" = "Показ";
+"Expand by hovering over the menu bar" = "Розгортати при наведенні";
+"Click empty menu bar to show or hide icons" = "Перемикати клацанням по порожній смузі меню";
+"Expand when an external display is connected" = "Розгортати із зовнішнім дисплеєм";
+"Shortcut" = "Скорочення";
+"Set Shortcut" = "Задати скорочення";
+"Type Shortcut…" = "Введіть скорочення…";
+"Clear" = "Очистити";
+"Appearance" = "Вигляд";
+"Expand icon" = "Значок розгортання";
+"Standard" = "Стандартний";
+"Transparent" = "Прозорий";
+"Ellipsis" = "Три крапки";
+"Use the full MenuBar on expanding" = "Розгортати на всю смугу меню";
+"Extra Sections" = "Додаткові розділи";
+"Enable always hidden section" = "Завжди схований розділ";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Значки за вирізом";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Розмістіть роздільник завжди схованого розділу ліворуч від стрілки, а потім перетягніть значки ліворуч від нього, утримуючи ⌘. Клацніть стрілку, утримуючи Option, щоб сховати або показати цей розділ.";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Розмістіть роздільник завжди схованого розділу ліворуч від звичайного роздільника, а потім перетягніть значки ліворуч від нього, утримуючи ⌘. Клацніть стрілку, утримуючи Option, щоб сховати або показати цей розділ.";
+"Startup" = "Запуск";
+"Start Tuckaway when I log in" = "Запускати під час входу";
+"Show preferences on launch" = "Відкривати параметри під час запуску";
+"Could not update the login item" = "Не вдалося оновити елемент входу";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "Відкрийте «Системні параметри» > «Загальні» > «Елементи входу» і переконайтеся, що Tuckaway дозволено.";
+"Updates" = "Оновлення";
+"Check for updates automatically" = "Автоматично перевіряти оновлення";
+"Check Now" = "Перевірити";
+
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️Завжди сховані";
+"Hidden" = "Сховані";
+"Shown" = "Показані";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "Утримуйте ⌘ і перетягніть значки ліворуч від стрілки, щоб сховати їх.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Щоб налаштувати Tuckaway, утримуйте ⌘ у смузі меню Mac\nі перетягуйте значки між розділами.";
+"Tuckaway needs Accessibility access to hide icons." = "Tuckaway потребує доступу до функції «Доступність», щоб ховати значки.";
+"Open Settings…" = "Відкрити Параметри…";
+
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "Перетягуйте елементи в межах списку, щоб змінити порядок, або між списками, щоб змінити видимість.";
+"Visible" = "Видимі";
+"Refresh" = "Оновити";
+"Grant Access" = "Надати доступ";
+"Enable Tuckaway in System Settings, then return and refresh." = "Увімкніть Tuckaway у Системних параметрах, потім поверніться й оновіть.";
+"Scanning menu bar items…" = "Пошук елементів смуги меню…";
+"Accessibility permission is required to list and move menu bar items." = "Щоб показувати й переміщати елементи смуги меню, потрібен дозвіл «Доступність».";
+"No manageable menu bar items were found." = "Не знайдено елементів смуги меню, якими можна керувати.";
+"Drop an item to apply the real menu bar position." = "Зміни застосовуються до смуги меню, щойно ви відпустите елемент.";
+"Drop items here" = "Перетягніть елементи сюди";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "Не вдалося точно розмістити %@; списки показують, де опинився елемент.";
+"Unknown" = "Невідомо";
+
+/* About tab */
+"Version" = "Версія";
+"Tidy your Mac’s menu bar." = "Наведіть лад у смузі меню Mac.";
+"Source code" = "Вихідний код";
+"Report an issue" = "Повідомити про проблему";
+"Independent MIT-licensed fork of Hidden Bar" = "Незалежний форк Hidden Bar за ліцензією MIT";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "Оригінальна робота © Dwarves Foundation · Зміни Tuckaway © Bruno-Alumn";
+
+/* App Store build on macOS 27 (#360) */
+"Hiding unavailable on macOS 27 - Learn more" = "Ця версія не може ховати значки в macOS 27 – завантажте пряму версію";
+"Menu bar hiding isn't available on macOS 27" = "Ця версія Tuckaway не може ховати значки в macOS 27";
+"macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "macOS 27 ховає значки смуги меню по-новому, і версія з App Store, що працює в пісочниці, не може цим скористатися. Версія Tuckaway для прямого завантаження це підтримує — завантажте її з GitHub, щоб і далі ховати значки.";
+"Learn More" = "Завантажити пряму версію";
+"OK" = "OK";
+
+/* Updater */
+"Version %@" = "Версія %@";
+"Couldn’t check for updates" = "Не вдалося перевірити оновлення";
+"Make sure you’re connected to the internet, then try again." = "Переконайтеся, що ви підʼєднані до інтернету, і спробуйте ще раз.";
+"You’re up to date" = "У вас найновіша версія";
+"Tuckaway %@ is the latest version." = "Tuckaway %@ — найновіша версія.";
+"Tuckaway %@ is available" = "Доступна версія Tuckaway %@";
+"You have version %@." = "У вас версія %@.";
+"Install and Relaunch" = "Інсталювати й перезапустити";
+"Download" = "Завантажити";
+"Later" = "Пізніше";
+"Skip This Version" = "Пропустити цю версію";
+"Update installed" = "Оновлення інстальовано";
+"Quit and reopen Tuckaway to finish updating." = "Вийдіть із Tuckaway і відкрийте знову, щоб завершити оновлення.";
+"The update couldn’t be installed" = "Не вдалося інсталювати оновлення";
+"The download didn’t finish. You can download the update from GitHub instead." = "Завантаження не завершилося. Натомість можна завантажити оновлення з GitHub.";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "Завантажений файл не містить дійсної копії Tuckaway, тож нічого не змінено. Натомість можна завантажити оновлення з GitHub.";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway не вдалося замінити себе в поточній папці. Натомість можна завантажити оновлення з GitHub.";
+"Open Release Page" = "Відкрити сторінку випуску";
+"Cancel" = "Скасувати";

@@ -1,50 +1,125 @@
-/* 
+/*
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Keys are the English source text used in code (some keys are older wording;
+  the value is what's shown). Every key here is used; keep the 12 other
+  languages in step when adding one.
 */
 
-"Preferences..." = "Réglages...";
-"Toggle Auto Collapse" = "Activer la réduction automatique";
-"Enable Auto Collapse" = "Activer la réduction automatique";
-"Disable Auto Collapse" = "Désactiver la réduction automatique";
-"Quit" = "Quitter";
-"Set Shortcut" = "Définir un raccourci";
-"Tutorial text" = "
-Utilisez la fonction de section toujours cachée pour garder vos icônes bien rangées.
-Étapes pour activer:
-1. Activez le «|» toujours masqué (barre de couleur translucide)
-2. Maintenez ⌘ et faites-le glisser sur le côté gauche de la barre normale, puis déplacez les icônes que vous souhaitez faire disparaître sur la gauche de cette barre.
-3. Enfin, maintenez ⌥ Option et cliquez sur l'icône de réduction «<» pour la faire disparaître.
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "Réduction automatique";
+"Show separators" = "Afficher les séparateurs";
+"Hide separators" = "Masquer les séparateurs";
+"Manage Menu Bar Items…" = "Gérer les éléments de la barre des menus…";
+"Check for Updates…" = "Rechercher les mises à jour…";
+"Settings…" = "Réglages…";
+"Quit Tuckaway" = "Quitter Tuckaway";
+"Show Notch Items" = "Afficher les éléments sous l’encoche";
+"Notch Overflow" = "Sous l’encoche";
+"Hidden Behind Notch (%d)" = "Masqués sous l’encoche (%d)";
+"Visible (%d)" = "Visibles (%d)";
+"No items found (grant Accessibility permission)" = "Aucun élément trouvé (autorisez l’accès à Accessibilité)";
+"Hidden items unavailable" = "Éléments masqués indisponibles";
+"Show hidden items in separate bar" = "Afficher les éléments masqués dans une barre distincte";
 
-Étapes pour afficher les icônes toujours masquées:
-1. Cliquez à nouveau sur l'icône «<» en maintenant ⌥ Option pour afficher et répéter l'action pour activer la fonction. Profitez 😉!
-";
-"Disable Auto Collapse" = "Désactiver la réduction automatique";
+/* Settings window tabs */
+"General" = "Général";
+"Menu Bar Items" = "Éléments de la barre des menus";
+"About" = "À propos";
 
-/* General settings (moved from Main.storyboard) */
-"Start Tuckaway when I log in" = "Démarrer automatiquement Tuckaway lors de la connexion";
-"Show preferences on launch" = "Afficher les réglages au lancement";
-"Use the full MenuBar on expanding" = "Utiliser toute la barre de menu lors du développement";
-"Enable always hidden section" = "Activer la section toujours cachée";
-"Automatically hide icon after: " = "Masquer automatiquement l'icône après: ";
-"Global Shortcut" = "Raccourci global";
-"Hidden" = "Cachés";
-"Shown" = "Montrés";
-"⭐️Always Hidden" = "⭐️Always Hidden";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Dans la barre des menus de votre Mac, maintenez la touche ⌘ et\nfaites glisser les icônes entre les sections pour configurer Tuckaway.";
+/* General settings */
+"Hiding" = "Masquage";
+"Automatically hide icon after: " = "Réduire après";
 "5 seconds" = "5 secondes";
 "10 seconds" = "10 secondes";
 "15 seconds" = "15 secondes";
 "30 seconds" = "30 secondes";
 "1 minute" = "1 minute";
+"Collapse when another app becomes active" = "Réduire au changement d’app";
+"Revealing" = "Affichage";
+"Expand by hovering over the menu bar" = "Développer au survol";
+"Click empty menu bar to show or hide icons" = "Basculer en cliquant sur la barre vide";
+"Expand when an external display is connected" = "Développer avec un écran externe";
+"Shortcut" = "Raccourci";
+"Set Shortcut" = "Définir un raccourci";
+"Type Shortcut…" = "Saisissez le raccourci…";
+"Clear" = "Effacer";
+"Appearance" = "Apparence";
+"Expand icon" = "Icône de développement";
+"Standard" = "Standard";
+"Transparent" = "Transparente";
+"Ellipsis" = "Points de suspension";
+"Use the full MenuBar on expanding" = "Développer sur toute la barre";
+"Extra Sections" = "Sections supplémentaires";
+"Enable always hidden section" = "Section toujours masquée";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Icônes sous l’encoche";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Placez le séparateur « toujours masqué » à gauche de la flèche, puis faites glisser des icônes à sa gauche en maintenant ⌘. Cliquez sur la flèche en maintenant Option pour masquer ou afficher cette section.";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Placez le séparateur « toujours masqué » à gauche du séparateur normal, puis faites glisser des icônes à sa gauche en maintenant ⌘. Cliquez sur la flèche en maintenant Option pour masquer ou afficher cette section.";
+"Startup" = "Démarrage";
+"Start Tuckaway when I log in" = "Ouvrir à la connexion";
+"Show preferences on launch" = "Afficher les réglages au lancement";
+"Could not update the login item" = "Impossible de mettre à jour l’élément d’ouverture";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "Vérifiez dans Réglages Système > Général > Ouverture que Tuckaway est autorisé.";
+"Updates" = "Mises à jour";
+"Check for updates automatically" = "Rechercher les mises à jour automatiquement";
+"Check Now" = "Rechercher";
 
-"General" = "Général";
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️Toujours masqués";
+"Hidden" = "Masqués";
+"Shown" = "Affichés";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "Maintenez ⌘ et faites glisser des icônes à gauche de la flèche pour les masquer.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Dans la barre des menus de votre Mac, maintenez ⌘ et faites glisser\nles icônes entre les sections pour configurer Tuckaway.";
+"Tuckaway needs Accessibility access to hide icons." = "Tuckaway a besoin de l’accès à Accessibilité pour masquer les icônes.";
+"Open Settings…" = "Ouvrir les réglages…";
 
-"About" = "À propos";
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "Faites glisser les éléments dans une liste pour les réordonner, ou d’une liste à l’autre pour changer leur visibilité.";
+"Visible" = "Visibles";
+"Refresh" = "Actualiser";
+"Grant Access" = "Autoriser l’accès";
+"Enable Tuckaway in System Settings, then return and refresh." = "Activez Tuckaway dans Réglages Système, puis revenez et actualisez.";
+"Scanning menu bar items…" = "Recherche des éléments de la barre des menus…";
+"Accessibility permission is required to list and move menu bar items." = "L’accès à Accessibilité est nécessaire pour lister et déplacer les éléments de la barre des menus.";
+"No manageable menu bar items were found." = "Aucun élément gérable n’a été trouvé dans la barre des menus.";
+"Drop an item to apply the real menu bar position." = "Les changements s’appliquent à la barre des menus dès que vous relâchez.";
+"Drop items here" = "Déposez des éléments ici";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "Impossible de placer %@ exactement ; les listes indiquent sa position finale.";
+"Unknown" = "Inconnu";
 
-"Menu bar cleaner" = "Nettoyeur de la barre de menu";
-
+/* About tab */
 "Version" = "Version";
+"Tidy your Mac’s menu bar." = "Rangez la barre des menus de votre Mac.";
+"Source code" = "Code source";
+"Report an issue" = "Signaler un problème";
+"Independent MIT-licensed fork of Hidden Bar" = "Fork indépendant de Hidden Bar sous licence MIT";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "Œuvre originale © Dwarves Foundation · Modifications de Tuckaway © Bruno-Alumn";
+
+/* App Store build on macOS 27 (#360) */
+"Hiding unavailable on macOS 27 - Learn more" = "Cette version ne peut pas masquer les icônes sous macOS 27 – Obtenez la version à télécharger";
+"Menu bar hiding isn't available on macOS 27" = "Cette version de Tuckaway ne peut pas masquer les icônes sous macOS 27";
+"macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "macOS 27 masque les icônes de la barre des menus d’une nouvelle manière que la version sandboxée de l’App Store ne peut pas utiliser. La version à télécharger directement de Tuckaway la prend en charge : téléchargez-la sur GitHub pour continuer à masquer les icônes.";
+"Learn More" = "Obtenir la version directe";
+"OK" = "OK";
+
+/* Updater */
+"Version %@" = "Version %@";
+"Couldn’t check for updates" = "Impossible de rechercher les mises à jour";
+"Make sure you’re connected to the internet, then try again." = "Vérifiez que vous êtes connecté à Internet, puis réessayez.";
+"You’re up to date" = "Tuckaway est à jour";
+"Tuckaway %@ is the latest version." = "Tuckaway %@ est la version la plus récente.";
+"Tuckaway %@ is available" = "Tuckaway %@ est disponible";
+"You have version %@." = "Vous avez la version %@.";
+"Install and Relaunch" = "Installer et relancer";
+"Download" = "Télécharger";
+"Later" = "Plus tard";
+"Skip This Version" = "Ignorer cette version";
+"Update installed" = "Mise à jour installée";
+"Quit and reopen Tuckaway to finish updating." = "Quittez et rouvrez Tuckaway pour terminer la mise à jour.";
+"The update couldn’t be installed" = "Impossible d’installer la mise à jour";
+"The download didn’t finish. You can download the update from GitHub instead." = "Le téléchargement n’a pas abouti. Vous pouvez plutôt télécharger la mise à jour sur GitHub.";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "Le fichier téléchargé ne contenait pas de copie valide de Tuckaway ; rien n’a été modifié. Vous pouvez plutôt télécharger la mise à jour sur GitHub.";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway n’a pas pu se remplacer dans son dossier actuel. Vous pouvez plutôt télécharger la mise à jour sur GitHub.";
+"Open Release Page" = "Ouvrir la page de la version";
+"Cancel" = "Annuler";

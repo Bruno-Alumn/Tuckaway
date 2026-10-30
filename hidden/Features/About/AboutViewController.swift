@@ -36,7 +36,7 @@ private struct AboutSettingsView: View {
                 .scaledToFit()
                 .frame(width: 72, height: 72)
                 .accessibilityHidden(true)
-            Text("Tuckaway")
+            Text(verbatim: "Tuckaway")
                 .font(.title2)
                 .fontWeight(.semibold)
                 .padding(.top, 8)

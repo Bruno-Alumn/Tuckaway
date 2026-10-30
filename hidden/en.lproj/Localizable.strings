@@ -1,24 +1,81 @@
-/* 
+/*
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Keys are the English source text used in code (some keys are older wording;
+  the value is what's shown). Every key here is used; keep the 12 other
+  languages in step when adding one.
 */
 
-"Preferences..." = "Preferences...";
-"Toggle Auto Collapse" = "Toggle Auto Collapse";
-"Enable Auto Collapse" = "Enable Auto Collapse";
-"Disable Auto Collapse" = "Disable Auto Collapse";
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "Auto-collapse";
 "Show separators" = "Show separators";
 "Hide separators" = "Hide separators";
-"Show hidden items in separate bar" = "Show hidden items in separate bar";
-"Hidden items unavailable" = "Hidden items unavailable";
 "Manage Menu Bar Items…" = "Manage Menu Bar Items…";
-"Manage Menu Bar Items" = "Manage Menu Bar Items";
+"Check for Updates…" = "Check for Updates…";
+"Settings…" = "Settings…";
+"Quit Tuckaway" = "Quit Tuckaway";
+"Show Notch Items" = "Show Notch Items";
+"Notch Overflow" = "Notch Overflow";
+"Hidden Behind Notch (%d)" = "Hidden Behind Notch (%d)";
+"Visible (%d)" = "Visible (%d)";
+"No items found (grant Accessibility permission)" = "No items found (grant Accessibility permission)";
+"Hidden items unavailable" = "Hidden items unavailable";
+"Show hidden items in separate bar" = "Show hidden items in separate bar";
+
+/* Settings window tabs */
+"General" = "General";
 "Menu Bar Items" = "Menu Bar Items";
-"Drag items within a list to reorder them, or between lists to change visibility." = "Drag items within a list to reorder them, or between lists to change visibility.";
+"About" = "About";
+
+/* General settings */
+"Hiding" = "Hiding";
+"Automatically hide icon after: " = "Collapse after";
+"5 seconds" = "5 seconds";
+"10 seconds" = "10 seconds";
+"15 seconds" = "15 seconds";
+"30 seconds" = "30 seconds";
+"1 minute" = "1 minute";
+"Collapse when another app becomes active" = "Collapse on app switch";
+"Revealing" = "Revealing";
+"Expand by hovering over the menu bar" = "Hover to expand";
+"Click empty menu bar to show or hide icons" = "Toggle by clicking empty menu bar";
+"Expand when an external display is connected" = "Expand with an external display";
+"Shortcut" = "Shortcut";
+"Set Shortcut" = "Set Shortcut";
+"Type Shortcut…" = "Type Shortcut…";
+"Clear" = "Clear";
+"Appearance" = "Appearance";
+"Expand icon" = "Expand icon";
+"Standard" = "Standard";
+"Transparent" = "Transparent";
+"Ellipsis" = "Ellipsis";
+"Use the full MenuBar on expanding" = "Expand across full menu bar";
+"Extra Sections" = "Extra Sections";
+"Enable always hidden section" = "Always-hidden section";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Icons behind the notch";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section.";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section.";
+"Startup" = "Startup";
+"Start Tuckaway when I log in" = "Launch at login";
+"Show preferences on launch" = "Open settings on launch";
+"Could not update the login item" = "Could not update the login item";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "Check System Settings > General > Login Items and make sure Tuckaway is allowed.";
+"Updates" = "Updates";
+"Check for updates automatically" = "Check for updates automatically";
+"Check Now" = "Check Now";
+
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️Always Hidden";
 "Hidden" = "Hidden";
+"Shown" = "Shown";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "Hold ⌘ and drag icons to the left of the arrow to hide them.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway.";
+"Tuckaway needs Accessibility access to hide icons." = "Tuckaway needs Accessibility access to hide icons.";
+"Open Settings…" = "Open Settings…";
+
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "Drag items within a list to reorder them, or between lists to change visibility.";
 "Visible" = "Visible";
 "Refresh" = "Refresh";
 "Grant Access" = "Grant Access";
@@ -27,80 +84,26 @@
 "Accessibility permission is required to list and move menu bar items." = "Accessibility permission is required to list and move menu bar items.";
 "No manageable menu bar items were found." = "No manageable menu bar items were found.";
 "Drop an item to apply the real menu bar position." = "Changes apply to your menu bar as soon as you drop.";
+"Drop items here" = "Drop items here";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "Couldn’t place %@ exactly; the lists show where it ended up.";
 "Unknown" = "Unknown";
-"Quit" = "Quit";
-"Set Shortcut" = "Set Shortcut";
-"Show Notch Items" = "Show Notch Items";
-"Notch Overflow" = "Notch Overflow";
-"Hidden Behind Notch (%d)" = "Hidden Behind Notch (%d)";
-"Visible (%d)" = "Visible (%d)";
-"No items found (grant Accessibility permission)" = "No items found (grant Accessibility permission)";
-"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Icons behind the notch";
 
-/* macOS 27 hide-mechanism degrade notice (#360). English-only for now; translations welcome. */
+/* About tab */
+"Version" = "Version";
+"Tidy your Mac’s menu bar." = "Tidy your Mac’s menu bar.";
+"Source code" = "Source code";
+"Report an issue" = "Report an issue";
+"Independent MIT-licensed fork of Hidden Bar" = "Independent MIT-licensed fork of Hidden Bar";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn";
+
+/* App Store build on macOS 27 (#360) */
 "Hiding unavailable on macOS 27 - Learn more" = "This version can't hide icons on macOS 27 – Get the direct download";
 "Menu bar hiding isn't available on macOS 27" = "This version of Tuckaway can't hide icons on macOS 27";
 "macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "macOS 27 hides menu-bar icons in a new way that the sandboxed App Store version can't use. The direct-download version of Tuckaway supports it — download it from GitHub to keep hiding icons.";
 "Learn More" = "Get Direct Download";
 "OK" = "OK";
-"Tutorial text" = "
-Use the always hidden feature to keep your icons tidy. Here's how to set it
-Steps to enable:
-1. Enable the always hidden “|” (translucent color bar)
-2. Hold  ⌘ and drag it on the left-hand side of the normal bar, then move any icons you want to disappear on the left of that bar.
-3. Finally, hold ⌥ Option and click the collapse “<” icon to make it disappear.
-Steps to view always hidden icons:
-1. Option-click the “<” icon again to view and repeat the action to enable the feature. Enjoy 😉!
-";
-
-"Tuckaway needs Accessibility access to hide icons." = "Tuckaway needs Accessibility access to hide icons.";
-"Open Settings…" = "Open Settings…";
-"Hold ⌘ and drag icons to the left of the arrow to hide them." = "Hold ⌘ and drag icons to the left of the arrow to hide them.";
-"Accessibility access needed" = "Accessibility access needed";
-"Type Shortcut…" = "Type Shortcut…";
-"Clear" = "Clear";
-
-"Automatically hide icon after: " = "Collapse after";
-"Collapse when another app becomes active" = "Collapse on app switch";
-"Use transparent expand icon" = "Transparent expand icon";
-"Click empty menu bar to show or hide icons" = "Toggle by clicking empty menu bar";
-"Expand by hovering over the menu bar" = "Hover to expand";
-"Expand icon" = "Expand icon";
-"Standard" = "Standard";
-"Transparent" = "Transparent";
-"Ellipsis" = "Ellipsis";
-"Use the full MenuBar on expanding" = "Expand across full menu bar";
-"Expand when an external display is connected" = "Expand with an external display";
-"Enable always hidden section" = "Always-hidden section";
-"Always-hidden section help" = "Always-hidden section help";
-"Right-click the arrow to access icons behind the notch." = "Right-click the arrow to access icons behind the notch.";
-
-"Startup" = "Startup";
-"Menu Bar" = "Menu Bar";
-
-"Shortcut" = "Shortcut";
-
-"Start Tuckaway when I log in" = "Launch at login";
-"Show preferences on launch" = "Open settings on launch";
-
-"Auto-hide delay" = "Auto-hide delay";
-
-/* Compact settings redesign */
-"Settings…" = "Settings…";
-"Quit Tuckaway" = "Quit Tuckaway";
-"Auto-collapse" = "Auto-collapse";
-"Hiding" = "Hiding";
-"Revealing" = "Revealing";
-"Appearance" = "Appearance";
-"Extra Sections" = "Extra Sections";
-"Drop items here" = "Drop items here";
-"Couldn’t place %@ exactly; the lists show where it ended up." = "Couldn’t place %@ exactly; the lists show where it ended up.";
 
 /* Updater */
-"Updates" = "Updates";
-"Check for updates automatically" = "Check for updates automatically";
-"Check Now" = "Check Now";
-"Check for Updates…" = "Check for Updates…";
 "Version %@" = "Version %@";
 "Couldn’t check for updates" = "Couldn’t check for updates";
 "Make sure you’re connected to the internet, then try again." = "Make sure you’re connected to the internet, then try again.";

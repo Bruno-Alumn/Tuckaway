@@ -2,24 +2,124 @@
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Keys are the English source text used in code (some keys are older wording;
+  the value is what's shown). Every key here is used; keep the 12 other
+  languages in step when adding one.
 */
 
-"Preferences..." = "Preferenze...";
-"Toggle Auto Collapse" = "Contrazione automatica";
-"Enable Auto Collapse" = "Abilita contrazione automatica";
-"Disable Auto Collapse" = "Disabilita contrazione automatica";
-"Quit" = "Chiudi";
-"Set Shortcut" = "Imposta scorciatoia";
-"Tutorial text" = "
-Usa la sezione sempre nascosta per tenere le tue icone in ordine, ecco come impostarla.
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "Riduzione automatica";
+"Show separators" = "Mostra separatori";
+"Hide separators" = "Nascondi separatori";
+"Manage Menu Bar Items…" = "Gestisci elementi della barra dei menu…";
+"Check for Updates…" = "Verifica aggiornamenti…";
+"Settings…" = "Impostazioni…";
+"Quit Tuckaway" = "Esci da Tuckaway";
+"Show Notch Items" = "Mostra elementi sotto il notch";
+"Notch Overflow" = "Sotto il notch";
+"Hidden Behind Notch (%d)" = "Nascosti sotto il notch (%d)";
+"Visible (%d)" = "Visibili (%d)";
+"No items found (grant Accessibility permission)" = "Nessun elemento trovato (concedi l’accesso ad Accessibilità)";
+"Hidden items unavailable" = "Elementi nascosti non disponibili";
+"Show hidden items in separate bar" = "Mostra elementi nascosti in una barra separata";
 
-Passi per abilitarla:
-1. Abilita la sezione sempre nascosta “􀥤” (barra trasparente)
-2. Tieni premuta la barra trasparente e trascinala sulla parte sinistra della barra classica, poi muovi ogni icona che vuoi far scomparire sulla sinistra della barra trasparente.
-3. In fine, clicca col tasto destro sull'icona di contrazione “􀆊” per farla scomparire.
+/* Settings window tabs */
+"General" = "Generali";
+"Menu Bar Items" = "Elementi della barra dei menu";
+"About" = "Info";
 
-Passi per mostrare la sezione sempre nascosta:
-1. Clicca col tasto destro sull'icona “􀆊” per mostrarla e ripeti il passaggio per abilitare la funzione. Buon divertimento 😉!
-";
+/* General settings */
+"Hiding" = "Nascondi";
+"Automatically hide icon after: " = "Riduci dopo";
+"5 seconds" = "5 secondi";
+"10 seconds" = "10 secondi";
+"15 seconds" = "15 secondi";
+"30 seconds" = "30 secondi";
+"1 minute" = "1 minuto";
+"Collapse when another app becomes active" = "Riduci al cambio di app";
+"Revealing" = "Mostra";
+"Expand by hovering over the menu bar" = "Espandi al passaggio del puntatore";
+"Click empty menu bar to show or hide icons" = "Alterna facendo clic sulla barra vuota";
+"Expand when an external display is connected" = "Espandi con un monitor esterno";
+"Shortcut" = "Abbreviazione";
+"Set Shortcut" = "Imposta abbreviazione";
+"Type Shortcut…" = "Digita abbreviazione…";
+"Clear" = "Cancella";
+"Appearance" = "Aspetto";
+"Expand icon" = "Icona di espansione";
+"Standard" = "Standard";
+"Transparent" = "Trasparente";
+"Ellipsis" = "Puntini di sospensione";
+"Use the full MenuBar on expanding" = "Espandi su tutta la barra dei menu";
+"Extra Sections" = "Sezioni aggiuntive";
+"Enable always hidden section" = "Sezione sempre nascosta";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Icone sotto il notch";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Posiziona il separatore “sempre nascosto” a sinistra della freccia, poi trascina le icone alla sua sinistra tenendo premuto ⌘. Fai clic sulla freccia tenendo premuto Opzione per nascondere o mostrare quella sezione.";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Posiziona il separatore “sempre nascosto” a sinistra del separatore normale, poi trascina le icone alla sua sinistra tenendo premuto ⌘. Fai clic sulla freccia tenendo premuto Opzione per nascondere o mostrare quella sezione.";
+"Startup" = "Avvio";
+"Start Tuckaway when I log in" = "Apri al login";
+"Show preferences on launch" = "Apri impostazioni all’avvio";
+"Could not update the login item" = "Impossibile aggiornare l’elemento login";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "Controlla in Impostazioni di Sistema > Generali > Elementi login che Tuckaway sia consentito.";
+"Updates" = "Aggiornamenti";
+"Check for updates automatically" = "Verifica aggiornamenti automaticamente";
+"Check Now" = "Verifica ora";
+
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️Sempre nascosti";
+"Hidden" = "Nascosti";
+"Shown" = "Visibili";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "Tieni premuto ⌘ e trascina le icone a sinistra della freccia per nasconderle.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Nella barra dei menu del Mac, tieni premuto ⌘ e trascina le icone\ntra le sezioni per configurare Tuckaway.";
+"Tuckaway needs Accessibility access to hide icons." = "Tuckaway ha bisogno dell’accesso ad Accessibilità per nascondere le icone.";
+"Open Settings…" = "Apri Impostazioni…";
+
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "Trascina gli elementi all’interno di un elenco per riordinarli, o tra gli elenchi per cambiarne la visibilità.";
+"Visible" = "Visibili";
+"Refresh" = "Aggiorna";
+"Grant Access" = "Concedi accesso";
+"Enable Tuckaway in System Settings, then return and refresh." = "Abilita Tuckaway in Impostazioni di Sistema, poi torna qui e aggiorna.";
+"Scanning menu bar items…" = "Ricerca degli elementi della barra dei menu…";
+"Accessibility permission is required to list and move menu bar items." = "È necessario l’accesso ad Accessibilità per elencare e spostare gli elementi della barra dei menu.";
+"No manageable menu bar items were found." = "Nessun elemento gestibile trovato nella barra dei menu.";
+"Drop an item to apply the real menu bar position." = "Le modifiche vengono applicate alla barra dei menu appena rilasci.";
+"Drop items here" = "Trascina gli elementi qui";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "Impossibile posizionare %@ con precisione; gli elenchi mostrano dove si trova.";
+"Unknown" = "Sconosciuto";
+
+/* About tab */
+"Version" = "Versione";
+"Tidy your Mac’s menu bar." = "Riordina la barra dei menu del Mac.";
+"Source code" = "Codice sorgente";
+"Report an issue" = "Segnala un problema";
+"Independent MIT-licensed fork of Hidden Bar" = "Fork indipendente di Hidden Bar con licenza MIT";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "Opera originale © Dwarves Foundation · Modifiche di Tuckaway © Bruno-Alumn";
+
+/* App Store build on macOS 27 (#360) */
+"Hiding unavailable on macOS 27 - Learn more" = "Questa versione non può nascondere le icone su macOS 27 – Scarica la versione diretta";
+"Menu bar hiding isn't available on macOS 27" = "Questa versione di Tuckaway non può nascondere le icone su macOS 27";
+"macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "macOS 27 nasconde le icone della barra dei menu in un modo nuovo che la versione sandbox dell’App Store non può usare. La versione di Tuckaway scaricabile direttamente lo supporta: scaricala da GitHub per continuare a nascondere le icone.";
+"Learn More" = "Scarica versione diretta";
+"OK" = "OK";
+
+/* Updater */
+"Version %@" = "Versione %@";
+"Couldn’t check for updates" = "Impossibile verificare gli aggiornamenti";
+"Make sure you’re connected to the internet, then try again." = "Assicurati di essere connesso a Internet, poi riprova.";
+"You’re up to date" = "Tuckaway è aggiornato";
+"Tuckaway %@ is the latest version." = "Tuckaway %@ è la versione più recente.";
+"Tuckaway %@ is available" = "Tuckaway %@ è disponibile";
+"You have version %@." = "Hai la versione %@.";
+"Install and Relaunch" = "Installa e riavvia";
+"Download" = "Scarica";
+"Later" = "Più tardi";
+"Skip This Version" = "Salta questa versione";
+"Update installed" = "Aggiornamento installato";
+"Quit and reopen Tuckaway to finish updating." = "Esci e riapri Tuckaway per completare l’aggiornamento.";
+"The update couldn’t be installed" = "Impossibile installare l’aggiornamento";
+"The download didn’t finish. You can download the update from GitHub instead." = "Il download non è stato completato. Puoi scaricare l’aggiornamento da GitHub.";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "Il file scaricato non conteneva una copia valida di Tuckaway, quindi non è stato modificato nulla. Puoi scaricare l’aggiornamento da GitHub.";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway non è riuscito a sostituirsi nella cartella attuale. Puoi scaricare l’aggiornamento da GitHub.";
+"Open Release Page" = "Apri pagina della versione";
+"Cancel" = "Annulla";
