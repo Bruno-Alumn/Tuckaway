@@ -385,6 +385,56 @@ final class NativeVisibilityEngineTests: XCTestCase {
         XCTAssertEqual(items.alwaysHiddenItem?.length, 0, "the always-hidden separator only shows when enabled")
     }
 
+    func testUnansweredActivationTimesOutSoTheNextCollapseWorks() {
+        let items = self.items!
+        let engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                            captureActivity: capture, clock: clock,
+                                            ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                            itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
+                                            displays: { [mainDisplay] },
+                                            isLTR: { true },
+                                            activationTimeout: 0.05)
+        var results: [CollapseResult] = []
+        engine.collapse { results.append($0) }
+        XCTAssertEqual(engine.state, .calibrating)
+
+        let timedOut = expectation(description: "activation gives up")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { timedOut.fulfill() }
+        wait(for: [timedOut], timeout: 1)
+        XCTAssertEqual(results, [.unavailable])
+        XCTAssertEqual(engine.state, .expanded)
+
+        // The next collapse is no longer swallowed, and a late answer to the
+        // first one is thrown away.
+        engine.collapse { results.append($0) }
+        XCTAssertEqual(visibility.requests.count, 2)
+        let late = visibility.succeed(0)
+        XCTAssertTrue(late.isInvalidated)
+        visibility.succeed(1)
+        XCTAssertEqual(results, [.unavailable, .collapsed])
+        XCTAssertEqual(engine.state, .collapsed)
+    }
+
+    func testAnsweredActivationDoesNotTimeOut() {
+        let items = self.items!
+        let engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                            captureActivity: capture, clock: clock,
+                                            ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                            itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
+                                            displays: { [mainDisplay] },
+                                            isLTR: { true },
+                                            activationTimeout: 0.05)
+        var results: [CollapseResult] = []
+        engine.collapse { results.append($0) }
+        visibility.succeed(0)
+
+        let waited = expectation(description: "past the timeout")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { waited.fulfill() }
+        wait(for: [waited], timeout: 1)
+        XCTAssertEqual(results, [.collapsed])
+        XCTAssertEqual(engine.state, .collapsed)
+    }
+
     func testExpandDropsTheRestriction() {
         let engine = makeEngine()
         engine.collapse { _ in }
