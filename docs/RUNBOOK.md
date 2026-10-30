@@ -58,9 +58,12 @@ installed app, test the dev build, then re-import and relaunch.
 1. Verify the stack: every PR reviewed, builds green, behavioral checks above run.
 2. Bump `MARKETING_VERSION` (all four Tuckaway configurations) and
    `CURRENT_PROJECT_VERSION` in the project file.
-3. Archive the GitHub build with the **Tuckaway** scheme
-   (`Release-Direct`), then notarize (Developer ID), staple, zip, and publish a
-   GitHub release with notes listing closed issues. The **Tuckaway App Store**
+3. Build the GitHub release with `scripts/package-dmg.sh`. It builds
+   `Release-Direct` (universal), refuses Debug or sandboxed builds, and writes
+   `dist/Tuckaway.dmg`. Set `SIGN_IDENTITY` to a Developer ID to sign, then
+   notarize and staple the DMG. Publish a GitHub release tagged `v<version>`
+   with **`Tuckaway.dmg`** as the asset (no zip) and notes listing closed
+   issues. The **Tuckaway App Store**
    scheme archives `Release`, the sandboxed App Store build, which cannot hide
    on macOS 27. v1.11 shipped that build to GitHub by mistake. Before zipping,
    confirm the app is unsandboxed:
@@ -69,11 +72,11 @@ installed app, test the dev build, then re-import and relaunch.
    codesign -d --entitlements - 'Tuckaway.app' | grep app-sandbox  # must print nothing
    ```
 
-   The in-app updater installs this zip, so it must hold `Tuckaway.app` at the
-   top level, its `CFBundleShortVersionString` must equal the release tag
-   (`v1.1.0` ↔ `1.1.0`), and `codesign --verify --deep --strict` must pass.
-   Also make sure it is a Release build: `Contents/MacOS` must not contain
-   `Tuckaway.debug.dylib` (the v1.0.0 asset did).
+   The in-app updater installs this DMG, so it must hold `Tuckaway.app` at its
+   root, its `CFBundleShortVersionString` must equal the release tag
+   (`v1.1.0` ↔ `1.1.0`), and `codesign --verify --deep --strict` must pass. The
+   script checks all of this except the tag. (The v1.0.0 asset was a zip of a
+   Debug build; the updater still accepts zips so v1.0.0 users can update.)
 4. App Store (separate lane, **Tuckaway App Store** scheme): the MAS listing
    has lagged GitHub since v1.8 (issues #281/#202); decide deliberately whether
    a release goes there too.

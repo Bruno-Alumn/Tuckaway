@@ -97,8 +97,9 @@ subprocess use.
 Direct build: unsandboxed so it can hide natively on macOS 27. Its only
 network use is the updater (`Features/Update`), which reads GitHub's
 `releases/latest` for Bruno-Alumn/Tuckaway, at most daily when automatic checks
-are on, or when the user asks. Installing downloads the release zip, unpacks it
-with `ditto`, requires a matching bundle ID and version plus a passing
+are on, or when the user asks. Installing downloads the release's `Tuckaway.dmg`
+(a `.zip` is still accepted), mounts it read-only with `hdiutil` and copies the
+app out with `ditto`, requires a matching bundle ID and version plus a passing
 `codesign --verify --deep --strict`, then swaps the bundle (rolling back on
 failure) and relaunches through `/bin/sh`. The only
 dependency is HotKey (a small Carbon `RegisterEventHotKey` wrapper) locked by
