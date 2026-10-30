@@ -14,7 +14,10 @@ import ServiceManagement
 
 class AppDelegate: NSObject, NSApplicationDelegate{
     
-    var statusBarController = StatusBarController()
+    // Created in applicationDidFinishLaunching, once defaults are registered and
+    // migrated: its init reads them, and a duplicate instance must not create
+    // status items before it quits.
+    private(set) var statusBarController: StatusBarController!
 
     var hotKey: HotKey? {
         didSet {
@@ -29,8 +32,9 @@ class AppDelegate: NSObject, NSApplicationDelegate{
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard ensureSingleInstance() else { return }
         Preferences.migrateFromHiddenBar()
-        setupAutoStartApp()
         registerDefaultValues()
+        statusBarController = StatusBarController()
+        setupAutoStartApp()
         setupHotKey()
         openPreferencesIfNeeded()
         detectLTRLang()
