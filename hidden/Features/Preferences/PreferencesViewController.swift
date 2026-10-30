@@ -306,7 +306,9 @@ struct GeneralSettingsView: View {
                         Text(verbatim: style.rawValue.capitalized.localized).tag(style)
                     }
                 }
-                settingsToggle("Show hidden items in separate bar", isOn: model.separateHiddenItemsBar)
+                if MenuBarEngineFactory.supportsSeparateHiddenItemsBar {
+                    settingsToggle("Show hidden items in separate bar", isOn: model.separateHiddenItemsBar)
+                }
                 settingsToggle("Use the full MenuBar on expanding", isOn: model.useFullMenuBar)
             }
 

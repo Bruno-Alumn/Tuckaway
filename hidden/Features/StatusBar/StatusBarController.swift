@@ -116,6 +116,10 @@ class StatusBarController: MenuBarItemProvider {
         return menuBarEngine.state == .collapsed
     }
 
+    private var usesSeparateHiddenItemsBar: Bool {
+        return Preferences.showHiddenItemsInSeparateBar && MenuBarEngineFactory.supportsSeparateHiddenItemsBar
+    }
+
     private var isSeparateHiddenItemsBarVisible: Bool {
         hiddenItemsBarController.isVisible
     }
@@ -473,7 +477,7 @@ class StatusBarController: MenuBarItemProvider {
         }
         if isSeparateHiddenItemsBarVisible {
             collapseMenuBar()
-        } else if isCollapsed && Preferences.showHiddenItemsInSeparateBar {
+        } else if isCollapsed && usesSeparateHiddenItemsBar {
             expandHiddenItemsBar()
         } else {
             isCollapsed ? expandMenubar() : collapseMenuBar()
@@ -682,7 +686,7 @@ class StatusBarController: MenuBarItemProvider {
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
-        if !Preferences.showHiddenItemsInSeparateBar {
+        if !usesSeparateHiddenItemsBar {
             hiddenItemsCaptureShieldController.hide()
             hiddenItemsBarController.hide()
             hiddenItemsSeparatorOverlayController.hide()
@@ -756,7 +760,7 @@ extension StatusBarController {
     }
 
     private func temporarilyExpandForConfigurationDragIfNeeded() {
-        guard Preferences.showHiddenItemsInSeparateBar,
+        guard usesSeparateHiddenItemsBar,
               !Preferences.areSeparatorsHidden,
               isCollapsed else { return }
         configurationDragCollapseWorkItem?.cancel()
@@ -810,7 +814,7 @@ extension StatusBarController {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + SeparateBarTiming.shieldSettleDelay) { [weak self] in
             guard let self = self else { return }
-            guard Preferences.showHiddenItemsInSeparateBar else {
+            guard self.usesSeparateHiddenItemsBar else {
                 self.restoreInlineMenuBarAfterInvalidSeparatePosition()
                 return
             }
@@ -819,7 +823,7 @@ extension StatusBarController {
 
             DispatchQueue.main.asyncAfter(deadline: .now() + SeparateBarTiming.captureDelay) { [weak self] in
                 guard let self = self else { return }
-                guard Preferences.showHiddenItemsInSeparateBar,
+                guard self.usesSeparateHiddenItemsBar,
                       let capture = self.captureExpandedHiddenItems() else {
                     self.restoreInlineMenuBarAfterInvalidSeparatePosition()
                     return
@@ -837,7 +841,7 @@ extension StatusBarController {
                     DispatchQueue.main.asyncAfter(deadline: .now() + SeparateBarTiming.showDelayAfterCollapse) { [weak self] in
                         guard let self = self else { return }
                         self.hiddenItemsCaptureShieldController.hide()
-                        guard Preferences.showHiddenItemsInSeparateBar && self.menuBarEngine.isArrangementValid else {
+                        guard self.usesSeparateHiddenItemsBar && self.menuBarEngine.isArrangementValid else {
                             self.restoreInlineMenuBarAfterInvalidSeparatePosition()
                             return
                         }
