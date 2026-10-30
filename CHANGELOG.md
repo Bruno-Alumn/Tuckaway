@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.1.0 (2026-10-30)
 
 ### Added
 - Releases ship as a disk image, `Tuckaway.dmg`, instead of a zip. `scripts/package-dmg.sh` builds it from `Release-Direct` (universal) and refuses Debug or sandboxed builds. The updater installs from the DMG and still accepts zips, so v1.0.0 can update.
@@ -18,6 +18,10 @@
 - Menu Bar Items: dragging an item no longer flings the cursor onto the menu bar, and the item lands where you drop it instead of at the end of the list. The list updates the moment you drop. The real menu bar follows in about half a second with the cursor hidden and left where it was, and the list corrects itself if macOS puts the item somewhere else.
 - Menu Bar Items: moving an item could leave macOS thinking ⌘ was still held down afterwards, which broke the next move and made ordinary typing act like ⌘ shortcuts.
 - macOS 27: the App Store build's notice said menu-bar hiding was impossible on macOS 27, although the direct-download build supports it. The notice now says only that version can't hide icons, and links to the direct download instead of the upstream issue.
+
+## v1.0.0 (2026-10-30)
+
+### Fixed
 - Preferences uses a native settings toolbar and compact controls; General and About keep the same width.
 - Shortcut recording cancels when the window closes, loses focus, or changes tabs. Invalid typing preserves the saved shortcut.
 - Always-hidden help now describes the correct boundary and Option-click behavior for the active engine.
