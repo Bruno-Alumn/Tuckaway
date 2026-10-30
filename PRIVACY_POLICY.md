@@ -1,11 +1,27 @@
-## Privacy Policy
+# Tuckaway Privacy Policy
 
-Dwarves Foundation built the Hidden Bar app as an Open Source app. This app is provided by Dwarves Foundation at no cost and is intended for use as is.
+Tuckaway is an independent, open-source fork of Hidden Bar maintained by
+Bruno-Alumn. The original Hidden Bar project was created by Dwarves Foundation.
 
-**Information Collection and Use**
+## Information collection
 
-The app does NOT use any third party services that may collect information used to identify you.
+Tuckaway does not collect, transmit, sell, or share personal information. It has
+no accounts, analytics, advertising, tracking service, or third-party data
+processor.
 
-**Contact Us**
+## Local permissions
 
-If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at macos@d.foundation.
+Depending on the features you enable and your macOS version, Tuckaway may request:
+
+- **Accessibility / Device Control and Data Access:** read menu-bar item
+  positions, identify empty menu-bar space, and forward clicks to hidden items.
+- **Screen Recording:** capture menu-bar icons only when the separate
+  hidden-items bar or related capture features are used.
+
+These permissions are used locally on your Mac. Captured content and preference
+data are not uploaded.
+
+## Source code and contact
+
+You can inspect the implementation and report privacy concerns at
+<https://github.com/Bruno-Alumn/hidden/issues>.

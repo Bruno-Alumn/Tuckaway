@@ -1,6 +1,6 @@
 /* 
   Localizable.strings
-  Hidden Bar
+  Tuckaway
 
   Created by Licardo on 2020/3/9.
   Copyright © 2020 Dwarves Foundation. All rights reserved.
@@ -22,7 +22,7 @@
 ";
 
 /* General settings (moved from Main.storyboard) */
-"Start Hidden Bar when I log in" = "ログインする時 Hidden Bar を起動";
+"Start Tuckaway when I log in" = "ログインする時 Tuckaway を起動";
 "Show preferences on launch" = "起動時に環境設定を開く";
 "Use the full MenuBar on expanding" = "アイコンを表示する時に Hidden のメニューバーも表示";
 "Enable always hidden section" = "「アイコンを常に非表示機能」を有効にする";
@@ -31,7 +31,7 @@
 "Hidden" = "非表示";
 "Shown" = "表示";
 "⭐️Always Hidden" = "⭐️常に非表示";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "Mac のメニューバーに  ⌘ を押しながらアイコンを移動して \nメニューバーをカスタマイズする";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Mac のメニューバーに  ⌘ を押しながらアイコンを移動して \nメニューバーをカスタマイズする";
 "5 seconds" = "5秒";
 "10 seconds" = "10秒";
 "15 seconds" = "15秒";

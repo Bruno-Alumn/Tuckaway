@@ -59,7 +59,7 @@ final class MenuBarItemManagerViewController: NSViewController {
     }
 
     private enum Drag {
-        static let type = NSPasteboard.PasteboardType("com.dwarvesv.minimalbar.menu-item")
+        static let type = NSPasteboard.PasteboardType("com.brunoalumn.tuckaway.menu-item")
     }
 
     private let hiddenTable = NSTableView()
@@ -197,7 +197,7 @@ final class MenuBarItemManagerViewController: NSViewController {
     @objc private func permissionPressed() {
         let prompt = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
         AXIsProcessTrustedWithOptions(prompt)
-        statusLabel.stringValue = "Enable Hidden Bar in System Settings, then return and refresh.".localized
+        statusLabel.stringValue = "Enable Tuckaway in System Settings, then return and refresh.".localized
     }
 
     private func refresh() {

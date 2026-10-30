@@ -198,6 +198,20 @@ enum Preferences {
         }
     }
 
+    static func migrateFromHiddenBar(defaults: UserDefaults = .standard,
+                                     legacyDomain: String = "com.dwarvesv.minimalbar",
+                                     currentDomain: String = Bundle.main.bundleIdentifier ?? "") {
+        let marker = "didMigrateFromHiddenBar"
+        guard !defaults.bool(forKey: marker) else { return }
+        let currentValues = defaults.persistentDomain(forName: currentDomain) ?? [:]
+        if let legacyValues = defaults.persistentDomain(forName: legacyDomain) {
+            for (key, value) in legacyValues where currentValues[key] == nil {
+                defaults.set(value, forKey: key)
+            }
+        }
+        defaults.set(true, forKey: marker)
+    }
+
     // Latches the one-time "hiding is unavailable on macOS 27" notice (#360) so it
     // is shown at most once per user. No notification post: nothing observes it.
     static var didShowMacOS27HideUnavailableNotice: Bool {

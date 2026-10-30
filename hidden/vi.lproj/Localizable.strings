@@ -1,6 +1,6 @@
 /* 
   Localizable.strings
-  Hidden Bar
+  Tuckaway
 
   Created by Licardo on 2020/3/9.
   Copyright © 2020 Dwarves Foundation. All rights reserved.
@@ -23,7 +23,7 @@ Các bước thực hiện:
 ";
 
 /* General settings (moved from Main.storyboard) */
-"Start Hidden Bar when I log in" = "Chạy Hidden Bar khi khởi động";
+"Start Tuckaway when I log in" = "Chạy Tuckaway khi khởi động";
 "Show preferences on launch" = "Hiện tuỳ chọn lúc khởi chạy";
 "Use the full MenuBar on expanding" = "Sử dụng toàn thanh công cụ khi mở rộng";
 "Enable always hidden section" = "Bật tính năng luôn ẩn";
@@ -32,7 +32,7 @@ Các bước thực hiện:
 "Hidden" = "Ẩn";
 "Shown" = "Hiện";
 "⭐️Always Hidden" = "⭐️Luôn ẩn";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "Ở thanh menu hệ thống, giữ phím ⌘ và nhấn chuột kéo icons\n di chuyển đến vùng cần ẩn /hiện.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Ở thanh menu hệ thống, giữ phím ⌘ và nhấn chuột kéo icons\n di chuyển đến vùng cần ẩn /hiện.";
 "5 seconds" = "5 giây";
 "10 seconds" = "10 giây";
 "15 seconds" = "15 giây";

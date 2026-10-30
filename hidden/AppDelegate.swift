@@ -28,6 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate{
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard ensureSingleInstance() else { return }
+        Preferences.migrateFromHiddenBar()
         setupAutoStartApp()
         registerDefaultValues()
         setupHotKey()
@@ -35,7 +36,7 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         detectLTRLang()
     }
 
-    /// Hidden Bar is a menu bar utility with no visible window, so launching it a
+    /// Tuckaway is a menu bar utility with no visible window, so launching it a
     /// second time looks like a no-op while silently spawning a duplicate instance.
     /// If another instance with the same bundle ID is already running, activate it
     /// and terminate this one instead.

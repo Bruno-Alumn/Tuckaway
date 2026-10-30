@@ -1,6 +1,6 @@
 //
 //  LegacyLengthEngine.swift
-//  Hidden Bar
+//  Tuckaway
 //
 //  Copyright © 2026 Dwarves Foundation. All rights reserved.
 //
@@ -136,7 +136,7 @@ final class LegacyLengthEngine: MenuBarEngine {
         let alert = NSAlert()
         alert.alertStyle = .informational
         alert.messageText = NSLocalizedString("Menu bar hiding isn't available on macOS 27", comment: "")
-        alert.informativeText = NSLocalizedString("macOS 27 changed how the menu bar works, so Hidden Bar can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Hidden Bar will stay out of the way until a compatible method is available.", comment: "")
+        alert.informativeText = NSLocalizedString("macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available.", comment: "")
         alert.addButton(withTitle: NSLocalizedString("Learn More", comment: ""))
         alert.addButton(withTitle: NSLocalizedString("OK", comment: ""))
         NSApp.activate(ignoringOtherApps: true)
