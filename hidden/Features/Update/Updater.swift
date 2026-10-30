@@ -211,15 +211,21 @@ final class Updater {
         let extracted = workDirectory.appendingPathComponent("extracted")
         if isDiskImage {
             let mountPoint = workDirectory.appendingPathComponent("mount")
+            // The detach has to be deferred from this scope, not from inside the
+            // `if #available` branches, or it runs before the app is copied out.
+            // `diskutil image` has no detach; ejecting the mount point detaches
+            // the image (a plain unmount would leave it attached).
+            let attached: Bool
+            let detach: (String, [String])
             if #available(macOS 27.0, *) {
-                guard run("/usr/bin/diskutil", ["image", "attach", package.path, "--readOnly", "--nobrowse", "--mountPoint", mountPoint.path])
-                else { throw UpdateError.invalidArchive }
-                defer { run("/usr/bin/diskutil", ["unmount", mountPoint.path]) }
+                attached = run("/usr/bin/diskutil", ["image", "attach", package.path, "--readOnly", "--nobrowse", "--mountPoint", mountPoint.path])
+                detach = ("/usr/bin/diskutil", ["eject", mountPoint.path])
             } else {
-                guard run("/usr/bin/hdiutil", ["attach", package.path, "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mountPoint.path])
-                else { throw UpdateError.invalidArchive }
-                defer { run("/usr/bin/hdiutil", ["detach", mountPoint.path, "-force"]) }
+                attached = run("/usr/bin/hdiutil", ["attach", package.path, "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mountPoint.path])
+                detach = ("/usr/bin/hdiutil", ["detach", mountPoint.path, "-force"])
             }
+            guard attached else { throw UpdateError.invalidArchive }
+            defer { run(detach.0, detach.1) }
             let mounted = (try? fileManager.contentsOfDirectory(at: mountPoint, includingPropertiesForKeys: nil)) ?? []
             guard let mountedApp = mounted.first(where: { $0.pathExtension == "app" }),
                   run("/usr/bin/ditto", [mountedApp.path, extracted.appendingPathComponent(mountedApp.lastPathComponent).path])
