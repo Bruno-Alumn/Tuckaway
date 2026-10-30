@@ -70,7 +70,7 @@ General, Menu Bar Items and About.
   it, or pressing a global shortcut.
 - Keep rarely used icons in a second, always-hidden section.
 - On Macs with a notch, list the icons the notch covers.
-- Show hidden icons in a separate floating bar instead of the menu bar.
+- Show hidden icons in a separate floating bar instead of the menu bar (macOS 13–26).
 - Expand automatically when an external display is connected.
 - Pick a standard arrow, a transparent one, or an ellipsis.
 
@@ -83,7 +83,7 @@ daily update check to GitHub, which you can turn off in Settings. The
 | Permission | What it's for |
 |:--|:--|
 | Accessibility (Device Control and Data Access on macOS 27) | Finding where menu-bar icons are, detecting clicks on empty menu-bar space, and passing clicks to hidden icons |
-| Screen Recording | Only the separate bar, which shows pictures of hidden icons. They stay on your Mac. |
+| Screen Recording | Only the separate bar (macOS 13–26), which shows pictures of hidden icons. They stay on your Mac. |
 
 Releases are signed with the same certificate every time, so macOS keeps these
 permissions when Tuckaway updates. The one exception is updating from 1.1.0 or
