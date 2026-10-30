@@ -86,7 +86,7 @@ Open it with **Settings…** (⌘,) from the arrow's menu. It has three tabs.
 | Revealing | Expand with an external display | Show everything while an external display is connected. |
 | Revealing | Shortcut | A system-wide expand/collapse hotkey. Click to record, Esc to cancel, ⓧ to clear. F-keys work on their own. |
 | Appearance | Expand icon | Standard arrow, transparent arrow, or an ellipsis. |
-| Appearance | Show hidden items in separate bar | Shows hidden icons in a floating row below the menu bar. Needs Screen Recording, plus Accessibility to forward clicks. |
+| Appearance | Show hidden items in separate bar | Shows hidden icons in a floating row below the menu bar. Needs Screen Recording, plus Accessibility to forward clicks. macOS 13–26 only: macOS 27 no longer gives menu-bar icons their own windows to capture, so the option is hidden there. |
 | Appearance | Expand across full menu bar | Activates the app's full menu bar while expanded, without a Dock icon (helps on crowded menu bars). |
 | Extra Sections | Always-hidden section | A second zone whose icons stay hidden even when expanded. Option-click the arrow to reveal it. |
 | Extra Sections | Icons behind the notch | Notched Macs only. Adds **Show Notch Items** to the arrow's menu, listing icons the notch covers. |

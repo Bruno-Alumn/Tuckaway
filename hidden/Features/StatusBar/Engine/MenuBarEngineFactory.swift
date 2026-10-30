@@ -21,6 +21,12 @@ enum MenuBarEngineFactory {
 
     // True when hiding goes through NativeVisibilityEngine, which has no
     // separator and needs the Accessibility permission to read the sections.
+    // The separate bar captures each status item's own window. macOS 27 draws
+    // status items into the menu bar itself, so there is nothing to capture.
+    static var supportsSeparateHiddenItemsBar: Bool {
+        return !usesNativeVisibility
+    }
+
     static var usesNativeVisibility: Bool {
         #if HIDDENBAR_NATIVE_VISIBILITY
         return ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27
