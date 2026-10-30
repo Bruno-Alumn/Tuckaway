@@ -1,13 +1,13 @@
 # Architecture
 
-Hidden Bar is a single-process, sandboxed AppKit menubar utility (~1.5k lines of
+Tuckaway is a single-process, sandboxed AppKit menubar utility (~1.5k lines of
 Swift, one dependency: [HotKey](https://github.com/soffes/HotKey)). There is no
 helper app, no daemon, no network. Everything happens inside three
 `NSStatusItem`s and one window.
 
 ## The core trick
 
-macOS offers no API to hide other apps' menubar icons. Hidden Bar fakes it with
+macOS offers no API to hide other apps' menubar icons. Tuckaway fakes it with
 geometry: a separator status item whose **length is inflated to roughly the
 width of the widest attached screen**, shoving every icon to its left off-screen.
 Collapsing and expanding is just flipping that length between ~20pt and the

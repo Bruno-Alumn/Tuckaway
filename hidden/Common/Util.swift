@@ -31,7 +31,7 @@ class Util {
         return MenuBarEngineFactory.usesNativeVisibility && !AXIsProcessTrusted()
     }
 
-    // The prompt adds Hidden Bar to the Accessibility list (so the user only has
+    // The prompt adds Tuckaway to the Accessibility list (so the user only has
     // to flip the switch); the pane is opened too because the prompt is shown at
     // most once per launch and is easy to dismiss.
     static func requestAccessibilityPermission() {

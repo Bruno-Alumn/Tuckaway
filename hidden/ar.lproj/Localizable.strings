@@ -1,6 +1,6 @@
 /* 
   Localizable.strings
-  Hidden Bar
+  Tuckaway
 
   Created by Licardo on 2020/3/9.
   Copyright © 2020 Dwarves Foundation. All rights reserved.
@@ -24,7 +24,7 @@
 ";
 
 /* General settings (moved from Main.storyboard) */
-"Start Hidden Bar when I log in" = "شغل الشريط المخفي عندما أقوم بتسجيل الدخول";
+"Start Tuckaway when I log in" = "شغل الشريط المخفي عندما أقوم بتسجيل الدخول";
 "Show preferences on launch" = "إعرض التفضيلات عند بدء التشغيل";
 "Use the full MenuBar on expanding" = "استخدم كامل شريط القائمة عند التوسيع";
 "Enable always hidden section" = "تمكين القسم المخفي دائما";
@@ -33,7 +33,7 @@
 "Hidden" = "مخفي";
 "Shown" = "ظاهر";
 "⭐️Always Hidden" = "⭐️مخفي دائما";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "في شريط القائمة الخاص بـMac الخاص بك، استمر بالضغط على ⌘ واسحب الأيقونات\nبين الأقسام لتكوين الشريط المخفي.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "في شريط القائمة الخاص بـMac الخاص بك، استمر بالضغط على ⌘ واسحب الأيقونات\nبين الأقسام لتكوين الشريط المخفي.";
 "5 seconds" = "5 ثوان";
 "10 seconds" = "١٠ ثوان";
 "15 seconds" = "١٥ ثانية";

@@ -1,6 +1,6 @@
 /* 
   Localizable.strings
-  Hidden Bar
+  Tuckaway
 
   Created by Licardo on 2020/3/9.
   Copyright © 2020 Dwarves Foundation. All rights reserved.
@@ -25,7 +25,7 @@ Utilisez la fonction de section toujours cachée pour garder vos icônes bien ra
 "Disable Auto Collapse" = "Désactiver la réduction automatique";
 
 /* General settings (moved from Main.storyboard) */
-"Start Hidden Bar when I log in" = "Démarrer automatiquement Hidden Bar lors de la connexion";
+"Start Tuckaway when I log in" = "Démarrer automatiquement Tuckaway lors de la connexion";
 "Show preferences on launch" = "Afficher les réglages au lancement";
 "Use the full MenuBar on expanding" = "Utiliser toute la barre de menu lors du développement";
 "Enable always hidden section" = "Activer la section toujours cachée";
@@ -34,7 +34,7 @@ Utilisez la fonction de section toujours cachée pour garder vos icônes bien ra
 "Hidden" = "Cachés";
 "Shown" = "Montrés";
 "⭐️Always Hidden" = "⭐️Always Hidden";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "Dans la barre des menus de votre Mac, maintenez la touche ⌘ et\nfaites glisser les icônes entre les sections pour configurer Hidden Bar.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Dans la barre des menus de votre Mac, maintenez la touche ⌘ et\nfaites glisser les icônes entre les sections pour configurer Tuckaway.";
 "5 seconds" = "5 secondes";
 "10 seconds" = "10 secondes";
 "15 seconds" = "15 secondes";

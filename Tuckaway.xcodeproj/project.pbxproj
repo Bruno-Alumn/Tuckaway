@@ -82,7 +82,7 @@
 			containerPortal = 929113E921F9D04100173149 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 929113F021F9D04100173149;
-			remoteInfo = "Hidden Bar";
+			remoteInfo = "Tuckaway";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -121,7 +121,7 @@
 		6F2F828CAAE82A4D34BDDCBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		6C0A10002DEBF00100A5E001 /* HiddenItemsBarPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenItemsBarPanelController.swift; sourceTree = "<group>"; };
 		9220587D22127050008A8B03 /* Hidden.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Hidden.entitlements; path = Hidden/Hidden.entitlements; sourceTree = "<group>"; };
-		929113F121F9D04100173149 /* Hidden Bar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hidden Bar.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		929113F121F9D04100173149 /* Tuckaway.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tuckaway.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		929113F421F9D04100173149 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		929113F821F9D04200173149 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		929113FB21F9D04200173149 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -138,7 +138,7 @@
 		967F4B2B24169CB200F18D3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		967F4B2C24169CB400F18D3C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9B44EDBC1C09AEF89C472D74 /* NotchGeometryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NotchGeometryTests.swift; path = NotchGeometryTests.swift; sourceTree = "<group>"; };
-		9C7BF2ECD52E3E5C0D8D7556 /* HiddenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HiddenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C7BF2ECD52E3E5C0D8D7556 /* TuckawayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuckawayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACE30458A6074188B93CD466 /* MenuBarLayoutResolverTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MenuBarLayoutResolverTests.swift; sourceTree = "<group>"; };
 		B1326443261D7E0200319D35 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
 		B1326445261D7E0200319D35 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -165,7 +165,7 @@
 		D1484680F97D4EF3661639C5 /* HBNativeVisibilityShim.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HBNativeVisibilityShim.m; sourceTree = "<group>"; };
 		C26FA55CE7C1DDA6A96F4B92 /* Hidden-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hidden-Bridging-Header.h; sourceTree = "<group>"; };
 		22254D038882D5996C96A287 /* Hidden-Direct.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Hidden-Direct.entitlements; sourceTree = "<group>"; };
-		27A530C718790900F466C145 /* HiddenBarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HiddenBarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		27A530C718790900F466C145 /* TuckawayUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuckawayUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C57343F39835408A99E25A6E /* MenuBarEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarEngineTests.swift; sourceTree = "<group>"; };
 		6171C0428FE84918BC3FBD91 /* ExpandCollapseAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandCollapseAction.swift; sourceTree = "<group>"; };
 		07588662B80C4ACD927C6AF4 /* AccessibilityPermissionTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPermissionTransition.swift; sourceTree = "<group>"; };
@@ -281,7 +281,7 @@
 			path = About;
 			sourceTree = "<group>";
 		};
-		82028E09AB3D6FF759D8044C /* HiddenTests */ = {
+		82028E09AB3D6FF759D8044C /* TuckawayTests */ = {
 			isa = PBXGroup;
 			children = (
 				9B44EDBC1C09AEF89C472D74 /* NotchGeometryTests.swift */,
@@ -291,8 +291,8 @@
 				06495EE4F823D325A44A357C /* NotchOverflowPreferencesTests.swift */,
                 AABBDD112233445566778802 /* GlobalShortcutTests.swift */,
 			);
-			name = HiddenTests;
-			path = HiddenTests;
+			name = TuckawayTests;
+			path = TuckawayTests;
 			sourceTree = "<group>";
 		};
 		8E00063F190C5A30FD3DA5BA /* OS X */ = {
@@ -326,21 +326,21 @@
 		929113E821F9D04100173149 = {
 			isa = PBXGroup;
 			children = (
-				7EEDF61C103DD183FF180F32 /* HiddenBarTests */,
+				7EEDF61C103DD183FF180F32 /* TuckawayUnitTests */,
 				9220587D22127050008A8B03 /* Hidden.entitlements */,
 				929113F321F9D04100173149 /* hidden */,
 				929113F221F9D04100173149 /* Products */,
 				92C5057D21FEC24C0084719A /* Frameworks */,
-				82028E09AB3D6FF759D8044C /* HiddenTests */,
+				82028E09AB3D6FF759D8044C /* TuckawayTests */,
 			);
 			sourceTree = "<group>";
 		};
 		929113F221F9D04100173149 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				929113F121F9D04100173149 /* Hidden Bar.app */,
-				27A530C718790900F466C145 /* HiddenBarTests.xctest */,
-				9C7BF2ECD52E3E5C0D8D7556 /* HiddenTests.xctest */,
+				929113F121F9D04100173149 /* Tuckaway.app */,
+				27A530C718790900F466C145 /* TuckawayUnitTests.xctest */,
+				9C7BF2ECD52E3E5C0D8D7556 /* TuckawayTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -405,7 +405,7 @@
 			path = Native;
 			sourceTree = "<group>";
 		};
-		7EEDF61C103DD183FF180F32 /* HiddenBarTests */ = {
+		7EEDF61C103DD183FF180F32 /* TuckawayUnitTests */ = {
 			isa = PBXGroup;
 			children = (
 				C57343F39835408A99E25A6E /* MenuBarEngineTests.swift */,
@@ -413,15 +413,15 @@
 				981D57CDACA242EB85D0674A /* AccessibilityPermissionTransitionTests.swift */,
 				F013C3E5499B4EA7B816F7A8 /* AutoStartTests.swift */,
 			);
-			path = HiddenBarTests;
+			path = TuckawayUnitTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		929113F021F9D04100173149 /* Hidden Bar */ = {
+		929113F021F9D04100173149 /* Tuckaway */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9291141721F9D04200173149 /* Build configuration list for PBXNativeTarget "Hidden Bar" */;
+			buildConfigurationList = 9291141721F9D04200173149 /* Build configuration list for PBXNativeTarget "Tuckaway" */;
 			buildPhases = (
 				929113ED21F9D04100173149 /* Sources */,
 				929113EE21F9D04100173149 /* Frameworks */,
@@ -431,17 +431,17 @@
 			);
 			dependencies = (
 			);
-			name = "Hidden Bar";
+			name = "Tuckaway";
 			packageProductDependencies = (
 				08A5F85E23AA01EE00981CA5 /* HotKey */,
 			);
 			productName = vanillaClone;
-			productReference = 929113F121F9D04100173149 /* Hidden Bar.app */;
+			productReference = 929113F121F9D04100173149 /* Tuckaway.app */;
 			productType = "com.apple.product-type.application";
 		};
-		38276456C8B72E6FF49DF8FB /* HiddenBarTests */ = {
+		38276456C8B72E6FF49DF8FB /* TuckawayUnitTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3A686D31BAC6830A55C8DBBC /* Build configuration list for PBXNativeTarget "HiddenBarTests" */;
+			buildConfigurationList = 3A686D31BAC6830A55C8DBBC /* Build configuration list for PBXNativeTarget "TuckawayUnitTests" */;
 			buildPhases = (
 				9E2CDE524C042CAB55337770 /* Sources */,
 				F4BF4BB2D325FB6EE08DF9AD /* Frameworks */,
@@ -450,14 +450,14 @@
 			);
 			dependencies = (
 			);
-			name = HiddenBarTests;
-			productName = HiddenBarTests;
-			productReference = 27A530C718790900F466C145 /* HiddenBarTests.xctest */;
+			name = TuckawayUnitTests;
+			productName = TuckawayUnitTests;
+			productReference = 27A530C718790900F466C145 /* TuckawayUnitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		B6ED1C7FB7AE7D98FD4143B2 /* HiddenTests */ = {
+		B6ED1C7FB7AE7D98FD4143B2 /* TuckawayTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 655BFC0A8D76007E8D584889 /* Build configuration list for PBXNativeTarget "HiddenTests" */;
+			buildConfigurationList = 655BFC0A8D76007E8D584889 /* Build configuration list for PBXNativeTarget "TuckawayTests" */;
 			buildPhases = (
 				637C6E21964C904F331A1E4E /* Sources */,
 				0A920B36E60886C7F0761422 /* Frameworks */,
@@ -468,9 +468,9 @@
 			dependencies = (
 				C3B52A428D5EEE19E486F2CE /* PBXTargetDependency */,
 			);
-			name = HiddenTests;
-			productName = HiddenTests;
-			productReference = 9C7BF2ECD52E3E5C0D8D7556 /* HiddenTests.xctest */;
+			name = TuckawayTests;
+			productName = TuckawayTests;
+			productReference = 9C7BF2ECD52E3E5C0D8D7556 /* TuckawayTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -497,7 +497,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 929113EC21F9D04100173149 /* Build configuration list for PBXProject "Hidden Bar" */;
+			buildConfigurationList = 929113EC21F9D04100173149 /* Build configuration list for PBXProject "Tuckaway" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -525,9 +525,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				929113F021F9D04100173149 /* Hidden Bar */,
-				38276456C8B72E6FF49DF8FB /* HiddenBarTests */,
-				B6ED1C7FB7AE7D98FD4143B2 /* HiddenTests */,
+				929113F021F9D04100173149 /* Tuckaway */,
+				38276456C8B72E6FF49DF8FB /* TuckawayUnitTests */,
+				B6ED1C7FB7AE7D98FD4143B2 /* TuckawayTests */,
 			);
 		};
 /* End PBXProject section */
@@ -639,8 +639,8 @@
 /* Begin PBXTargetDependency section */
 		C3B52A428D5EEE19E486F2CE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "Hidden Bar";
-			target = 929113F021F9D04100173149 /* Hidden Bar */;
+			name = "Tuckaway";
+			target = 929113F021F9D04100173149 /* Tuckaway */;
 			targetProxy = 1CD893E4132E5B9D9BBD5DFD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -698,12 +698,12 @@
 				DEVELOPMENT_TEAM = W777S7V8TN;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.minimalbar.HiddenTests;
-				PRODUCT_MODULE_NAME = HiddenTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.tuckaway.TuckawayTests;
+				PRODUCT_MODULE_NAME = TuckawayTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hidden Bar.app/Contents/MacOS/Hidden Bar";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tuckaway.app/Contents/MacOS/Tuckaway";
 			};
 			name = Release;
 		};
@@ -716,12 +716,12 @@
 				DEVELOPMENT_TEAM = W777S7V8TN;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.minimalbar.HiddenTests;
-				PRODUCT_MODULE_NAME = HiddenTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.tuckaway.TuckawayTests;
+				PRODUCT_MODULE_NAME = TuckawayTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hidden Bar.app/Contents/MacOS/Hidden Bar";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tuckaway.app/Contents/MacOS/Tuckaway";
 			};
 			name = "Debug-Direct";
 		};
@@ -734,12 +734,12 @@
 				DEVELOPMENT_TEAM = W777S7V8TN;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.minimalbar.HiddenTests;
-				PRODUCT_MODULE_NAME = HiddenTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.tuckaway.TuckawayTests;
+				PRODUCT_MODULE_NAME = TuckawayTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hidden Bar.app/Contents/MacOS/Hidden Bar";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tuckaway.app/Contents/MacOS/Tuckaway";
 			};
 			name = "Release-Direct";
 		};
@@ -879,7 +879,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.11.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.minimalbar;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.tuckaway;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -905,7 +905,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.11.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.minimalbar;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.tuckaway;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -994,7 +994,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.11.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.minimalbar;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.tuckaway;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1080,7 +1080,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.11.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.minimalbar;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.tuckaway;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1098,7 +1098,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.HiddenBarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.TuckawayUnitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "hidden/Hidden-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -1116,7 +1116,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.HiddenBarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.TuckawayUnitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "hidden/Hidden-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -1134,7 +1134,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.HiddenBarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.TuckawayUnitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "hidden/Hidden-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -1152,7 +1152,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.HiddenBarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.TuckawayUnitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "hidden/Hidden-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -1168,19 +1168,19 @@
 				DEVELOPMENT_TEAM = W777S7V8TN;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dwarvesv.minimalbar.HiddenTests;
-				PRODUCT_MODULE_NAME = HiddenTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brunoalumn.tuckaway.TuckawayTests;
+				PRODUCT_MODULE_NAME = TuckawayTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hidden Bar.app/Contents/MacOS/Hidden Bar";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tuckaway.app/Contents/MacOS/Tuckaway";
 			};
 			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		655BFC0A8D76007E8D584889 /* Build configuration list for PBXNativeTarget "HiddenTests" */ = {
+		655BFC0A8D76007E8D584889 /* Build configuration list for PBXNativeTarget "TuckawayTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				088F2BBA8058B47FD0E9F5AD /* Release */,
@@ -1191,7 +1191,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		929113EC21F9D04100173149 /* Build configuration list for PBXProject "Hidden Bar" */ = {
+		929113EC21F9D04100173149 /* Build configuration list for PBXProject "Tuckaway" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E0B4F4FBADE5A80104D67BFF /* Release-Direct */,
@@ -1202,7 +1202,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9291141721F9D04200173149 /* Build configuration list for PBXNativeTarget "Hidden Bar" */ = {
+		9291141721F9D04200173149 /* Build configuration list for PBXNativeTarget "Tuckaway" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E9DFD295D467717BFB7FFCBD /* Release-Direct */,
@@ -1213,7 +1213,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3A686D31BAC6830A55C8DBBC /* Build configuration list for PBXNativeTarget "HiddenBarTests" */ = {
+		3A686D31BAC6830A55C8DBBC /* Build configuration list for PBXNativeTarget "TuckawayUnitTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				111758211714EB769234B6A9 /* Debug */,
