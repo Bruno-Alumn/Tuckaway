@@ -247,6 +247,10 @@ final class GeneralSettingsModel: ObservableObject {
         })
     }
 
+    var automaticallyChecksForUpdates: Binding<Bool> {
+        return binding({ Preferences.automaticallyChecksForUpdates }) { Preferences.automaticallyChecksForUpdates = $0 }
+    }
+
     var separateHiddenItemsBar: Binding<Bool> {
         return binding({ Preferences.showHiddenItemsInSeparateBar }) { enabled in
             if enabled && !CGPreflightScreenCaptureAccess() {
@@ -325,6 +329,18 @@ struct GeneralSettingsView: View {
             Section(Self.label("Startup")) {
                 settingsToggle("Start Tuckaway when I log in", isOn: model.autoStart)
                 settingsToggle("Show preferences on launch", isOn: model.showPreferencesOnLaunch)
+            }
+
+            if Updater.isSupported {
+                Section(Self.label("Updates")) {
+                    settingsToggle("Check for updates automatically", isOn: model.automaticallyChecksForUpdates)
+                    LabeledContent(String(format: "Version %@".localized, Bundle.main.releaseVersionNumber ?? "")) {
+                        Button("Check Now".localized) {
+                            Updater.shared.checkForUpdates()
+                        }
+                        .controlSize(.small)
+                    }
+                }
             }
         }
         .formStyle(.grouped)

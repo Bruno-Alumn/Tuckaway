@@ -58,6 +58,13 @@ private struct AboutSettingsView: View {
             }
             .labelStyle(.titleOnly)
             .padding(.top, 14)
+            if Updater.isSupported {
+                Button("Check for Updates…".localized) {
+                    Updater.shared.checkForUpdates()
+                }
+                .controlSize(.small)
+                .padding(.top, 12)
+            }
             Spacer(minLength: 16)
             VStack(spacing: 2) {
                 Text("Independent MIT-licensed fork of Hidden Bar")
