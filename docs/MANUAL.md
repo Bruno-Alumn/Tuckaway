@@ -5,8 +5,16 @@ Everything Tuckaway can do, including the parts with no UI.
 ## Basics
 
 - **Left- or right-click the arrow** (`<` / `>`): expand or collapse the hidden section.
-- **Control-right-click the arrow** or **click the separator** (`|`): context menu
-  (Preferences, separator visibility, auto collapse, Quit).
+- **Control-click the arrow** or **click the separator** (`|`): the menu.
+  - **Auto-collapse** (checkmark, ⌘T)
+  - **Show/Hide separators** (⌘S)
+  - **Manage Menu Bar Items…**
+  - **Check for Updates…** (direct-download build)
+  - **Settings…** (⌘,)
+  - **Quit Tuckaway** (⌘Q)
+
+  On Macs with a notch, **Show Notch Items** appears at the top when notch
+  overflow is on.
 - **⌘-drag** icons in the menu bar to move them across the separator: icons to
   the separator's left are hidden when collapsed.
 - **Option-click the arrow**: show/hide the separators and the always-hidden
@@ -61,19 +69,47 @@ cannot opt out of them. While the arrow is collapsed:
 
 Expanding the arrow ends all of this immediately.
 
-## Preferences window
+## Settings window
 
-| Setting | What it does |
-|---|---|
-| Start Tuckaway when I log in | Login item via System Settings (macOS 13+ `SMAppService`); revocable in System Settings > General > Login Items |
-| Show preferences on launch | Open this window at app start |
-| Auto collapse | Re-hide automatically after the chosen delay |
-| Hover to expand | Expand after hovering over the menu bar for about half a second |
-| Global shortcut | System-wide expand/collapse hotkey (F-keys display as F18, not Fn18) |
-| Enable always hidden section | A second zone whose icons stay hidden even when expanded; revealed by option-clicking the arrow |
-| Use full menu bar on expanding | Activates the app's full menu bar while expanded without adding a Dock icon (helps on tight menubars) |
-| Show hidden items in separate bar | Captures hidden icons into a floating row below the menu bar; requires Screen Recording, and Accessibility for click forwarding |
-| Manage Menu Bar Items | Opens two sortable lists for hidden and visible items; drag within a list to reorder or across lists to change visibility; requires Accessibility permission |
+Open it with **Settings…** (⌘,) from the arrow's menu. It has three tabs.
+
+### General
+
+| Section | Setting | What it does |
+|---|---|---|
+| Hiding | Auto-collapse | Re-hide automatically after a delay. Also a checkmark in the arrow's menu. |
+| Hiding | Collapse after | The delay: 5, 10, 15 or 30 seconds, or 1 minute. Shown only while auto-collapse is on. |
+| Hiding | Collapse on app switch | Hide again as soon as another app becomes active. |
+| Revealing | Hover to expand | Expand after hovering over the menu bar for about half a second. |
+| Revealing | Toggle by clicking empty menu bar | Click an empty part of the menu bar to hide or show icons. |
+| Revealing | Expand with an external display | Show everything while an external display is connected. |
+| Revealing | Shortcut | A system-wide expand/collapse hotkey. Click to record, Esc to cancel, ⓧ to clear. F-keys work on their own. |
+| Appearance | Expand icon | Standard arrow, transparent arrow, or an ellipsis. |
+| Appearance | Show hidden items in separate bar | Shows hidden icons in a floating row below the menu bar. Needs Screen Recording, plus Accessibility to forward clicks. |
+| Appearance | Expand across full menu bar | Activates the app's full menu bar while expanded, without a Dock icon (helps on crowded menu bars). |
+| Extra Sections | Always-hidden section | A second zone whose icons stay hidden even when expanded. Option-click the arrow to reveal it. |
+| Extra Sections | Icons behind the notch | Notched Macs only. Adds **Show Notch Items** to the arrow's menu, listing icons the notch covers. |
+| Startup | Launch at login | A login item (macOS 13+ `SMAppService`), revocable in System Settings › General › Login Items. |
+| Startup | Open settings on launch | Show this window every time Tuckaway starts. |
+| Updates | Check for updates automatically | Direct-download build only. See [Updates](#updates). |
+
+If Accessibility is missing on macOS 27, a banner at the top of General
+explains why nothing hides and links to System Settings.
+
+### Menu Bar Items
+
+Two lists, **Hidden** and **Visible**, of the other apps' menu-bar icons.
+
+- **Drag within a list** to reorder icons.
+- **Drag between lists** to change whether an icon is hidden. Tuckaway performs
+  the ⌘-drag in the real menu bar for you.
+- Use the refresh button after you change the menu bar yourself.
+- Needs Accessibility permission. Without it, a **Grant Access** button shows.
+
+### About
+
+Version and build number, links to the source and issue tracker, and **Check
+for Updates…** (direct-download build).
 
 > **Always-hidden section, current behavior:** items in the always-hidden zone
 > are reliably pushed off-screen only when "hide separators" is also on
@@ -84,6 +120,29 @@ Expanding the arrow ends all of this immediately.
 > the always-hidden zone until the rework lands, since a stuck off-screen item has
 > to be recovered by ⌘-dragging it back (macOS persists its position per app).
 
+## Updates
+
+The direct-download build updates itself from
+[GitHub releases](https://github.com/Bruno-Alumn/Tuckaway/releases).
+
+- **Automatic checks:** about 10 seconds after launch, at most once a day.
+  Turn them off with **Check for updates automatically** in Settings › General.
+- **Manual checks:** **Check for Updates…** in the arrow's menu or About, or
+  **Check Now** in Settings › General › Updates.
+- **When a newer version exists**, you can choose:
+  - **Install and Relaunch:** downloads `Tuckaway.dmg`, checks the bundle ID,
+    the version and the code signature, replaces the app in place and reopens
+    it. If anything fails, the old copy stays.
+  - **Later:** asks again on the next check.
+  - **Skip This Version:** no more automatic prompts for that version. A manual
+    check still offers it.
+- If Tuckaway is running from a read-only location (for example straight from
+  the disk image), the button becomes **Download** and opens the release page.
+- Releases are ad-hoc signed for now, so macOS may ask you to re-enable
+  Accessibility after an update.
+
+The App Store build has no network access and no updater.
+
 ## Behaviors you get for free
 
 - **It won't collapse mid-use**: while your pointer is anywhere in the menu bar,
@@ -91,7 +150,11 @@ Expanding the arrow ends all of this immediately.
 - **Self-repair**: if the arrow or separator was ⌘-dragged off the bar (which
   used to make the app unreachable forever), they come back on next launch.
 - **Display changes**: plugging in or removing monitors re-sizes the hidden zone
-  for the widest attached screen automatically.
+  for the widest attached screen automatically (macOS 26 and earlier). On macOS
+  27, Tuckaway re-reads the layout and stays expanded until it can read it
+  safely.
+- **One copy at a time**: opening Tuckaway again brings the running copy
+  forward instead of starting a second one.
 
 ## Hidden settings (Terminal)
 
@@ -115,8 +178,10 @@ To undo any of them: `defaults delete com.brunoalumn.tuckaway <key>`.
 | Login item missing after denying it once | System Settings > General > Login Items: re-enable Tuckaway, then toggle the pref off/on |
 | A ghost "LauncherApplication" login item from old versions | Launch the current version once; it deauthorizes the legacy item automatically |
 | App language stuck | See the `AppleLanguages` command above, or System Settings > General > Language & Region > Applications |
-| Nothing hides on a macOS 27 beta | Known (issue #360); the menu bar re-architecture broke the hiding mechanism, fix under investigation |
-| A new or just-updated app's icon shows up already hidden | Expected, see "Why new icons start hidden" below; ⌘-drag it to the right of the separator once |
+| Nothing hides on macOS 27 | Use the [direct-download build](https://github.com/Bruno-Alumn/Tuckaway/releases/latest) and grant **Device Control and Data Access**. The App Store build can't hide on macOS 27 and says so once. |
+| Hiding stopped after an update | Re-enable Tuckaway in System Settings › Privacy & Security › Accessibility (Device Control and Data Access on macOS 27); each ad-hoc signed build counts as a new app |
+| "Check for Updates" says it couldn't check | Check your internet connection. GitHub's API also limits anonymous requests per hour, so try again later. |
+| A new or just-updated app's icon shows up already hidden | Expected, see "Why new icons start hidden" below; ⌘-drag it to the right of the separator (the arrow on macOS 27) once, or move it in Settings › Menu Bar Items |
 
 ### Why new icons start hidden
 
@@ -125,12 +190,13 @@ it slides off-screen. macOS always inserts a brand-new menu-bar icon at the
 far-left slot, which is inside that hidden zone, so a freshly launched or updated
 app can appear "swallowed". This is macOS positioning behavior, not Tuckaway
 moving your icon: there is no way for one app to reposition another app's menu-bar
-icon. The one-time fix is to ⌘-drag the icon to the right of the separator;
-macOS remembers that placement per app. A built-in way to keep chosen icons
-pinned is being explored as part of the larger menu-bar redesign.
+icon. The one-time fix is to ⌘-drag the icon to the right of the separator (the
+arrow on macOS 27), or drag it to **Visible** in Settings › Menu Bar Items;
+macOS remembers that placement per app.
 
 ## Requirements
 
-macOS 13 Ventura or later. Pre-Ventura (10.13 - 12.x): use
+macOS 13 Ventura or later, on Apple Silicon or Intel. For macOS 10.13–12, use
+the original Hidden Bar
 [v1.10](https://github.com/dwarvesf/hidden/releases/tag/v1.10), the last release
 on the old autostart mechanism.
