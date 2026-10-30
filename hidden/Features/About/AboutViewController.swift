@@ -37,17 +37,18 @@ private struct AboutSettingsView: View {
                     .frame(width: 60, height: 60)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Hidden Bar").font(.title2).fontWeight(.semibold)
+                    Text("Tuckaway").font(.title2).fontWeight(.semibold)
                     Text("Menu bar cleaner".localized).foregroundStyle(.secondary)
                     Text(verbatim: versionText)
                         .font(.callout).foregroundStyle(.secondary)
                 }
             }
             HStack(spacing: 20) {
-                Link("Source code".localized, destination: URL(string: "https://github.com/dwarvesf/hidden")!)
-                Link("Report an issue".localized, destination: URL(string: "https://github.com/dwarvesf/hidden/issues")!)
+                Link("Source code".localized, destination: URL(string: "https://github.com/Bruno-Alumn/hidden")!)
+                Link("Report an issue".localized, destination: URL(string: "https://github.com/Bruno-Alumn/hidden/issues")!)
             }
             VStack(spacing: 6) {
+                Text("Independent fork of Hidden Bar")
                 Text("MIT © Dwarves Foundation")
                     .foregroundStyle(.secondary)
             }

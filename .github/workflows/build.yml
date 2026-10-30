@@ -11,11 +11,11 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
-      - name: Build Hidden Bar
+      - name: Build Tuckaway
         run: >-
           xcodebuild
-          -project "Hidden Bar.xcodeproj"
-          -scheme "Hidden Bar"
+          -project "Tuckaway.xcodeproj"
+          -scheme "Tuckaway"
           -configuration Release
           -destination "platform=macOS"
           -derivedDataPath build/DerivedData
@@ -23,14 +23,14 @@ jobs:
           build
       - name: Package app
         run: |
-          xattr -cr "build/DerivedData/Build/Products/Release/Hidden Bar.app"
-          codesign --force --deep --sign - "build/DerivedData/Build/Products/Release/Hidden Bar.app"
-          codesign --verify --deep --strict "build/DerivedData/Build/Products/Release/Hidden Bar.app"
+          xattr -cr "build/DerivedData/Build/Products/Release/Tuckaway.app"
+          codesign --force --deep --sign - "build/DerivedData/Build/Products/Release/Tuckaway.app"
+          codesign --verify --deep --strict "build/DerivedData/Build/Products/Release/Tuckaway.app"
           ditto -c -k --keepParent \
-            "build/DerivedData/Build/Products/Release/Hidden Bar.app" \
-            Hidden-Bar-notch-overflow.zip
+            "build/DerivedData/Build/Products/Release/Tuckaway.app" \
+            Tuckaway.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: Hidden-Bar-notch-overflow
-          path: Hidden-Bar-notch-overflow.zip
+          name: Tuckaway
+          path: Tuckaway.zip
           if-no-files-found: error

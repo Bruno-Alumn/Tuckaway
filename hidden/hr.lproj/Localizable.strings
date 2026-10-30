@@ -1,6 +1,6 @@
 /* 
   Localizable.strings
-  Hidden Bar
+  Tuckaway
 
   Created by Licardo on 2020/3/9.
   Copyright © 2020 Dwarves Foundation. All rights reserved.
@@ -23,7 +23,7 @@
 ";
 
 /* General settings (moved from Main.storyboard) */
-"Start Hidden Bar when I log in" = "Pokreni Hidden Bar nakon prijave";
+"Start Tuckaway when I log in" = "Pokreni Tuckaway nakon prijave";
 "Show preferences on launch" = "Prikaži postavke nakon pokretanja";
 "Use the full MenuBar on expanding" = "Koristi cijelu traku izbornika pri rasklapanju";
 "Enable always hidden section" = "Uključi uvijek skriveni odjeljak";
@@ -32,7 +32,7 @@
 "Hidden" = "Skriveno";
 "Shown" = "Prikazano";
 "⭐️Always Hidden" = "⭐️Uvijek skriveno";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "Za konfiguriranje programa Hidden Bar, u traci izbornika pritisni tipku ⌘ i povuci ikone između odjeljaka.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Za konfiguriranje programa Tuckaway, u traci izbornika pritisni tipku ⌘ i povuci ikone između odjeljaka.";
 "5 seconds" = "5 s";
 "10 seconds" = "10 s";
 "15 seconds" = "15 s";

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Hidden_Bar
+@testable import Tuckaway
 
 /// Contract: Preferences.notchOverflowEnabled and AppDelegate's default
 /// values must give the user an explicit, persistent, discoverable way to
@@ -48,5 +48,41 @@ final class NotchOverflowPreferencesTests: XCTestCase {
         Preferences.notchOverflowEnabled = false
 
         XCTAssertFalse(Preferences.notchOverflowEnabled, "the preference must persist the value it was set to")
+    }
+}
+
+final class HiddenBarPreferenceMigrationTests: XCTestCase {
+    private var defaults: UserDefaults!
+    private var suiteName: String!
+    private var legacyDomain: String!
+
+    override func setUp() {
+        super.setUp()
+        suiteName = "TuckawayMigrationTests.\(UUID().uuidString)"
+        legacyDomain = "\(suiteName!).legacy"
+        defaults = UserDefaults(suiteName: suiteName)
+    }
+
+    override func tearDown() {
+        defaults.removePersistentDomain(forName: suiteName)
+        defaults.removePersistentDomain(forName: legacyDomain)
+        super.tearDown()
+    }
+
+    func testMigrationCopiesHiddenBarPreferencesOnce() {
+        defaults.setPersistentDomain([UserDefaults.Key.isAutoHide: false], forName: legacyDomain)
+        Preferences.migrateFromHiddenBar(defaults: defaults, legacyDomain: legacyDomain, currentDomain: suiteName)
+        XCTAssertFalse(defaults.bool(forKey: UserDefaults.Key.isAutoHide))
+
+        defaults.set(true, forKey: UserDefaults.Key.isAutoHide)
+        Preferences.migrateFromHiddenBar(defaults: defaults, legacyDomain: legacyDomain, currentDomain: suiteName)
+        XCTAssertTrue(defaults.bool(forKey: UserDefaults.Key.isAutoHide))
+    }
+
+    func testMigrationDoesNotOverwriteExistingTuckawayPreferences() {
+        defaults.set(true, forKey: UserDefaults.Key.isAutoHide)
+        defaults.setPersistentDomain([UserDefaults.Key.isAutoHide: false], forName: legacyDomain)
+        Preferences.migrateFromHiddenBar(defaults: defaults, legacyDomain: legacyDomain, currentDomain: suiteName)
+        XCTAssertTrue(defaults.bool(forKey: UserDefaults.Key.isAutoHide))
     }
 }

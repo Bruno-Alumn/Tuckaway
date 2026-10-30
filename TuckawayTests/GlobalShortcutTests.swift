@@ -1,5 +1,5 @@
 import XCTest
-@testable import Hidden_Bar
+@testable import Tuckaway
 
 final class GlobalShortcutTests: XCTestCase {
     private func shortcut(keyCode: UInt32 = 0, flags: UInt32 = 0,

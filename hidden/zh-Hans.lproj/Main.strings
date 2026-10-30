@@ -5,8 +5,8 @@
 /* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
 "1UK-8n-QPP.title" = "Customize Toolbar…";
 
-/* Class = "NSMenuItem"; title = "Hidden Bar"; ObjectID = "1Xt-HY-uBw"; */
-"1Xt-HY-uBw.title" = "Hidden Bar";
+/* Class = "NSMenuItem"; title = "Tuckaway"; ObjectID = "1Xt-HY-uBw"; */
+"1Xt-HY-uBw.title" = "Tuckaway";
 
 /* Class = "NSMenu"; title = "Find"; ObjectID = "1b7-l0-nxx"; */
 "1b7-l0-nxx.title" = "Find";
@@ -23,8 +23,8 @@
 /* Class = "NSMenuItem"; title = "Transformations"; ObjectID = "2oI-Rn-ZJC"; */
 "2oI-Rn-ZJC.title" = "Transformations";
 
-/* Class = "NSTextFieldCell"; title = "Hidden Bar"; ObjectID = "2xp-Ht-xa6"; */
-"2xp-Ht-xa6.title" = "Hidden Bar";
+/* Class = "NSTextFieldCell"; title = "Tuckaway"; ObjectID = "2xp-Ht-xa6"; */
+"2xp-Ht-xa6.title" = "Tuckaway";
 
 /* Class = "NSButtonCell"; title = "Keep last app state"; ObjectID = "31D-vN-XSA"; */
 "31D-vN-XSA.title" = "保留上一次使用应用时的状态";
@@ -50,8 +50,8 @@
 /* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
 "4J7-dP-txa.title" = "Enter Full Screen";
 
-/* Class = "NSMenuItem"; title = "Quit Hidden Bar"; ObjectID = "4sb-4s-VLi"; */
-"4sb-4s-VLi.title" = "Quit Hidden Bar";
+/* Class = "NSMenuItem"; title = "Quit Tuckaway"; ObjectID = "4sb-4s-VLi"; */
+"4sb-4s-VLi.title" = "Quit Tuckaway";
 
 /* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
 "5QF-Oa-p0T.title" = "Edit";
@@ -59,8 +59,8 @@
 /* Class = "NSMenuItem"; title = "Copy Style"; ObjectID = "5Vv-lz-BsD"; */
 "5Vv-lz-BsD.title" = "Copy Style";
 
-/* Class = "NSMenuItem"; title = "About Hidden Bar"; ObjectID = "5kV-Vb-QxS"; */
-"5kV-Vb-QxS.title" = "About Hidden Bar";
+/* Class = "NSMenuItem"; title = "About Tuckaway"; ObjectID = "5kV-Vb-QxS"; */
+"5kV-Vb-QxS.title" = "About Tuckaway";
 
 /* Class = "NSMenuItem"; title = "Redo"; ObjectID = "6dh-zS-Vam"; */
 "6dh-zS-Vam.title" = "Redo";
@@ -110,8 +110,8 @@
 /* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
 "F2S-fz-NVQ.title" = "Help";
 
-/* Class = "NSMenuItem"; title = "Hidden Bar Help"; ObjectID = "FKE-Sm-Kum"; */
-"FKE-Sm-Kum.title" = "Hidden Bar Help";
+/* Class = "NSMenuItem"; title = "Tuckaway Help"; ObjectID = "FKE-Sm-Kum"; */
+"FKE-Sm-Kum.title" = "Tuckaway Help";
 
 /* Class = "NSMenuItem"; title = "Text"; ObjectID = "Fal-I4-PZk"; */
 "Fal-I4-PZk.title" = "Text";
@@ -158,8 +158,8 @@
 /* Class = "NSButtonCell"; title = "⌫"; ObjectID = "IId-1b-leb"; */
 "IId-1b-leb.title" = "⌫";
 
-/* Class = "NSWindow"; title = "Hidden Bar"; ObjectID = "IQv-IB-iLA"; */
-"IQv-IB-iLA.title" = "Hidden Bar";
+/* Class = "NSWindow"; title = "Tuckaway"; ObjectID = "IQv-IB-iLA"; */
+"IQv-IB-iLA.title" = "Tuckaway";
 
 /* Class = "NSMenuItem"; title = "Justify"; ObjectID = "J5U-5w-g23"; */
 "J5U-5w-g23.title" = "Justify";
@@ -218,8 +218,8 @@
 /* Class = "NSMenuItem"; title = "Baseline"; ObjectID = "OaQ-X3-Vso"; */
 "OaQ-X3-Vso.title" = "Baseline";
 
-/* Class = "NSMenuItem"; title = "Hide Hidden Bar"; ObjectID = "Olw-nP-bQN"; */
-"Olw-nP-bQN.title" = "Hide Hidden Bar";
+/* Class = "NSMenuItem"; title = "Hide Tuckaway"; ObjectID = "Olw-nP-bQN"; */
+"Olw-nP-bQN.title" = "Hide Tuckaway";
 
 /* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
 "OwM-mh-QMV.title" = "Find Previous";
@@ -266,8 +266,8 @@
 /* Class = "NSMenuItem"; title = "Italic"; ObjectID = "Vjx-xi-njq"; */
 "Vjx-xi-njq.title" = "Italic";
 
-/* Class = "NSButtonCell"; title = "Start Hidden Bar when I log in"; ObjectID = "W1G-55-zGo"; */
-"W1G-55-zGo.title" = "在登录时启动 Hidden Bar";
+/* Class = "NSButtonCell"; title = "Start Tuckaway when I log in"; ObjectID = "W1G-55-zGo"; */
+"W1G-55-zGo.title" = "在登录时启动 Tuckaway";
 
 /* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
 "W48-6f-4Dl.title" = "Edit";
@@ -407,7 +407,7 @@
 /* Class = "NSMenuItem"; title = "Format"; ObjectID = "jxT-CU-nIS"; */
 "jxT-CU-nIS.title" = "Format";
 
-/* Class = "NSTextFieldCell"; title = "In your Mac's menu bar, hold ⌘ and drag icons \nbetween sections to configure Hidden Bar."; ObjectID = "k7C-e5-6a0"; */
+/* Class = "NSTextFieldCell"; title = "In your Mac's menu bar, hold ⌘ and drag icons \nbetween sections to configure Tuckaway."; ObjectID = "k7C-e5-6a0"; */
 "k7C-e5-6a0.title" = "在 Mac 的菜单栏中，按住 ⌘ 并拖动图标\n以自定义菜单栏";
 
 /* Class = "NSMenuItem"; title = "Show Sidebar"; ObjectID = "kIP-vf-haE"; */
@@ -467,8 +467,8 @@
 /* Class = "NSMenu"; title = "Kern"; ObjectID = "tlD-Oa-oAM"; */
 "tlD-Oa-oAM.title" = "Kern";
 
-/* Class = "NSMenu"; title = "Hidden Bar"; ObjectID = "uQy-DD-JDr"; */
-"uQy-DD-JDr.title" = "Hidden Bar";
+/* Class = "NSMenu"; title = "Tuckaway"; ObjectID = "uQy-DD-JDr"; */
+"uQy-DD-JDr.title" = "Tuckaway";
 
 /* Class = "NSMenuItem"; title = "Cut"; ObjectID = "uRl-iY-unG"; */
 "uRl-iY-unG.title" = "Cut";

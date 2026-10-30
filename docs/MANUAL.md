@@ -1,12 +1,12 @@
 # Manual
 
-Everything Hidden Bar can do, including the parts with no UI.
+Everything Tuckaway can do, including the parts with no UI.
 
 ## Basics
 
-- **Left-click the arrow** (`<` / `>`): expand or collapse the hidden section.
-- **Right-click the arrow** or **left-click the separator** (`|`): context menu
-  (Preferences, Toggle Auto Collapse, Quit).
+- **Left- or right-click the arrow** (`<` / `>`): expand or collapse the hidden section.
+- **Control-right-click the arrow** or **click the separator** (`|`): context menu
+  (Preferences, separator visibility, auto collapse, Quit).
 - **⌘-drag** icons in the menu bar to move them across the separator: icons to
   the separator's left are hidden when collapsed.
 - **Option-click the arrow**: show/hide the separators and the always-hidden
@@ -20,43 +20,43 @@ the arrow's left to hide them when collapsed, to its right to keep them
 visible. The always-hidden separator still appears (while expanded) when that
 section is enabled.
 
-- Needs **Accessibility** permission (System Settings › Privacy & Security ›
-  Accessibility) to see where your icons are. Without it the bar stays
-  expanded.
+- Needs **Device Control and Data Access** permission (System Settings › Privacy
+  & Security), called **Accessibility** on earlier macOS versions, to see where
+  your icons are. Without it the bar stays expanded.
 - Hiding is per app: an app with several icons hides or shows them together.
 - These macOS items always stay visible: clock, Control Center, Wi-Fi,
   Bluetooth, Sound, Battery, Display, Keyboard and Screen Mirroring.
 - With more than one display, an app stays visible if it is on the arrow's
-  visible side on **any** display. If Hidden Bar cannot read a complete display
+  visible side on **any** display. If Tuckaway cannot read a complete display
   layout after a monitor change, wake, or app launch, it leaves the bar expanded
   until it can safely read it again.
 - Clicking the clock opens Notification Center as usual. macOS ignores the
-  clock while it hides icons this way, so Hidden Bar lifts the hiding for a
+  clock while it hides icons this way, so Tuckaway lifts the hiding for a
   moment and clicks the clock for you; the hidden icons show for under a
   second while it does.
-- Run Hidden Bar from `/Applications`; macOS only recognizes that copy as
-  Hidden Bar, and a copy elsewhere hides its own arrow.
+- Run Tuckaway from `/Applications`; macOS only recognizes that copy as
+  Tuckaway, and a copy elsewhere hides its own arrow.
 
 #### While collapsed (macOS limitation, #437)
 
 macOS 27 offers this kind of hiding only as part of its exam-lockdown
-(assessment) mode, and turns on that mode's other restrictions too. Hidden Bar
+(assessment) mode, and turns on that mode's other restrictions too. Tuckaway
 cannot opt out of them. While the arrow is collapsed:
 
 - **Now Playing and Live Activities are hidden**, even if you keep the app that
   is playing to the right of the arrow.
-- **Clicking the clock briefly reveals hidden icons.** Hidden Bar lifts the
+- **Clicking the clock briefly reveals hidden icons.** Tuckaway lifts the
   restriction, presses the clock to open Notification Center, then restores
   hiding; the icons can remain visible for under a second.
 - **Recording indicators:** macOS hides the menu-bar indicator that names the
   app using the microphone or camera (the orange or green capsule). The small
   colored dot in the top-right corner of the screen still shows. To keep the
-  capsule too, Hidden Bar stops hiding and shows the whole bar as soon as an
+  capsule too, Tuckaway stops hiding and shows the whole bar as soon as an
   app starts using the microphone or a camera, and resumes when that stops.
   macOS's always-on CoreSpeech listener is ignored because it does not show a
   recording indicator. The arrow keeps its collapsed look in the meantime.
 - **Screen recording: not covered.** macOS offers no public way to tell that
-  another app is recording the screen, so Hidden Bar keeps hiding. The purple
+  another app is recording the screen, so Tuckaway keeps hiding. The purple
   dot in the screen corner still shows.
 
 Expanding the arrow ends all of this immediately.
@@ -65,7 +65,7 @@ Expanding the arrow ends all of this immediately.
 
 | Setting | What it does |
 |---|---|
-| Start Hidden Bar when I log in | Login item via System Settings (macOS 13+ `SMAppService`); revocable in System Settings > General > Login Items |
+| Start Tuckaway when I log in | Login item via System Settings (macOS 13+ `SMAppService`); revocable in System Settings > General > Login Items |
 | Show preferences on launch | Open this window at app start |
 | Auto collapse | Re-hide automatically after the chosen delay |
 | Hover to expand | Expand after hovering over the menu bar for about half a second |
@@ -99,20 +99,20 @@ All via `defaults`; quit and relaunch the app after changing them.
 
 ```sh
 # auto-collapse delay in seconds (the UI offers a fixed list; any value works)
-defaults write com.dwarvesv.minimalbar numberOfSecondForAutoHide -float 5
+defaults write com.brunoalumn.tuckaway numberOfSecondForAutoHide -float 5
 
 # force the app language regardless of system order (issue #287)
-defaults write com.dwarvesv.minimalbar AppleLanguages '(en)'
+defaults write com.brunoalumn.tuckaway AppleLanguages '(en)'
 ```
 
-To undo any of them: `defaults delete com.dwarvesv.minimalbar <key>`.
+To undo any of them: `defaults delete com.brunoalumn.tuckaway <key>`.
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---|---|
 | Icons I want visible got hidden after an update | On macOS 27 direct builds, ⌘-drag them to the arrow's right; on earlier builds, drag them right of the separator |
-| Login item missing after denying it once | System Settings > General > Login Items: re-enable Hidden Bar, then toggle the pref off/on |
+| Login item missing after denying it once | System Settings > General > Login Items: re-enable Tuckaway, then toggle the pref off/on |
 | A ghost "LauncherApplication" login item from old versions | Launch the current version once; it deauthorizes the legacy item automatically |
 | App language stuck | See the `AppleLanguages` command above, or System Settings > General > Language & Region > Applications |
 | Nothing hides on a macOS 27 beta | Known (issue #360); the menu bar re-architecture broke the hiding mechanism, fix under investigation |
@@ -120,10 +120,10 @@ To undo any of them: `defaults delete com.dwarvesv.minimalbar <key>`.
 
 ### Why new icons start hidden
 
-Hidden Bar hides icons by widening its separator so everything to the *left* of
+Tuckaway hides icons by widening its separator so everything to the *left* of
 it slides off-screen. macOS always inserts a brand-new menu-bar icon at the
 far-left slot, which is inside that hidden zone, so a freshly launched or updated
-app can appear "swallowed". This is macOS positioning behavior, not Hidden Bar
+app can appear "swallowed". This is macOS positioning behavior, not Tuckaway
 moving your icon: there is no way for one app to reposition another app's menu-bar
 icon. The one-time fix is to ⌘-drag the icon to the right of the separator;
 macOS remembers that placement per app. A built-in way to keep chosen icons

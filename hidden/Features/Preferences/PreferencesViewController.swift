@@ -186,7 +186,7 @@ final class GeneralSettingsModel: ObservableObject {
             if Preferences.isAutoStart != wanted {
                 let alert = NSAlert()
                 alert.messageText = "Could not update the login item".localized
-                alert.informativeText = "Check System Settings > General > Login Items and make sure Hidden Bar is allowed.".localized
+                alert.informativeText = "Check System Settings > General > Login Items and make sure Tuckaway is allowed.".localized
                 alert.alertStyle = .warning
                 alert.runModal()
             }
@@ -282,7 +282,7 @@ struct GeneralSettingsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         sectionLabel("Startup")
                         VStack(spacing: 0) {
-                            settingsToggle("Start Hidden Bar when I log in", isOn: model.autoStart)
+                            settingsToggle("Start Tuckaway when I log in", isOn: model.autoStart)
                             settingsToggle("Show preferences on launch", isOn: model.showPreferencesOnLaunch)
                         }
                     }
@@ -340,7 +340,7 @@ struct GeneralSettingsView: View {
                 .frame(maxWidth: .infinity)
             Text(verbatim: MenuBarEngineFactory.usesNativeVisibility
                  ? "Hold ⌘ and drag icons to the left of the arrow to hide them.".localized
-                 : Self.label("In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar.").replacingOccurrences(of: "\n", with: " "))
+                 : Self.label("In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway.").replacingOccurrences(of: "\n", with: " "))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -352,7 +352,7 @@ struct GeneralSettingsView: View {
         HStack(spacing: 10) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundStyle(.orange)
-            Text(verbatim: "Hidden Bar needs Accessibility access to hide icons.".localized)
+            Text(verbatim: "Tuckaway needs Accessibility access to hide icons.".localized)
                 .font(.callout)
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
