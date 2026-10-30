@@ -14,6 +14,10 @@ enum MenuBarDropAnchor: Equatable {
     case emptyList
 }
 
+enum MenuBarDropSide {
+    case before, after
+}
+
 // The pure part of moving an item from the Menu Bar Items lists, kept free of
 // AppKit and Accessibility so it can be unit tested.
 enum MenuBarItemMovePlan {
@@ -40,35 +44,28 @@ enum MenuBarItemMovePlan {
         return .emptyList
     }
 
-    // Where to release the ⌘-drag. macOS swaps a dragged item past a neighbour
-    // once the pointer crosses into it, so aiming just inside the neighbour's
-    // near edge settles the item on the requested side whichever way it moves.
-    static func releaseX(for anchor: MenuBarDropAnchor, anchorFrame: CGRect?, emptyListX: CGFloat) -> CGFloat {
-        guard let frame = anchorFrame else { return emptyListX }
-        let inset = min(4, frame.width / 4)
-        switch anchor {
-        case .before: return frame.minX + inset
-        case .after: return frame.maxX - inset
-        case .emptyList: return emptyListX
-        }
+    // Where to release the first, quick ⌘-drag: just inside the anchor's near
+    // edge. That usually lands the item next to the anchor in one go, however
+    // far it travels; `nextStep` fixes the rest.
+    static func releaseX(placing itemFrame: CGRect, _ side: MenuBarDropSide, of anchorFrame: CGRect) -> CGFloat {
+        let inset = min(4, anchorFrame.width / 4)
+        return side == .before ? anchorFrame.minX + inset : anchorFrame.maxX - inset
     }
 
-    // Status items sit a few points apart (6–14pt measured on macOS 27); any
-    // wider gap means something else is in between.
-    static let neighbourGap: CGFloat = 24
+    enum Direction { case left, right }
 
-    // Whether the item sits right next to its anchor, on the requested side.
-    static func isSettled(itemFrame: CGRect, anchor: MenuBarDropAnchor, anchorFrame: CGRect?) -> Bool {
-        guard let anchorFrame else { return true }
-        switch anchor {
-        case .before:
-            let gap = anchorFrame.minX - itemFrame.maxX
-            return gap > -1 && gap < neighbourGap
-        case .after:
-            let gap = itemFrame.minX - anchorFrame.maxX
-            return gap > -1 && gap < neighbourGap
-        case .emptyList:
-            return true
-        }
+    // Given the whole bar in left-to-right order, which neighbour the item has
+    // to pass next, and which way, to end up on `side` of `anchor`. Nil once it
+    // is there (or if either is missing).
+    //
+    // A synthesized ⌘-drag reliably swaps an item with exactly one neighbour
+    // (measured on macOS 27), so corrections pass one neighbour at a time.
+    static func nextStep<ID: Equatable>(in order: [ID], item: ID, _ side: MenuBarDropSide, of anchor: ID) -> (pass: ID, direction: Direction)? {
+        guard let itemIndex = order.firstIndex(of: item), let anchorIndex = order.firstIndex(of: anchor) else { return nil }
+        let goal = side == .before ? anchorIndex - 1 : anchorIndex + 1
+        if itemIndex == goal { return nil }
+        // Too far left: pass the right-hand neighbour. Too far right: the left-hand one.
+        let tooFarLeft = side == .before ? itemIndex < goal : itemIndex < anchorIndex
+        return tooFarLeft ? (order[itemIndex + 1], .right) : (order[itemIndex - 1], .left)
     }
 }
