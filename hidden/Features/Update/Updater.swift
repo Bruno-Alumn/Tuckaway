@@ -211,9 +211,15 @@ final class Updater {
         let extracted = workDirectory.appendingPathComponent("extracted")
         if isDiskImage {
             let mountPoint = workDirectory.appendingPathComponent("mount")
-            guard run("/usr/bin/hdiutil", ["attach", package.path, "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mountPoint.path])
-            else { throw UpdateError.invalidArchive }
-            defer { run("/usr/bin/hdiutil", ["detach", mountPoint.path, "-force"]) }
+            if #available(macOS 27.0, *) {
+                guard run("/usr/bin/diskutil", ["image", "attach", package.path, "--readOnly", "--nobrowse", "--mountPoint", mountPoint.path])
+                else { throw UpdateError.invalidArchive }
+                defer { run("/usr/bin/diskutil", ["unmount", mountPoint.path]) }
+            } else {
+                guard run("/usr/bin/hdiutil", ["attach", package.path, "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mountPoint.path])
+                else { throw UpdateError.invalidArchive }
+                defer { run("/usr/bin/hdiutil", ["detach", mountPoint.path, "-force"]) }
+            }
             let mounted = (try? fileManager.contentsOfDirectory(at: mountPoint, includingPropertiesForKeys: nil)) ?? []
             guard let mountedApp = mounted.first(where: { $0.pathExtension == "app" }),
                   run("/usr/bin/ditto", [mountedApp.path, extracted.appendingPathComponent(mountedApp.lastPathComponent).path])

@@ -187,8 +187,9 @@ flowchart TD
    `skippedUpdateVersion` suppresses automatic prompts only.
 3. **Download:** `GitHubRelease.appPackage` picks `Tuckaway.dmg`, falling back
    to a zip for releases made before the DMG switch.
-4. **Unpack:** a DMG is mounted read-only with `hdiutil` and the app copied out
-   with `ditto`; a zip is extracted with `ditto`.
+4. **Unpack:** a DMG is mounted read-only with `diskutil image` on macOS 27
+   (`hdiutil` on older systems) and the app copied out with `ditto`; a zip is
+   extracted with `ditto`.
 5. **Verify:** the app must have the same bundle ID, a version equal to the tag,
    pass `codesign --verify --deep --strict`, and satisfy the running app's
    designated requirement (same bundle ID and signing certificate; checked
@@ -220,8 +221,8 @@ never garbage-collects those; see Apple TN3111). The helper app itself is gone.
   - It loads one private framework, `MenuBarClientCore`, only through the
     exception-catching shim.
   - Its only network request is the update check. The updater is also the only
-    code that runs subprocesses (`hdiutil`, `ditto`, `codesign`, `xattr`, and
-    the `/bin/sh` relauncher). They get fixed tool paths and pass paths as
+    code that runs subprocesses (`diskutil`/`hdiutil`, `ditto`, `codesign`,
+    `xattr`, and the `/bin/sh` relauncher). They get fixed tool paths and pass paths as
     arguments, never interpolated into a shell string.
 - **Both builds:**
   - The only dependency, HotKey (a small Carbon `RegisterEventHotKey` wrapper),
@@ -246,5 +247,5 @@ never garbage-collects those; see Apple TN3111). The helper app itself is gone.
 - **Other apps' open menus:** interaction awareness is based on pointer
   position. A pointer deep inside another app's open dropdown is below the
   menu-bar band, so an auto-collapse can still fire there.
-- **`hdiutil` is deprecated** on macOS 27 in favor of `diskutil image`. It
-  still works for the updater and `scripts/package-dmg.sh`.
+- **DMG tooling requires macOS 13–26 fallback.** macOS 27 uses `diskutil
+  image`; older systems use the deprecated but still supported `hdiutil`.
