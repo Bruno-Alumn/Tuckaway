@@ -72,16 +72,28 @@ final class ExpandCollapseActionTests: XCTestCase {
 
     func testVisiblePreferencesDoesNotDeferNormalAutoCollapse() {
         XCTAssertFalse(ExpandCollapseActionResolver.shouldDeferAutoCollapse(
-            isMouseInMenuBar: false, isPreferencesVisible: true, usesFullMenuBar: false))
+            isMouseInMenuBar: false, isMouseButtonDown: false, isPreferencesVisible: true, usesFullMenuBar: false))
     }
 
     func testVisiblePreferencesDefersFullMenuBarAutoCollapse() {
         XCTAssertTrue(ExpandCollapseActionResolver.shouldDeferAutoCollapse(
-            isMouseInMenuBar: false, isPreferencesVisible: true, usesFullMenuBar: true))
+            isMouseInMenuBar: false, isMouseButtonDown: false, isPreferencesVisible: true, usesFullMenuBar: true))
     }
 
     func testMenuBarPointerAlwaysDefersAutoCollapse() {
         XCTAssertTrue(ExpandCollapseActionResolver.shouldDeferAutoCollapse(
-            isMouseInMenuBar: true, isPreferencesVisible: false, usesFullMenuBar: false))
+            isMouseInMenuBar: true, isMouseButtonDown: false, isPreferencesVisible: false, usesFullMenuBar: false))
+    }
+
+    // ⌘-dragging icons keeps going after the pointer drifts below the bar; the
+    // held button alone must keep the bar from collapsing under the drag.
+    func testHeldMouseButtonDefersAutoCollapseOutsideTheMenuBar() {
+        XCTAssertTrue(ExpandCollapseActionResolver.shouldDeferAutoCollapse(
+            isMouseInMenuBar: false, isMouseButtonDown: true, isPreferencesVisible: false, usesFullMenuBar: false))
+    }
+
+    func testNothingHeldAndPointerAwayCollapses() {
+        XCTAssertFalse(ExpandCollapseActionResolver.shouldDeferAutoCollapse(
+            isMouseInMenuBar: false, isMouseButtonDown: false, isPreferencesVisible: false, usesFullMenuBar: false))
     }
 }

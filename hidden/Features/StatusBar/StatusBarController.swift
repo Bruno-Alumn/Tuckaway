@@ -149,6 +149,11 @@ class StatusBarController: MenuBarItemProvider {
         }
     }
 
+    // Any mouse button held, anywhere: a click or drag is still in progress.
+    private var isMouseButtonDown: Bool {
+        return NSEvent.pressedMouseButtons != 0
+    }
+
     // The preferences window is an ordinary app window, not in the menu bar, so
     // the mouse-in-menubar guard does not cover it. With "use full menu bar on
     // expanding" on, an auto-collapse deactivates the app and dismisses this
@@ -236,7 +241,9 @@ class StatusBarController: MenuBarItemProvider {
             self.hoverDwellTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
                 guard let self = self else { return }
                 self.hoverDwellTimer = nil
-                if self.isCollapsed && self.isMouseInMenuBar {
+                // A press means the user is clicking or ⌘-dragging an icon;
+                // expanding under it would reflow the bar mid-gesture.
+                if self.isCollapsed && self.isMouseInMenuBar && !self.isMouseButtonDown {
                     self.expandMenubar()
                 }
             }
@@ -286,7 +293,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     @objc private func handleApplicationActivated(_ notification: Notification) {
-        guard Preferences.autoCollapseOnFocusChange, !isCollapsed,
+        guard Preferences.autoCollapseOnFocusChange, !isCollapsed, !isMouseButtonDown,
               let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
               app.bundleIdentifier != Bundle.main.bundleIdentifier else { return }
         collapseMenuBar()
@@ -585,6 +592,7 @@ class StatusBarController: MenuBarItemProvider {
             // same deferral when full-menu-bar activation could dismiss it (#170).
             if ExpandCollapseActionResolver.shouldDeferAutoCollapse(
                 isMouseInMenuBar: self.isMouseInMenuBar,
+                isMouseButtonDown: self.isMouseButtonDown,
                 isPreferencesVisible: self.isPreferencesWindowVisible,
                 usesFullMenuBar: Preferences.useFullStatusBarOnExpandEnabled
             ) {
