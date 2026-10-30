@@ -1,48 +1,123 @@
-/* 
+/*
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Translated from en.lproj/Localizable.strings; keep keys and order in step.
 */
 
-"Preferences..." = "Tuỳ chọn...";
-"Toggle Auto Collapse" = "Đổi trạng thái tự động ẩn";
-"Enable Auto Collapse" = "Bật tự động ẩn";
-"Disable Auto Collapse" = "Tắt tự động ẩn";
-"Quit" = "Thoát";
-"Set Shortcut" = "Cài phím tắt";
-"Tutorial text" = "
-Dùng tính năng luôn ẩn để làm thanh menu gọn gàng hơn bằng cách luôn ẩn những icons bạn không thích. Để bật tính năng này
-Các bước thực hiện:
-1. Bật tính năng luôn ẩn “|” (thanh dọc có màu hơi mờ sẽ xuất hiện)
-2. Giữ phím ⌘ và kéo thanh mờ này về phía bên tay trái của thanh không mờ, di chuyển icons của ứng dụng mà bạn không muốn hiện kể cả khi đang mở rộng (hiện ẩn).
-3. Sau cùng, giữ phím ⌥ Option và click vào icon “<” để luôn ẩn những icon này.
-Để hiện lại những icon luôn ẩn:
-1. Giữ phím ⌥ Option và click vào nút “<” 😉!
-";
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "Tự động thu gọn";
+"Show separators" = "Hiện dấu phân cách";
+"Hide separators" = "Ẩn dấu phân cách";
+"Manage Menu Bar Items…" = "Quản lý mục thanh menu…";
+"Check for Updates…" = "Kiểm tra bản cập nhật…";
+"Settings…" = "Cài đặt…";
+"Quit Tuckaway" = "Thoát Tuckaway";
+"Show Notch Items" = "Hiện mục sau tai thỏ";
+"Notch Overflow" = "Mục bị tai thỏ che";
+"Hidden Behind Notch (%d)" = "Bị tai thỏ che (%d)";
+"Visible (%d)" = "Đang hiện (%d)";
+"No items found (grant Accessibility permission)" = "Không tìm thấy mục nào (hãy cấp quyền Trợ năng)";
+"Hidden items unavailable" = "Không thể hiển thị các mục ẩn";
+"Show hidden items in separate bar" = "Hiện các mục ẩn trong thanh riêng";
 
-/* General settings (moved from Main.storyboard) */
-"Start Tuckaway when I log in" = "Chạy Tuckaway khi khởi động";
-"Show preferences on launch" = "Hiện tuỳ chọn lúc khởi chạy";
-"Use the full MenuBar on expanding" = "Sử dụng toàn thanh công cụ khi mở rộng";
-"Enable always hidden section" = "Bật tính năng luôn ẩn";
-"Automatically hide icon after: " = "Tự động ẩn sau: ";
-"Global Shortcut" = "Phím tắt";
-"Hidden" = "Ẩn";
-"Shown" = "Hiện";
-"⭐️Always Hidden" = "⭐️Luôn ẩn";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Ở thanh menu hệ thống, giữ phím ⌘ và nhấn chuột kéo icons\n di chuyển đến vùng cần ẩn /hiện.";
+/* Settings window tabs */
+"General" = "Cài đặt chung";
+"Menu Bar Items" = "Mục thanh menu";
+"About" = "Giới thiệu";
+
+/* General settings */
+"Hiding" = "Ẩn";
+"Automatically hide icon after: " = "Thu gọn sau";
 "5 seconds" = "5 giây";
 "10 seconds" = "10 giây";
 "15 seconds" = "15 giây";
 "30 seconds" = "30 giây";
 "1 minute" = "1 phút";
+"Collapse when another app becomes active" = "Thu gọn khi chuyển ứng dụng";
+"Revealing" = "Hiện";
+"Expand by hovering over the menu bar" = "Di chuột để mở rộng";
+"Click empty menu bar to show or hide icons" = "Bấm vùng trống trên thanh menu để ẩn/hiện";
+"Expand when an external display is connected" = "Mở rộng khi có màn hình ngoài";
+"Shortcut" = "Phím tắt";
+"Set Shortcut" = "Đặt phím tắt";
+"Type Shortcut…" = "Nhập phím tắt…";
+"Clear" = "Xóa";
+"Appearance" = "Giao diện";
+"Expand icon" = "Biểu tượng mở rộng";
+"Standard" = "Chuẩn";
+"Transparent" = "Trong suốt";
+"Ellipsis" = "Dấu ba chấm";
+"Use the full MenuBar on expanding" = "Mở rộng trên toàn thanh menu";
+"Extra Sections" = "Vùng bổ sung";
+"Enable always hidden section" = "Vùng luôn ẩn";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Biểu tượng sau tai thỏ";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Đặt dấu phân cách luôn ẩn ở bên trái mũi tên, sau đó giữ ⌘ và kéo biểu tượng sang bên trái dấu đó. Giữ Option và bấm vào mũi tên để ẩn hoặc hiện vùng đó.";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Đặt dấu phân cách luôn ẩn ở bên trái dấu phân cách thông thường, sau đó giữ ⌘ và kéo biểu tượng sang bên trái dấu đó. Giữ Option và bấm vào mũi tên để ẩn hoặc hiện vùng đó.";
+"Startup" = "Khởi động";
+"Start Tuckaway when I log in" = "Mở khi đăng nhập";
+"Show preferences on launch" = "Mở cài đặt khi khởi chạy";
+"Could not update the login item" = "Không thể cập nhật mục đăng nhập";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "Hãy kiểm tra Cài đặt hệ thống > Cài đặt chung > Mục đăng nhập và đảm bảo Tuckaway được cho phép.";
+"Updates" = "Cập nhật";
+"Check for updates automatically" = "Tự động kiểm tra bản cập nhật";
+"Check Now" = "Kiểm tra ngay";
 
-"General" = "Bảng tuỳ chỉnh";
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️Luôn ẩn";
+"Hidden" = "Ẩn";
+"Shown" = "Hiện";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "Giữ ⌘ và kéo biểu tượng sang bên trái mũi tên để ẩn chúng.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Trên thanh menu của máy Mac, giữ ⌘ và kéo biểu tượng\ngiữa các vùng để cấu hình Tuckaway.";
+"Tuckaway needs Accessibility access to hide icons." = "Tuckaway cần quyền truy cập Trợ năng để ẩn biểu tượng.";
+"Open Settings…" = "Mở Cài đặt…";
 
-"About" = "Về chúng tôi";
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "Kéo mục trong một danh sách để sắp xếp lại, hoặc kéo giữa các danh sách để thay đổi trạng thái hiển thị.";
+"Visible" = "Hiện";
+"Refresh" = "Làm mới";
+"Grant Access" = "Cấp quyền truy cập";
+"Enable Tuckaway in System Settings, then return and refresh." = "Bật Tuckaway trong Cài đặt hệ thống, sau đó quay lại và làm mới.";
+"Scanning menu bar items…" = "Đang quét các mục thanh menu…";
+"Accessibility permission is required to list and move menu bar items." = "Cần quyền Trợ năng để liệt kê và di chuyển các mục thanh menu.";
+"No manageable menu bar items were found." = "Không tìm thấy mục thanh menu nào có thể quản lý.";
+"Drop an item to apply the real menu bar position." = "Thay đổi được áp dụng cho thanh menu ngay khi bạn thả.";
+"Drop items here" = "Thả mục vào đây";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "Không thể đặt %@ đúng vị trí; danh sách cho biết vị trí thực tế của mục đó.";
+"Unknown" = "Không xác định";
 
-"Menu bar cleaner" = "Menu bar cleaner";
-
+/* About tab */
 "Version" = "Phiên bản";
+"Tidy your Mac’s menu bar." = "Dọn gọn thanh menu trên máy Mac của bạn.";
+"Source code" = "Mã nguồn";
+"Report an issue" = "Báo cáo sự cố";
+"Independent MIT-licensed fork of Hidden Bar" = "Bản fork độc lập của Hidden Bar theo giấy phép MIT";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "Tác phẩm gốc © Dwarves Foundation · Phần sửa đổi của Tuckaway © Bruno-Alumn";
+
+/* App Store build on macOS 27 (#360) */
+"Hiding unavailable on macOS 27 - Learn more" = "Phiên bản này không thể ẩn biểu tượng trên macOS 27 – Tải phiên bản tải trực tiếp";
+"Menu bar hiding isn't available on macOS 27" = "Phiên bản Tuckaway này không thể ẩn biểu tượng trên macOS 27";
+"macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "macOS 27 ẩn biểu tượng trên thanh menu theo cách mới mà phiên bản App Store chạy trong sandbox không thể sử dụng. Phiên bản tải trực tiếp của Tuckaway hỗ trợ cách này — hãy tải từ GitHub để tiếp tục ẩn biểu tượng.";
+"Learn More" = "Tải phiên bản trực tiếp";
+"OK" = "OK";
+
+/* Updater */
+"Version %@" = "Phiên bản %@";
+"Couldn’t check for updates" = "Không thể kiểm tra bản cập nhật";
+"Make sure you’re connected to the internet, then try again." = "Hãy đảm bảo bạn đã kết nối Internet, sau đó thử lại.";
+"You’re up to date" = "Bạn đang dùng phiên bản mới nhất";
+"Tuckaway %@ is the latest version." = "Tuckaway %@ là phiên bản mới nhất.";
+"Tuckaway %@ is available" = "Đã có Tuckaway %@";
+"You have version %@." = "Bạn đang dùng phiên bản %@.";
+"Install and Relaunch" = "Cài đặt và mở lại";
+"Download" = "Tải về";
+"Later" = "Để sau";
+"Skip This Version" = "Bỏ qua phiên bản này";
+"Update installed" = "Đã cài đặt bản cập nhật";
+"Quit and reopen Tuckaway to finish updating." = "Thoát và mở lại Tuckaway để hoàn tất cập nhật.";
+"The update couldn’t be installed" = "Không thể cài đặt bản cập nhật";
+"The download didn’t finish. You can download the update from GitHub instead." = "Quá trình tải về chưa hoàn tất. Thay vào đó, bạn có thể tải bản cập nhật từ GitHub.";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "Tệp đã tải về không chứa bản Tuckaway hợp lệ nên không có gì bị thay đổi. Thay vào đó, bạn có thể tải bản cập nhật từ GitHub.";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway không thể tự thay thế trong thư mục hiện tại. Thay vào đó, bạn có thể tải bản cập nhật từ GitHub.";
+"Open Release Page" = "Mở trang phát hành";
+"Cancel" = "Hủy";

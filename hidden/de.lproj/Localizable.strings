@@ -1,70 +1,125 @@
-/* 
+/*
   Localizable.strings
   Tuckaway
 
-  Created by Licardo on 2020/3/9.
-  Copyright © 2020 Dwarves Foundation. All rights reserved.
+  Keys are the English source text used in code (some keys are older wording;
+  the value is what's shown). Every key here is used; keep the 12 other
+  languages in step when adding one.
 */
 
-"Preferences..." = "Voreinstellungen…";
-"Toggle Auto Collapse" = "Automatisch einklappen";
-"Enable Auto Collapse" = "Automatisch einklappen einschalten";
-"Disable Auto Collapse" = "Automatisch einklappen ausschalten";
-"Quit" = "Beenden";
-"Set Shortcut" = "Kurzbefehl festlegen";
-"Tutorial text" = "
-Verwende die “permanent ausgeblendet“ Funktion um deine Menüleistensymbole aufgeräumt zu halten.. Und so funktioniert es..
-Zum einschalten:
-1. Aktiviere permanent ausgeblendet “|” (transluzenter Farbstreifen)
-2. Halte  ⌘ und ziehe es auf die linke Seite der normalen Leiste, verschiebe dann die Symbole die ausgeblendet werden sollen auf die linke Seite dieser Leiste.
-3. Abschließend klicke mit gedrückter ⌥ Wahltaste auf das Einklappen Symbol “<” um sie auszublenden.
-Zum Anzeigen der permanent ausgeblendeten Symbole:
-1. Klicke mit gedrückter ⌥ Wahltaste nochmals auf das Einklappen Symbol “<” um sie anzuzeigen und wiederhole den Schritt um die Funktion zu aktivieren. Viel Spaß 😉!
-";
+/* Menu bar: arrow and separator menu */
+"Auto-collapse" = "Automatisch einklappen";
+"Show separators" = "Trennlinien einblenden";
+"Hide separators" = "Trennlinien ausblenden";
+"Manage Menu Bar Items…" = "Menüleistenobjekte verwalten …";
+"Check for Updates…" = "Nach Updates suchen …";
+"Settings…" = "Einstellungen …";
+"Quit Tuckaway" = "Tuckaway beenden";
+"Show Notch Items" = "Objekte hinter der Notch zeigen";
+"Notch Overflow" = "Hinter der Notch";
+"Hidden Behind Notch (%d)" = "Hinter der Notch verborgen (%d)";
+"Visible (%d)" = "Sichtbar (%d)";
+"No items found (grant Accessibility permission)" = "Keine Objekte gefunden (Zugriff auf Bedienungshilfen erlauben)";
+"Hidden items unavailable" = "Ausgeblendete Objekte nicht verfügbar";
+"Show hidden items in separate bar" = "Ausgeblendete Objekte in eigener Leiste zeigen";
 
-"Tuckaway needs Accessibility access to hide icons." = "Tuckaway benötigt Bedienungshilfen-Zugriff, um Symbole auszublenden.";
-"Open Settings…" = "Einstellungen öffnen…";
+/* Settings window tabs */
+"General" = "Allgemein";
+"Menu Bar Items" = "Menüleistenobjekte";
+"About" = "Über";
 
-/* General settings (moved from Main.storyboard) */
-"Start Tuckaway when I log in" = "Beim Anmelden starten";
-"Show preferences on launch" = "Einstellungen beim Start öffnen";
-"Use the full MenuBar on expanding" = "Beim Erweitern die gesamte Menübreite benutzen";
-"Enable always hidden section" = "Dauerhaft ausgeblendeter Bereich";
-"Automatically hide icon after: " = "Ausblenden nach";
-"Global Shortcut" = "Globaler Shortcut";
-"Hidden" = "Ausgeblendet";
-"Shown" = "Sichtbar";
-"⭐️Always Hidden" = "⭐️Immer ausgeblendet";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Halte ⌘ in der Menüleiste und verschiebe Symbole\nzwischen den Sektionen um Tuckaway zu konfigurieren.";
+/* General settings */
+"Hiding" = "Ausblenden";
+"Automatically hide icon after: " = "Einklappen nach";
 "5 seconds" = "5 Sekunden";
 "10 seconds" = "10 Sekunden";
 "15 seconds" = "15 Sekunden";
 "30 seconds" = "30 Sekunden";
 "1 minute" = "1 Minute";
-"Hold ⌘ and drag icons to the left of the arrow to hide them." = "Halte ⌘ gedrückt und ziehe Symbole links neben den Pfeil, um sie auszublenden.";
-"Accessibility access needed" = "Bedienungshilfen-Zugriff erforderlich";
-"Type Shortcut…" = "Tastenkombination drücken…";
+"Collapse when another app becomes active" = "Bei App-Wechsel einklappen";
+"Revealing" = "Einblenden";
+"Expand by hovering over the menu bar" = "Ausklappen per Mauszeiger";
+"Click empty menu bar to show or hide icons" = "Klick auf leere Menüleiste schaltet um";
+"Expand when an external display is connected" = "Mit externem Display ausklappen";
+"Shortcut" = "Tastenkurzbefehl";
+"Set Shortcut" = "Kurzbefehl festlegen";
+"Type Shortcut…" = "Kurzbefehl eingeben …";
 "Clear" = "Löschen";
+"Appearance" = "Erscheinungsbild";
+"Expand icon" = "Symbol zum Ausklappen";
+"Standard" = "Standard";
+"Transparent" = "Transparent";
+"Ellipsis" = "Auslassungspunkte";
+"Use the full MenuBar on expanding" = "Über ganze Menüleiste ausklappen";
+"Extra Sections" = "Zusätzliche Bereiche";
+"Enable always hidden section" = "Immer ausgeblendeter Bereich";
+"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Symbole hinter der Notch";
+"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Platziere die Trennlinie für immer ausgeblendete Symbole links neben dem Pfeil und ziehe Symbole mit gedrückter ⌘-Taste links daneben. Klicke mit gedrückter Wahltaste auf den Pfeil, um diesen Bereich aus- oder einzublenden.";
+"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Platziere die Trennlinie für immer ausgeblendete Symbole links neben der normalen Trennlinie und ziehe Symbole mit gedrückter ⌘-Taste links daneben. Klicke mit gedrückter Wahltaste auf den Pfeil, um diesen Bereich aus- oder einzublenden.";
+"Startup" = "Starten";
+"Start Tuckaway when I log in" = "Bei Anmeldung öffnen";
+"Show preferences on launch" = "Einstellungen beim Start öffnen";
+"Could not update the login item" = "Anmeldeobjekt konnte nicht aktualisiert werden";
+"Check System Settings > General > Login Items and make sure Tuckaway is allowed." = "Prüfe unter „Systemeinstellungen“ > „Allgemein“ > „Anmeldeobjekte“, ob Tuckaway erlaubt ist.";
+"Updates" = "Updates";
+"Check for updates automatically" = "Automatisch nach Updates suchen";
+"Check Now" = "Jetzt suchen";
 
-"General" = "Allgemein";
+/* General settings: menu bar diagram and permission banner */
+"⭐️Always Hidden" = "⭐️Immer ausgeblendet";
+"Hidden" = "Ausgeblendet";
+"Shown" = "Sichtbar";
+"Hold ⌘ and drag icons to the left of the arrow to hide them." = "Halte ⌘ gedrückt und ziehe Symbole links neben den Pfeil, um sie auszublenden.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Halte in der Menüleiste deines Mac ⌘ gedrückt und ziehe Symbole\nzwischen die Bereiche, um Tuckaway zu konfigurieren.";
+"Tuckaway needs Accessibility access to hide icons." = "Tuckaway benötigt Zugriff auf Bedienungshilfen, um Symbole auszublenden.";
+"Open Settings…" = "Einstellungen öffnen …";
 
-"About" = "Über";
+/* Menu Bar Items tab */
+"Drag items within a list to reorder them, or between lists to change visibility." = "Ziehe Objekte innerhalb einer Liste, um sie neu anzuordnen, oder zwischen Listen, um die Sichtbarkeit zu ändern.";
+"Visible" = "Sichtbar";
+"Refresh" = "Aktualisieren";
+"Grant Access" = "Zugriff erlauben";
+"Enable Tuckaway in System Settings, then return and refresh." = "Aktiviere Tuckaway in den Systemeinstellungen, kehre dann zurück und aktualisiere.";
+"Scanning menu bar items…" = "Menüleistenobjekte werden gesucht …";
+"Accessibility permission is required to list and move menu bar items." = "Zum Anzeigen und Bewegen von Menüleistenobjekten ist Zugriff auf Bedienungshilfen erforderlich.";
+"No manageable menu bar items were found." = "Keine verwaltbaren Menüleistenobjekte gefunden.";
+"Drop an item to apply the real menu bar position." = "Änderungen werden beim Loslassen direkt in der Menüleiste übernommen.";
+"Drop items here" = "Objekte hierher ziehen";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "%@ konnte nicht genau platziert werden. Die Listen zeigen die tatsächliche Position.";
+"Unknown" = "Unbekannt";
 
-"Menu bar cleaner" = "Aufgeräumte Menüleiste";
-
+/* About tab */
 "Version" = "Version";
-
-"Always-hidden section help" = "Hilfe zum dauerhaft ausgeblendeten Bereich";
-"Right-click the arrow to access icons behind the notch." = "Klicke mit der rechten Maustaste auf den Pfeil, um Symbole hinter der Notch anzuzeigen.";
+"Tidy your Mac’s menu bar." = "Räume die Menüleiste deines Mac auf.";
 "Source code" = "Quellcode";
 "Report an issue" = "Problem melden";
-"Original project" = "Originalprojekt";
-"Place the always-hidden separator to the left of the arrow, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Platziere den Trenner für dauerhaft ausgeblendete Symbole links vom Pfeil und ziehe mit ⌘ Symbole links davon. Klicke mit gedrückter Wahltaste auf den Pfeil, um diesen Bereich aus- oder einzublenden.";
-"Place the always-hidden separator to the left of the regular separator, then ⌘-drag icons to its left. Option-click the arrow to hide or reveal that section." = "Platziere den Trenner für dauerhaft ausgeblendete Symbole links vom normalen Trenner und ziehe mit ⌘ Symbole links davon. Klicke mit gedrückter Wahltaste auf den Pfeil, um diesen Bereich aus- oder einzublenden.";
+"Independent MIT-licensed fork of Hidden Bar" = "Unabhängiger, MIT-lizenzierter Fork von Hidden Bar";
+"Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn" = "Original © Dwarves Foundation · Tuckaway-Änderungen © Bruno-Alumn";
 
-"Startup" = "Beim Start";
-"Menu Bar" = "Menüleiste";
+/* App Store build on macOS 27 (#360) */
+"Hiding unavailable on macOS 27 - Learn more" = "Diese Version kann unter macOS 27 keine Symbole ausblenden – Direkt-Download laden";
+"Menu bar hiding isn't available on macOS 27" = "Diese Version von Tuckaway kann unter macOS 27 keine Symbole ausblenden";
+"macOS 27 changed how the menu bar works, so Tuckaway can no longer hide other apps' icons by collapsing. This is a known limitation tracked on GitHub; Tuckaway will stay out of the way until a compatible method is available." = "macOS 27 blendet Menüleistensymbole auf eine neue Art aus, die die Sandbox-Version aus dem App Store nicht nutzen kann. Die Direkt-Download-Version von Tuckaway unterstützt sie – lade sie von GitHub, um weiterhin Symbole auszublenden.";
+"Learn More" = "Direkt-Download laden";
+"OK" = "OK";
 
-"Shortcut" = "Kurzbefehl";
-
-"Enable Notch Overflow (right-click ‹ to access hidden icons)" = "Symbole hinter der Notch anzeigen";
+/* Updater */
+"Version %@" = "Version %@";
+"Couldn’t check for updates" = "Suche nach Updates fehlgeschlagen";
+"Make sure you’re connected to the internet, then try again." = "Stelle sicher, dass du mit dem Internet verbunden bist, und versuche es erneut.";
+"You’re up to date" = "Tuckaway ist auf dem neuesten Stand";
+"Tuckaway %@ is the latest version." = "Tuckaway %@ ist die neueste Version.";
+"Tuckaway %@ is available" = "Tuckaway %@ ist verfügbar";
+"You have version %@." = "Du hast Version %@.";
+"Install and Relaunch" = "Installieren und neu starten";
+"Download" = "Laden";
+"Later" = "Später";
+"Skip This Version" = "Diese Version überspringen";
+"Update installed" = "Update installiert";
+"Quit and reopen Tuckaway to finish updating." = "Beende Tuckaway und öffne es erneut, um das Update abzuschließen.";
+"The update couldn’t be installed" = "Das Update konnte nicht installiert werden";
+"The download didn’t finish. You can download the update from GitHub instead." = "Der Download wurde nicht abgeschlossen. Du kannst das Update stattdessen von GitHub laden.";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "Die geladene Datei enthielt keine gültige Kopie von Tuckaway, daher wurde nichts geändert. Du kannst das Update stattdessen von GitHub laden.";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway konnte sich im aktuellen Ordner nicht ersetzen. Du kannst das Update stattdessen von GitHub laden.";
+"Open Release Page" = "Release-Seite öffnen";
+"Cancel" = "Abbrechen";
