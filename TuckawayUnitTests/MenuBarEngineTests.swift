@@ -385,6 +385,53 @@ final class NativeVisibilityEngineTests: XCTestCase {
         XCTAssertEqual(items.alwaysHiddenItem?.length, 0, "the always-hidden separator only shows when enabled")
     }
 
+    // Timeouts are fired by hand: spinning the run loop here lets AppKit tear
+    // down earlier tests' status items mid-test.
+    private func makeEngine(timeouts: @escaping (@escaping () -> Void) -> Void) -> NativeVisibilityEngine {
+        let items = self.items!
+        return NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                      captureActivity: capture, clock: clock,
+                                      ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                      itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
+                                      displays: { [mainDisplay] },
+                                      isLTR: { true },
+                                      afterActivationTimeout: timeouts)
+    }
+
+    func testUnansweredActivationTimesOutSoTheNextCollapseWorks() {
+        var timeouts: [() -> Void] = []
+        let engine = makeEngine { timeouts.append($0) }
+        var results: [CollapseResult] = []
+        engine.collapse { results.append($0) }
+        XCTAssertEqual(engine.state, .calibrating)
+
+        timeouts[0]()
+        XCTAssertEqual(results, [.unavailable])
+        XCTAssertEqual(engine.state, .expanded)
+
+        // The next collapse is no longer swallowed, and a late answer to the
+        // first one is thrown away.
+        engine.collapse { results.append($0) }
+        XCTAssertEqual(visibility.requests.count, 2)
+        let late = visibility.succeed(0)
+        XCTAssertTrue(late.isInvalidated)
+        visibility.succeed(1)
+        XCTAssertEqual(results, [.unavailable, .collapsed])
+        XCTAssertEqual(engine.state, .collapsed)
+    }
+
+    func testAnsweredActivationDoesNotTimeOut() {
+        var timeouts: [() -> Void] = []
+        let engine = makeEngine { timeouts.append($0) }
+        var results: [CollapseResult] = []
+        engine.collapse { results.append($0) }
+        visibility.succeed(0)
+
+        timeouts[0]()
+        XCTAssertEqual(results, [.collapsed])
+        XCTAssertEqual(engine.state, .collapsed)
+    }
+
     func testExpandDropsTheRestriction() {
         let engine = makeEngine()
         engine.collapse { _ in }
