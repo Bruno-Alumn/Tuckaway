@@ -1,22 +1,62 @@
-# Contributing
+# Contributing to Tuckaway
 
-When contributing to this repository, please first discuss the change you wish to make via issue,
-email, or any other method with the owners of this repository before making a change. 
+**Everyone is welcome here.** First-timers, seasoned macOS developers, designers,
+people who just want one bug gone: come on in.
 
-Please note we have a code of conduct, please follow it in all your interactions with the project.
+## AI is welcome, all of it
 
-## Pull Request Process
+Tuckaway is openly vibe coded, and **every use of AI is allowed**. Autocomplete,
+chatting with a model, pair programming with an agent, or an agent writing the
+entire pull request are all fine. You don't need to apologize for it or hide it.
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a 
-   build.
-2. Please fully test whether the existing features are affected by your modifications.
-3. Follow the git-flow workflow. You can see more about git-flow [here](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
+If you want to mention which tools you used, that's welcome, but it's optional.
+We judge changes on whether they work, not on how they were written.
 
-### Branch name convention
+## How to contribute
 
-The branch name meaning should be clear and follow these conventions:
-- Feature branch should be `feature/add-something`
-- Bugfix branch should be `bugfix/fix-something`
+- **Report a bug or suggest an idea:**
+  [open an issue](https://github.com/Bruno-Alumn/Tuckaway/issues/new). Include
+  your macOS version and, if you can, a screenshot or screen recording.
+- **Send a fix or feature:** fork the repo, make a branch, and open a pull
+  request against `main`. Small fixes don't need an issue first. For big
+  changes (a new hiding engine, large UI rework), opening an issue first saves
+  everyone time.
+- **Improve docs or translations:** always appreciated. English strings live in
+  `hidden/en.lproj/Localizable.strings`; other languages sit next to it.
+
+Branch names don't matter much. `feature/…`, `fix/…` and `docs/…` are a good
+habit.
+
+## Before you open a pull request
+
+These are the only real requirements, whether a human or an AI wrote the code:
+
+1. **It builds.** Use the `-Direct` configurations; plain `Debug`/`Release`
+   are the sandboxed App Store variant and can't hide icons on macOS 27.
+
+   ```sh
+   xcodebuild -project Tuckaway.xcodeproj -scheme Tuckaway \
+     -configuration Debug-Direct CODE_SIGNING_ALLOWED=NO build
+   ```
+
+2. **Tests pass.**
+
+   ```sh
+   xcodebuild -project Tuckaway.xcodeproj -scheme Tuckaway \
+     -configuration Debug-Direct CODE_SIGNING_ALLOWED=NO test
+   ```
+
+3. **You tried it on a real menu bar.** Hiding depends on the macOS version and
+   your own icons, so run the app and check that the change behaves. For UI
+   changes, add a screenshot or short recording to the PR.
+4. **The PR says what you checked.** For example: "tested on macOS 27, notch
+   MacBook, collapse and expand with 12 icons." That tells reviewers what still
+   needs a look.
+
+Useful reading, for you or your agent:
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) explains how hiding works and its
+known limits, and [docs/RUNBOOK.md](docs/RUNBOOK.md) covers verification and
+releases.
 
 ## Code of Conduct
 
@@ -59,7 +99,7 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 ### Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at [INSERT CONTACT METHOD]. All complaints will be reviewed and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement by contacting the maintainer, [Bruno-Alumn](https://github.com/Bruno-Alumn), on GitHub. All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the reporter of any incident.
 
