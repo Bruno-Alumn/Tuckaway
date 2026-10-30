@@ -2,7 +2,7 @@
 
 Tuckaway is a single-process, sandboxed AppKit menubar utility (~1.5k lines of
 Swift, one dependency: [HotKey](https://github.com/soffes/HotKey)). There is no
-helper app, no daemon, no network. Everything happens inside three
+helper app, no daemon, and no network beyond the direct build's update check. Everything happens inside three
 `NSStatusItem`s and one window.
 
 ## The core trick
@@ -90,8 +90,17 @@ garbage-collects those; see Apple TN3111). The helper app itself is gone.
 
 ## Security posture
 
-Sandboxed (`com.apple.security.app-sandbox`), hardened runtime, no network
-entitlement, no file I/O, no IPC surface, no shell or subprocess use. The only
+App Store build: sandboxed (`com.apple.security.app-sandbox`), hardened
+runtime, no network entitlement, no file I/O, no IPC surface, no shell or
+subprocess use.
+
+Direct build: unsandboxed so it can hide natively on macOS 27. Its only
+network use is the updater (`Features/Update`), which reads GitHub's
+`releases/latest` for Bruno-Alumn/Tuckaway, at most daily when automatic checks
+are on, or when the user asks. Installing downloads the release zip, unpacks it
+with `ditto`, requires a matching bundle ID and version plus a passing
+`codesign --verify --deep --strict`, then swaps the bundle (rolling back on
+failure) and relaunches through `/bin/sh`. The only
 dependency is HotKey (a small Carbon `RegisterEventHotKey` wrapper) locked by
 the committed `Package.resolved`. The opt-in hover monitor observes pointer
 position only and discards event payloads. About-window links are hardcoded.
