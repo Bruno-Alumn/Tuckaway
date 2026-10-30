@@ -85,23 +85,16 @@ class NotchOverflowController: NSObject {
 
   // MARK: - Notch Detection
 
+  // The built-in display's notch, wherever key focus is; NSScreen.main would
+  // report no notch whenever an external display is focused.
   private static func currentBoundary() -> NotchBoundary {
-    guard let screen = NSScreen.main else {
+    guard let screen = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 }) ?? NSScreen.main else {
       return NotchBoundary(hasNotch: false, overflowThresholdX: NotchGeometry.fallbackThresholdX)
-    }
-    let safeAreaTop: CGFloat
-    let auxRightMinX: CGFloat?
-    if #available(macOS 12.0, *) {
-      safeAreaTop = screen.safeAreaInsets.top
-      auxRightMinX = screen.auxiliaryTopRightArea?.minX
-    } else {
-      safeAreaTop = 0
-      auxRightMinX = nil
     }
     return NotchGeometry.computeBoundary(
       screenFrame: screen.frame,
-      safeAreaInsetsTop: safeAreaTop,
-      auxiliaryTopRightAreaMinX: auxRightMinX
+      safeAreaInsetsTop: screen.safeAreaInsets.top,
+      auxiliaryTopRightAreaMinX: screen.auxiliaryTopRightArea?.minX
     )
   }
 
