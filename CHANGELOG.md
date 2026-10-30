@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- Release verification now exercises the updater's DMG mount-copy-eject path and cleans up after itself, catching early-unmount failures before publication.
 - The app icon had solid black corners: the artwork was drawn on an opaque black square, so black showed in Finder, the Dock, ⌘-Tab, the About window, alerts and the README. It's now cut out with transparent corners and sits on Apple's icon grid (an 824-point rounded square on a 1024 canvas, with the standard shadow), so it's no longer oversized next to other apps.
 
 ### Changed
