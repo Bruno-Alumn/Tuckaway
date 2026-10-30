@@ -7,6 +7,7 @@
 - Built-in updater (direct-download build). It checks GitHub releases once a day, or on demand from Settings › General › Updates, About, or the arrow's menu. It offers Install and Relaunch, Later, or Skip This Version. Installs are verified (bundle ID, version, code signature) before the app is swapped, with automatic rollback on failure.
 
 ### Changed
+- Documentation rewritten for Tuckaway as it is now: the manual covers the Settings window, Menu Bar Items and updates; the architecture covers both builds, both hiding engines and the updater; the runbook, backlog and upstream-issue status drop Hidden Bar–era instructions and stale PR numbers.
 - Redesigned Settings: a smaller 480pt window with standard toolbar tabs (General, Menu Bar Items, About) that resizes to each tab.
 - General is now a grouped form ordered by intent — Hiding, Revealing, Appearance, Extra Sections, Startup. The collapse delay only appears while auto-collapse is on, and the always-hidden help is an inline footer instead of a popover.
 - Menu Bar Items uses lighter inset lists with section icons, item counts, a "Drop items here" hint on empty lists, and a compact footer.

@@ -1,7 +1,12 @@
 # Experiment: what macOS 27 exposes for hiding menu-bar icons
 
-**Status:** exploration / not shipped. **Does NOT hide anything.** Read-only probe +
-findings, to scope a future macOS-27 hide mechanism (#360, managed-overflow epic #366).
+> **Historical.** This research led to `NativeVisibilityEngine`, which now ships in
+> the direct-download build (see [ARCHITECTURE.md](../ARCHITECTURE.md#nativevisibilityengine-macos-27-direct-build)).
+> The notes below are kept as the record of how macOS 27's menu bar was explored.
+
+**Status (at the time):** exploration, not shipped. **The probe does NOT hide anything.**
+Read-only probe and findings, to scope a future macOS-27 hide mechanism (#360,
+managed-overflow epic #366).
 
 PR #370 makes Hidden Bar detect-and-degrade on macOS 27 (the length-inflation trick is
 dead there). This note answers the next question: **is there any path to actually hide

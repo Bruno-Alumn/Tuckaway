@@ -7,12 +7,20 @@ Build, verify, and release Tuckaway. Assumes current Xcode on macOS 13+.
 ```sh
 # CI-style build, no signing required
 xcodebuild -project 'Tuckaway.xcodeproj' -scheme 'Tuckaway' \
-  -configuration Debug CODE_SIGNING_ALLOWED=NO build
+  -configuration Debug-Direct CODE_SIGNING_ALLOWED=NO build
 
-# runnable local build (uses your Apple Development identity)
+# runnable local build, ad-hoc signed (no Apple Developer account needed)
 xcodebuild -project 'Tuckaway.xcodeproj' -scheme 'Tuckaway' \
-  -configuration Debug build
+  -configuration Debug-Direct CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= build
+
+# the sandboxed App Store variant must keep compiling too
+xcodebuild -project 'Tuckaway.xcodeproj' -scheme 'Tuckaway' \
+  -configuration Debug CODE_SIGNING_ALLOWED=NO build
 ```
+
+Use the `-Direct` configurations for anything you run on macOS 27. Plain
+`Debug`/`Release` are the App Store variant: they can't hide on 27 and show the
+"this version can't hide icons" notice on first launch.
 
 Both must exit 0 with **no** `MACOSX_DEPLOYMENT_TARGET` override; the floor is
 13.0 in the project file. The single expected warning is the deliberately
@@ -29,9 +37,12 @@ xcodebuild -project 'Tuckaway.xcodeproj' -scheme 'Tuckaway' \
 
 Also verify against the real menu bar:
 
-1. **Truth signal**: the separator's AX size.
+1. **Truth signal (macOS 26 and earlier)**: the separator's AX size.
    `osascript -e 'tell application "System Events" to tell process "Tuckaway" to get size of menu bar item 2 of menu bar 2'`
    reads ~20pt expanded vs ~2x-screen-width collapsed. Item 1 is the arrow.
+   On macOS 27 (direct build) there is no wide separator. Instead, collapse
+   and confirm the hidden apps' icons disappear while the arrow and the
+   visible ones remain.
 2. **Interaction**: `AXPress` supports accessibility toggling. Real `CGEvent`
    clicks can additionally exercise modifier handling and native event flow.
 
@@ -47,7 +58,13 @@ Standard checks before any release:
   events);
 - autostart pref on -> `AutoStart: SMAppService.mainApp.status = 1` on stderr;
   off -> `= 0` (run the binary directly to capture stderr);
-- localization tables stay parseable: `plutil -lint hidden/*.lproj/*.strings`.
+- localization tables stay parseable: `plutil -lint hidden/*.lproj/*.strings`;
+- Settings opens from the arrow's menu (⌘,), every General toggle sticks after
+  reopening, and Menu Bar Items lists real items with Accessibility granted;
+- the updater: from a build older than the latest release (or a Debug build
+  with `TUCKAWAY_UPDATE_CURRENT_VERSION=0.9`), **Check for Updates…** offers
+  the release and **Install and Relaunch** brings up the new version. Run that
+  copy outside `/Applications` so your installed copy stays as it is.
 
 When testing on a machine that runs Tuckaway daily: export the prefs domain
 first (`defaults export com.brunoalumn.tuckaway backup.plist`), quit the
@@ -63,10 +80,9 @@ installed app, test the dev build, then re-import and relaunch.
    `dist/Tuckaway.dmg`. Set `SIGN_IDENTITY` to a Developer ID to sign, then
    notarize and staple the DMG. Publish a GitHub release tagged `v<version>`
    with **`Tuckaway.dmg`** as the asset (no zip) and notes listing closed
-   issues. The **Tuckaway App Store**
-   scheme archives `Release`, the sandboxed App Store build, which cannot hide
-   on macOS 27. v1.11 shipped that build to GitHub by mistake. Before zipping,
-   confirm the app is unsandboxed:
+   issues. Never publish a build from the **Tuckaway App Store** scheme there:
+   it is the sandboxed build, which can't hide on macOS 27 (a past release made
+   that mistake). The script refuses it; to check a build by hand:
 
    ```sh
    codesign -d --entitlements - 'Tuckaway.app' | grep app-sandbox  # must print nothing
@@ -77,26 +93,29 @@ installed app, test the dev build, then re-import and relaunch.
    (`v1.1.0` ↔ `1.1.0`), and `codesign --verify --deep --strict` must pass. The
    script checks all of this except the tag. (The v1.0.0 asset was a zip of a
    Debug build; the updater still accepts zips so v1.0.0 users can update.)
-4. App Store (separate lane, **Tuckaway App Store** scheme): the MAS listing
-   has lagged GitHub since v1.8 (issues #281/#202); decide deliberately whether
-   a release goes there too.
-5. Homebrew cask (`brew install --cask hiddenbar`) follows the GitHub release
-   artifact; notarization matters (issue #219).
-6. Before any public release after the SMAppService migration: one
-   upgrade-path run from a launcher-era build (v1.9 or older) verifying System
-   Settings shows no ghost LauncherApplication login item.
+4. App Store (separate lane, **Tuckaway App Store** scheme): Tuckaway has no
+   App Store listing, and Hidden Bar's belongs to its original maintainers
+   (#393). The sandboxed build also can't hide on macOS 27, so decide
+   deliberately before starting one.
+5. Homebrew: there is no Tuckaway cask yet (`hiddenbar` installs the original
+   app). A cask would follow the GitHub DMG; notarization matters (issue #219).
+6. Before a public release: one upgrade-path run from a launcher-era Hidden Bar
+   (v1.9 or older) verifying System Settings shows no ghost
+   LauncherApplication login item.
 
 ## Stacked-PR hygiene
 
-Feature stacks land as chained PRs (`develop <- A <- B`). Merge the base PR
-first, then retarget the next PR's base to `develop` BEFORE merging it;
-deleting a merged branch auto-closes dependents otherwise.
+PRs target `main`. When changes stack (`main <- A <- B`), merge the base PR
+first, then retarget the next PR's base to `main` BEFORE merging it; deleting a
+merged branch auto-closes dependents otherwise.
 
 ## Issue triage map
 
 The live clusters and their code areas are documented at the end of
-[ARCHITECTURE.md](ARCHITECTURE.md#known-architectural-limits): notch, macOS 27
-mechanism break, and pointer-vs-open-menu limits. Memory reports (#361 et al.)
+[ARCHITECTURE.md](ARCHITECTURE.md#known-architectural-limits): macOS 27's
+per-app, private-API hiding and its side effects, the App Store build on 27,
+the notch, and pointer-vs-open-menu limits. Upstream Hidden Bar issues and
+where each landed are in [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md). Memory reports (#361 et al.)
 have so far not reproduced as leaks (constraint-leak fix landed; `leaks` clean
 over toggle stress); re-check with a 24h+ uptime `footprint` sample before
 chasing further.
