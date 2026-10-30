@@ -1113,8 +1113,14 @@ extension StatusBarController {
         )
     }
 
+    // Quartz measures y down from the top of the primary screen (the one with
+    // the origin), not from NSScreen.main, which is whichever has key focus.
+    private static var primaryScreenMaxY: CGFloat? {
+        NSScreen.screens.first?.frame.maxY
+    }
+
     private func appKitRectFromQuartzRect(_ quartzRect: CGRect, on screen: NSScreen) -> CGRect {
-        let referenceMaxY = NSScreen.main?.frame.maxY ?? screen.frame.maxY
+        let referenceMaxY = Self.primaryScreenMaxY ?? screen.frame.maxY
         return CGRect(
             x: quartzRect.minX,
             y: referenceMaxY - quartzRect.maxY,
@@ -1124,7 +1130,7 @@ extension StatusBarController {
     }
 
     private func quartzRectFromAppKitRect(_ appKitRect: CGRect) -> CGRect {
-        let referenceMaxY = NSScreen.main?.frame.maxY ?? appKitRect.maxY
+        let referenceMaxY = Self.primaryScreenMaxY ?? appKitRect.maxY
         return CGRect(
             x: appKitRect.minX,
             y: referenceMaxY - appKitRect.maxY,
@@ -1153,7 +1159,7 @@ extension StatusBarController {
     }
 
     private func postClick(at appKitPoint: CGPoint) {
-        let referenceMaxY = NSScreen.main?.frame.maxY ?? appKitPoint.y
+        let referenceMaxY = Self.primaryScreenMaxY ?? appKitPoint.y
         let eventPoint = CGPoint(x: appKitPoint.x, y: referenceMaxY - appKitPoint.y)
         guard let mouseDown = CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: eventPoint, mouseButton: .left),
               let mouseUp = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: eventPoint, mouseButton: .left)
