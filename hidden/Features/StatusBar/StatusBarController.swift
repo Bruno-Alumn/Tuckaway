@@ -459,17 +459,20 @@ class StatusBarController: MenuBarItemProvider {
     func prepareForItemManagement(completion: @escaping (MenuBarManagementLayout) -> Void) {
         expandMenubar(force: true)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
-            guard let self = self,
-                  let expandCollapseFrame = self.btnExpandCollapse.button?.window?.frame else { return }
-            let separatorFrame = MenuBarEngineFactory.usesNativeVisibility
-                ? expandCollapseFrame
-                : self.btnSeparate.button?.window?.frame
-            guard let separatorFrame = separatorFrame else { return }
-            completion(MenuBarManagementLayout(
-                separatorFrame: separatorFrame,
-                expandCollapseFrame: expandCollapseFrame
-            ))
+            guard let layout = self?.currentManagementLayout() else { return }
+            completion(layout)
         }
+    }
+
+    // Where the section boundaries are right now, without expanding. Moving an
+    // item across them shifts Tuckaway's own items, so movers re-read this.
+    func currentManagementLayout() -> MenuBarManagementLayout? {
+        guard let expandCollapseFrame = btnExpandCollapse.button?.window?.frame else { return nil }
+        let separatorFrame = MenuBarEngineFactory.usesNativeVisibility
+            ? expandCollapseFrame
+            : btnSeparate.button?.window?.frame
+        guard let separatorFrame else { return nil }
+        return MenuBarManagementLayout(separatorFrame: separatorFrame, expandCollapseFrame: expandCollapseFrame)
     }
     
     private func collapseMenuBar() {
