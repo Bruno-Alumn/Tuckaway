@@ -27,7 +27,7 @@
 ---
 
 <p align="center">
-  <img src="img/tuckaway-collapse.gif" width="900" alt="Tuckaway collapsing and expanding menu-bar icons">
+  <img src="img/tuckaway-menubar.gif" width="900" alt="Clicking Tuckaway’s arrow tucks away and reveals menu-bar icons">
 </p>
 
 Tuckaway is a fast, native macOS utility for decluttering the menu bar without
@@ -78,13 +78,15 @@ Bar before using Tuckaway so the two apps do not compete for the menu bar.
    side collapse; icons on the visible side remain.
 2. Click the arrow to collapse or expand. Right-click also toggles;
    **Control-right-click** opens the menu.
-3. Open **Preferences** to configure automatic collapse, startup, appearance,
-   hover, separate-bar display, and external-display behavior.
+3. Control-right-click the arrow and choose **Settings…** (⌘,). **General**
+   groups options by what they do (Hiding, Revealing, Appearance, Extra
+   Sections, Startup, Updates). **Menu Bar Items** lets you drag icons between
+   the Hidden and Visible lists.
 4. Option-click the arrow, or choose **Hide/Show Separators**, to change the
    always-hidden presentation.
 
 <p align="center">
-  <img src="img/tuckaway-preferences.gif" width="720" alt="Tuckaway Preferences, item manager, and About screen">
+  <img src="img/tuckaway-settings.gif" width="560" alt="Tuckaway Settings: General options, dragging an item between the Hidden and Visible lists, and About">
 </p>
 
 ## Permissions
