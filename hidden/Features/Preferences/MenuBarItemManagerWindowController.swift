@@ -67,8 +67,10 @@ final class MenuBarItemManagerViewController: NSViewController {
     private let hiddenCountLabel = NSTextField(labelWithString: "")
     private let visibleCountLabel = NSTextField(labelWithString: "")
     private let statusLabel = NSTextField(wrappingLabelWithString: "")
+    private let hiddenEmptyLabel = NSTextField(labelWithString: "")
+    private let visibleEmptyLabel = NSTextField(labelWithString: "")
     private let permissionButton = NSButton(title: "Grant Access".localized, target: nil, action: nil)
-    private let refreshButton = NSButton(title: "Refresh".localized, target: nil, action: nil)
+    private let refreshButton = NSButton(title: "", target: nil, action: nil)
     private var hiddenItems: [ManagedMenuBarItem] = []
     private var visibleItems: [ManagedMenuBarItem] = []
     private var layout: MenuBarManagementLayout?
@@ -83,7 +85,8 @@ final class MenuBarItemManagerViewController: NSViewController {
     }
 
     override func loadView() {
-        view = NSView(frame: NSRect(x: 0, y: 0, width: 668, height: 500))
+        view = NSView(frame: NSRect(x: 0, y: 0, width: 480, height: 420))
+        preferredContentSize = view.frame.size
         buildUI()
     }
 
@@ -95,39 +98,46 @@ final class MenuBarItemManagerViewController: NSViewController {
     private func buildUI() {
         let contentView = view
 
-        let title = NSTextField(labelWithString: "Menu Bar Items".localized)
-        title.font = .systemFont(ofSize: 22, weight: .bold)
         let help = NSTextField(wrappingLabelWithString: "Drag items within a list to reorder them, or between lists to change visibility.".localized)
+        help.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
         help.textColor = .secondaryLabelColor
 
         configure(table: hiddenTable, identifier: "hidden")
         configure(table: visibleTable, identifier: "visible")
 
-        let hiddenHeader = makeHeader(title: "Hidden".localized, countLabel: hiddenCountLabel)
-        let visibleHeader = makeHeader(title: "Visible".localized, countLabel: visibleCountLabel)
-        let hiddenColumn = makeColumn(header: hiddenHeader, table: hiddenTable)
-        let visibleColumn = makeColumn(header: visibleHeader, table: visibleTable)
+        let hiddenHeader = makeHeader(title: "Hidden".localized, symbol: "eye.slash", countLabel: hiddenCountLabel)
+        let visibleHeader = makeHeader(title: "Visible".localized, symbol: "eye", countLabel: visibleCountLabel)
+        let hiddenColumn = makeColumn(header: hiddenHeader, table: hiddenTable, emptyLabel: hiddenEmptyLabel)
+        let visibleColumn = makeColumn(header: visibleHeader, table: visibleTable, emptyLabel: visibleEmptyLabel)
         let columns = NSStackView(views: [hiddenColumn, visibleColumn])
         columns.orientation = .horizontal
-        columns.spacing = 14
+        columns.spacing = 12
         columns.distribution = .fillEqually
 
+        refreshButton.image = NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: "Refresh".localized)
+        refreshButton.toolTip = "Refresh".localized
+        refreshButton.bezelStyle = .rounded
+        refreshButton.controlSize = .small
         refreshButton.target = self
         refreshButton.action = #selector(refreshPressed)
+        permissionButton.controlSize = .small
+        permissionButton.bezelStyle = .rounded
         permissionButton.target = self
         permissionButton.action = #selector(permissionPressed)
         permissionButton.isHidden = true
+        statusLabel.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
         statusLabel.textColor = .secondaryLabelColor
         statusLabel.maximumNumberOfLines = 2
         let footer = NSStackView(views: [statusLabel, permissionButton, refreshButton])
         footer.orientation = .horizontal
         footer.alignment = .centerY
-        footer.spacing = 12
+        footer.spacing = 8
         statusLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        statusLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         permissionButton.setContentHuggingPriority(.required, for: .horizontal)
         refreshButton.setContentHuggingPriority(.required, for: .horizontal)
 
-        let root = NSStackView(views: [title, help, columns, footer])
+        let root = NSStackView(views: [help, columns, footer])
         root.orientation = .vertical
         root.alignment = .leading
         root.spacing = 10
@@ -139,53 +149,97 @@ final class MenuBarItemManagerViewController: NSViewController {
         NSLayoutConstraint.activate([
             root.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             root.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            root.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 20),
-            root.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            root.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 14),
+            root.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -14),
+            help.widthAnchor.constraint(equalTo: root.widthAnchor),
             columns.widthAnchor.constraint(equalTo: root.widthAnchor),
-            columns.heightAnchor.constraint(greaterThanOrEqualToConstant: 260),
             footer.widthAnchor.constraint(equalTo: root.widthAnchor)
         ])
+        columns.setContentHuggingPriority(.defaultLow, for: .vertical)
     }
 
     private func configure(table: NSTableView, identifier: String) {
         table.identifier = NSUserInterfaceItemIdentifier(identifier)
         table.headerView = nil
-        table.rowHeight = 40
-        table.usesAlternatingRowBackgroundColors = true
+        table.style = .inset
+        table.rowHeight = 30
+        table.backgroundColor = .clear
         table.allowsMultipleSelection = false
         table.dataSource = self
         table.delegate = self
         table.registerForDraggedTypes([Drag.type])
         table.setDraggingSourceOperationMask(.move, forLocal: true)
+        table.draggingDestinationFeedbackStyle = .gap
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("item"))
         column.resizingMask = .autoresizingMask
         table.addTableColumn(column)
     }
 
-    private func makeHeader(title: String, countLabel: NSTextField) -> NSView {
+    private func makeHeader(title: String, symbol: String, countLabel: NSTextField) -> NSView {
+        let icon = NSImageView(image: NSImage(systemSymbolName: symbol, accessibilityDescription: nil) ?? NSImage())
+        icon.contentTintColor = .secondaryLabelColor
+        icon.symbolConfiguration = .init(pointSize: 11, weight: .medium)
         let label = NSTextField(labelWithString: title)
-        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.font = .systemFont(ofSize: NSFont.systemFontSize, weight: .semibold)
+        countLabel.font = .monospacedDigitSystemFont(ofSize: NSFont.smallSystemFontSize, weight: .regular)
         countLabel.textColor = .secondaryLabelColor
         let spacer = NSView()
-        let stack = NSStackView(views: [label, spacer, countLabel])
+        let stack = NSStackView(views: [icon, label, spacer, countLabel])
         stack.orientation = .horizontal
         stack.alignment = .centerY
+        stack.spacing = 5
+        stack.edgeInsets = NSEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
         return stack
     }
 
-    private func makeColumn(header: NSView, table: NSTableView) -> NSView {
+    // Each list sits in a rounded, grouped-form style box; an empty list shows
+    // a drop hint instead of blank rows.
+    private func makeColumn(header: NSView, table: NSTableView, emptyLabel: NSTextField) -> NSView {
         let scroll = NSScrollView()
         scroll.documentView = table
         scroll.hasVerticalScroller = true
-        scroll.borderType = .bezelBorder
-        let stack = NSStackView(views: [header, scroll])
+        scroll.autohidesScrollers = true
+        scroll.borderType = .noBorder
+        scroll.drawsBackground = false
+
+        let box = NSBox()
+        box.boxType = .custom
+        box.cornerRadius = 8
+        box.borderWidth = 1
+        box.borderColor = .separatorColor
+        box.fillColor = .controlBackgroundColor
+        box.contentViewMargins = .zero
+        box.contentView = scroll
+
+        emptyLabel.stringValue = "Drop items here".localized
+        emptyLabel.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+        emptyLabel.textColor = .tertiaryLabelColor
+        emptyLabel.isHidden = true
+
+        // The hint floats above the box rather than inside it, so the box's
+        // content view can never draw over it.
+        let list = NSView()
+        for subview in [box, emptyLabel] as [NSView] {
+            subview.translatesAutoresizingMaskIntoConstraints = false
+            list.addSubview(subview)
+        }
+
+        let stack = NSStackView(views: [header, list])
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.spacing = 6
-        scroll.translatesAutoresizingMaskIntoConstraints = false
+        list.translatesAutoresizingMaskIntoConstraints = false
+        header.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            scroll.widthAnchor.constraint(equalTo: stack.widthAnchor),
-            scroll.heightAnchor.constraint(greaterThanOrEqualToConstant: 240)
+            header.widthAnchor.constraint(equalTo: stack.widthAnchor),
+            list.widthAnchor.constraint(equalTo: stack.widthAnchor),
+            list.heightAnchor.constraint(greaterThanOrEqualToConstant: 200),
+            box.topAnchor.constraint(equalTo: list.topAnchor),
+            box.bottomAnchor.constraint(equalTo: list.bottomAnchor),
+            box.leadingAnchor.constraint(equalTo: list.leadingAnchor),
+            box.trailingAnchor.constraint(equalTo: list.trailingAnchor),
+            emptyLabel.centerXAnchor.constraint(equalTo: list.centerXAnchor),
+            emptyLabel.centerYAnchor.constraint(equalTo: list.centerYAnchor)
         ])
         return stack
     }
@@ -278,6 +332,8 @@ final class MenuBarItemManagerViewController: NSViewController {
         visibleTable.reloadData()
         hiddenCountLabel.stringValue = "\(hiddenItems.count)"
         visibleCountLabel.stringValue = "\(visibleItems.count)"
+        hiddenEmptyLabel.isHidden = !hiddenItems.isEmpty
+        visibleEmptyLabel.isHidden = !visibleItems.isEmpty
         if found.isEmpty, !accessibilityTrusted {
             statusLabel.stringValue = "Accessibility permission is required to list and move menu bar items.".localized
             permissionButton.isHidden = false
@@ -338,7 +394,7 @@ final class MenuBarItemManagerViewController: NSViewController {
             targetX = destination[clampedRow].center.x - 8
         }
 
-        statusLabel.stringValue = "Moving \(item.primaryName)…"
+        statusLabel.stringValue = String(format: "Moving %@…".localized, item.primaryName)
         refreshButton.isEnabled = false
         postCommandDrag(from: item.center, to: CGPoint(x: targetX, y: item.center.y)) { [weak self] in
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
@@ -380,24 +436,24 @@ extension MenuBarItemManagerViewController: NSTableViewDataSource, NSTableViewDe
         imageView.imageScaling = .scaleProportionallyDown
         let label = NSTextField(labelWithString: item.primaryName)
         label.lineBreakMode = .byTruncatingTail
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         let detail = NSTextField(labelWithString: item.secondaryName ?? "")
         detail.textColor = .secondaryLabelColor
-        detail.font = .systemFont(ofSize: 10)
+        detail.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+        detail.lineBreakMode = .byTruncatingTail
+        detail.setContentCompressionResistancePriority(.defaultLow - 1, for: .horizontal)
         detail.isHidden = item.secondaryName == nil
-        let labels = NSStackView(views: [label, detail])
-        labels.orientation = .vertical
-        labels.spacing = 0
-        let stack = NSStackView(views: [imageView, labels])
+        let stack = NSStackView(views: [imageView, label, detail])
         stack.orientation = .horizontal
         stack.alignment = .centerY
-        stack.spacing = 8
+        stack.spacing = 6
         stack.translatesAutoresizingMaskIntoConstraints = false
         cell.addSubview(stack)
         NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: 22),
-            imageView.heightAnchor.constraint(equalToConstant: 22),
-            stack.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 6),
-            stack.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -6),
+            imageView.widthAnchor.constraint(equalToConstant: 18),
+            imageView.heightAnchor.constraint(equalToConstant: 18),
+            stack.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 2),
+            stack.trailingAnchor.constraint(lessThanOrEqualTo: cell.trailingAnchor, constant: -2),
             stack.centerYAnchor.constraint(equalTo: cell.centerYAnchor)
         ])
         return cell

@@ -9,6 +9,7 @@ final class AboutViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        preferredContentSize = NSSize(width: 480, height: 300)
         let hostingView = NSHostingView(rootView: AboutSettingsView())
         hostingView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(hostingView)
@@ -29,41 +30,47 @@ private struct AboutSettingsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 22) {
-            VStack(spacing: 12) {
-                Image(nsImage: NSApp.applicationIconImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 88, height: 88)
-                    .accessibilityHidden(true)
-                Text("Tuckaway")
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                Text("Tidy your Mac’s menu bar.")
-                    .foregroundStyle(.secondary)
-                Text(verbatim: versionText)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
+        VStack(spacing: 0) {
+            Image(nsImage: NSApp.applicationIconImage)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 72, height: 72)
+                .accessibilityHidden(true)
+            Text("Tuckaway")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .padding(.top, 8)
+            Text(verbatim: versionText)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .textSelection(.enabled)
+                .padding(.top, 2)
+            Text("Tidy your Mac’s menu bar.")
+                .padding(.top, 10)
+            HStack(spacing: 8) {
+                Link(destination: URL(string: "https://github.com/Bruno-Alumn/Tuckaway")!) {
+                    Label("Source code".localized, systemImage: "chevron.left.forwardslash.chevron.right")
+                }
+                Text(verbatim: "·").foregroundStyle(.tertiary)
+                Link(destination: URL(string: "https://github.com/Bruno-Alumn/Tuckaway/issues")!) {
+                    Label("Report an issue".localized, systemImage: "exclamationmark.bubble")
+                }
             }
-            .frame(maxWidth: .infinity)
-            .padding(22)
-            .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 16))
-            HStack(spacing: 20) {
-                Link("Source code".localized, destination: URL(string: "https://github.com/Bruno-Alumn/Tuckaway")!)
-                Link("Report an issue".localized, destination: URL(string: "https://github.com/Bruno-Alumn/Tuckaway/issues")!)
-            }
-            .tint(.accentColor)
-            VStack(spacing: 6) {
+            .labelStyle(.titleOnly)
+            .padding(.top, 14)
+            Spacer(minLength: 16)
+            VStack(spacing: 2) {
                 Text("Independent MIT-licensed fork of Hidden Bar")
-                Text("Original work © Dwarves Foundation")
-                Text("Tuckaway modifications © Bruno-Alumn")
+                Text("Original work © Dwarves Foundation · Tuckaway modifications © Bruno-Alumn")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
+            .multilineTextAlignment(.center)
         }
         .font(.system(size: 13))
-        .padding(24)
+        .padding(.horizontal, 24)
+        .padding(.top, 24)
+        .padding(.bottom, 18)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(nsColor: .windowBackgroundColor))
     }
 }
