@@ -24,4 +24,4 @@ data are not uploaded.
 ## Source code and contact
 
 You can inspect the implementation and report privacy concerns at
-<https://github.com/Bruno-Alumn/hidden/issues>.
+<https://github.com/Bruno-Alumn/Tuckaway/issues>.

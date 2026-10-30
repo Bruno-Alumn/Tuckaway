@@ -1,7 +1,7 @@
 # Upstream issue integration status
 
 Tracks the open-issue queue from `dwarvesf/hidden` and the corresponding pull
-requests in `Bruno-Alumn/hidden`. It does not modify or close upstream issues.
+requests in `Bruno-Alumn/Tuckaway`. It does not modify or close upstream issues.
 
 ## Merged fix PRs
 

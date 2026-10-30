@@ -1,79 +1,113 @@
 <p align="center">
-  <img width="180" height="180" src="img/icon_512%402x.png" alt="Tuckaway app icon">
+  <img src="img/icon_512%402x.png" width="168" height="168" alt="Tuckaway app icon">
 </p>
 
-# Tuckaway
+<h1 align="center">Tuckaway</h1>
 
-**Tidy your Mac’s menu bar.**
+<p align="center">
+  <strong>Tidy your Mac’s menu bar.</strong><br>
+  Choose what stays visible. Tuck away everything else.
+</p>
 
-Tuckaway lets you choose which menu-bar icons stay visible and which are tucked
-out of sight. It is a native macOS utility with automatic collapse, global
-shortcuts, an always-hidden section, notch overflow, and a separate hidden-items
-bar.
+<p align="center">
+  <a href="https://github.com/Bruno-Alumn/Tuckaway/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/release-v1.0.0-7c3aed" alt="Release v1.0.0"></a>
+  <img src="https://img.shields.io/badge/macOS-13%2B-1f2937" alt="macOS 13 or later">
+  <img src="https://img.shields.io/badge/Swift-native-ef5b45" alt="Native Swift app">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2774c8" alt="MIT license"></a>
+</p>
 
-Tuckaway is an independent, MIT-licensed fork of
-[Hidden Bar](https://github.com/dwarvesf/hidden), maintained by
+<p align="center">
+  <a href="#install">Install</a> ·
+  <a href="#features">Features</a> ·
+  <a href="#permissions">Permissions</a> ·
+  <a href="#build-from-source">Build</a> ·
+  <a href="#license">License</a>
+</p>
+
+---
+
+<p align="center">
+  <img src="img/tuckaway-collapse.gif" width="900" alt="Tuckaway collapsing and expanding menu-bar icons">
+</p>
+
+Tuckaway is a fast, native macOS utility for decluttering the menu bar without
+quitting the apps behind it. Arrange your icons once, then collapse and reveal
+them with a click, keyboard shortcut, hover, or empty-menu-bar click.
+
+Tuckaway is an **independent, MIT-licensed fork of
+[Hidden Bar](https://github.com/dwarvesf/hidden)**, maintained by
 [Bruno-Alumn](https://github.com/Bruno-Alumn). It is not affiliated with or
-endorsed by the Hidden Bar maintainers.
+endorsed by the original maintainers.
 
-## Highlights
+## Features
 
-- Click the arrow to collapse or expand your chosen icons.
-- Auto-collapse after a configurable delay, on app switch, or expand with hover.
-- Keep frequently used icons visible with ⌘-drag arrangement or the item manager.
-- Use an always-hidden section for icons you rarely need.
-- Show hidden items in a separate bar, including icons behind a camera notch.
-- Choose standard, transparent, or ellipsis expand icons.
-- Toggle from empty menu-bar space or with a global keyboard shortcut.
-- Optionally expand automatically when an external display is connected.
-- Launch at login without opening Preferences.
-
-## Requirements
-
-- macOS 13 Ventura or later
-- Intel or Apple Silicon Mac
-
-macOS 27 uses a different native hiding engine. It requires the direct,
-non-sandboxed build and **Device Control and Data Access** permission (the
-Accessibility permission under macOS 27's updated Settings wording).
+| | |
+|---|---|
+| **One-click cleanup** | Collapse and expand selected menu-bar icons instantly. |
+| **Automatic tidying** | Auto-collapse after a delay or when another app becomes active. |
+| **Flexible reveal** | Click, right-click, hover, use a global shortcut, or click empty menu-bar space. |
+| **Always-hidden section** | Keep rarely used icons out of sight until you explicitly reveal them. |
+| **Notch overflow** | Reach icons concealed behind the camera notch. |
+| **Separate hidden-items bar** | Display and interact with hidden icons in a floating row. |
+| **Display-aware behavior** | Optionally expand when an external display is connected. |
+| **Your preferred appearance** | Choose standard, transparent, or ellipsis expand icons. |
+| **Background startup** | Launch at login with or without opening Preferences. |
 
 ## Install
 
-Download Tuckaway from the
-[project’s releases](https://github.com/Bruno-Alumn/hidden/releases), move
-**Tuckaway.app** to `/Applications`, and launch it.
+1. Download **Tuckaway.zip** from the
+   [v1.0.0 release](https://github.com/Bruno-Alumn/Tuckaway/releases/tag/v1.0.0).
+2. Unzip it and move **Tuckaway.app** to **Applications**.
+3. Launch Tuckaway and grant the permissions below.
 
-If you are upgrading from Hidden Bar, Tuckaway copies your existing preferences
-once without overwriting preferences you subsequently change in Tuckaway. macOS
-treats Tuckaway as a separate app, so grant its accessibility permission and
-review its login-item setting. Quit Hidden Bar before using Tuckaway to avoid
-competing menu-bar restrictions.
+Tuckaway supports **macOS 13 Ventura or later** on Intel and Apple Silicon.
+Current release builds are ad-hoc signed; if macOS warns you, review the app in
+Finder and choose **Open** only if you trust this release. Apple notarization is
+planned for a future release.
 
-## Use
+### Upgrading from Hidden Bar
 
-1. Hold **⌘** and drag icons to arrange them relative to Tuckaway’s arrow.
-   Icons on the hidden side collapse; icons on the visible side remain.
+Tuckaway migrates your existing preferences once, including your auto-collapse
+delay. It never overwrites preferences you later change in Tuckaway. Quit Hidden
+Bar before using Tuckaway so the two apps do not compete for the menu bar.
+
+## Quick start
+
+1. Hold **⌘** and drag icons relative to Tuckaway’s arrow. Icons on the hidden
+   side collapse; icons on the visible side remain.
 2. Click the arrow to collapse or expand. Right-click also toggles;
-   Control-right-click opens the menu.
-3. Open **Preferences** to configure auto-collapse, startup, icon style,
-   hover, separate-bar display, and display-specific behavior.
-4. Option-click the arrow, or choose **Hide/Show Separators**, to toggle the
+   **Control-right-click** opens the menu.
+3. Open **Preferences** to configure automatic collapse, startup, appearance,
+   hover, separate-bar display, and external-display behavior.
+4. Option-click the arrow, or choose **Hide/Show Separators**, to change the
    always-hidden presentation.
 
-On macOS 27, grant Tuckaway access under **System Settings → Privacy & Security
-→ Device Control and Data Access**. Other macOS versions call this
-**Accessibility**.
+<p align="center">
+  <img src="img/tuckaway-preferences.gif" width="720" alt="Tuckaway Preferences, item manager, and About screen">
+</p>
+
+## Permissions
+
+| Permission | Why Tuckaway uses it |
+|---|---|
+| **Accessibility / Device Control and Data Access** | Reads icon positions, identifies empty menu-bar space, and forwards clicks to hidden items. On macOS 27, this appears as **Device Control and Data Access** in System Settings. |
+| **Screen Recording** | Captures hidden icons only when separate-bar or related capture features are enabled. Captures remain on your Mac. |
+
+Tuckaway has **no accounts, analytics, advertising, tracking, or data upload**.
+See the [Privacy Policy](PRIVACY_POLICY.md).
 
 ## Build from source
 
 Install current Xcode, then run:
 
 ```sh
+git clone https://github.com/Bruno-Alumn/Tuckaway.git
+cd Tuckaway
 xcodebuild -project "Tuckaway.xcodeproj" -scheme "Tuckaway" \
   -configuration Debug-Direct CODE_SIGNING_ALLOWED=NO build
 ```
 
-Run the complete test suite with:
+Run the complete test suite:
 
 ```sh
 xcodebuild -project "Tuckaway.xcodeproj" -scheme "Tuckaway" \
@@ -85,24 +119,26 @@ when their signature changes.
 
 ## Documentation
 
-- [Manual](docs/MANUAL.md): settings, permissions, behavior, and troubleshooting
-- [Architecture](docs/ARCHITECTURE.md): hiding engines, topology, and known limits
-- [Maintainer runbook](docs/RUNBOOK.md): build, verification, and release process
-- [Upstream issue status](docs/UPSTREAM_ISSUES.md): integrated fixes and external blockers
-
-## Privacy
-
-Tuckaway has no analytics, accounts, network service, or third-party tracking.
-Permissions are used locally to read menu-bar layout, capture hidden items when
-requested, and forward clicks. See [Privacy Policy](PRIVACY_POLICY.md).
+- [Manual](docs/MANUAL.md) — every setting, permission, and troubleshooting step
+- [Architecture](docs/ARCHITECTURE.md) — hiding engines, topology, and known limits
+- [Maintainer runbook](docs/RUNBOOK.md) — verification and release process
+- [Upstream issue status](docs/UPSTREAM_ISSUES.md) — integrated fixes and external blockers
+- [Contributing](CONTRIBUTING.md) — contribution process and code of conduct
 
 ## Acknowledgments
 
-Tuckaway incorporates work from Hidden Bar’s contributors and from the upstream
-pull requests listed in the project history. The original copyright and MIT
-license notices are preserved in [LICENSE](LICENSE).
+Tuckaway builds on Hidden Bar and contributions from its community. The original
+copyright and MIT notices are preserved. See
+[upstream issue integration status](docs/UPSTREAM_ISSUES.md) for incorporated
+fixes and current platform limitations.
 
 ## License
 
-MIT © Dwarves Foundation, with Tuckaway modifications maintained by
-Bruno-Alumn. See [LICENSE](LICENSE).
+**MIT License**
+
+- Original work: **Copyright © 2019 Dwarves Foundation**
+- Tuckaway modifications: **Copyright © 2026 Bruno-Alumn**
+
+You may use, copy, modify, merge, publish, distribute, sublicense, and sell the
+software under the terms of the [MIT License](LICENSE). The software is provided
+**“as is,” without warranty of any kind**.

@@ -28,34 +28,43 @@ private struct AboutSettingsView: View {
         return "\("Version".localized) \(version) (\(build))"
     }
 
+    private let brandPurple = Color(red: 0.55, green: 0.25, blue: 0.86)
+
     var body: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 16) {
+        VStack(spacing: 22) {
+            VStack(spacing: 12) {
                 Image(nsImage: NSApp.applicationIconImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 60, height: 60)
+                    .frame(width: 88, height: 88)
                     .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Tuckaway").font(.title2).fontWeight(.semibold)
-                    Text("Menu bar cleaner".localized).foregroundStyle(.secondary)
-                    Text(verbatim: versionText)
-                        .font(.callout).foregroundStyle(.secondary)
-                }
-            }
-            HStack(spacing: 20) {
-                Link("Source code".localized, destination: URL(string: "https://github.com/Bruno-Alumn/hidden")!)
-                Link("Report an issue".localized, destination: URL(string: "https://github.com/Bruno-Alumn/hidden/issues")!)
-            }
-            VStack(spacing: 6) {
-                Text("Independent fork of Hidden Bar")
-                Text("MIT © Dwarves Foundation")
+                Text("Tuckaway")
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                Text("Tidy your Mac’s menu bar.")
+                    .foregroundStyle(.secondary)
+                Text(verbatim: versionText)
+                    .font(.callout)
                     .foregroundStyle(.secondary)
             }
+            .frame(maxWidth: .infinity)
+            .padding(22)
+            .background(brandPurple.opacity(0.10), in: RoundedRectangle(cornerRadius: 16))
+            HStack(spacing: 20) {
+                Link("Source code".localized, destination: URL(string: "https://github.com/Bruno-Alumn/Tuckaway")!)
+                Link("Report an issue".localized, destination: URL(string: "https://github.com/Bruno-Alumn/Tuckaway/issues")!)
+            }
+            .tint(brandPurple)
+            VStack(spacing: 6) {
+                Text("Independent MIT-licensed fork of Hidden Bar")
+                Text("Original work © Dwarves Foundation")
+                Text("Tuckaway modifications © Bruno-Alumn")
+            }
             .font(.caption)
+            .foregroundStyle(.secondary)
         }
         .font(.system(size: 13))
-        .padding(20)
+        .padding(24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(nsColor: .windowBackgroundColor))
     }
