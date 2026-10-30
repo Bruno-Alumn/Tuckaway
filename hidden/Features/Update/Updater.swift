@@ -4,6 +4,7 @@
 //
 
 import AppKit
+import Security
 
 // Checks GitHub releases for a newer Tuckaway and installs it in place.
 //
@@ -231,9 +232,39 @@ final class Updater {
               bundleVersion == version
         else { throw UpdateError.wrongApp }
 
-        guard run("/usr/bin/codesign", ["--verify", "--deep", "--strict", app.path]) else { throw UpdateError.invalidSignature }
+        guard run("/usr/bin/codesign", ["--verify", "--deep", "--strict", app.path]),
+              isSignedLikeThisApp(app)
+        else { throw UpdateError.invalidSignature }
         _ = run("/usr/bin/xattr", ["-dr", "com.apple.quarantine", app.path])
         return app
+    }
+
+    // Whether `app` satisfies the running app's designated requirement: same
+    // bundle ID, signed by the same certificate. That keeps a tampered or
+    // re-signed download out, and is the same identity macOS uses to keep
+    // Tuckaway's permissions across updates. An ad-hoc signed running app
+    // (releases before 1.2) has no certificate to match, so it accepts the
+    // update on the codesign check alone.
+    private static func isSignedLikeThisApp(_ app: URL) -> Bool {
+        var runningCode: SecStaticCode?
+        guard SecStaticCodeCreateWithPath(Bundle.main.bundleURL as CFURL, [], &runningCode) == errSecSuccess,
+              let runningCode
+        else { return false }
+        var information: CFDictionary?
+        guard SecCodeCopySigningInformation(runningCode, SecCSFlags(rawValue: kSecCSSigningInformation), &information) == errSecSuccess,
+              let information = information as? [String: Any]
+        else { return false }
+        let flags = (information[kSecCodeInfoFlags as String] as? NSNumber)?.uint32Value ?? 0
+        if flags & SecCodeSignatureFlags.adhoc.rawValue != 0 { return true }
+
+        var requirement: SecRequirement?
+        var updateCode: SecStaticCode?
+        guard SecCodeCopyDesignatedRequirement(runningCode, [], &requirement) == errSecSuccess,
+              let requirement,
+              SecStaticCodeCreateWithPath(app as CFURL, [], &updateCode) == errSecSuccess,
+              let updateCode
+        else { return false }
+        return SecStaticCodeCheckValidity(updateCode, SecCSFlags(rawValue: kSecCSCheckAllArchitectures), requirement) == errSecSuccess
     }
 
     @discardableResult

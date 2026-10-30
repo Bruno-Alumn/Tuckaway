@@ -33,11 +33,10 @@ before merging.
 
 ## Releases and distribution
 
-- **Publish the first DMG release.** v1.0.0 on GitHub is a zip of a Debug build. Bump
-  `MARKETING_VERSION`, run `scripts/package-dmg.sh`, and publish `Tuckaway.dmg` so the
-  updater has something to install.
-- **Developer ID signing and notarization (#219).** Removes the Open Anyway step and
-  the Accessibility re-grant after every update.
+- **Publish the first certificate-signed release (1.2).** From then on permissions
+  survive updates; 1.1.0 users re-grant once.
+- **Developer ID signing and notarization (#219).** Removes the Open Anyway step.
+  Permissions already survive updates through the self-signed release certificate.
 - **Homebrew cask** pointing at the GitHub DMG, once notarized.
 - **`hdiutil` → `diskutil image`.** `hdiutil` is deprecated on macOS 27; the updater
   and `scripts/package-dmg.sh` still use it.

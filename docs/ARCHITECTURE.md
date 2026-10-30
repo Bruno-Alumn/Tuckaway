@@ -190,8 +190,11 @@ flowchart TD
 4. **Unpack:** a DMG is mounted read-only with `hdiutil` and the app copied out
    with `ditto`; a zip is extracted with `ditto`.
 5. **Verify:** the app must have the same bundle ID, a version equal to the tag,
-   and pass `codesign --verify --deep --strict`. Otherwise nothing on disk
-   changes.
+   pass `codesign --verify --deep --strict`, and satisfy the running app's
+   designated requirement (same bundle ID and signing certificate; checked
+   with `SecStaticCodeCheckValidity`). A running app that is itself ad-hoc
+   signed (1.1.0 and earlier) has no certificate to match and skips that last
+   check. If anything fails, nothing on disk changes.
 6. **Swap:** the running bundle is moved aside and the new one moved in, rolling
    back if the second move fails. A detached `/bin/sh` waits for the old process
    to exit, opens the new app, and deletes the backup.
@@ -225,8 +228,10 @@ never garbage-collects those; see Apple TN3111). The helper app itself is gone.
     is locked by the committed `Package.resolved`.
   - The hover monitor only reads pointer position.
   - About-window links are hardcoded.
-- Releases are ad-hoc signed until a Developer ID is available, so each update
-  is a new app to macOS and may need Accessibility granted again.
+- Releases are signed with a self-signed certificate, the same one every time
+  (see the [runbook](RUNBOOK.md#release-signing)). macOS's privacy permissions
+  key on that identity, so they survive updates. Gatekeeper still treats the app
+  as unidentified until there is a Developer ID.
 
 ## Known architectural limits
 
