@@ -185,6 +185,7 @@ To undo any of them: `defaults delete com.brunoalumn.tuckaway <key>`.
 | Nothing hides on macOS 27 | Use the [direct-download build](https://github.com/Bruno-Alumn/Tuckaway/releases/latest) and grant **Device Control and Data Access**. The App Store build can't hide on macOS 27 and says so once. |
 | Hiding stopped after an update | Expected once, when updating from 1.1.0 or earlier. In System Settings › Privacy & Security › Accessibility (Device Control and Data Access on macOS 27), remove Tuckaway with the − button, then open Tuckaway and allow it again |
 | "Check for Updates" says it couldn't check | Check your internet connection. GitHub's API also limits anonymous requests per hour, so try again later. |
+| A fast ⌘-drag springs back to where it started, or the bar stalls for a moment | macOS 27 behaviour; it happens with Tuckaway quit too. Drag steadily: press, pause briefly, then move. Or drag the icon in Settings › Menu Bar Items, and Tuckaway does the drag for you |
 | A new or just-updated app's icon shows up already hidden | Expected, see "Why new icons start hidden" below; ⌘-drag it to the right of the separator (the arrow on macOS 27) once, or move it in Settings › Menu Bar Items |
 
 ### Why new icons start hidden
