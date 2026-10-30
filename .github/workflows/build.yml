@@ -7,6 +7,12 @@ on:
       - "agent/**"
   pull_request:
 
+# A new push to a pull request makes its earlier run pointless; runs on main
+# are kept so every merge gets its package.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   macos:
     runs-on: macos-15
@@ -35,7 +41,10 @@ jobs:
           CODE_SIGNING_ALLOWED=NO
           build
 
+      # The package is only useful from main; pull requests stop at tests and
+      # the App Store build, which roughly halves their wait.
       - name: Package direct release
+        if: github.event_name == 'push'
         run: |
           xcodebuild \
             -project "Tuckaway.xcodeproj" \
@@ -53,6 +62,7 @@ jobs:
             Tuckaway.zip
 
       - uses: actions/upload-artifact@v4
+        if: github.event_name == 'push'
         with:
           name: Tuckaway-direct
           path: Tuckaway.zip
