@@ -126,6 +126,8 @@ DerivedData/
 
 # End of https://www.gitignore.io/api/macos,swift
 
+dist/
+
 # Local agent/tooling layer (kept out of the repo)
 /.claude/
 /CLAUDE.local.md
