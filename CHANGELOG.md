@@ -4,6 +4,7 @@
 
 ### Fixed
 - With more than one display, "Show hidden items in separate bar" captured and clicked the wrong spot whenever a display of a different height had keyboard focus, and the "Show Notch Items" menu only appeared while the built-in display had focus. Both now use the right screen.
+- The notch overflow menu ("Show Notch Items") could freeze Tuckaway for seconds while it opened, because it asked every running process, helpers included, one at a time. It now asks only apps, all at once, with a short timeout: 17 ms instead of 3.1 s on a cold first open.
 - On macOS 27, launching any app, waking the Mac or changing displays showed every hidden icon, and they stayed visible until you clicked the arrow. Tuckaway now hides them again about two seconds after things settle. It waits while your pointer is in the menu bar, and doesn't re-hide if "Expand with an external display" is keeping the bar open.
 - On the very first launch, auto-collapse didn't start, and after migrating from Hidden Bar the always-hidden separator was missing until a relaunch. Tuckaway was reading your settings before loading them.
 - The app icon had solid black corners: the artwork was drawn on an opaque black square, so black showed in Finder, the Dock, ⌘-Tab, the About window, alerts and the README. It's now cut out with transparent corners and sits on Apple's icon grid (an 824-point rounded square on a 1024 canvas, with the standard shadow), so it's no longer oversized next to other apps.
