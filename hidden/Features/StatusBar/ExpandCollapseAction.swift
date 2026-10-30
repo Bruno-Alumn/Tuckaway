@@ -36,8 +36,13 @@ enum ExpandCollapseActionResolver {
         }
     }
 
-    static func shouldDeferAutoCollapse(isMouseInMenuBar: Bool, isPreferencesVisible: Bool, usesFullMenuBar: Bool) -> Bool {
-        return isMouseInMenuBar || (usesFullMenuBar && isPreferencesVisible)
+    // An automatic collapse waits while the user is still using the menu bar:
+    // the pointer is in it, or a mouse button is held. ⌘-dragging icons keeps
+    // going after the pointer drifts below the bar, and collapsing under that
+    // drag makes macOS reflow the bar mid-gesture.
+    static func shouldDeferAutoCollapse(isMouseInMenuBar: Bool, isMouseButtonDown: Bool,
+                                        isPreferencesVisible: Bool, usesFullMenuBar: Bool) -> Bool {
+        return isMouseInMenuBar || isMouseButtonDown || (usesFullMenuBar && isPreferencesVisible)
     }
 
     static func isEmptyMenuBar(role: String?) -> Bool {
