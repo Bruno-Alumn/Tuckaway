@@ -735,7 +735,7 @@ extension StatusBarController {
     // sees every left drag in every app, so install it only while that's on.
     // Global monitors already run on the main thread.
     private func updateConfigurationDragMonitor() {
-        if Preferences.showHiddenItemsInSeparateBar {
+        if usesSeparateHiddenItemsBar {
             guard configurationDragMonitor == nil else { return }
             configurationDragMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDragged, .leftMouseUp]) { [weak self] event in
                 self?.handleConfigurationDragEvent(event)
