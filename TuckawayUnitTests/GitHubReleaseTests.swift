@@ -75,4 +75,11 @@ final class GitHubReleaseTests: XCTestCase {
         XCTAssertFalse(release.isUpdate(over: ReleaseVersion("1.0.0")!))
         XCTAssertNil(release.appPackage)
     }
+
+    func testDownloadSizeMustMatchReleaseMetadata() {
+        XCTAssertTrue(GitHubRelease.Asset.isCompleteDownload(size: 4_194_304, expected: 4_194_304))
+        XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 1_024, expected: 4_194_304))
+        XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 4_194_305, expected: 4_194_304))
+        XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 0, expected: 0))
+    }
 }
