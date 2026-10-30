@@ -663,7 +663,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     @objc private func openMacOS27Notice() {
-        guard let url = URL(string: "https://github.com/dwarvesf/hidden/issues/360") else { return }
+        guard let url = URL(string: "https://github.com/Bruno-Alumn/Tuckaway/releases/latest") else { return }
         NSWorkspace.shared.open(url)
     }
     

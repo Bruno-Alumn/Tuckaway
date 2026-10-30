@@ -10,6 +10,7 @@
 - The arrow's context menu: "Auto-collapse" is a checkmark item, "Settings…" uses ⌘, , "Manage Menu Bar Items…" opens that tab directly, and Quit reads "Quit Tuckaway".
 
 ### Fixed
+- macOS 27: the App Store build's notice said menu-bar hiding was impossible on macOS 27, although the direct-download build supports it. The notice now says only that version can't hide icons, and links to the direct download instead of the upstream issue.
 - Preferences uses a native settings toolbar and compact controls; General and About keep the same width.
 - Shortcut recording cancels when the window closes, loses focus, or changes tabs. Invalid typing preserves the saved shortcut.
 - Always-hidden help now describes the correct boundary and Option-click behavior for the active engine.
