@@ -1,5 +1,5 @@
 import XCTest
-@testable import Hidden_Bar
+@testable import Tuckaway
 
 private func makeExtra(appName: String, x: CGFloat, width: CGFloat = 22, height: CGFloat = 22, title: String? = nil) -> MenuBarExtraInfo {
     MenuBarExtraInfo(

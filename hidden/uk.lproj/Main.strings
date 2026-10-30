@@ -2,23 +2,23 @@
 /* Class = "NSTextFieldCell"; title = "Settings"; ObjectID = "1Is-Ut-a9h"; */
 "1Is-Ut-a9h.title" = "Налаштування";
 
-/* Class = "NSMenuItem"; title = "Hidden Bar"; ObjectID = "1Xt-HY-uBw"; */
-"1Xt-HY-uBw.title" = "Hidden Bar";
+/* Class = "NSMenuItem"; title = "Tuckaway"; ObjectID = "1Xt-HY-uBw"; */
+"1Xt-HY-uBw.title" = "Tuckaway";
 
 /* Class = "NSTextFieldCell"; title = "⭐️Always Hidden"; ObjectID = "1jU-1x-cFf"; */
 "1jU-1x-cFf.title" = "⭐️Завжди сховано";
 
-/* Class = "NSTextFieldCell"; title = "Hidden Bar"; ObjectID = "2xp-Ht-xa6"; */
-"2xp-Ht-xa6.title" = "Hidden Bar";
+/* Class = "NSTextFieldCell"; title = "Tuckaway"; ObjectID = "2xp-Ht-xa6"; */
+"2xp-Ht-xa6.title" = "Tuckaway";
 
 /* Class = "NSTextFieldCell"; title = "Version"; ObjectID = "4Au-5A-dYq"; */
 "4Au-5A-dYq.title" = "Версія";
 
-/* Class = "NSMenuItem"; title = "Quit Hidden Bar"; ObjectID = "4sb-4s-VLi"; */
-"4sb-4s-VLi.title" = "Вийти з Hidden Bar";
+/* Class = "NSMenuItem"; title = "Quit Tuckaway"; ObjectID = "4sb-4s-VLi"; */
+"4sb-4s-VLi.title" = "Вийти з Tuckaway";
 
-/* Class = "NSMenuItem"; title = "About Hidden Bar"; ObjectID = "5kV-Vb-QxS"; */
-"5kV-Vb-QxS.title" = "Про Hidden Bar";
+/* Class = "NSMenuItem"; title = "About Tuckaway"; ObjectID = "5kV-Vb-QxS"; */
+"5kV-Vb-QxS.title" = "Про Tuckaway";
 
 /* Class = "NSButtonCell"; title = "Use the full MenuBar on expanding"; ObjectID = "8z8-6N-wnc"; */
 "8z8-6N-wnc.title" = "Використовувати повну смугу меню при розкритті";
@@ -30,7 +30,7 @@
 "B2x-1Q-Aei.ibShadowedLabels[0]" = "Загальне";
 
 /* Class = "NSSegmentedCell"; B2x-1Q-Aei.ibShadowedLabels[1] = "About"; ObjectID = "B2x-1Q-Aei"; */
-"B2x-1Q-Aei.ibShadowedLabels[1]" = "Про Hidden Bar";
+"B2x-1Q-Aei.ibShadowedLabels[1]" = "Про Tuckaway";
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
 "BOF-NM-1cW.title" = "Налаштування…";
@@ -71,8 +71,8 @@
 /* Class = "NSButtonCell"; title = "Enable always hidden section"; ObjectID = "Nhn-ch-1f7"; */
 "Nhn-ch-1f7.title" = "Ввімкнути секцію завжди схованних";
 
-/* Class = "NSMenuItem"; title = "Hide Hidden Bar"; ObjectID = "Olw-nP-bQN"; */
-"Olw-nP-bQN.title" = "Сховати Hidden Bar";
+/* Class = "NSMenuItem"; title = "Hide Tuckaway"; ObjectID = "Olw-nP-bQN"; */
+"Olw-nP-bQN.title" = "Сховати Tuckaway";
 
 /* Class = "NSTextFieldCell"; title = "Follow us on Twitter"; ObjectID = "Tba-C7-Zr8"; */
 "Tba-C7-Zr8.title" = "Слідкуйте за нами в Твіттері";
@@ -80,8 +80,8 @@
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
 "Vdr-fp-XzO.title" = "Hide Others";
 
-/* Class = "NSButtonCell"; title = "Start Hidden Bar when I log in"; ObjectID = "W1G-55-zGo"; */
-"W1G-55-zGo.title" = "Запускати Hidden Bar коли я вхожу";
+/* Class = "NSButtonCell"; title = "Start Tuckaway when I log in"; ObjectID = "W1G-55-zGo"; */
+"W1G-55-zGo.title" = "Запускати Tuckaway коли я вхожу";
 
 /* Class = "NSTextFieldCell"; title = "Menu bar cleaner"; ObjectID = "X4W-sr-Z32"; */
 "X4W-sr-Z32.title" = "Очисник смуги меню";
@@ -119,8 +119,8 @@
 /* Class = "NSTextFieldCell"; title = "Shown"; ObjectID = "iyS-g5-5mk"; */
 "iyS-g5-5mk.title" = "Показано";
 
-/* Class = "NSTextFieldCell"; title = "In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar."; ObjectID = "k7C-e5-6a0"; */
-"k7C-e5-6a0.title" = "У смузі меню вашого Mac, затисніть ⌘ і перетягуйте іконку\nміж секціями щоб налаштувати Hidden Bar.";
+/* Class = "NSTextFieldCell"; title = "In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway."; ObjectID = "k7C-e5-6a0"; */
+"k7C-e5-6a0.title" = "У смузі меню вашого Mac, затисніть ⌘ і перетягуйте іконку\nміж секціями щоб налаштувати Tuckaway.";
 
 /* Class = "NSButtonCell"; title = "Automatically hide icon after: "; ObjectID = "kg8-rW-srh"; */
 "kg8-rW-srh.title" = "Автоматично ховати після: ";
@@ -134,8 +134,8 @@
 /* Class = "NSTextFieldCell"; title = "Email us"; ObjectID = "sRr-sO-uV0"; */
 "sRr-sO-uV0.title" = "Відправте нам лист";
 
-/* Class = "NSMenu"; title = "Hidden Bar"; ObjectID = "uQy-DD-JDr"; */
-"uQy-DD-JDr.title" = "Hidden Bar";
+/* Class = "NSMenu"; title = "Tuckaway"; ObjectID = "uQy-DD-JDr"; */
+"uQy-DD-JDr.title" = "Tuckaway";
 
 /* Class = "NSMenuItem"; title = "10 seconds"; ObjectID = "z2X-nw-vxX"; */
 "z2X-nw-vxX.title" = "10 секунд";

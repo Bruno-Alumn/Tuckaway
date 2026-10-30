@@ -1,6 +1,6 @@
 /* 
   Localizable.strings
-  Hidden Bar
+  Tuckaway
 
   Created by Licardo on 2020/3/9.
   Copyright © 2020 Dwarves Foundation. All rights reserved.
@@ -21,7 +21,7 @@
 "Visible" = "顯示";
 "Refresh" = "重新整理";
 "Grant Access" = "授予權限";
-"Enable Hidden Bar in System Settings, then return and refresh." = "請在系統設定中啟用目前版本的 Hidden Bar，然後返回並重新整理。";
+"Enable Tuckaway in System Settings, then return and refresh." = "請在系統設定中啟用目前版本的 Tuckaway，然後返回並重新整理。";
 "Scanning menu bar items…" = "正在掃描選單列項目…";
 "Accessibility permission is required to list and move menu bar items." = "列出和移動選單列項目需要輔助使用權限。";
 "No manageable menu bar items were found." = "找不到可管理的選單列項目。";
@@ -47,7 +47,7 @@
 ";
 
 /* General settings (moved from Main.storyboard) */
-"Start Hidden Bar when I log in" = "登入時啟動 Hidden Bar";
+"Start Tuckaway when I log in" = "登入時啟動 Tuckaway";
 "Show preferences on launch" = "啟動時顯示偏好設定";
 "Use the full MenuBar on expanding" = "展開隱藏區時淨空選單列";
 "Enable always hidden section" = "啟用持續隱藏區域";
@@ -56,7 +56,7 @@
 "Hidden" = "隱藏區";
 "Shown" = "顯示區";
 "⭐️Always Hidden" = "⭐️ 持續隱藏";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "按住 ⌘ 並在區塊間拖曳 Mac 選單列的圖示\n就是 Hidden Bar 的設定方法。";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "按住 ⌘ 並在區塊間拖曳 Mac 選單列的圖示\n就是 Tuckaway 的設定方法。";
 "5 seconds" = "5 秒";
 "10 seconds" = "10 秒";
 "15 seconds" = "15 秒";

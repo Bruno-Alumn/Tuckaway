@@ -1,6 +1,6 @@
 /* 
   Localizable.strings
-  Hidden Bar
+  Tuckaway
 
   Created by Licardo on 2020/3/9.
   Copyright © 2020 Dwarves Foundation. All rights reserved.
@@ -22,11 +22,11 @@ Zum Anzeigen der permanent ausgeblendeten Symbole:
 1. Klicke mit gedrückter ⌥ Wahltaste nochmals auf das Einklappen Symbol “<” um sie anzuzeigen und wiederhole den Schritt um die Funktion zu aktivieren. Viel Spaß 😉!
 ";
 
-"Hidden Bar needs Accessibility access to hide icons." = "Hidden Bar benötigt Bedienungshilfen-Zugriff, um Symbole auszublenden.";
+"Tuckaway needs Accessibility access to hide icons." = "Tuckaway benötigt Bedienungshilfen-Zugriff, um Symbole auszublenden.";
 "Open Settings…" = "Einstellungen öffnen…";
 
 /* General settings (moved from Main.storyboard) */
-"Start Hidden Bar when I log in" = "Beim Anmelden starten";
+"Start Tuckaway when I log in" = "Beim Anmelden starten";
 "Show preferences on launch" = "Einstellungen beim Start öffnen";
 "Use the full MenuBar on expanding" = "Beim Erweitern die gesamte Menübreite benutzen";
 "Enable always hidden section" = "Dauerhaft ausgeblendeter Bereich";
@@ -35,7 +35,7 @@ Zum Anzeigen der permanent ausgeblendeten Symbole:
 "Hidden" = "Ausgeblendet";
 "Shown" = "Sichtbar";
 "⭐️Always Hidden" = "⭐️Immer ausgeblendet";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "Halte ⌘ in der Menüleiste und verschiebe Symbole\nzwischen den Sektionen um Hidden Bar zu konfigurieren.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Halte ⌘ in der Menüleiste und verschiebe Symbole\nzwischen den Sektionen um Tuckaway zu konfigurieren.";
 "5 seconds" = "5 Sekunden";
 "10 seconds" = "10 Sekunden";
 "15 seconds" = "15 Sekunden";

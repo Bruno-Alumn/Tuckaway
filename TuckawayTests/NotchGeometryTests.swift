@@ -1,5 +1,5 @@
 import XCTest
-@testable import Hidden_Bar
+@testable import Tuckaway
 
 /// Contract: NotchGeometry.computeBoundary must tell the notch-overflow
 /// feature (#350) where the notch actually is, replacing the reviewer-flagged

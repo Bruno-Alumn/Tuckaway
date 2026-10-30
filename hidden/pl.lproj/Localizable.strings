@@ -1,6 +1,6 @@
 /* 
   Localizable.strings
-  Hidden Bar
+  Tuckaway
 
   Created by Licardo on 2020/3/9.
   Copyright © 2020 Dwarves Foundation. All rights reserved.
@@ -23,7 +23,7 @@ Jak wyświetlić zawsze ukryte ikony:
 ";
 
 /* General settings (moved from Main.storyboard) */
-"Start Hidden Bar when I log in" = "Uruchamiaj Hidden Bar po zalogowaniu";
+"Start Tuckaway when I log in" = "Uruchamiaj Tuckaway po zalogowaniu";
 "Show preferences on launch" = "Pokazuj \"Preferencje...\" po uruchomieniu";
 "Use the full MenuBar on expanding" = "Po rozwinięciu używaj całego paska menu";
 "Enable always hidden section" = "Włącz sekcję \"Zawsze ukryte\"";
@@ -32,7 +32,7 @@ Jak wyświetlić zawsze ukryte ikony:
 "Hidden" = "Ukryte";
 "Shown" = "Widoczne";
 "⭐️Always Hidden" = "⭐️Zawsze ukryte";
-"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Hidden Bar." = "Na pasku menu Maca przytrzymaj klawisz ⌘ i przeciągaj ikony\nmiędzy sekcjami, aby skonfigurować Hidden Bar.";
+"In your Mac's menu bar, hold ⌘ and drag icons\nbetween sections to configure Tuckaway." = "Na pasku menu Maca przytrzymaj klawisz ⌘ i przeciągaj ikony\nmiędzy sekcjami, aby skonfigurować Tuckaway.";
 "5 seconds" = "5 s";
 "10 seconds" = "10 s";
 "15 seconds" = "15 s";
