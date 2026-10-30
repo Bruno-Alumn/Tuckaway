@@ -1,0 +1,64 @@
+//
+//  GitHubReleaseTests.swift
+//  TuckawayUnitTests
+//
+
+import XCTest
+
+final class GitHubReleaseTests: XCTestCase {
+    func testParsesTagsWithAndWithoutPrefix() {
+        XCTAssertEqual(ReleaseVersion("v1.2.3")?.components, [1, 2, 3])
+        XCTAssertEqual(ReleaseVersion("1.0")?.components, [1, 0])
+        XCTAssertEqual(ReleaseVersion(" V2 ")?.components, [2])
+    }
+
+    func testRejectsNonNumericAndPrereleaseVersions() {
+        XCTAssertNil(ReleaseVersion(""))
+        XCTAssertNil(ReleaseVersion("v"))
+        XCTAssertNil(ReleaseVersion("1.3.0-beta"))
+        XCTAssertNil(ReleaseVersion("1..2"))
+        XCTAssertNil(ReleaseVersion("latest"))
+    }
+
+    func testComparesNumericallyAndPadsMissingComponents() {
+        XCTAssertLessThan(ReleaseVersion("1.9")!, ReleaseVersion("1.10")!)
+        XCTAssertLessThan(ReleaseVersion("1.0.0")!, ReleaseVersion("1.0.1")!)
+        XCTAssertEqual(ReleaseVersion("1.2")!, ReleaseVersion("1.2.0")!)
+        XCTAssertFalse(ReleaseVersion("2.0")! < ReleaseVersion("1.99.99")!)
+    }
+
+    func testDecodesGitHubPayloadAndPicksAppArchive() throws {
+        let json = """
+        {
+          "tag_name": "v1.1.0",
+          "name": "Tuckaway 1.1.0",
+          "body": "Notes",
+          "html_url": "https://github.com/Bruno-Alumn/Tuckaway/releases/tag/v1.1.0",
+          "draft": false,
+          "prerelease": false,
+          "assets": [
+            {"name": "checksums.txt", "browser_download_url": "https://example.com/checksums.txt", "size": 10},
+            {"name": "Other.zip", "browser_download_url": "https://example.com/Other.zip", "size": 20},
+            {"name": "Tuckaway.zip", "browser_download_url": "https://example.com/Tuckaway.zip", "size": 30}
+          ]
+        }
+        """
+        let release = try JSONDecoder().decode(GitHubRelease.self, from: Data(json.utf8))
+        XCTAssertEqual(release.version, ReleaseVersion("1.1.0"))
+        XCTAssertEqual(release.appArchive?.name, "Tuckaway.zip")
+        XCTAssertTrue(release.isUpdate(over: ReleaseVersion("1.0.0")!))
+        XCTAssertFalse(release.isUpdate(over: ReleaseVersion("1.1")!))
+        XCTAssertFalse(release.isUpdate(over: ReleaseVersion("1.2.0")!))
+    }
+
+    func testIgnoresDraftsAndPrereleases() throws {
+        let json = """
+        {"tag_name": "v9.0.0", "name": null, "body": null,
+         "html_url": "https://github.com/Bruno-Alumn/Tuckaway/releases/tag/v9.0.0",
+         "draft": false, "prerelease": true, "assets": []}
+        """
+        let release = try JSONDecoder().decode(GitHubRelease.self, from: Data(json.utf8))
+        XCTAssertFalse(release.isUpdate(over: ReleaseVersion("1.0.0")!))
+        XCTAssertNil(release.appArchive)
+    }
+}

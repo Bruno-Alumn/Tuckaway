@@ -224,4 +224,26 @@ enum Preferences {
         }
     }
 
+    static var automaticallyChecksForUpdates: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: UserDefaults.Key.automaticallyChecksForUpdates)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.automaticallyChecksForUpdates)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
+    // Bookkeeping for the updater; nothing observes these.
+    static var lastUpdateCheck: Date? {
+        get { UserDefaults.standard.object(forKey: UserDefaults.Key.lastUpdateCheck) as? Date }
+        set { UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.lastUpdateCheck) }
+    }
+
+    static var skippedUpdateVersion: String? {
+        get { UserDefaults.standard.string(forKey: UserDefaults.Key.skippedUpdateVersion) }
+        set { UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.skippedUpdateVersion) }
+    }
+
 }

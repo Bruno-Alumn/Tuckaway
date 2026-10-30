@@ -34,6 +34,7 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         setupHotKey()
         openPreferencesIfNeeded()
         detectLTRLang()
+        Updater.shared.start()
     }
 
     /// Tuckaway is a menu bar utility with no visible window, so launching it a
@@ -91,7 +92,8 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         UserDefaults.Key.useTransparentExpandIconEnabled: false,
         UserDefaults.Key.clickEmptyMenuBarToToggle: false,
         UserDefaults.Key.expandWhenExternalDisplayConnected: false,
-        UserDefaults.Key.showHiddenItemsInSeparateBar: false
+        UserDefaults.Key.showHiddenItemsInSeparateBar: false,
+        UserDefaults.Key.automaticallyChecksForUpdates: true
     ]
 
     func registerDefaultValues() {

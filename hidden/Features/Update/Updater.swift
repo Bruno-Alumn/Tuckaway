@@ -1,0 +1,294 @@
+//
+//  Updater.swift
+//  Tuckaway
+//
+
+import AppKit
+
+// Checks GitHub releases for a newer Tuckaway and installs it in place.
+//
+// Only the direct-download build updates itself. The App Store build is
+// sandboxed without network access, and the App Store delivers its updates.
+final class Updater {
+    static let shared = Updater()
+
+    static let latestReleaseURL = URL(string: "https://api.github.com/repos/Bruno-Alumn/Tuckaway/releases/latest")!
+    static let releasesPageURL = URL(string: "https://github.com/Bruno-Alumn/Tuckaway/releases/latest")!
+
+    private static let checkInterval: TimeInterval = 24 * 60 * 60
+
+    static var isSupported: Bool {
+        ProcessInfo.processInfo.environment["APP_SANDBOX_CONTAINER_ID"] == nil
+    }
+
+    private var isBusy = false
+    private var timer: Timer?
+
+    private init() {}
+
+    // MARK: - Scheduling
+
+    // Called once at launch: checks shortly after startup when a day has
+    // passed since the last check, then re-evaluates every few hours.
+    func start() {
+        guard Self.isSupported else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+            self?.checkIfDue()
+        }
+        timer = Timer.scheduledTimer(withTimeInterval: 6 * 60 * 60, repeats: true) { [weak self] _ in
+            self?.checkIfDue()
+        }
+    }
+
+    private func checkIfDue() {
+        guard Preferences.automaticallyChecksForUpdates else { return }
+        if let last = Preferences.lastUpdateCheck, Date().timeIntervalSince(last) < Self.checkInterval { return }
+        check(userInitiated: false)
+    }
+
+    // MARK: - Checking
+
+    @objc func checkForUpdates() {
+        check(userInitiated: true)
+    }
+
+    private var currentVersion: ReleaseVersion {
+        #if DEBUG
+        // Lets a dev build exercise the install path against a real release.
+        if let override = ProcessInfo.processInfo.environment["TUCKAWAY_UPDATE_CURRENT_VERSION"],
+           let version = ReleaseVersion(override) {
+            return version
+        }
+        #endif
+        return ReleaseVersion(Bundle.main.releaseVersionNumber ?? "") ?? ReleaseVersion("0")!
+    }
+
+    private func check(userInitiated: Bool) {
+        guard Self.isSupported else {
+            if userInitiated { NSWorkspace.shared.open(Self.releasesPageURL) }
+            return
+        }
+        guard !isBusy else { return }
+        isBusy = true
+
+        var request = URLRequest(url: Self.latestReleaseURL, timeoutInterval: 20)
+        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
+        request.setValue("Tuckaway/\(Bundle.main.releaseVersionNumber ?? "0")", forHTTPHeaderField: "User-Agent")
+
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            let release: GitHubRelease?
+            if error == nil, (response as? HTTPURLResponse)?.statusCode == 200, let data {
+                release = try? JSONDecoder().decode(GitHubRelease.self, from: data)
+            } else {
+                release = nil
+            }
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.isBusy = false
+                Preferences.lastUpdateCheck = Date()
+                self.handle(release: release, userInitiated: userInitiated)
+            }
+        }.resume()
+    }
+
+    private func handle(release: GitHubRelease?, userInitiated: Bool) {
+        guard let release else {
+            if userInitiated {
+                showAlert(title: "Couldn’t check for updates".localized,
+                          message: "Make sure you’re connected to the internet, then try again.".localized)
+            }
+            return
+        }
+        guard release.isUpdate(over: currentVersion), let version = release.version else {
+            if userInitiated {
+                showAlert(title: "You’re up to date".localized,
+                          message: String(format: "Tuckaway %@ is the latest version.".localized, currentVersion.description))
+            }
+            return
+        }
+        if !userInitiated && Preferences.skippedUpdateVersion == version.description { return }
+        offer(release, version: version)
+    }
+
+    private func offer(_ release: GitHubRelease, version: ReleaseVersion) {
+        let alert = NSAlert()
+        alert.messageText = String(format: "Tuckaway %@ is available".localized, version.description)
+        var message = String(format: "You have version %@.".localized, currentVersion.description)
+        if let notes = release.body?.trimmingCharacters(in: .whitespacesAndNewlines), !notes.isEmpty {
+            let excerpt = notes.count > 600 ? String(notes.prefix(600)) + "…" : notes
+            message += "\n\n" + excerpt
+        }
+        alert.informativeText = message
+        let canInstall = release.appArchive != nil && installDestination != nil
+        alert.addButton(withTitle: canInstall ? "Install and Relaunch".localized : "Download".localized)
+        alert.addButton(withTitle: "Later".localized)
+        alert.addButton(withTitle: "Skip This Version".localized)
+
+        NSApp.activate(ignoringOtherApps: true)
+        switch alert.runModal() {
+        case .alertFirstButtonReturn:
+            if canInstall, let asset = release.appArchive {
+                install(asset, version: version, fallback: release.htmlURL)
+            } else {
+                NSWorkspace.shared.open(release.htmlURL)
+            }
+        case .alertThirdButtonReturn:
+            Preferences.skippedUpdateVersion = version.description
+        default:
+            break
+        }
+    }
+
+    // MARK: - Installing
+
+    // The running bundle, when it can be replaced in place. A translocated or
+    // read-only copy cannot, so the release page is opened instead.
+    private var installDestination: URL? {
+        let bundleURL = Bundle.main.bundleURL
+        guard !bundleURL.path.contains("/AppTranslocation/"),
+              FileManager.default.isWritableFile(atPath: bundleURL.deletingLastPathComponent().path)
+        else { return nil }
+        return bundleURL
+    }
+
+    private func install(_ asset: GitHubRelease.Asset, version: ReleaseVersion, fallback: URL) {
+        guard !isBusy, let destination = installDestination else { return }
+        isBusy = true
+
+        URLSession.shared.downloadTask(with: asset.browserDownloadURL) { [weak self] location, response, error in
+            let result: Result<URL, UpdateError>
+            if let location, error == nil, (response as? HTTPURLResponse)?.statusCode == 200 {
+                result = Result { try Self.prepare(archive: location, expecting: version) }
+                    .mapError { $0 as? UpdateError ?? .invalidArchive }
+            } else {
+                result = .failure(.downloadFailed)
+            }
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.isBusy = false
+                switch result {
+                case .success(let newApp):
+                    self.replace(destination, with: newApp, fallback: fallback)
+                case .failure(let error):
+                    self.showInstallFailure(error, fallback: fallback)
+                }
+            }
+        }.resume()
+    }
+
+    enum UpdateError: Error {
+        case downloadFailed
+        case invalidArchive
+        case wrongApp
+        case invalidSignature
+        case replaceFailed
+    }
+
+    // Unpacks the archive and checks the app inside is a signed Tuckaway of
+    // the advertised version before anything on disk is touched.
+    private static func prepare(archive: URL, expecting version: ReleaseVersion) throws -> URL {
+        let fileManager = FileManager.default
+        let workDirectory = fileManager.temporaryDirectory.appendingPathComponent("TuckawayUpdate-\(UUID().uuidString)")
+        try fileManager.createDirectory(at: workDirectory, withIntermediateDirectories: true)
+        let zip = workDirectory.appendingPathComponent("update.zip")
+        try fileManager.moveItem(at: archive, to: zip)
+
+        let extracted = workDirectory.appendingPathComponent("extracted")
+        guard run("/usr/bin/ditto", ["-x", "-k", zip.path, extracted.path]) else { throw UpdateError.invalidArchive }
+
+        let candidates = (try? fileManager.contentsOfDirectory(at: extracted, includingPropertiesForKeys: nil)) ?? []
+        guard let app = candidates.first(where: { $0.pathExtension == "app" }),
+              let bundle = Bundle(url: app)
+        else { throw UpdateError.invalidArchive }
+
+        guard bundle.bundleIdentifier == Bundle.main.bundleIdentifier,
+              let bundleVersion = ReleaseVersion(bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""),
+              bundleVersion == version
+        else { throw UpdateError.wrongApp }
+
+        guard run("/usr/bin/codesign", ["--verify", "--deep", "--strict", app.path]) else { throw UpdateError.invalidSignature }
+        _ = run("/usr/bin/xattr", ["-dr", "com.apple.quarantine", app.path])
+        return app
+    }
+
+    @discardableResult
+    private static func run(_ tool: String, _ arguments: [String]) -> Bool {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: tool)
+        process.arguments = arguments
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        do {
+            try process.run()
+            process.waitUntilExit()
+            return process.terminationStatus == 0
+        } catch {
+            return false
+        }
+    }
+
+    // Swaps the bundles (macOS lets a running app's bundle be moved), then
+    // relaunches from a shell that waits for this process to exit first.
+    private func replace(_ destination: URL, with newApp: URL, fallback: URL) {
+        let fileManager = FileManager.default
+        let backup = newApp.deletingLastPathComponent().appendingPathComponent("Previous.app")
+        do {
+            try fileManager.moveItem(at: destination, to: backup)
+            do {
+                try fileManager.moveItem(at: newApp, to: destination)
+            } catch {
+                try? fileManager.moveItem(at: backup, to: destination)
+                throw error
+            }
+        } catch {
+            showInstallFailure(.replaceFailed, fallback: fallback)
+            return
+        }
+
+        let relaunch = Process()
+        relaunch.executableURL = URL(fileURLWithPath: "/bin/sh")
+        relaunch.arguments = [
+            "-c", "while /bin/kill -0 \"$1\" 2>/dev/null; do /bin/sleep 0.2; done; /usr/bin/open \"$2\"; /bin/rm -rf \"$3\"",
+            "tuckaway-relaunch",
+            String(ProcessInfo.processInfo.processIdentifier),
+            destination.path,
+            backup.path
+        ]
+        do {
+            try relaunch.run()
+        } catch {
+            showAlert(title: "Update installed".localized,
+                      message: "Quit and reopen Tuckaway to finish updating.".localized)
+            return
+        }
+        NSApp.terminate(nil)
+    }
+
+    private func showInstallFailure(_ error: UpdateError, fallback: URL) {
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = "The update couldn’t be installed".localized
+        switch error {
+        case .downloadFailed:
+            alert.informativeText = "The download didn’t finish. You can download the update from GitHub instead.".localized
+        case .invalidArchive, .wrongApp, .invalidSignature:
+            alert.informativeText = "The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead.".localized
+        case .replaceFailed:
+            alert.informativeText = "Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead.".localized
+        }
+        alert.addButton(withTitle: "Open Release Page".localized)
+        alert.addButton(withTitle: "Cancel".localized)
+        NSApp.activate(ignoringOtherApps: true)
+        if alert.runModal() == .alertFirstButtonReturn {
+            NSWorkspace.shared.open(fallback)
+        }
+    }
+
+    private func showAlert(title: String, message: String) {
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = message
+        NSApp.activate(ignoringOtherApps: true)
+        alert.runModal()
+    }
+}

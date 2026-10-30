@@ -27,5 +27,8 @@ extension UserDefaults {
         static let useTransparentExpandIconEnabled = "useTransparentExpandIconEnabled"
         static let expandIconStyle = "expandIconStyle"
         static let didShowMacOS27HideUnavailableNotice = "didShowMacOS27HideUnavailableNotice"
+        static let automaticallyChecksForUpdates = "automaticallyChecksForUpdates"
+        static let lastUpdateCheck = "lastUpdateCheck"
+        static let skippedUpdateVersion = "skippedUpdateVersion"
     }
 }
