@@ -35,9 +35,10 @@ section is enabled.
 - These macOS items always stay visible: clock, Control Center, Wi-Fi,
   Bluetooth, Sound, Battery, Display, Keyboard and Screen Mirroring.
 - With more than one display, an app stays visible if it is on the arrow's
-  visible side on **any** display. If Tuckaway cannot read a complete display
-  layout after a monitor change, wake, or app launch, it leaves the bar expanded
-  until it can safely read it again.
+  visible side on **any** display. A monitor change, wake, or app launch shows
+  everything for a moment; about two seconds after things settle, Tuckaway
+  re-reads the layout and hides again (it waits while your pointer is in the
+  menu bar). If it still can't read a complete layout, the bar stays expanded.
 - Clicking the clock opens Notification Center as usual. macOS ignores the
   clock while it hides icons this way, so Tuckaway lifts the hiding for a
   moment and clicks the clock for you; the hidden icons show for under a
@@ -155,8 +156,7 @@ The App Store build has no network access and no updater.
   used to make the app unreachable forever), they come back on next launch.
 - **Display changes**: plugging in or removing monitors re-sizes the hidden zone
   for the widest attached screen automatically (macOS 26 and earlier). On macOS
-  27, Tuckaway re-reads the layout and stays expanded until it can read it
-  safely.
+  27, Tuckaway re-reads the layout and hides again about two seconds later.
 - **One copy at a time**: opening Tuckaway again brings the running copy
   forward instead of starting a second one.
 
