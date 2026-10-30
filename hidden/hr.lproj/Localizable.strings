@@ -8,6 +8,8 @@
 */
 
 /* Menu bar: arrow and separator menu */
+"Show hidden icons" = "Prikaži skrivene ikone";
+"Hide icons" = "Sakrij ikone";
 "Auto-collapse" = "Automatsko sklapanje";
 "Show separators" = "Prikaži razdjelnike";
 "Hide separators" = "Sakrij razdjelnike";

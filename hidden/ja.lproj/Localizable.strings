@@ -6,6 +6,8 @@
 */
 
 /* Menu bar: arrow and separator menu */
+"Show hidden icons" = "隠したアイコンを表示";
+"Hide icons" = "アイコンを隠す";
 "Auto-collapse" = "自動的に折りたたむ";
 "Show separators" = "区切りを表示";
 "Hide separators" = "区切りを非表示";

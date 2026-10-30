@@ -8,6 +8,8 @@
 */
 
 /* Menu bar: arrow and separator menu */
+"Show hidden icons" = "إظهار الأيقونات المخفية";
+"Hide icons" = "إخفاء الأيقونات";
 "Auto-collapse" = "طي تلقائي";
 "Show separators" = "إظهار الفواصل";
 "Hide separators" = "إخفاء الفواصل";
