@@ -37,25 +37,55 @@ final class MenuBarItemMovePlanTests: XCTestCase {
         XCTAssertEqual(MenuBarItemMovePlan.anchor(for: "x", in: ["x"]), .emptyList)
     }
 
-    func testReleasesJustInsideTheAnchorsNearEdge() {
-        let frame = CGRect(x: 100, y: 0, width: 24, height: 22)
-        XCTAssertEqual(MenuBarItemMovePlan.releaseX(for: .before("b"), anchorFrame: frame, emptyListX: 0), 104)
-        XCTAssertEqual(MenuBarItemMovePlan.releaseX(for: .after("b"), anchorFrame: frame, emptyListX: 0), 120)
-        XCTAssertEqual(MenuBarItemMovePlan.releaseX(for: .before("b"), anchorFrame: CGRect(x: 100, y: 0, width: 8, height: 22), emptyListX: 0), 102)
-        XCTAssertEqual(MenuBarItemMovePlan.releaseX(for: .emptyList, anchorFrame: nil, emptyListX: 50), 50)
-        XCTAssertEqual(MenuBarItemMovePlan.releaseX(for: .before("gone"), anchorFrame: nil, emptyListX: 50), 50)
+    func testFirstReleaseIsJustInsideTheAnchorsNearEdge() {
+        let item = CGRect(x: 0, y: 0, width: 30, height: 22)
+        let anchor = CGRect(x: 100, y: 0, width: 24, height: 22)
+        XCTAssertEqual(MenuBarItemMovePlan.releaseX(placing: item, .before, of: anchor), 104)
+        XCTAssertEqual(MenuBarItemMovePlan.releaseX(placing: item, .after, of: anchor), 120)
+        XCTAssertEqual(MenuBarItemMovePlan.releaseX(placing: item, .before, of: CGRect(x: 100, y: 0, width: 8, height: 22)), 102)
     }
 
-    func testSettledMeansRightNextToTheAnchorOnTheRequestedSide() {
-        let anchor = CGRect(x: 100, y: 0, width: 24, height: 22)
-        let justLeft = CGRect(x: 64, y: 0, width: 30, height: 22)     // 6pt gap
-        let justRight = CGRect(x: 134, y: 0, width: 30, height: 22)   // 10pt gap
-        let farLeft = CGRect(x: 10, y: 0, width: 30, height: 22)      // others in between
-        XCTAssertTrue(MenuBarItemMovePlan.isSettled(itemFrame: justLeft, anchor: .before("a"), anchorFrame: anchor))
-        XCTAssertFalse(MenuBarItemMovePlan.isSettled(itemFrame: justRight, anchor: .before("a"), anchorFrame: anchor))
-        XCTAssertFalse(MenuBarItemMovePlan.isSettled(itemFrame: farLeft, anchor: .before("a"), anchorFrame: anchor))
-        XCTAssertTrue(MenuBarItemMovePlan.isSettled(itemFrame: justRight, anchor: .after("a"), anchorFrame: anchor))
-        XCTAssertFalse(MenuBarItemMovePlan.isSettled(itemFrame: justLeft, anchor: .after("a"), anchorFrame: anchor))
-        XCTAssertTrue(MenuBarItemMovePlan.isSettled(itemFrame: farLeft, anchor: .emptyList, anchorFrame: nil))
+    func testNextStepIsNilOnceTheItemIsInPlace() {
+        XCTAssertNil(MenuBarItemMovePlan.nextStep(in: ["a", "x", "b"], item: "x", .before, of: "b"))
+        XCTAssertNil(MenuBarItemMovePlan.nextStep(in: ["a", "x", "b"], item: "x", .after, of: "a"))
+        XCTAssertNil(MenuBarItemMovePlan.nextStep(in: ["a", "b"], item: "x", .before, of: "b"))
+    }
+
+    func testNextStepPassesOneNeighbourTowardsTheGoal() {
+        // Before c from the far left: pass a, then b.
+        let first = MenuBarItemMovePlan.nextStep(in: ["x", "a", "b", "c", "d"], item: "x", .before, of: "c")
+        XCTAssertEqual(first?.pass, "a")
+        XCTAssertEqual(first?.direction, .right)
+        XCTAssertEqual(MenuBarItemMovePlan.nextStep(in: ["a", "x", "b", "c", "d"], item: "x", .before, of: "c")?.pass, "b")
+        // After c from the left: passes c itself last.
+        XCTAssertEqual(MenuBarItemMovePlan.nextStep(in: ["a", "b", "x", "c", "d"], item: "x", .after, of: "c")?.pass, "c")
+        // Before b from the far right: pass d, c, then b.
+        let left = MenuBarItemMovePlan.nextStep(in: ["a", "b", "c", "d", "x"], item: "x", .before, of: "b")
+        XCTAssertEqual(left?.pass, "d")
+        XCTAssertEqual(left?.direction, .left)
+        XCTAssertEqual(MenuBarItemMovePlan.nextStep(in: ["a", "b", "x", "c", "d"], item: "x", .before, of: "b")?.pass, "b")
+        // After b from the right stops short of b.
+        XCTAssertEqual(MenuBarItemMovePlan.nextStep(in: ["a", "b", "c", "x"], item: "x", .after, of: "b")?.pass, "c")
+        XCTAssertNil(MenuBarItemMovePlan.nextStep(in: ["a", "b", "x", "c"], item: "x", .after, of: "b"))
+    }
+
+    func testNextStepAlwaysReachesTheGoal() {
+        let others = ["a", "b", "c", "d"]
+        for start in 0...others.count {
+            for anchor in others {
+                for side in [MenuBarDropSide.before, .after] {
+                    var bar = others
+                    bar.insert("x", at: start)
+                    var steps = 0
+                    while steps < 10, let step = MenuBarItemMovePlan.nextStep(in: bar, item: "x", side, of: anchor) {
+                        bar.swapAt(bar.firstIndex(of: "x")!, bar.firstIndex(of: step.pass)!)
+                        steps += 1
+                    }
+                    let item = bar.firstIndex(of: "x")!, target = bar.firstIndex(of: anchor)!
+                    XCTAssertEqual(item, side == .before ? target - 1 : target + 1, "start \(start), \(side) \(anchor)")
+                    XCTAssertLessThanOrEqual(steps, others.count)
+                }
+            }
+        }
     }
 }

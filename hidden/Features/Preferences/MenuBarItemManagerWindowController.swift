@@ -445,15 +445,22 @@ final class MenuBarItemManagerViewController: NSViewController {
 
         movesInFlight += 1
         let element = item.element
+        // An empty list has no neighbour; aim at Tuckaway's own boundary item
+        // instead: the separator (or, on macOS 27, the arrow) for Hidden, the
+        // arrow for Visible.
+        let side: MenuBarDropSide
+        switch anchor {
+        case .before: side = .before
+        case .after: side = .after
+        case .emptyList: side = toHidden ? .before : .after
+        }
         moveQueue.async { [weak self] in
-            let layout = DispatchQueue.main.sync { () -> MenuBarManagementLayout? in
-                (NSApp.delegate as? AppDelegate)?.statusBarController.currentManagementLayout()
+            let settled = MenuBarItemDragger.move(element, side, of: anchorElement) {
+                DispatchQueue.main.sync {
+                    let layout = (NSApp.delegate as? AppDelegate)?.statusBarController.currentManagementLayout()
+                    return toHidden ? layout?.separatorFrame : layout?.expandCollapseFrame
+                }
             }
-            let emptyListX: CGFloat = {
-                guard let layout else { return 0 }
-                return toHidden ? layout.separatorFrame.minX - 12 : layout.expandCollapseFrame.maxX + 12
-            }()
-            let settled = MenuBarItemDragger.move(element, anchor: anchor, anchorElement: anchorElement, emptyListX: emptyListX)
             DispatchQueue.main.async {
                 guard let self else { return }
                 self.movesInFlight -= 1
