@@ -184,12 +184,25 @@ final class Updater {
         case replaceFailed
     }
 
+    private static let workDirectoryPrefix = "TuckawayUpdate-"
+
     // Copies the app out of the disk image (or zip) and checks it is a signed
     // Tuckaway of the advertised version before anything on disk is touched.
+    // Everything lives in one work folder, deleted again if anything fails.
     private static func prepare(download: URL, named name: String, expecting version: ReleaseVersion) throws -> URL {
         let fileManager = FileManager.default
-        let workDirectory = fileManager.temporaryDirectory.appendingPathComponent("TuckawayUpdate-\(UUID().uuidString)")
+        let workDirectory = fileManager.temporaryDirectory.appendingPathComponent(workDirectoryPrefix + UUID().uuidString)
         try fileManager.createDirectory(at: workDirectory, withIntermediateDirectories: true)
+        do {
+            return try unpack(download: download, named: name, expecting: version, in: workDirectory)
+        } catch {
+            try? fileManager.removeItem(at: workDirectory)
+            throw error
+        }
+    }
+
+    private static func unpack(download: URL, named name: String, expecting version: ReleaseVersion, in workDirectory: URL) throws -> URL {
+        let fileManager = FileManager.default
         let isDiskImage = name.lowercased().hasSuffix(".dmg")
         let package = workDirectory.appendingPathComponent(isDiskImage ? "update.dmg" : "update.zip")
         try fileManager.moveItem(at: download, to: package)
@@ -240,10 +253,16 @@ final class Updater {
     }
 
     // Swaps the bundles (macOS lets a running app's bundle be moved), then
-    // relaunches from a shell that waits for this process to exit first.
+    // relaunches from a shell that waits for this process to exit first and
+    // deletes the work folder (download, unpacked copy and the old app).
     private func replace(_ destination: URL, with newApp: URL, fallback: URL) {
         let fileManager = FileManager.default
-        let backup = newApp.deletingLastPathComponent().appendingPathComponent("Previous.app")
+        // newApp is <work folder>/extracted/Tuckaway.app.
+        let workDirectory = newApp.deletingLastPathComponent().deletingLastPathComponent()
+        let isOurWorkDirectory = workDirectory.lastPathComponent.hasPrefix(Self.workDirectoryPrefix)
+            && workDirectory.deletingLastPathComponent().resolvingSymlinksInPath().path
+                == fileManager.temporaryDirectory.resolvingSymlinksInPath().path
+        let backup = workDirectory.appendingPathComponent("Previous.app")
         do {
             try fileManager.moveItem(at: destination, to: backup)
             do {
@@ -253,6 +272,7 @@ final class Updater {
                 throw error
             }
         } catch {
+            if isOurWorkDirectory { try? fileManager.removeItem(at: workDirectory) }
             showInstallFailure(.replaceFailed, fallback: fallback)
             return
         }
@@ -264,11 +284,13 @@ final class Updater {
             "tuckaway-relaunch",
             String(ProcessInfo.processInfo.processIdentifier),
             destination.path,
-            backup.path
+            // Only ever a folder this updater created in the temporary directory.
+            isOurWorkDirectory ? workDirectory.path : backup.path
         ]
         do {
             try relaunch.run()
         } catch {
+            if isOurWorkDirectory { try? fileManager.removeItem(at: workDirectory) }
             showAlert(title: "Update installed".localized,
                       message: "Quit and reopen Tuckaway to finish updating.".localized)
             return
