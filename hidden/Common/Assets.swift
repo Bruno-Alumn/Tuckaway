@@ -17,11 +17,18 @@ struct Assets {
         image(expanded: false)
     }
 
+    // `expanded` names the arrow that expands the bar, shown while it is
+    // collapsed. VoiceOver reads the image's description as the button's label,
+    // so it says what a click will do.
     private static func image(expanded: Bool) -> NSImage? {
+        let description = (expanded ? "Show hidden icons" : "Hide icons").localized
         let style = Preferences.expandIconStyle
         guard let expandIcon = style.assetName else {
-            return NSImage(systemSymbolName: "ellipsis", accessibilityDescription: "Tuckaway")
+            return NSImage(systemSymbolName: "ellipsis", accessibilityDescription: description)
         }
-        return NSImage(named: NSImage.Name(Constant.isUsingLTRLanguage == expanded ? expandIcon : "ic_collapse"))
+        // A copy: named images are shared, and the description differs by state.
+        let image = NSImage(named: NSImage.Name(Constant.isUsingLTRLanguage == expanded ? expandIcon : "ic_collapse"))?.copy() as? NSImage
+        image?.accessibilityDescription = description
+        return image
     }
 }
