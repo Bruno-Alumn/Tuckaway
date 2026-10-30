@@ -223,10 +223,7 @@ final class HiddenItemsBarSeparatorOverlayView: NSView {
     }
 
     private var isDarkAppearance: Bool {
-        if #available(OSX 10.14, *) {
-            return effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-        }
-        return false
+        effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
     }
 }
 
@@ -267,12 +264,7 @@ final class HiddenItemsBarView: NSView {
         panelBackgroundColor.setFill()
         path.fill()
 
-        let strokeColor: NSColor
-        if #available(OSX 10.14, *) {
-            strokeColor = prefersDarkBackground ? NSColor.white.withAlphaComponent(0.28) : NSColor.separatorColor
-        } else {
-            strokeColor = NSColor.lightGray
-        }
+        let strokeColor = prefersDarkBackground ? NSColor.white.withAlphaComponent(0.28) : NSColor.separatorColor
         strokeColor.withAlphaComponent(0.35).setStroke()
         path.lineWidth = 1
         path.stroke()
