@@ -26,7 +26,7 @@
 "Scanning menu bar items…" = "Scanning menu bar items…";
 "Accessibility permission is required to list and move menu bar items." = "Accessibility permission is required to list and move menu bar items.";
 "No manageable menu bar items were found." = "No manageable menu bar items were found.";
-"Drop an item to apply the real menu bar position." = "Drop an item to apply the real menu bar position.";
+"Drop an item to apply the real menu bar position." = "Changes apply to your menu bar as soon as you drop.";
 "Unknown" = "Unknown";
 "Quit" = "Quit";
 "Set Shortcut" = "Set Shortcut";
@@ -94,7 +94,7 @@ Steps to view always hidden icons:
 "Appearance" = "Appearance";
 "Extra Sections" = "Extra Sections";
 "Drop items here" = "Drop items here";
-"Moving %@…" = "Moving %@…";
+"Couldn’t place %@ exactly; the lists show where it ended up." = "Couldn’t place %@ exactly; the lists show where it ended up.";
 
 /* Updater */
 "Updates" = "Updates";
