@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Changed
+- Releases are signed with a single certificate, "Tuckaway Release Signing", instead of a different ad-hoc signature each time. macOS now keeps Tuckaway's Accessibility and Screen Recording permissions, and firewall rules, across updates. Updating from 1.1.0 or earlier asks once more.
+- The updater only installs an update signed with the same certificate as the running copy, so a tampered or differently signed download is refused.
+- Release builds no longer carry the debug-only `get-task-allow` entitlement.
+
 ### Fixed
 - Updater: each update left its download and unpacked copy (about 4 MB) in the temporary folder. The whole work folder is now deleted after installing, and as soon as an update fails.
 
