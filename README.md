@@ -1,117 +1,191 @@
-<p align="center">
-  <img src="img/icon_512%402x.png" width="168" height="168" alt="Tuckaway app icon">
-</p>
+<div align="center">
 
-<h1 align="center">Tuckaway</h1>
+<img src="img/icon_512%402x.png" width="128" height="128" alt="Tuckaway app icon">
 
-<p align="center">
-  <strong>Tidy your Mac’s menu bar.</strong><br>
-  Choose what stays visible. Tuck away everything else.
-</p>
+# Tuckaway
 
-<p align="center">
-  <a href="https://github.com/Bruno-Alumn/Tuckaway/releases/latest"><img src="https://img.shields.io/github/v/release/Bruno-Alumn/Tuckaway?color=7c3aed&label=release" alt="Latest release"></a>
-  <img src="https://img.shields.io/badge/macOS-13%2B-1f2937" alt="macOS 13 or later">
-  <img src="https://img.shields.io/badge/Swift-native-ef5b45" alt="Native Swift app">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2774c8" alt="MIT license"></a>
-  <a href="#built-with-ai"><img src="https://img.shields.io/badge/vibe%20coded-%E2%9C%A8-ff69b4" alt="Vibe coded"></a>
-  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome%20(AI%20too)-22c55e" alt="Pull requests welcome, AI-assisted included"></a>
-</p>
+**Tidy your Mac’s menu bar.**<br>
+Choose what stays visible. Tuck away everything else.
 
-<p align="center">
-  <a href="#install">Install</a> ·
-  <a href="#quick-start">Quick start</a> ·
-  <a href="#features">Features</a> ·
-  <a href="#privacy--permissions">Privacy</a> ·
-  <a href="#build-from-source">Build</a> ·
-  <a href="#contributing">Contribute</a>
-</p>
+<a href="https://github.com/Bruno-Alumn/Tuckaway/releases/latest"><img src="https://img.shields.io/badge/Download_for_macOS-7c3aed?style=for-the-badge&logo=apple&logoColor=white" alt="Download Tuckaway for macOS" height="40"></a>
 
----
+<a href="https://github.com/Bruno-Alumn/Tuckaway/releases/latest"><img src="https://img.shields.io/github/v/release/Bruno-Alumn/Tuckaway?style=flat-square&color=7c3aed&label=release" alt="Latest release"></a>
+<img src="https://img.shields.io/badge/macOS-13%2B-1f2937?style=flat-square&logo=apple&logoColor=white" alt="macOS 13 or later">
+<img src="https://img.shields.io/badge/Swift-native-f05138?style=flat-square&logo=swift&logoColor=white" alt="Native Swift app">
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2774c8?style=flat-square" alt="MIT license"></a>
+<a href="#-built-with-ai"><img src="https://img.shields.io/badge/vibe_coded-✨-ec4899?style=flat-square" alt="Vibe coded"></a>
+<a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome_(AI_too)-22c55e?style=flat-square" alt="Pull requests welcome, AI-assisted included"></a>
 
-<p align="center">
-  <img src="img/tuckaway-menubar.gif" width="900" alt="Clicking Tuckaway’s arrow tucks away and reveals menu-bar icons">
-</p>
+<br><br>
 
-Tuckaway is a small, native macOS app for decluttering the menu bar without
+<img src="img/tuckaway-menubar.gif" width="900" alt="Clicking Tuckaway’s arrow tucks away and reveals menu-bar icons">
+
+<sub><a href="#-install">Install</a> &nbsp;·&nbsp; <a href="#-how-it-works">How it works</a> &nbsp;·&nbsp; <a href="#-features">Features</a> &nbsp;·&nbsp; <a href="#-privacy">Privacy</a> &nbsp;·&nbsp; <a href="#-contributing">Contributing</a></sub>
+
+</div>
+
+<br>
+
+Tuckaway is a small, native macOS app that declutters your menu bar without
 quitting the apps behind it. Arrange your icons once, then hide and reveal them
-with a click, a keyboard shortcut, a hover, or a click on empty menu-bar space.
+with a click, a shortcut, a hover, or a click on empty menu-bar space.
 
 It's an independent, MIT-licensed fork of
 [Hidden Bar](https://github.com/dwarvesf/hidden) that keeps working on
-**macOS 27**, where the original's hiding trick no longer works. It is not
-affiliated with or endorsed by Hidden Bar's maintainers.
+**macOS 27**, where the original's hiding trick stopped working.
 
-## Install
+## 📦 Install
 
-1. Download **Tuckaway.dmg** from the
-   [latest release](https://github.com/Bruno-Alumn/Tuckaway/releases/latest).
-2. Open it and drag **Tuckaway** onto the **Applications** folder.
-3. Open it. If macOS says it can't verify the developer, go to
-   **System Settings › Privacy & Security** and choose **Open Anyway**.
-   Releases are ad-hoc signed for now; notarization is planned.
-4. Grant the [permissions](#privacy--permissions) it asks for.
+1. Download **Tuckaway.dmg** from the [latest release](https://github.com/Bruno-Alumn/Tuckaway/releases/latest).
+2. Open it and drag **Tuckaway** onto **Applications**.
+3. Launch it and grant the [permissions](#-privacy) it asks for.
 
-Requires **macOS 13 Ventura or later**, on Apple Silicon or Intel.
+> [!TIP]
+> If macOS says it can't verify the developer, open **System Settings ›
+> Privacy & Security** and click **Open Anyway**. Releases are ad-hoc signed
+> for now; notarization is planned.
 
-From then on, Tuckaway **updates itself**: it checks GitHub once a day and
-offers **Install and Relaunch** when a new version ships. You can also choose
-**Check for Updates…** from the arrow's menu, or turn automatic checks off in
-Settings.
+Requires **macOS 13 Ventura or later** on Apple Silicon or Intel. Tuckaway then
+**updates itself**: it checks GitHub once a day and offers **Install and
+Relaunch** when a new version ships.
 
-> **Coming from Hidden Bar?** Quit Hidden Bar first so the two apps don't fight
-> over the menu bar. Tuckaway imports your Hidden Bar settings once and never
-> overwrites anything you change afterwards.
+<details>
+<summary><b>Coming from Hidden Bar?</b></summary>
+<br>
 
-## Quick start
+Quit Hidden Bar first so the two apps don't fight over the menu bar. Tuckaway
+imports your Hidden Bar settings once and never overwrites anything you change
+afterwards.
 
-1. **Arrange:** hold **⌘** and drag menu-bar icons to the left of Tuckaway's
-   arrow to hide them. Icons to its right stay visible.
-2. **Toggle:** click the arrow (or right-click it) to tuck icons away or bring
-   them back.
-3. **Customize:** **Control-click** the arrow and choose **Settings…** (⌘,).
-   - **General** groups options by what they do: Hiding, Revealing, Appearance,
-     Extra Sections, Startup and Updates.
-   - **Menu Bar Items** lets you drag icons between Hidden and Visible instead
-     of ⌘-dragging in the menu bar.
-4. **Go further:** turn on the always-hidden section for icons you almost never
-   need, then **Option-click** the arrow to show or hide it.
+</details>
+
+## 🪄 How it works
+
+Tuckaway adds an arrow to your menu bar. Everything to its **left** can be
+tucked away; everything to its **right** always stays visible.
+
+1. **Arrange:** hold <kbd>⌘</kbd> and drag icons to the left of the arrow to
+   hide them, or move them in **Settings › Menu Bar Items**.
+2. **Toggle:** click the arrow to tuck icons away or bring them back.
+3. **Customize:** <kbd>Control</kbd>-click the arrow and choose **Settings…**
+   (<kbd>⌘</kbd><kbd>,</kbd>).
+
+| Do this | To |
+|:--|:--|
+| **Click** or **right-click** the arrow | Hide or show your icons |
+| <kbd>⌘</kbd> **drag** an icon | Move it between the hidden and visible sides |
+| <kbd>⌥</kbd> **click** the arrow | Show or hide the always-hidden section |
+| <kbd>Control</kbd> **click** the arrow | Open the menu: Settings, updates, Quit |
+| Your **global shortcut** | Hide or show from anywhere |
 
 <p align="center">
-  <img src="img/tuckaway-settings.gif" width="560" alt="Tuckaway Settings: General options, dragging an item between the Hidden and Visible lists, and About">
+  <img src="img/tuckaway-settings.gif" width="520" alt="Tuckaway Settings: General options, dragging an item between the Hidden and Visible lists, and About">
 </p>
 
-## Features
+## ✨ Features
 
-| | |
-|---|---|
-| **One-click tidy** | Hide and reveal chosen menu-bar icons instantly. |
-| **Hides itself again** | Auto-collapse after a delay, or as soon as you switch apps. |
-| **Reveal your way** | Click, right-click, hover, a global shortcut, or a click on empty menu-bar space. |
-| **Drag-and-drop manager** | Move icons between Hidden and Visible from Settings. |
-| **Always-hidden section** | A second tier for icons you rarely need. |
-| **Notch overflow** | Reach icons stuck behind the camera notch. |
-| **Separate hidden-items bar** | Show hidden icons in a floating row you can click. |
-| **Display-aware** | Optionally expand when an external display is connected. |
-| **Your look** | Standard, transparent, or ellipsis arrow. |
-| **Built-in updates** | Daily or on-demand checks against GitHub releases, installed with one click. |
-| **macOS 27 ready** | Uses macOS 27's native menu-bar hiding in the direct-download build. |
+<table>
+<tr>
+<td width="33%" valign="top">
 
-## Privacy & permissions
+**🧹 One-click tidy**<br>
+Hide and reveal the icons you choose, instantly.
 
-| Permission | Why |
-|---|---|
-| **Accessibility** (called **Device Control and Data Access** on macOS 27) | Read where menu-bar icons are, detect empty menu-bar space, and pass clicks to hidden icons. |
-| **Screen Recording** | Only for the separate hidden-items bar, to show images of hidden icons. Nothing leaves your Mac. |
+</td>
+<td width="33%" valign="top">
 
-Tuckaway has **no accounts, analytics, ads or tracking**. Its only network
-request is the update check to GitHub, which you can turn off. Details are in
-the [Privacy Policy](PRIVACY_POLICY.md).
+**⏱️ Tidies itself**<br>
+Collapse again after a delay, or as soon as you switch apps.
 
-Because releases are ad-hoc signed, macOS may ask you to re-enable Accessibility
-after an update.
+</td>
+<td width="33%" valign="top">
 
-## Build from source
+**🖱️ Reveal your way**<br>
+Click, hover, a global shortcut, or a click on empty menu-bar space.
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+**🗂️ Drag-and-drop manager**<br>
+Move icons between Hidden and Visible right from Settings.
+
+</td>
+<td valign="top">
+
+**🔒 Always-hidden section**<br>
+A second tier for icons you almost never need.
+
+</td>
+<td valign="top">
+
+**📐 Notch-aware**<br>
+Reach icons stuck behind the camera notch.
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+**🪟 Separate bar**<br>
+Show hidden icons in a floating row you can click.
+
+</td>
+<td valign="top">
+
+**🖥️ Display-aware**<br>
+Optionally expand whenever an external display is connected.
+
+</td>
+<td valign="top">
+
+**🔄 Built-in updates**<br>
+Daily or on-demand, installed with one click.
+
+</td>
+</tr>
+</table>
+
+## 🔐 Privacy
+
+No accounts, analytics, ads or tracking. The only network request is the update
+check to GitHub, and you can turn it off. See the
+[Privacy Policy](PRIVACY_POLICY.md).
+
+| Permission | Why Tuckaway asks |
+|:--|:--|
+| **Accessibility**<br><sub>Device Control and Data Access on macOS 27</sub> | See where menu-bar icons are, detect empty menu-bar space, and pass clicks to hidden icons. |
+| **Screen Recording** | Only for the separate bar, to show images of hidden icons. Nothing leaves your Mac. |
+
+> [!NOTE]
+> Releases are ad-hoc signed, so macOS may ask you to re-enable Accessibility
+> after an update.
+
+## 💜 Built with AI
+
+Tuckaway is openly **vibe coded**. Much of it, including the Settings redesign
+and the updater, was written in conversation with AI coding agents, then built,
+tested and tried on a real menu bar before merging. What matters is whether a
+change works, not how it was typed.
+
+## 🤝 Contributing
+
+**Everyone is welcome, and all uses of AI are allowed.** Whether this is your
+first pull request or your thousandth, and whether you write Swift by hand, pair
+with an AI, or let an agent do the whole thing, come on in.
+
+- 🐛 **Found a bug or have an idea?** [Open an issue](https://github.com/Bruno-Alumn/Tuckaway/issues/new). Rough notes and screenshots are fine.
+- 🔧 **Want to fix something?** Fork it and open a PR against `main`. Small fixes don't need an issue first.
+- 🤖 **Not sure where to start?** Point your agent at [ARCHITECTURE.md](docs/ARCHITECTURE.md) and an open issue.
+
+The [contributing guide](CONTRIBUTING.md) lists the only four requirements:
+the change builds, the tests pass, you tried it on a real menu bar, and the PR
+says what you checked.
+
+<details>
+<summary><b>Build from source</b></summary>
+<br>
 
 You need a current Xcode.
 
@@ -129,53 +203,32 @@ xcodebuild -project Tuckaway.xcodeproj -scheme Tuckaway \
   -configuration Debug-Direct CODE_SIGNING_ALLOWED=NO test
 ```
 
-> **Use the `-Direct` configurations** (`Debug-Direct`, `Release-Direct`).
-> Plain `Debug`/`Release` produce the sandboxed App Store variant, which can't
-> hide icons on macOS 27 and shows a warning saying so.
+> [!IMPORTANT]
+> Use the `-Direct` configurations. Plain `Debug`/`Release` build the sandboxed
+> App Store variant, which can't hide icons on macOS 27.
 
-Each local build has a new signature, so macOS may ask for permissions again.
+</details>
 
-## Built with AI
+<details>
+<summary><b>Documentation</b></summary>
+<br>
 
-Tuckaway is openly **vibe coded**. Much of it, including the current Settings
-redesign and the updater, was written in conversation with AI coding agents,
-then built, tested and tried on a real menu bar before merging.
+| | |
+|:--|:--|
+| [Manual](docs/MANUAL.md) | Every setting, shortcut and troubleshooting step |
+| [Architecture](docs/ARCHITECTURE.md) | The two builds, both hiding engines, the updater, known limits |
+| [Runbook](docs/RUNBOOK.md) | Verification and the release process |
+| [Upstream issues](docs/UPSTREAM_ISSUES.md) | Hidden Bar issues fixed here, and what's still blocked |
+| [Backlog](docs/BACKLOG.md) | What's open next |
+| [Changelog](CHANGELOG.md) | What changed, release by release |
 
-We think that's a great way to build software, and you're welcome to work the
-same way. What matters is whether the change works, not how it was typed.
+</details>
 
-## Contributing
+<br>
 
-**Everyone is welcome.** It doesn't matter if this is your first pull request or
-your thousandth, or whether you write Swift by hand, pair with an AI, or let an
-agent do the whole thing. **All uses of AI are allowed.**
-
-- **Found a bug or have an idea?**
-  [Open an issue](https://github.com/Bruno-Alumn/Tuckaway/issues/new). Rough
-  notes and screenshots are fine.
-- **Want to fix something?** Fork, make the change, and open a PR against
-  `main`. Small fixes don't need an issue first.
-- **Not sure where to start?** Point your AI agent at
-  [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and an open issue, and go.
-
-The [contributing guide](CONTRIBUTING.md) covers the few things we ask: build it,
-run the tests, try it on a real menu bar, and say what you checked.
-
-## Documentation
-
-- [Manual](docs/MANUAL.md): every setting, permission, and troubleshooting step
-- [Architecture](docs/ARCHITECTURE.md): how hiding works, the engines, known limits
-- [Maintainer runbook](docs/RUNBOOK.md): verification and release process
-- [Upstream issue status](docs/UPSTREAM_ISSUES.md): Hidden Bar issues fixed here, and what's still blocked
-- [Changelog](CHANGELOG.md)
-
-## Acknowledgments
-
-Tuckaway stands on Hidden Bar by [Dwarves Foundation](https://github.com/dwarvesf)
-and the many people who contributed to it. Upstream issues and pull requests
-folded into Tuckaway are tracked in [docs/UPSTREAM_ISSUES.md](docs/UPSTREAM_ISSUES.md).
-
-## License
-
-[MIT](LICENSE). Original work © 2019 Dwarves Foundation; Tuckaway modifications
-© 2026 Bruno-Alumn. Provided “as is,” without warranty of any kind.
+<div align="center">
+<sub>
+Built on <a href="https://github.com/dwarvesf/hidden">Hidden Bar</a> by <a href="https://github.com/dwarvesf">Dwarves Foundation</a> and its contributors. Not affiliated with or endorsed by them.<br>
+<a href="LICENSE">MIT License</a> · Original work © 2019 Dwarves Foundation · Tuckaway modifications © 2026 Bruno-Alumn
+</sub>
+</div>
