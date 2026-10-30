@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- ⌘-pressing Tuckaway's arrow (or separator) while arranging icons collapsed or expanded the bar, or opened the menu. By macOS convention a ⌘-press on a menu-bar icon starts arranging, so it now does nothing; plain clicks and VoiceOver presses are unchanged.
 - ⌘-dragging icons in the menu bar could stutter and misbehave. If your hand drifted below the menu bar mid-drag, auto-collapse saw the pointer "leave" and collapsed the bar under the drag. Auto-collapse, hover-to-expand and collapse-on-app-switch now wait until no mouse button is held.
 
 ### Changed
