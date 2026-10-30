@@ -95,6 +95,13 @@ installed app, test the dev build, then re-import and relaunch.
    (`v1.1.0` ↔ `1.1.0`), and `codesign --verify --deep --strict` must pass. The
    script checks all of this except the tag. (The v1.0.0 asset was a zip of a
    Debug build; the updater still accepts zips so v1.0.0 users can update.)
+
+   Then exercise the same mount-copy-eject path the updater uses, which catches
+   images that unmount before their contents can be read:
+
+   ```sh
+   scripts/verify-dmg.sh
+   ```
 4. App Store (separate lane, **Tuckaway App Store** scheme): Tuckaway has no
    App Store listing, and Hidden Bar's belongs to its original maintainers
    (#393). The sandboxed build also can't hide on macOS 27, so decide
