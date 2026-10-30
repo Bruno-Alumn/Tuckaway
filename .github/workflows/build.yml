@@ -7,10 +7,11 @@ on:
       - "agent/**"
   pull_request:
 
-# A new push to a pull request makes its earlier run pointless; runs on main
-# are kept so every merge gets its package.
+# A new push to a pull request makes its earlier run pointless. Pushes each get
+# their own group (by commit): GitHub keeps only one pending run per group and
+# drops the rest even without cancel-in-progress, which skipped merges on main.
 concurrency:
-  group: build-${{ github.ref }}
+  group: build-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
