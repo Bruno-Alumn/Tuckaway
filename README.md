@@ -13,10 +13,8 @@ Choose what stays visible. Tuck away everything else.
 <img src="https://img.shields.io/badge/macOS-13%2B-1f2937?style=flat-square&logo=apple&logoColor=white" alt="macOS 13 or later">
 <img src="https://img.shields.io/badge/Swift-native-f05138?style=flat-square&logo=swift&logoColor=white" alt="Native Swift app">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2774c8?style=flat-square" alt="MIT license"></a>
-<a href="#-built-with-ai"><img src="https://img.shields.io/badge/vibe_coded-✨-ec4899?style=flat-square" alt="Vibe coded"></a>
+<a href="#-built-with-ai"><img src="https://img.shields.io/badge/vibe_coded-%E2%9C%A8-ec4899?style=flat-square" alt="Vibe coded"></a>
 <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome_(AI_too)-22c55e?style=flat-square" alt="Pull requests welcome, AI-assisted included"></a>
-
-<br><br>
 
 <img src="img/tuckaway-menubar.gif" width="900" alt="Clicking Tuckaway’s arrow tucks away and reveals menu-bar icons">
 
@@ -79,7 +77,7 @@ tucked away; everything to its **right** always stays visible.
 | Your **global shortcut** | Hide or show from anywhere |
 
 <p align="center">
-  <img src="img/tuckaway-settings.gif" width="520" alt="Tuckaway Settings: General options, dragging an item between the Hidden and Visible lists, and About">
+  <img src="img/tuckaway-settings.gif" width="440" alt="Tuckaway Settings: General options, dragging an item between the Hidden and Visible lists, and About">
 </p>
 
 ## ✨ Features
