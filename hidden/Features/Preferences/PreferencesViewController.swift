@@ -270,43 +270,66 @@ struct GeneralSettingsView: View {
 
     private let autoHideDelays = ["5 seconds", "10 seconds", "15 seconds", "30 seconds", "1 minute"]
 
+    private let brandPurple = Color(red: 0.55, green: 0.25, blue: 0.86)
+
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                tutorial
+            VStack(alignment: .leading, spacing: 14) {
+                brandHeader
                 if model.isAccessibilityPermissionMissing {
                     accessibilityNotice
                 }
-                Divider()
-                VStack(alignment: .leading, spacing: 12) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        sectionLabel("Startup")
-                        VStack(spacing: 0) {
-                            settingsToggle("Start Tuckaway when I log in", isOn: model.autoStart)
-                            settingsToggle("Show preferences on launch", isOn: model.showPreferencesOnLaunch)
-                        }
+                tutorial.settingsCard()
+                VStack(alignment: .leading, spacing: 6) {
+                    sectionLabel("Startup")
+                    VStack(spacing: 0) {
+                        settingsToggle("Start Tuckaway when I log in", isOn: model.autoStart)
+                        settingsToggle("Show preferences on launch", isOn: model.showPreferencesOnLaunch)
                     }
-                    VStack(alignment: .leading, spacing: 4) {
-                        sectionLabel("Menu Bar")
-                        menuBarOptions
-                    }
-                    Divider()
-                    HStack {
-                        Text(verbatim: Self.label("Shortcut"))
-                        Spacer()
-                        shortcutRecorder
-                    }
-                    .frame(minHeight: 28)
                 }
+                .settingsCard()
+                VStack(alignment: .leading, spacing: 6) {
+                    sectionLabel("Menu Bar")
+                    menuBarOptions
+                }
+                .settingsCard()
+                HStack {
+                    Text(verbatim: Self.label("Shortcut"))
+                    Spacer()
+                    shortcutRecorder
+                }
+                .frame(minHeight: 28)
+                .settingsCard()
             }
             .padding(.horizontal, 20)
-            .padding(.top, 12)
-            .padding(.bottom, 16)
+            .padding(.top, 14)
+            .padding(.bottom, 18)
             .frame(maxWidth: .infinity)
         }
         .font(.system(size: 13))
         .controlSize(.small)
+        .tint(brandPurple)
         .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    private var brandHeader: some View {
+        HStack(spacing: 12) {
+            Image(nsImage: NSApp.applicationIconImage)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 48, height: 48)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Tuckaway")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                Text("Tidy your Mac’s menu bar.")
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+        }
+        .padding(14)
+        .background(brandPurple.opacity(0.10), in: RoundedRectangle(cornerRadius: 14))
     }
 
     private func sectionLabel(_ key: String) -> some View {
@@ -456,6 +479,17 @@ struct GeneralSettingsView: View {
             return model.recordingPreview.isEmpty ? "Type Shortcut…".localized : model.recordingPreview
         }
         return model.shortcutTitle ?? "Set Shortcut".localized
+    }
+}
+
+private extension View {
+    func settingsCard() -> some View {
+        padding(12)
+            .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 12))
+            .overlay {
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 1)
+            }
     }
 }
 

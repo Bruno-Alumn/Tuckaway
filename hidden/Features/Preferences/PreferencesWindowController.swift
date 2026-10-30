@@ -78,7 +78,7 @@ class PreferencesWindowController: NSWindowController, NSWindowDelegate, NSToolb
         tabs.selectedTabViewItemIndex = sender.selectedSegment
     }
 
-    private let contentSize = NSSize(width: 668, height: 520)
+    private let contentSize = NSSize(width: 720, height: 600)
 
     func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
         [.flexibleSpace, tabsIdentifier, .flexibleSpace]
