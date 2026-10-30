@@ -270,8 +270,6 @@ struct GeneralSettingsView: View {
 
     private let autoHideDelays = ["5 seconds", "10 seconds", "15 seconds", "30 seconds", "1 minute"]
 
-    private let brandPurple = Color(red: 0.55, green: 0.25, blue: 0.86)
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
@@ -308,7 +306,7 @@ struct GeneralSettingsView: View {
         }
         .font(.system(size: 13))
         .controlSize(.small)
-        .tint(brandPurple)
+        .tint(.accentColor)
         .background(Color(nsColor: .windowBackgroundColor))
     }
 
@@ -329,7 +327,7 @@ struct GeneralSettingsView: View {
             Spacer()
         }
         .padding(14)
-        .background(brandPurple.opacity(0.10), in: RoundedRectangle(cornerRadius: 14))
+        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 14))
     }
 
     private func sectionLabel(_ key: String) -> some View {
