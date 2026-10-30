@@ -37,7 +37,13 @@ class Util {
     static func requestAccessibilityPermission() {
         let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         _ = AXIsProcessTrustedWithOptions(options)
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+        let settingsURL: String
+        if #available(macOS 27.0, *) {
+            settingsURL = "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Accessibility"
+        } else {
+            settingsURL = "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+        }
+        if let url = URL(string: settingsURL) {
             NSWorkspace.shared.open(url)
         }
     }
