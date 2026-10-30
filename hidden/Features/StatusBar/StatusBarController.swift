@@ -100,6 +100,7 @@ class StatusBarController: MenuBarItemProvider {
     private var configurationDragMonitor: Any?
     private var isTemporarilyExpandedForConfigurationDrag = false
     private var configurationDragCollapseWorkItem: DispatchWorkItem?
+    private var recollapseWorkItem: DispatchWorkItem?
     
     var toggleItem: NSStatusItem { btnExpandCollapse }
     var separatorItem: NSStatusItem { btnSeparate }
@@ -306,10 +307,29 @@ class StatusBarController: MenuBarItemProvider {
         menuBarEngine.invalidateLayout()
         if wasCollapsed && !isCollapsed {
             didFailToCollapseMenuBar()
+            scheduleRecollapse()
         }
         if wasCollapsed && Preferences.areSeparatorsHidden {
             menuBarEngine.updateAlwaysHiddenSection(enabled: Preferences.alwaysHiddenSectionEnabled, separatorHidden: true)
         }
+    }
+
+    // The engine reveals everything while the layout is stale. Hide again once
+    // launches, wakes and display changes have settled (each one restarts the
+    // wait), unless the user is in the menu bar or an external display keeps
+    // the bar open.
+    private func scheduleRecollapse(after delay: TimeInterval = 2) {
+        recollapseWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self, !self.isCollapsed, !self.didExpandForExternalDisplay else { return }
+            if self.isMouseInMenuBar || self.isMouseButtonDown {
+                self.scheduleRecollapse(after: 1)
+                return
+            }
+            self.collapseMenuBar()
+        }
+        recollapseWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
     }
 
     private func applyExternalDisplayPreference(force: Bool = false) {
@@ -483,6 +503,7 @@ class StatusBarController: MenuBarItemProvider {
     }
     
     private func collapseMenuBar() {
+        recollapseWorkItem?.cancel()
         hiddenItemsCaptureShieldController.hide()
         hiddenItemsBarController.hide()
         hiddenItemsSeparatorOverlayController.hide()
@@ -559,6 +580,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     private func expandMenubar(force: Bool = false) {
+        recollapseWorkItem?.cancel()
         guard self.isCollapsed || force else {return}
         hiddenItemsCaptureShieldController.hide()
         hiddenItemsBarController.hide()
