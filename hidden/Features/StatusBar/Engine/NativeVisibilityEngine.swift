@@ -80,6 +80,9 @@ final class NativeVisibilityEngine: MenuBarEngine {
     // Bumped whenever a pending activation must no longer win (an expand, a newer
     // activation); a late success is then invalidated straight away.
     private var generation = 0
+    // An activation that is never answered would leave the engine calibrating,
+    // which ignores every collapse until relaunch; this runs the give-up check.
+    private let afterActivationTimeout: (@escaping () -> Void) -> Void
     private var lastUnavailableReason: String?
     // The capture state last acted on, so only a change moves the restriction.
     private var isCaptureActive: Bool
@@ -95,8 +98,12 @@ final class NativeVisibilityEngine: MenuBarEngine {
          ownBundleIdentifier: String? = Bundle.main.bundleIdentifier,
          itemFrame: @escaping (NSStatusItem) -> CGRect? = { $0.button?.window?.frame },
          displays: @escaping () -> [MenuBarDisplay] = MenuBarDisplayInventory.current,
-         isLTR: @escaping () -> Bool = { Constant.isUsingLTRLanguage }) {
+         isLTR: @escaping () -> Bool = { Constant.isUsingLTRLanguage },
+         afterActivationTimeout: @escaping (@escaping () -> Void) -> Void = {
+             DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: $0)
+         }) {
         self.items = items
+        self.afterActivationTimeout = afterActivationTimeout
         self.inventory = inventory
         self.visibility = visibility
         self.captureActivity = captureActivity
@@ -264,8 +271,17 @@ final class NativeVisibilityEngine: MenuBarEngine {
             return completion(true)
         }
         let allowed = (ownBundleIdentifier.map { [$0] } ?? []) + bundles
+        var answered = false
+        afterActivationTimeout { [weak self] in
+            guard let self = self, !answered, generation == self.generation else { return }
+            NSLog("NativeVisibility: activation timed out")
+            // A late answer is now stale and is invalidated when it arrives.
+            self.generation += 1
+            completion(false)
+        }
         visibility.activate(allowedSystemItems: Self.systemItemsToKeep,
                             allowedBundleIdentifiers: allowed) { [weak self] result in
+            answered = true
             guard let self = self, generation == self.generation else {
                 if case .success(let stale) = result { stale.invalidate() }
                 return
