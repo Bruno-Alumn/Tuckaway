@@ -68,6 +68,12 @@ installed app, test the dev build, then re-import and relaunch.
    ```sh
    codesign -d --entitlements - 'Tuckaway.app' | grep app-sandbox  # must print nothing
    ```
+
+   The in-app updater installs this zip, so it must hold `Tuckaway.app` at the
+   top level, its `CFBundleShortVersionString` must equal the release tag
+   (`v1.1.0` ↔ `1.1.0`), and `codesign --verify --deep --strict` must pass.
+   Also make sure it is a Release build: `Contents/MacOS` must not contain
+   `Tuckaway.debug.dylib` (the v1.0.0 asset did).
 4. App Store (separate lane, **Tuckaway App Store** scheme): the MAS listing
    has lagged GitHub since v1.8 (issues #281/#202); decide deliberately whether
    a release goes there too.

@@ -629,6 +629,12 @@ class StatusBarController: MenuBarItemProvider {
         itemsItem.target = self
         menu.addItem(itemsItem)
 
+        if Updater.isSupported {
+            let updateItem = NSMenuItem(title: "Check for Updates…".localized, action: #selector(Updater.checkForUpdates), keyEquivalent: "")
+            updateItem.target = Updater.shared
+            menu.addItem(updateItem)
+        }
+
         let prefItem = NSMenuItem(title: "Settings…".localized, action: #selector(openPreferenceViewControllerIfNeeded), keyEquivalent: ",")
         prefItem.target = self
         menu.addItem(prefItem)

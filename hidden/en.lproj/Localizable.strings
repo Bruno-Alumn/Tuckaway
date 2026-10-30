@@ -95,3 +95,28 @@ Steps to view always hidden icons:
 "Extra Sections" = "Extra Sections";
 "Drop items here" = "Drop items here";
 "Moving %@…" = "Moving %@…";
+
+/* Updater */
+"Updates" = "Updates";
+"Check for updates automatically" = "Check for updates automatically";
+"Check Now" = "Check Now";
+"Check for Updates…" = "Check for Updates…";
+"Version %@" = "Version %@";
+"Couldn’t check for updates" = "Couldn’t check for updates";
+"Make sure you’re connected to the internet, then try again." = "Make sure you’re connected to the internet, then try again.";
+"You’re up to date" = "You’re up to date";
+"Tuckaway %@ is the latest version." = "Tuckaway %@ is the latest version.";
+"Tuckaway %@ is available" = "Tuckaway %@ is available";
+"You have version %@." = "You have version %@.";
+"Install and Relaunch" = "Install and Relaunch";
+"Download" = "Download";
+"Later" = "Later";
+"Skip This Version" = "Skip This Version";
+"Update installed" = "Update installed";
+"Quit and reopen Tuckaway to finish updating." = "Quit and reopen Tuckaway to finish updating.";
+"The update couldn’t be installed" = "The update couldn’t be installed";
+"The download didn’t finish. You can download the update from GitHub instead." = "The download didn’t finish. You can download the update from GitHub instead.";
+"The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead." = "The downloaded file didn’t contain a valid copy of Tuckaway, so nothing was changed. You can download the update from GitHub instead.";
+"Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead.";
+"Open Release Page" = "Open Release Page";
+"Cancel" = "Cancel";

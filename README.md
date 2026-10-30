@@ -52,6 +52,7 @@ endorsed by the original maintainers.
 | **Display-aware behavior** | Optionally expand when an external display is connected. |
 | **Your preferred appearance** | Choose standard, transparent, or ellipsis expand icons. |
 | **Background startup** | Launch at login with or without opening Preferences. |
+| **Built-in updates** | Check GitHub releases daily or on demand, then install and relaunch in one click. |
 
 ## Install
 
