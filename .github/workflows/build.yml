@@ -3,6 +3,7 @@ name: Build
 on:
   push:
     branches:
+      - main
       - "agent/**"
   pull_request:
 
@@ -11,26 +12,48 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
-      - name: Build Tuckaway
+
+      - name: Test direct build
         run: >-
           xcodebuild
           -project "Tuckaway.xcodeproj"
           -scheme "Tuckaway"
-          -configuration Release
+          -configuration Debug-Direct
+          -destination "platform=macOS"
+          -derivedDataPath build/DerivedData
+          CODE_SIGNING_ALLOWED=NO
+          test
+
+      - name: Build App Store variant
+        run: >-
+          xcodebuild
+          -project "Tuckaway.xcodeproj"
+          -scheme "Tuckaway"
+          -configuration Debug
           -destination "platform=macOS"
           -derivedDataPath build/DerivedData
           CODE_SIGNING_ALLOWED=NO
           build
-      - name: Package app
+
+      - name: Package direct release
         run: |
-          xattr -cr "build/DerivedData/Build/Products/Release/Tuckaway.app"
-          codesign --force --deep --sign - "build/DerivedData/Build/Products/Release/Tuckaway.app"
-          codesign --verify --deep --strict "build/DerivedData/Build/Products/Release/Tuckaway.app"
+          xcodebuild \
+            -project "Tuckaway.xcodeproj" \
+            -scheme "Tuckaway" \
+            -configuration Release-Direct \
+            -destination "platform=macOS" \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+          xattr -cr "build/DerivedData/Build/Products/Release-Direct/Tuckaway.app"
+          codesign --force --deep --sign - "build/DerivedData/Build/Products/Release-Direct/Tuckaway.app"
+          codesign --verify --deep --strict "build/DerivedData/Build/Products/Release-Direct/Tuckaway.app"
           ditto -c -k --keepParent \
-            "build/DerivedData/Build/Products/Release/Tuckaway.app" \
+            "build/DerivedData/Build/Products/Release-Direct/Tuckaway.app" \
             Tuckaway.zip
+
       - uses: actions/upload-artifact@v4
         with:
-          name: Tuckaway
+          name: Tuckaway-direct
           path: Tuckaway.zip
           if-no-files-found: error
