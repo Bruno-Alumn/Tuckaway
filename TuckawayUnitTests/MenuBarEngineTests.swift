@@ -385,22 +385,27 @@ final class NativeVisibilityEngineTests: XCTestCase {
         XCTAssertEqual(items.alwaysHiddenItem?.length, 0, "the always-hidden separator only shows when enabled")
     }
 
-    func testUnansweredActivationTimesOutSoTheNextCollapseWorks() {
+    // Timeouts are fired by hand: spinning the run loop here lets AppKit tear
+    // down earlier tests' status items mid-test.
+    private func makeEngine(timeouts: @escaping (@escaping () -> Void) -> Void) -> NativeVisibilityEngine {
         let items = self.items!
-        let engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
-                                            captureActivity: capture, clock: clock,
-                                            ownBundleIdentifier: "com.brunoalumn.tuckaway",
-                                            itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
-                                            displays: { [mainDisplay] },
-                                            isLTR: { true },
-                                            activationTimeout: 0.05)
+        return NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                      captureActivity: capture, clock: clock,
+                                      ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                      itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
+                                      displays: { [mainDisplay] },
+                                      isLTR: { true },
+                                      afterActivationTimeout: timeouts)
+    }
+
+    func testUnansweredActivationTimesOutSoTheNextCollapseWorks() {
+        var timeouts: [() -> Void] = []
+        let engine = makeEngine { timeouts.append($0) }
         var results: [CollapseResult] = []
         engine.collapse { results.append($0) }
         XCTAssertEqual(engine.state, .calibrating)
 
-        let timedOut = expectation(description: "activation gives up")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { timedOut.fulfill() }
-        wait(for: [timedOut], timeout: 1)
+        timeouts[0]()
         XCTAssertEqual(results, [.unavailable])
         XCTAssertEqual(engine.state, .expanded)
 
@@ -416,21 +421,13 @@ final class NativeVisibilityEngineTests: XCTestCase {
     }
 
     func testAnsweredActivationDoesNotTimeOut() {
-        let items = self.items!
-        let engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
-                                            captureActivity: capture, clock: clock,
-                                            ownBundleIdentifier: "com.brunoalumn.tuckaway",
-                                            itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
-                                            displays: { [mainDisplay] },
-                                            isLTR: { true },
-                                            activationTimeout: 0.05)
+        var timeouts: [() -> Void] = []
+        let engine = makeEngine { timeouts.append($0) }
         var results: [CollapseResult] = []
         engine.collapse { results.append($0) }
         visibility.succeed(0)
 
-        let waited = expectation(description: "past the timeout")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { waited.fulfill() }
-        wait(for: [waited], timeout: 1)
+        timeouts[0]()
         XCTAssertEqual(results, [.collapsed])
         XCTAssertEqual(engine.state, .collapsed)
     }
