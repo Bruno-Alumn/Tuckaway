@@ -159,7 +159,7 @@ final class Updater {
         URLSession.shared.downloadTask(with: asset.browserDownloadURL) { [weak self] location, response, error in
             let result: Result<URL, UpdateError>
             if let location, error == nil, (response as? HTTPURLResponse)?.statusCode == 200 {
-                result = Result { try Self.prepare(download: location, named: asset.name, expecting: version) }
+                result = Result { try Self.prepare(download: location, named: asset.name, expecting: version, expectedSize: asset.size) }
                     .mapError { $0 as? UpdateError ?? .invalidArchive }
             } else {
                 result = .failure(.downloadFailed)
@@ -190,8 +190,14 @@ final class Updater {
     // Copies the app out of the disk image (or zip) and checks it is a signed
     // Tuckaway of the advertised version before anything on disk is touched.
     // Everything lives in one work folder, deleted again if anything fails.
-    private static func prepare(download: URL, named name: String, expecting version: ReleaseVersion) throws -> URL {
+    private static func prepare(download: URL, named name: String, expecting version: ReleaseVersion,
+                                expectedSize: Int) throws -> URL {
         let fileManager = FileManager.default
+        let attributes = try fileManager.attributesOfItem(atPath: download.path)
+        let actualSize = (attributes[.size] as? NSNumber)?.intValue ?? -1
+        guard GitHubRelease.Asset.isCompleteDownload(size: actualSize, expected: expectedSize) else {
+            throw UpdateError.invalidArchive
+        }
         let workDirectory = fileManager.temporaryDirectory.appendingPathComponent(workDirectoryPrefix + UUID().uuidString)
         try fileManager.createDirectory(at: workDirectory, withIntermediateDirectories: true)
         do {
