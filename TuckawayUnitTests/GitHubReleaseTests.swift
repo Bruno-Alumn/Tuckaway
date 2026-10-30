@@ -45,10 +45,24 @@ final class GitHubReleaseTests: XCTestCase {
         """
         let release = try JSONDecoder().decode(GitHubRelease.self, from: Data(json.utf8))
         XCTAssertEqual(release.version, ReleaseVersion("1.1.0"))
-        XCTAssertEqual(release.appArchive?.name, "Tuckaway.zip")
+        XCTAssertEqual(release.appPackage?.name, "Tuckaway.zip")
         XCTAssertTrue(release.isUpdate(over: ReleaseVersion("1.0.0")!))
         XCTAssertFalse(release.isUpdate(over: ReleaseVersion("1.1")!))
         XCTAssertFalse(release.isUpdate(over: ReleaseVersion("1.2.0")!))
+    }
+
+    func testPrefersDiskImageOverZip() throws {
+        let json = """
+        {"tag_name": "v1.2.0", "name": null, "body": null,
+         "html_url": "https://github.com/Bruno-Alumn/Tuckaway/releases/tag/v1.2.0",
+         "draft": false, "prerelease": false, "assets": [
+            {"name": "Tuckaway.zip", "browser_download_url": "https://example.com/Tuckaway.zip", "size": 30},
+            {"name": "Other.dmg", "browser_download_url": "https://example.com/Other.dmg", "size": 40},
+            {"name": "Tuckaway.dmg", "browser_download_url": "https://example.com/Tuckaway.dmg", "size": 50}
+         ]}
+        """
+        let release = try JSONDecoder().decode(GitHubRelease.self, from: Data(json.utf8))
+        XCTAssertEqual(release.appPackage?.name, "Tuckaway.dmg")
     }
 
     func testIgnoresDraftsAndPrereleases() throws {
@@ -59,6 +73,6 @@ final class GitHubReleaseTests: XCTestCase {
         """
         let release = try JSONDecoder().decode(GitHubRelease.self, from: Data(json.utf8))
         XCTAssertFalse(release.isUpdate(over: ReleaseVersion("1.0.0")!))
-        XCTAssertNil(release.appArchive)
+        XCTAssertNil(release.appPackage)
     }
 }
