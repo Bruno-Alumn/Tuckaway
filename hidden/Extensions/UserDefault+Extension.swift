@@ -30,5 +30,6 @@ extension UserDefaults {
         static let automaticallyChecksForUpdates = "automaticallyChecksForUpdates"
         static let lastUpdateCheck = "lastUpdateCheck"
         static let skippedUpdateVersion = "skippedUpdateVersion"
+        static let hasLaunchedBefore = "hasLaunchedBefore"
     }
 }
