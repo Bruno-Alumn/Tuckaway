@@ -119,7 +119,7 @@ final class Updater {
             message += "\n\n" + excerpt
         }
         alert.informativeText = message
-        let canInstall = release.appArchive != nil && installDestination != nil
+        let canInstall = release.appPackage != nil && installDestination != nil
         alert.addButton(withTitle: canInstall ? "Install and Relaunch".localized : "Download".localized)
         alert.addButton(withTitle: "Later".localized)
         alert.addButton(withTitle: "Skip This Version".localized)
@@ -127,7 +127,7 @@ final class Updater {
         NSApp.activate(ignoringOtherApps: true)
         switch alert.runModal() {
         case .alertFirstButtonReturn:
-            if canInstall, let asset = release.appArchive {
+            if canInstall, let asset = release.appPackage {
                 install(asset, version: version, fallback: release.htmlURL)
             } else {
                 NSWorkspace.shared.open(release.htmlURL)
@@ -158,7 +158,7 @@ final class Updater {
         URLSession.shared.downloadTask(with: asset.browserDownloadURL) { [weak self] location, response, error in
             let result: Result<URL, UpdateError>
             if let location, error == nil, (response as? HTTPURLResponse)?.statusCode == 200 {
-                result = Result { try Self.prepare(archive: location, expecting: version) }
+                result = Result { try Self.prepare(download: location, named: asset.name, expecting: version) }
                     .mapError { $0 as? UpdateError ?? .invalidArchive }
             } else {
                 result = .failure(.downloadFailed)
@@ -184,17 +184,29 @@ final class Updater {
         case replaceFailed
     }
 
-    // Unpacks the archive and checks the app inside is a signed Tuckaway of
-    // the advertised version before anything on disk is touched.
-    private static func prepare(archive: URL, expecting version: ReleaseVersion) throws -> URL {
+    // Copies the app out of the disk image (or zip) and checks it is a signed
+    // Tuckaway of the advertised version before anything on disk is touched.
+    private static func prepare(download: URL, named name: String, expecting version: ReleaseVersion) throws -> URL {
         let fileManager = FileManager.default
         let workDirectory = fileManager.temporaryDirectory.appendingPathComponent("TuckawayUpdate-\(UUID().uuidString)")
         try fileManager.createDirectory(at: workDirectory, withIntermediateDirectories: true)
-        let zip = workDirectory.appendingPathComponent("update.zip")
-        try fileManager.moveItem(at: archive, to: zip)
+        let isDiskImage = name.lowercased().hasSuffix(".dmg")
+        let package = workDirectory.appendingPathComponent(isDiskImage ? "update.dmg" : "update.zip")
+        try fileManager.moveItem(at: download, to: package)
 
         let extracted = workDirectory.appendingPathComponent("extracted")
-        guard run("/usr/bin/ditto", ["-x", "-k", zip.path, extracted.path]) else { throw UpdateError.invalidArchive }
+        if isDiskImage {
+            let mountPoint = workDirectory.appendingPathComponent("mount")
+            guard run("/usr/bin/hdiutil", ["attach", package.path, "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mountPoint.path])
+            else { throw UpdateError.invalidArchive }
+            defer { run("/usr/bin/hdiutil", ["detach", mountPoint.path, "-force"]) }
+            let mounted = (try? fileManager.contentsOfDirectory(at: mountPoint, includingPropertiesForKeys: nil)) ?? []
+            guard let mountedApp = mounted.first(where: { $0.pathExtension == "app" }),
+                  run("/usr/bin/ditto", [mountedApp.path, extracted.appendingPathComponent(mountedApp.lastPathComponent).path])
+            else { throw UpdateError.invalidArchive }
+        } else {
+            guard run("/usr/bin/ditto", ["-x", "-k", package.path, extracted.path]) else { throw UpdateError.invalidArchive }
+        }
 
         let candidates = (try? fileManager.contentsOfDirectory(at: extracted, includingPropertiesForKeys: nil)) ?? []
         guard let app = candidates.first(where: { $0.pathExtension == "app" }),

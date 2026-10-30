@@ -67,10 +67,17 @@ struct GitHubRelease: Decodable {
 
     var version: ReleaseVersion? { ReleaseVersion(tagName) }
 
-    // Prefers the archive named after the app ("Tuckaway.zip"), else any zip.
-    var appArchive: Asset? {
-        let zips = assets.filter { $0.name.lowercased().hasSuffix(".zip") }
-        return zips.first { $0.name.lowercased().hasPrefix("tuckaway") } ?? zips.first
+    // The downloadable app. Releases ship a disk image ("Tuckaway.dmg"); a zip
+    // is still accepted because v1.0.0 shipped one. Assets named after the app
+    // win over other files of the same kind.
+    var appPackage: Asset? {
+        for suffix in [".dmg", ".zip"] {
+            let matches = assets.filter { $0.name.lowercased().hasSuffix(suffix) }
+            if let match = matches.first(where: { $0.name.lowercased().hasPrefix("tuckaway") }) ?? matches.first {
+                return match
+            }
+        }
+        return nil
     }
 
     // Whether this release should be offered to a user running `current`.

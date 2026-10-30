@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- Releases ship as a disk image, `Tuckaway.dmg`, instead of a zip. `scripts/package-dmg.sh` builds it from `Release-Direct` (universal) and refuses Debug or sandboxed builds. The updater installs from the DMG and still accepts zips, so v1.0.0 can update.
 - Built-in updater (direct-download build). It checks GitHub releases once a day, or on demand from Settings › General › Updates, About, or the arrow's menu. It offers Install and Relaunch, Later, or Skip This Version. Installs are verified (bundle ID, version, code signature) before the app is swapped, with automatic rollback on failure.
 
 ### Changed
