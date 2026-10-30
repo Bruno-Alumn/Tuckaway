@@ -8,6 +8,8 @@
 */
 
 /* Menu bar: arrow and separator menu */
+"Show hidden icons" = "Gizli simgeleri göster";
+"Hide icons" = "Simgeleri gizle";
 "Auto-collapse" = "Otomatik daralt";
 "Show separators" = "Ayırıcıları göster";
 "Hide separators" = "Ayırıcıları gizle";

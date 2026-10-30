@@ -8,6 +8,8 @@
 */
 
 /* Menu bar: arrow and separator menu */
+"Show hidden icons" = "Afficher les icônes masquées";
+"Hide icons" = "Masquer les icônes";
 "Auto-collapse" = "Réduction automatique";
 "Show separators" = "Afficher les séparateurs";
 "Hide separators" = "Masquer les séparateurs";

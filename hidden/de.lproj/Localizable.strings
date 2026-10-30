@@ -8,6 +8,8 @@
 */
 
 /* Menu bar: arrow and separator menu */
+"Show hidden icons" = "Ausgeblendete Symbole anzeigen";
+"Hide icons" = "Symbole ausblenden";
 "Auto-collapse" = "Automatisch einklappen";
 "Show separators" = "Trennlinien einblenden";
 "Hide separators" = "Trennlinien ausblenden";
