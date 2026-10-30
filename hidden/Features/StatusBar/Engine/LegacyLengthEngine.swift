@@ -141,7 +141,7 @@ final class LegacyLengthEngine: MenuBarEngine {
         alert.addButton(withTitle: NSLocalizedString("OK", comment: ""))
         NSApp.activate(ignoringOtherApps: true)
         if alert.runModal() == .alertFirstButtonReturn,
-           let url = URL(string: "https://github.com/dwarvesf/hidden/issues/360") {
+           let url = URL(string: "https://github.com/Bruno-Alumn/Tuckaway/releases/latest") {
             NSWorkspace.shared.open(url)
         }
     }
