@@ -221,53 +221,63 @@ class NotchOverflowController: NSObject {
 
   // MARK: - AX Enumeration
 
+  // Runs while the menu opens, so it must be quick: only app bundles own status
+  // items (skipping helpers and XPC services), each app gets a short timeout so
+  // a hung one can't stall the menu, and apps are queried concurrently, as in
+  // AccessibilityMenuBarInventory. Results keep the running-app order.
   private func getAllMenuBarExtras() -> [MenuBarExtraInfo] {
-    var results: [MenuBarExtraInfo] = []
     let myPID = ProcessInfo.processInfo.processIdentifier
-
-    for app in NSWorkspace.shared.runningApplications {
-      if app.processIdentifier == myPID { continue }
-
-      let axApp = AXUIElementCreateApplication(app.processIdentifier)
-      var extrasRef: AnyObject?
-      let err = AXUIElementCopyAttributeValue(
-        axApp, "AXExtrasMenuBar" as CFString, &extrasRef)
-      guard err == .success else { continue }
-
-      var childrenRef: AnyObject?
-      let childErr = AXUIElementCopyAttributeValue(
-        extrasRef as! AXUIElement,
-        kAXChildrenAttribute as CFString, &childrenRef)
-      guard childErr == .success,
-        let children = childrenRef as? [AXUIElement]
-      else { continue }
-
-      for child in children {
-        var titleRef: AnyObject?
-        AXUIElementCopyAttributeValue(child, kAXTitleAttribute as CFString, &titleRef)
-
-        var posRef: AnyObject?
-        AXUIElementCopyAttributeValue(child, kAXPositionAttribute as CFString, &posRef)
-        var pos = CGPoint.zero
-        if let pv = posRef { AXValueGetValue(pv as! AXValue, .cgPoint, &pos) }
-
-        var sizeRef: AnyObject?
-        AXUIElementCopyAttributeValue(child, kAXSizeAttribute as CFString, &sizeRef)
-        var size = CGSize.zero
-        if let sv = sizeRef { AXValueGetValue(sv as! AXValue, .cgSize, &size) }
-
-        results.append(MenuBarExtraInfo(
-          element: child,
-          appName: app.localizedName ?? "Unknown",
-          appIcon: app.icon,
-          title: titleRef as? String,
-          pid: app.processIdentifier,
-          position: pos,
-          size: size
-        ))
-      }
+    let apps = NSWorkspace.shared.runningApplications
+      .filter { $0.processIdentifier != myPID && $0.bundleURL?.pathExtension == "app" }
+    var perApp = [[MenuBarExtraInfo]](repeating: [], count: apps.count)
+    let lock = NSLock()
+    DispatchQueue.concurrentPerform(iterations: apps.count) { index in
+      let extras = Self.menuBarExtras(of: apps[index])
+      lock.lock()
+      perApp[index] = extras
+      lock.unlock()
     }
-    return results
+    return perApp.flatMap { $0 }
+  }
+
+  private static func menuBarExtras(of app: NSRunningApplication) -> [MenuBarExtraInfo] {
+    let axApp = AXUIElementCreateApplication(app.processIdentifier)
+    AXUIElementSetMessagingTimeout(axApp, 0.25)
+    var extrasRef: AnyObject?
+    guard AXUIElementCopyAttributeValue(axApp, "AXExtrasMenuBar" as CFString, &extrasRef) == .success,
+      let extrasRef, CFGetTypeID(extrasRef) == AXUIElementGetTypeID()
+    else { return [] }
+
+    var childrenRef: AnyObject?
+    guard AXUIElementCopyAttributeValue(
+        extrasRef as! AXUIElement, kAXChildrenAttribute as CFString, &childrenRef) == .success,
+      let children = childrenRef as? [AXUIElement]
+    else { return [] }
+
+    return children.map { child in
+      var titleRef: AnyObject?
+      AXUIElementCopyAttributeValue(child, kAXTitleAttribute as CFString, &titleRef)
+
+      var posRef: AnyObject?
+      AXUIElementCopyAttributeValue(child, kAXPositionAttribute as CFString, &posRef)
+      var pos = CGPoint.zero
+      if let pv = posRef { AXValueGetValue(pv as! AXValue, .cgPoint, &pos) }
+
+      var sizeRef: AnyObject?
+      AXUIElementCopyAttributeValue(child, kAXSizeAttribute as CFString, &sizeRef)
+      var size = CGSize.zero
+      if let sv = sizeRef { AXValueGetValue(sv as! AXValue, .cgSize, &size) }
+
+      return MenuBarExtraInfo(
+        element: child,
+        appName: app.localizedName ?? "Unknown",
+        appIcon: app.icon,
+        title: titleRef as? String,
+        pid: app.processIdentifier,
+        position: pos,
+        size: size
+      )
+    }
   }
 
 }
