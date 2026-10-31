@@ -304,41 +304,51 @@ final class MenuBarItemManagerViewController: NSViewController {
     }
 
     private static func scanItems(layout: MenuBarManagementLayout, apps: [AppSnapshot]) -> [ManagedMenuBarItem] {
-        let separatorQuartzX = layout.separatorFrame.minX
+        var perApp = [[ManagedMenuBarItem]](repeating: [], count: apps.count)
+        let lock = NSLock()
+        DispatchQueue.concurrentPerform(iterations: apps.count) { index in
+            let found = scanItems(of: apps[index], separatorQuartzX: layout.separatorFrame.minX)
+            lock.lock()
+            perApp[index] = found
+            lock.unlock()
+        }
+        return perApp.flatMap { $0 }
+    }
+
+    private static func scanItems(of app: AppSnapshot, separatorQuartzX: CGFloat) -> [ManagedMenuBarItem] {
         var found: [ManagedMenuBarItem] = []
+        let axApp = AXUIElementCreateApplication(app.pid)
+        AXUIElementSetMessagingTimeout(axApp, 0.25)
+        var extrasValue: AnyObject?
+        guard AXUIElementCopyAttributeValue(axApp, "AXExtrasMenuBar" as CFString, &extrasValue) == .success,
+              let extras = extrasValue,
+              CFGetTypeID(extras) == AXUIElementGetTypeID()
+        else { return found }
 
-        for app in apps {
-            let axApp = AXUIElementCreateApplication(app.pid)
-            var extrasValue: AnyObject?
-            guard AXUIElementCopyAttributeValue(axApp, "AXExtrasMenuBar" as CFString, &extrasValue) == .success,
-                  let extras = extrasValue
+        var childrenValue: AnyObject?
+        guard AXUIElementCopyAttributeValue(extras as! AXUIElement, kAXChildrenAttribute as CFString, &childrenValue) == .success,
+              let children = childrenValue as? [AXUIElement]
+        else { return found }
+
+        for (index, element) in children.enumerated() {
+            guard let position = pointAttribute(kAXPositionAttribute as CFString, of: element),
+                  let size = sizeAttribute(kAXSizeAttribute as CFString, of: element),
+                  size.width > 2, size.height > 2
             else { continue }
-
-            var childrenValue: AnyObject?
-            guard AXUIElementCopyAttributeValue(extras as! AXUIElement, kAXChildrenAttribute as CFString, &childrenValue) == .success,
-                  let children = childrenValue as? [AXUIElement]
-            else { continue }
-
-            for (index, element) in children.enumerated() {
-                guard let position = pointAttribute(kAXPositionAttribute as CFString, of: element),
-                      let size = sizeAttribute(kAXSizeAttribute as CFString, of: element),
-                      size.width > 2, size.height > 2
-                else { continue }
-                let title = stringAttribute(kAXTitleAttribute as CFString, of: element)
-                    ?? stringAttribute(kAXDescriptionAttribute as CFString, of: element)
-                    ?? ""
-                let section: ManagedMenuBarItem.Section = position.x + size.width / 2 < separatorQuartzX ? .hidden : .visible
-                found.append(ManagedMenuBarItem(
-                    id: "\(app.pid)-\(index)",
-                    element: element,
-                    appName: app.name,
-                    title: title,
-                    icon: app.icon,
-                    position: position,
-                    size: size,
-                    section: section
-                ))
-            }
+            let title = stringAttribute(kAXTitleAttribute as CFString, of: element)
+                ?? stringAttribute(kAXDescriptionAttribute as CFString, of: element)
+                ?? ""
+            let section: ManagedMenuBarItem.Section = position.x + size.width / 2 < separatorQuartzX ? .hidden : .visible
+            found.append(ManagedMenuBarItem(
+                id: "\(app.pid)-\(index)",
+                element: element,
+                appName: app.name,
+                title: title,
+                icon: app.icon,
+                position: position,
+                size: size,
+                section: section
+            ))
         }
         return found
     }
