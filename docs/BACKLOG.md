@@ -56,12 +56,6 @@ before merging.
   "hide separators" is on (see the note in [MANUAL.md](MANUAL.md)). Decouple the two
   and add a way to recover a stuck off-screen item. Reproduce #242 (permanent icon
   loss) with a throwaway defaults profile first.
-- **Always Hidden list in Menu Bar Items.** The window shows only Hidden and Visible,
-  so icons in the always-hidden section appear under Hidden and can't be moved into
-  it. Add a third list while the section is on. The mover anchors an empty list to
-  Tuckaway's own item, so it needs the always-hidden separator's frame as well. On
-  macOS 27 that separator leaves the bar while its section is hidden, so the window
-  has to show the section first. Test on a real bar; it moves icons.
 - **Separate hidden-items bar on macOS 27.** Turned off there (#30): macOS 27 draws
   status items into the menu bar, so there are no per-item windows to capture.
   Capturing the menu-bar strip at the items' Accessibility frames, which the
@@ -75,4 +69,4 @@ macOS 27 tutorial text; single-instance guard (#324); ⌘W closes Settings (#276
 settings layout overlap (#355, Settings redesign); notch overflow and the separate
 hidden-items bar; native macOS 27 hiding (#360); automatic updates (#220, #197);
 certificate-signed releases (1.2.0); every string translated into all 13 languages,
-enforced by `LocalizationTests`.
+enforced by `LocalizationTests`; an Always Hidden list in Menu Bar Items.

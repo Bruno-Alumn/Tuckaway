@@ -138,6 +138,7 @@ class StatusBarController: MenuBarItemProvider {
     }
     
     private var isToggle = false
+    private var isManagingItems = false
     private var arrowRescueCount = 0
 
     private var hoverMonitor: Any?
@@ -203,6 +204,8 @@ class StatusBarController: MenuBarItemProvider {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             guard let self = self else { return }
             if self.isMenuBarGeometryReady || attempt >= 20 {
+                // Menu Bar Items keeps the bar open; it collapses when it closes.
+                guard !self.isManagingItems else { return }
                 if Preferences.areSeparatorsHidden { self.hideSeparators() }
                 self.collapseMenuBar()
             } else {
@@ -300,7 +303,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     @objc private func handleApplicationActivated(_ notification: Notification) {
-        guard Preferences.autoCollapseOnFocusChange, !isCollapsed, !isMouseButtonDown,
+        guard Preferences.autoCollapseOnFocusChange, !isCollapsed, !isMouseButtonDown, !isManagingItems,
               let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
               app.bundleIdentifier != Bundle.main.bundleIdentifier else { return }
         collapseMenuBar()
@@ -490,12 +493,28 @@ class StatusBarController: MenuBarItemProvider {
         }
     }
 
+    // While Menu Bar Items is open, the always-hidden section is shown too, so
+    // its icons can be listed and moved; the saved "hide separators" choice
+    // comes back in endItemManagement().
     func prepareForItemManagement(completion: @escaping (MenuBarManagementLayout) -> Void) {
+        isManagingItems = true
         expandMenubar(force: true)
+        if Preferences.alwaysHiddenSectionEnabled {
+            menuBarEngine.updateAlwaysHiddenSection(enabled: true, separatorHidden: false)
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
             guard let layout = self?.currentManagementLayout() else { return }
             completion(layout)
         }
+    }
+
+    func endItemManagement() {
+        guard isManagingItems else { return }
+        isManagingItems = false
+        if Preferences.alwaysHiddenSectionEnabled {
+            menuBarEngine.updateAlwaysHiddenSection(enabled: true, separatorHidden: Preferences.areSeparatorsHidden)
+        }
+        autoCollapseIfNeeded()
     }
 
     // Where the section boundaries are right now, without expanding. Moving an
@@ -506,7 +525,12 @@ class StatusBarController: MenuBarItemProvider {
             ? expandCollapseFrame
             : btnSeparate.button?.window?.frame
         guard let separatorFrame else { return nil }
-        return MenuBarManagementLayout(separatorFrame: separatorFrame, expandCollapseFrame: expandCollapseFrame)
+        // The always-hidden separator has no width while it is out of the bar.
+        let alwaysHiddenFrame = (btnAlwaysHidden?.button?.window?.frame).flatMap {
+            Preferences.alwaysHiddenSectionEnabled && $0.width > 2 && $0.origin != .zero ? $0 : nil
+        }
+        return MenuBarManagementLayout(separatorFrame: separatorFrame, expandCollapseFrame: expandCollapseFrame,
+                                       alwaysHiddenFrame: alwaysHiddenFrame)
     }
     
     private func collapseMenuBar() {
@@ -617,6 +641,8 @@ class StatusBarController: MenuBarItemProvider {
         timer?.invalidate()
         self.timer = Timer.scheduledTimer(withTimeInterval: Preferences.numberOfSecondForAutoHide, repeats: false) { [weak self] _ in
             guard let self = self, Preferences.isAutoHide else { return }
+            // Collapsing mid-move would hide the icons being moved.
+            if self.isManagingItems { return self.startTimerToAutoHide() }
             // Don't yank the bar shut mid-interaction. Preferences only needs the
             // same deferral when full-menu-bar activation could dismiss it (#170).
             if ExpandCollapseActionResolver.shouldDeferAutoCollapse(

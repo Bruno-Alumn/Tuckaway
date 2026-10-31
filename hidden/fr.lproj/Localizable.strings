@@ -69,6 +69,7 @@
 
 /* General settings: menu bar diagram and permission banner */
 "⭐️Always Hidden" = "⭐️Toujours masqués";
+"Always Hidden" = "Toujours masqués";
 "Hidden" = "Masqués";
 "Shown" = "Affichés";
 "Hold ⌘ and drag icons to the left of the arrow to hide them." = "Maintenez ⌘ et faites glisser des icônes à gauche de la flèche pour les masquer.";
