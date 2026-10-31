@@ -71,6 +71,14 @@ struct GitHubRelease: Decodable {
 
     var version: ReleaseVersion? { ReleaseVersion(tagName) }
 
+    static func updateRequest(url: URL, currentVersion: String) -> URLRequest {
+        var request = URLRequest(url: url, timeoutInterval: 20)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
+        request.setValue("Tuckaway/\(currentVersion)", forHTTPHeaderField: "User-Agent")
+        return request
+    }
+
     // The downloadable app. Releases ship a disk image ("Tuckaway.dmg"); a zip
     // is still accepted because v1.0.0 shipped one. Assets named after the app
     // win over other files of the same kind.

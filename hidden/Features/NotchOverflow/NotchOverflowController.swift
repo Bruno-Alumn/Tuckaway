@@ -52,7 +52,7 @@ enum NotchGeometry {
   ) -> NotchBoundary {
     let hasNotch = safeAreaInsetsTop > 0
     guard hasNotch, let thresholdX = auxiliaryTopRightAreaMinX else {
-      return NotchBoundary(hasNotch: hasNotch, overflowThresholdX: fallbackThresholdX)
+      return NotchBoundary(hasNotch: hasNotch, overflowThresholdX: hasNotch ? screenFrame.midX : fallbackThresholdX)
     }
     return NotchBoundary(hasNotch: true, overflowThresholdX: thresholdX)
   }
@@ -261,12 +261,16 @@ class NotchOverflowController: NSObject {
       var posRef: AnyObject?
       AXUIElementCopyAttributeValue(child, kAXPositionAttribute as CFString, &posRef)
       var pos = CGPoint.zero
-      if let pv = posRef { AXValueGetValue(pv as! AXValue, .cgPoint, &pos) }
+      if let pv = posRef, CFGetTypeID(pv) == AXValueGetTypeID() {
+        AXValueGetValue(pv as! AXValue, .cgPoint, &pos)
+      }
 
       var sizeRef: AnyObject?
       AXUIElementCopyAttributeValue(child, kAXSizeAttribute as CFString, &sizeRef)
       var size = CGSize.zero
-      if let sv = sizeRef { AXValueGetValue(sv as! AXValue, .cgSize, &size) }
+      if let sv = sizeRef, CFGetTypeID(sv) == AXValueGetTypeID() {
+        AXValueGetValue(sv as! AXValue, .cgSize, &size)
+      }
 
       return MenuBarExtraInfo(
         element: child,

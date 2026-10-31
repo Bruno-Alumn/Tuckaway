@@ -51,6 +51,11 @@ final class MenuBarItemMovePlanTests: XCTestCase {
         XCTAssertNil(MenuBarItemMovePlan.nextStep(in: ["a", "b"], item: "x", .before, of: "b"))
     }
 
+    func testNextStepIsNilWhenItemIsItsOwnAnchor() {
+        XCTAssertNil(MenuBarItemMovePlan.nextStep(in: ["x", "a"], item: "x", .before, of: "x"))
+        XCTAssertNil(MenuBarItemMovePlan.nextStep(in: ["a", "x"], item: "x", .after, of: "x"))
+    }
+
     func testNextStepPassesOneNeighbourTowardsTheGoal() {
         // Before c from the far left: pass a, then b.
         let first = MenuBarItemMovePlan.nextStep(in: ["x", "a", "b", "c", "d"], item: "x", .before, of: "c")
