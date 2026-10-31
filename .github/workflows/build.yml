@@ -21,6 +21,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Validate Homebrew cask
+        run: |
+          ruby -c Casks/tuckaway.rb
+          brew style Casks/tuckaway.rb
+
       - name: Test direct build
         run: >-
           xcodebuild
