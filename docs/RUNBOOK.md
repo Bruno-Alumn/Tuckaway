@@ -102,7 +102,7 @@ installed app, test the dev build, then re-import and relaunch.
    images that unmount before their contents can be read:
 
    ```sh
-   scripts/verify-dmg.sh
+   scripts/verify-dmg.sh dist/Tuckaway.dmg com.brunoalumn.tuckaway v<version>
    ```
 4. App Store (separate lane, **Tuckaway App Store** scheme): Tuckaway has no
    App Store listing, and Hidden Bar's belongs to its original maintainers
