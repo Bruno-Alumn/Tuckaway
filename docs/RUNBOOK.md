@@ -66,9 +66,26 @@ Standard checks before any release:
   the release and **Install and Relaunch** brings up the new version. Run that
   copy outside `/Applications` so your installed copy stays as it is.
 
-When testing on a machine that runs Tuckaway daily: export the prefs domain
-first (`defaults export com.brunoalumn.tuckaway backup.plist`), quit the
-installed app, test the dev build, then re-import and relaunch.
+When testing on a machine that runs Tuckaway daily, quit the installed app and
+back up its settings by file path:
+
+```sh
+defaults export ~/Library/Preferences/com.brunoalumn.tuckaway.plist backup.plist
+```
+
+Test the dev build, then quit it and restore. `import` merges into what is
+there, so delete first:
+
+```sh
+defaults delete ~/Library/Preferences/com.brunoalumn.tuckaway.plist
+defaults import ~/Library/Preferences/com.brunoalumn.tuckaway.plist backup.plist
+```
+
+Don't use the bare domain name (`defaults export com.brunoalumn.tuckaway`). On a
+Mac that has ever run the App Store build, `defaults` then reads and writes the
+leftover sandbox container
+(`~/Library/Containers/com.brunoalumn.tuckaway/…`), which the direct build never
+reads.
 
 ## Release
 
