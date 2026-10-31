@@ -151,8 +151,8 @@ enum MenuBarItemDragger {
     private static func holdUntilStill(_ element: AXUIElement) {
         var last = frame(of: element)?.minX
         var stillReadings = 0
-        let deadline = Date().addingTimeInterval(0.4)
-        while stillReadings < 2 && Date() < deadline {
+        let deadline = DispatchTime.now() + .milliseconds(400)
+        while stillReadings < 2 && DispatchTime.now() < deadline {
             usleep(16_000)
             let current = frame(of: element)?.minX
             stillReadings = (current != nil && last != nil && abs(current! - last!) < 0.5) ? stillReadings + 1 : 0
@@ -184,10 +184,10 @@ enum MenuBarItemDragger {
             items.compactMap { item in frame(of: item.element).map { (item, $0) } }
                 .sorted { $0.frame.minX < $1.frame.minX }
         }
-        let deadline = Date().addingTimeInterval(settleTimeout)
+        let deadline = DispatchTime.now() + .milliseconds(Int(settleTimeout * 1000))
         var last = read()
         var stillReadings = 0
-        while Date() < deadline && stillReadings < 3 {
+        while DispatchTime.now() < deadline && stillReadings < 3 {
             usleep(20_000)
             let current = read()
             let same = current.count == last.count
