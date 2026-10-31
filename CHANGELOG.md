@@ -12,7 +12,7 @@
 - The app icon had solid black corners: the artwork was drawn on an opaque black square, so black showed in Finder, the Dock, ⌘-Tab, the About window, alerts and the README. It's now cut out with transparent corners and sits on Apple's icon grid (an 824-point rounded square on a 1024 canvas, with the standard shadow), so it's no longer oversized next to other apps.
 
 ### Changed
-- `scripts/package-dmg.sh` now rejects a mismatched `EXPECTED_VERSION`, preventing a release from being uploaded under the wrong tag.
+- `scripts/package-dmg.sh` now rejects a mismatched `EXPECTED_VERSION` before starting Xcode, avoiding a full build when the tag is wrong.
 - `package-dmg.sh` now removes its staging directory on every exit, including failed builds, so failed releases don't leave app copies behind.
 - The update alert shows what changed, as readable text. It used to show the first 600 characters of the raw release notes: Markdown symbols, plus download-and-install instructions that make no sense inside the updater.
 - Settings no longer pops up every time Tuckaway starts, such as at login or after each update. It opens on the very first launch, and "Open settings on launch" (now off by default) brings back the old behaviour.
