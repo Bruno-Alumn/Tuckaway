@@ -32,6 +32,17 @@ jobs:
           CODE_SIGNING_ALLOWED=NO
           test
 
+      - name: Analyze direct build
+        run: >-
+          xcodebuild
+          -project "Tuckaway.xcodeproj"
+          -scheme "Tuckaway"
+          -configuration Debug-Direct
+          -destination "platform=macOS"
+          -derivedDataPath build/DerivedData
+          CODE_SIGNING_ALLOWED=NO
+          analyze
+
       - name: Build App Store variant
         run: >-
           xcodebuild
