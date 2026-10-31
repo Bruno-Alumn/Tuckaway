@@ -32,6 +32,14 @@ if ! security find-identity -p codesigning | grep -qF "\"$IDENTITY\""; then
   fi
 fi
 
+if [ -n "${EXPECTED_VERSION:-}" ]; then
+  PROJECT_VERSION=$(grep -m1 'MARKETING_VERSION = ' Tuckaway.xcodeproj/project.pbxproj | cut -d' ' -f3 | tr -d ';')
+  if [ "$EXPECTED_VERSION" != "$PROJECT_VERSION" ] && [ "$EXPECTED_VERSION" != "v$PROJECT_VERSION" ]; then
+    echo "error: expected version $EXPECTED_VERSION, but the project is $PROJECT_VERSION" >&2
+    exit 1
+  fi
+fi
+
 rm -rf "$DERIVED" "$STAGING"
 xcodebuild -project Tuckaway.xcodeproj -scheme Tuckaway -configuration Release-Direct \
   -destination "generic/platform=macOS" \
@@ -57,10 +65,6 @@ if [ "$IDENTITY" != "-" ] && ! codesign -dr - "$APP" 2>&1 | grep -q "certificate
 fi
 
 VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$APP/Contents/Info.plist")
-if [ -n "${EXPECTED_VERSION:-}" ] && [ "$EXPECTED_VERSION" != "$VERSION" ] && [ "$EXPECTED_VERSION" != "v$VERSION" ]; then
-  echo "error: expected version $EXPECTED_VERSION, but the app is $VERSION" >&2
-  exit 1
-fi
 
 mkdir -p "$STAGING" dist
 ditto "$APP" "$STAGING/Tuckaway.app"
