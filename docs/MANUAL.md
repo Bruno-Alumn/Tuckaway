@@ -99,7 +99,10 @@ explains why nothing hides and links to System Settings.
 
 ### Menu Bar Items
 
-Two lists, **Hidden** and **Visible**, of the other apps' menu-bar icons.
+Two lists, **Hidden** and **Visible**, of the other apps' menu-bar icons. With
+the always-hidden section on, a third list, **Always Hidden**, comes first.
+While this tab is open, Tuckaway shows that section and doesn't auto-collapse,
+so every icon can be moved; both go back to normal when you close it.
 
 - **Drag within a list** to reorder icons.
 - **Drag between lists** to change whether an icon is hidden. Tuckaway performs
