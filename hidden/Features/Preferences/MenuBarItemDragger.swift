@@ -199,24 +199,30 @@ enum MenuBarItemDragger {
     }
 
     private static func barItems(onRowOf row: CGRect) -> [(item: BarItem, frame: CGRect)] {
-        var result: [(item: BarItem, frame: CGRect)] = []
-        for app in NSWorkspace.shared.runningApplications where app.bundleURL?.pathExtension == "app" {
-            let axApp = AXUIElementCreateApplication(app.processIdentifier)
+        let apps = NSWorkspace.shared.runningApplications.filter { $0.bundleURL?.pathExtension == "app" }
+        var perApp = [[(item: BarItem, frame: CGRect)]](repeating: [], count: apps.count)
+        let lock = NSLock()
+        DispatchQueue.concurrentPerform(iterations: apps.count) { index in
+            var found: [(item: BarItem, frame: CGRect)] = []
+            let axApp = AXUIElementCreateApplication(apps[index].processIdentifier)
             AXUIElementSetMessagingTimeout(axApp, 0.25)
             var extras: AnyObject?
             var children: AnyObject?
-            guard AXUIElementCopyAttributeValue(axApp, "AXExtrasMenuBar" as CFString, &extras) == .success,
-                  let extras, CFGetTypeID(extras) == AXUIElementGetTypeID(),
-                  AXUIElementCopyAttributeValue(extras as! AXUIElement, kAXChildrenAttribute as CFString, &children) == .success,
-                  let elements = children as? [AXUIElement]
-            else { continue }
-            for element in elements {
-                if let frame = frame(of: element), frame.width > 2, abs(frame.midY - row.midY) < 4 {
-                    result.append((BarItem(element), frame))
+            if AXUIElementCopyAttributeValue(axApp, "AXExtrasMenuBar" as CFString, &extras) == .success,
+               let extras, CFGetTypeID(extras) == AXUIElementGetTypeID(),
+               AXUIElementCopyAttributeValue(extras as! AXUIElement, kAXChildrenAttribute as CFString, &children) == .success,
+               let elements = children as? [AXUIElement] {
+                for element in elements {
+                    if let frame = frame(of: element), frame.width > 2, abs(frame.midY - row.midY) < 4 {
+                        found.append((BarItem(element), frame))
+                    }
                 }
             }
+            lock.lock()
+            perApp[index] = found
+            lock.unlock()
         }
-        return result.sorted { $0.frame.minX < $1.frame.minX }
+        return perApp.flatMap { $0 }.sorted { $0.frame.minX < $1.frame.minX }
     }
 
     // Tuckaway's own item at `frame` (the separator or the arrow), found by
