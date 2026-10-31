@@ -52,7 +52,7 @@ enum NotchGeometry {
   ) -> NotchBoundary {
     let hasNotch = safeAreaInsetsTop > 0
     guard hasNotch, let thresholdX = auxiliaryTopRightAreaMinX else {
-      return NotchBoundary(hasNotch: hasNotch, overflowThresholdX: fallbackThresholdX)
+      return NotchBoundary(hasNotch: hasNotch, overflowThresholdX: hasNotch ? screenFrame.midX : fallbackThresholdX)
     }
     return NotchBoundary(hasNotch: true, overflowThresholdX: thresholdX)
   }
