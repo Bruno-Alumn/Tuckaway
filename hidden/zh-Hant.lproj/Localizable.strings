@@ -6,6 +6,8 @@
 */
 
 /* Menu bar: arrow and separator menu */
+"Show hidden icons" = "顯示隱藏的圖像";
+"Hide icons" = "隱藏圖像";
 "Auto-collapse" = "自動收合";
 "Show separators" = "顯示分隔線";
 "Hide separators" = "隱藏分隔線";

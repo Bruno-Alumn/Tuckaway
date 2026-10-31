@@ -64,10 +64,20 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         return false
     }
     
+    // Settings opens on the very first launch so people can find the app, and
+    // afterwards only if they ask for it: logging in and every update relaunch
+    // would otherwise pop the window up.
     func openPreferencesIfNeeded() {
-        if Preferences.isShowPreference {
+        let defaults = UserDefaults.standard
+        let isFirstLaunch = !defaults.bool(forKey: UserDefaults.Key.hasLaunchedBefore)
+        defaults.set(true, forKey: UserDefaults.Key.hasLaunchedBefore)
+        if Self.opensPreferencesOnLaunch(isFirstLaunch: isFirstLaunch, showPreferencesOnLaunch: Preferences.isShowPreference) {
             Util.showPrefWindow()
         }
+    }
+
+    static func opensPreferencesOnLaunch(isFirstLaunch: Bool, showPreferencesOnLaunch: Bool) -> Bool {
+        return isFirstLaunch || showPreferencesOnLaunch
     }
     
     func setupAutoStartApp() {
@@ -86,7 +96,7 @@ class AppDelegate: NSObject, NSApplicationDelegate{
     // spinning up an AppDelegate (which creates real status bar items).
     static let defaultPreferenceValues: [String: Any] = [
         UserDefaults.Key.isAutoStart: false,
-        UserDefaults.Key.isShowPreference: true,
+        UserDefaults.Key.isShowPreference: false,
         UserDefaults.Key.isAutoHide: true,
         UserDefaults.Key.autoCollapseOnFocusChange: false,
         UserDefaults.Key.numberOfSecondForAutoHide: 10.0,
