@@ -125,9 +125,11 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     private var isMenuBarGeometryReady: Bool {
-        guard let arrowOrigin = btnExpandCollapse.button?.window?.frame.origin,
-              let separatorOrigin = btnSeparate.button?.window?.frame.origin else { return false }
-        return arrowOrigin != .zero && separatorOrigin != .zero
+        guard let arrowOrigin = btnExpandCollapse.button?.window?.frame.origin else { return false }
+        guard arrowOrigin != .zero else { return false }
+        if MenuBarEngineFactory.usesNativeVisibility { return true }
+        guard let separatorOrigin = btnSeparate.button?.window?.frame.origin else { return false }
+        return separatorOrigin != .zero
     }
     
     private var isBtnAlwaysHiddenValidPosition: Bool {
