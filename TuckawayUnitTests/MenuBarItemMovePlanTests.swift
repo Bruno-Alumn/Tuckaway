@@ -25,6 +25,20 @@ final class MenuBarItemMovePlanTests: XCTestCase {
         XCTAssertEqual(MenuBarItemMovePlan.inserting("b", into: ["a", "b", "c"], aboveRow: 2), ["a", "b", "c"])
     }
 
+    func testSortsItemsIntoSectionsByBoundary() {
+        XCTAssertEqual(MenuBarSection.of(centerX: 100, hiddenBoundaryX: 500, alwaysHiddenBoundaryX: 300), .alwaysHidden)
+        XCTAssertEqual(MenuBarSection.of(centerX: 400, hiddenBoundaryX: 500, alwaysHiddenBoundaryX: 300), .hidden)
+        XCTAssertEqual(MenuBarSection.of(centerX: 600, hiddenBoundaryX: 500, alwaysHiddenBoundaryX: 300), .visible)
+        // Without the always-hidden section everything left of the boundary is hidden.
+        XCTAssertEqual(MenuBarSection.of(centerX: 100, hiddenBoundaryX: 500, alwaysHiddenBoundaryX: nil), .hidden)
+    }
+
+    func testEmptyListsLandBesideTheirBoundary() {
+        XCTAssertEqual(MenuBarSection.alwaysHidden.emptyListSide, .before)
+        XCTAssertEqual(MenuBarSection.hidden.emptyListSide, .before)
+        XCTAssertEqual(MenuBarSection.visible.emptyListSide, .after)
+    }
+
     func testClampsOutOfRangeRows() {
         XCTAssertEqual(MenuBarItemMovePlan.inserting("x", into: ["a"], aboveRow: 9), ["a", "x"])
         XCTAssertEqual(MenuBarItemMovePlan.inserting("x", into: ["a"], aboveRow: -3), ["x", "a"])

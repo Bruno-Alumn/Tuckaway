@@ -69,6 +69,7 @@
 
 /* General settings: menu bar diagram and permission banner */
 "⭐️Always Hidden" = "⭐️Uvijek skriveno";
+"Always Hidden" = "Uvijek skriveno";
 "Hidden" = "Skriveno";
 "Shown" = "Prikazano";
 "Hold ⌘ and drag icons to the left of the arrow to hide them." = "Držite ⌘ i povucite ikone lijevo od strelice da biste ih sakrili.";

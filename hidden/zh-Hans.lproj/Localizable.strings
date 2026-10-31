@@ -67,6 +67,7 @@
 
 /* General settings: menu bar diagram and permission banner */
 "⭐️Always Hidden" = "⭐️始终隐藏";
+"Always Hidden" = "始终隐藏";
 "Hidden" = "隐藏";
 "Shown" = "显示";
 "Hold ⌘ and drag icons to the left of the arrow to hide them." = "按住 ⌘ 并将图标拖到箭头左侧即可隐藏。";

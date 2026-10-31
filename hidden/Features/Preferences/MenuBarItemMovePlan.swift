@@ -18,6 +18,27 @@ enum MenuBarDropSide {
     case before, after
 }
 
+// The Menu Bar Items lists.
+extension MenuBarSection {
+    // Left to right, as in the menu bar.
+    static let leftToRight: [MenuBarSection] = [.alwaysHidden, .hidden, .visible]
+
+    // Which list an item centred at `x` belongs to. Items left of the
+    // always-hidden separator are always hidden, the rest left of the hidden
+    // section's boundary are hidden. No always-hidden separator means no such
+    // section.
+    static func of(centerX x: CGFloat, hiddenBoundaryX: CGFloat, alwaysHiddenBoundaryX: CGFloat?) -> MenuBarSection {
+        if let alwaysHiddenBoundaryX, x < alwaysHiddenBoundaryX { return .alwaysHidden }
+        return x < hiddenBoundaryX ? .hidden : .visible
+    }
+
+    // Where a drop into this list, while it is empty, lands: just left of the
+    // section's own boundary item, or, for Visible, just right of the arrow.
+    var emptyListSide: MenuBarDropSide {
+        self == .visible ? .after : .before
+    }
+}
+
 // The pure part of moving an item from the Menu Bar Items lists, kept free of
 // AppKit and Accessibility so it can be unit tested.
 enum MenuBarItemMovePlan {
