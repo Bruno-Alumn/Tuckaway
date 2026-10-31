@@ -38,6 +38,16 @@ struct ReleaseVersion: Comparable, CustomStringConvertible {
     }
 }
 
+enum UpdateReplacementCleanup {
+    static func discardWorkDirectory(_ workDirectory: URL, destination: URL, backup: URL,
+                                     fileManager: FileManager = .default) {
+        let destinationExists = fileManager.fileExists(atPath: destination.path)
+        let backupExists = fileManager.fileExists(atPath: backup.path)
+        guard destinationExists || !backupExists else { return }
+        try? fileManager.removeItem(at: workDirectory)
+    }
+}
+
 // The subset of GitHub's release JSON the updater needs.
 struct GitHubRelease: Decodable {
     struct Asset: Decodable {
