@@ -115,9 +115,8 @@ final class Updater {
         let alert = NSAlert()
         alert.messageText = String(format: "Tuckaway %@ is available".localized, version.description)
         var message = String(format: "You have version %@.".localized, currentVersion.description)
-        if let notes = release.body?.trimmingCharacters(in: .whitespacesAndNewlines), !notes.isEmpty {
-            let excerpt = notes.count > 600 ? String(notes.prefix(600)) + "…" : notes
-            message += "\n\n" + excerpt
+        if let notes = release.updateNotes {
+            message += "\n\n" + notes
         }
         alert.informativeText = message
         let canInstall = release.appPackage != nil && installDestination != nil
