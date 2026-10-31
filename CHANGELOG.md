@@ -3,16 +3,12 @@
 ## Unreleased
 
 ### Fixed
-- Accessibility inventory now checks Core Foundation types before casting, so a malformed or changed response fails open instead of crashing Tuckaway.
-- The notch overflow scanner also validates AXValue types before reading positions and sizes, avoiding a force-cast crash on malformed responses.
-- Notification Center clock lookup now validates MenuBarAgent's menu-bar element type before casting it, so an unexpected response can't crash the click handler.
-- Notch overflow now falls back to the candidate screen's midpoint when its safe-right area is unavailable, instead of using a threshold tuned for one display size.
-- Item-move settle checks now use monotonic deadlines, so a wall-clock adjustment can't cut them short or leave them hanging.
-- Native hiding no longer waits for the removed separator's window at startup, so icons hide immediately once the arrow is positioned instead of after the full retry delay.
-- Menu Bar Items now treats a move whose target is the item itself as already complete instead of risking an out-of-bounds array access.
+- Tuckaway could crash if macOS answered an Accessibility query with an unexpected kind of value while reading the menu bar, the notch or the clock. It now ignores such answers.
+- On a Mac with a notch, when macOS doesn't report where the notch is, "Show Notch Items" now assumes it's in the middle of the screen. It used a fixed position that only suited one screen size.
+- On macOS 27, icons hide a few seconds sooner after launch. Tuckaway was waiting for a divider that macOS 27 doesn't use.
+- Dropping an icon next to itself in Menu Bar Items can no longer crash Tuckaway.
 - Shortcut recording no longer accepts Shift by itself, so assigning something like Shift+A can't make ordinary capitalized typing toggle the menu bar. Shift still works alongside Command, Control or Option.
 - Update checks now bypass the local URL cache, so checking manually can't offer an older release because GitHub's previous response was cached.
-- Moving a menu-bar item on an external display now hides the cursor on that display, not on the main one.
 - The updater now rejects truncated or oversized downloads before unpacking them by checking their byte count against GitHub's release metadata.
 - With more than one display, "Show hidden items in separate bar" captured and clicked the wrong spot whenever a display of a different height had keyboard focus, and the "Show Notch Items" menu only appeared while the built-in display had focus. Both now use the right screen.
 - The notch overflow menu ("Show Notch Items") could freeze Tuckaway for seconds while it opened, because it asked every running process, helpers included, one at a time. It now asks only apps, all at once, with a short timeout: 17 ms instead of 3.1 s on a cold first open.
@@ -21,19 +17,13 @@
 - The app icon had solid black corners: the artwork was drawn on an opaque black square, so black showed in Finder, the Dock, ⌘-Tab, the About window, alerts and the README. It's now cut out with transparent corners and sits on Apple's icon grid (an 824-point rounded square on a 1024 canvas, with the standard shadow), so it's no longer oversized next to other apps.
 
 ### Changed
-- Menu Bar Items now scans apps concurrently with a 250 ms timeout per app, so one unresponsive app can't stall the whole list.
-- The item mover also inventories apps concurrently with its existing per-app timeout, preventing one hung app from delaying a move.
-- `scripts/package-dmg.sh` now rejects a mismatched `EXPECTED_VERSION` before starting Xcode, avoiding a full build when the tag is wrong.
-- `package-dmg.sh` now removes its staging directory on every exit, including failed builds, so failed releases don't leave app copies behind.
-- `verify-dmg.sh` now accepts an optional expected release tag and rejects the DMG if its app version differs, giving releases an independent version check.
-- `verify-release-digest.sh` now downloads a published DMG and verifies its actual SHA-256 against GitHub's digest, catching damaged or unexpected release assets.
+- Menu Bar Items and the icon mover no longer stall when one app stops responding: they ask all apps at once and give each a quarter of a second.
 - The update alert shows what changed, as readable text. It used to show the first 600 characters of the raw release notes: Markdown symbols, plus download-and-install instructions that make no sense inside the updater.
 - Settings no longer pops up every time Tuckaway starts, such as at login or after each update. It opens on the very first launch, and "Open settings on launch" (now off by default) brings back the old behaviour.
 - VoiceOver now reads Tuckaway's arrow as "Show hidden icons" or "Hide icons", depending on what a click will do. Before, it had no label at all. Hovering the arrow shows a "Tuckaway" tooltip.
 - "Show hidden items in separate bar" is hidden on macOS 27, where it couldn't work: macOS 27 no longer gives menu-bar icons their own windows, so there was nothing to capture, and every click flashed a cover and then just expanded the bar. It still works on macOS 13–26.
 - Tuckaway is fully translated again in all 13 languages (Arabic, Chinese (Simplified and Traditional), Croatian, French, German, Italian, Japanese, Polish, Turkish, Ukrainian, Vietnamese). The new Settings, Menu Bar Items, About and updater screens were English-only, and some languages had only a handful of strings. A test now fails if a string is missing from any language.
 - On macOS 27, the updater and `scripts/package-dmg.sh` use `diskutil image` instead of the deprecated `hdiutil`, which stays on macOS 13–26. "Open Accessibility Settings" uses macOS 27's new Settings link.
-- Main-branch CI now builds a test DMG and runs the mount-copy-eject verifier, covering the updater's installation path on every push.
 
 ## v1.2.0 (2026-10-30)
 
