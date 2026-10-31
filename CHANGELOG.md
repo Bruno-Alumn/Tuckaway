@@ -23,6 +23,7 @@
 - `scripts/package-dmg.sh` now rejects a mismatched `EXPECTED_VERSION` before starting Xcode, avoiding a full build when the tag is wrong.
 - `package-dmg.sh` now removes its staging directory on every exit, including failed builds, so failed releases don't leave app copies behind.
 - `verify-dmg.sh` now accepts an optional expected release tag and rejects the DMG if its app version differs, giving releases an independent version check.
+- `verify-release-digest.sh` now downloads a published DMG and verifies its actual SHA-256 against GitHub's digest, catching damaged or unexpected release assets.
 - The update alert shows what changed, as readable text. It used to show the first 600 characters of the raw release notes: Markdown symbols, plus download-and-install instructions that make no sense inside the updater.
 - Settings no longer pops up every time Tuckaway starts, such as at login or after each update. It opens on the very first launch, and "Open settings on launch" (now off by default) brings back the old behaviour.
 - VoiceOver now reads Tuckaway's arrow as "Show hidden icons" or "Hide icons", depending on what a click will do. Before, it had no label at all. Hovering the arrow shows a "Tuckaway" tooltip.
