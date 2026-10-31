@@ -62,6 +62,7 @@ enum MenuBarItemMovePlan {
     // (measured on macOS 27), so corrections pass one neighbour at a time.
     static func nextStep<ID: Equatable>(in order: [ID], item: ID, _ side: MenuBarDropSide, of anchor: ID) -> (pass: ID, direction: Direction)? {
         guard let itemIndex = order.firstIndex(of: item), let anchorIndex = order.firstIndex(of: anchor) else { return nil }
+        guard itemIndex != anchorIndex else { return nil }
         let goal = side == .before ? anchorIndex - 1 : anchorIndex + 1
         if itemIndex == goal { return nil }
         // Too far left: pass the right-hand neighbour. Too far right: the left-hand one.
