@@ -19,12 +19,11 @@ before merging.
   `2` (campoDrag) is rejected (`VisibilityRestrictionError.activation`). MenuBarAgent
   ORs the origin flags of all live restrictions, so any assessment restriction brings the
   side effects. The system-item range 0..<64 resolves to 9 names: battery, bluetooth,
-  clock, displays, keyboard, volume, wifi, screenMirroring, primaryBentoBox. The clock
-  and other MenuBarAgent items expose no AX actions, so the clock cannot be pressed
-  through Accessibility. Shipped mitigation: no restriction while a mic or camera is in
-  use (`CaptureActivityMonitor`). Still open: Now Playing / Live Activities hidden, clock
-  click inert, screen recording not detected (no public API). Revisit if Apple adds an
-  origin or a public API.
+  clock, displays, keyboard, volume, wifi, screenMirroring, primaryBentoBox. Shipped
+  mitigations: no restriction while a mic or camera is in use (`CaptureActivityMonitor`),
+  and `SystemMenuBarClock` presses the clock through Accessibility with the restriction
+  briefly lifted. Still open: Now Playing / Live Activities hidden and screen recording
+  not detected (no public API). Revisit if Apple adds an origin or a public API.
 - **App Store build can't hide on 27.** The sandbox denies `mach-lookup
   com.apple.axserver`, so the sections can't be read even with Accessibility granted
   (measured 2026-09-18). Options: a user-picked list of visible apps instead of ⌘-drag
