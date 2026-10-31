@@ -12,6 +12,7 @@
 - The app icon had solid black corners: the artwork was drawn on an opaque black square, so black showed in Finder, the Dock, ⌘-Tab, the About window, alerts and the README. It's now cut out with transparent corners and sits on Apple's icon grid (an 824-point rounded square on a 1024 canvas, with the standard shadow), so it's no longer oversized next to other apps.
 
 ### Changed
+- `verify-dmg.sh` now accepts an optional expected release tag and rejects the DMG if its app version differs, giving releases an independent version check.
 - The update alert shows what changed, as readable text. It used to show the first 600 characters of the raw release notes: Markdown symbols, plus download-and-install instructions that make no sense inside the updater.
 - Settings no longer pops up every time Tuckaway starts, such as at login or after each update. It opens on the very first launch, and "Open settings on launch" (now off by default) brings back the old behaviour.
 - VoiceOver now reads Tuckaway's arrow as "Show hidden icons" or "Hide icons", depending on what a click will do. Before, it had no label at all. Hovering the arrow shows a "Tuckaway" tooltip.
