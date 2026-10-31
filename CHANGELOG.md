@@ -10,7 +10,7 @@
 - On a Mac with a notch, when macOS doesn't report where the notch is, "Show Notch Items" now assumes it's in the middle of the screen. It used a fixed position that only suited one screen size.
 - On macOS 27, icons hide a few seconds sooner after launch. Tuckaway was waiting for a divider that macOS 27 doesn't use.
 - Dropping an icon next to itself in Menu Bar Items can no longer crash Tuckaway.
-- Shortcut recording no longer accepts Shift by itself, so assigning something like Shift+A can't make ordinary capitalized typing toggle the menu bar. Shift still works alongside Command, Control or Option.
+- Shortcut recording no longer accepts Shift by itself, and invalid shortcuts saved by older versions are ignored at launch, so something like Shift+A can't make ordinary capitalized typing toggle the menu bar. Shift still works alongside Command, Control or Option.
 - Update checks now bypass the local URL cache, so checking manually can't offer an older release because GitHub's previous response was cached.
 - The updater now rejects truncated or oversized downloads before unpacking them by checking their byte count against GitHub's release metadata.
 - With more than one display, "Show hidden items in separate bar" captured and clicked the wrong spot whenever a display of a different height had keyboard focus, and the "Show Notch Items" menu only appeared while the built-in display had focus. Both now use the right screen.

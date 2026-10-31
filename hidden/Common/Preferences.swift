@@ -12,8 +12,11 @@ enum Preferences {
 
     static var globalKey: GlobalKeybindPreferences? {
         get {
-            guard let data = UserDefaults.standard.value(forKey: UserDefaults.Key.globalKey) as? Data else { return nil }
-            return try? JSONDecoder().decode(GlobalKeybindPreferences.self, from: data)
+            guard let data = UserDefaults.standard.value(forKey: UserDefaults.Key.globalKey) as? Data,
+                  let shortcut = try? JSONDecoder().decode(GlobalKeybindPreferences.self, from: data),
+                  shortcut.isValidGlobalShortcut
+            else { return nil }
+            return shortcut
         }
 
         set {
