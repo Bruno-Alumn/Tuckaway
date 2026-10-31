@@ -82,7 +82,8 @@ installed app, test the dev build, then re-import and relaunch.
    refuses to run without that certificate. With a Developer ID later, set
    `SIGN_IDENTITY`, then notarize and staple the DMG. Publish a GitHub release tagged `v<version>`
    with **`Tuckaway.dmg`** as the asset (no zip) and notes listing closed
-   issues. The update alert shows the first ~700 characters of the notes as
+   issues. After publishing, run `scripts/update-cask.sh` to update the Homebrew
+   cask's version and SHA-256 from that release. The update alert shows the first ~700 characters of the notes as
    plain text, skipping any "Install" or "Download" section, so put what
    changed first. Never publish a build from the **Tuckaway App Store** scheme there:
    it is the sandboxed build, which can't hide on macOS 27 (a past release made

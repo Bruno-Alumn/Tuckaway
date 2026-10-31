@@ -13,6 +13,7 @@
 
 ### Changed
 - Tuckaway can now be installed with Homebrew using `brew install --cask ./Casks/tuckaway.rb`, with the same DMG, checksum, and permission guidance as a manual install.
+- `scripts/update-cask.sh` now updates the Homebrew cask's version and SHA-256 from the latest GitHub release and validates it, so releases don't require manual cask edits.
 - CI now checks the Homebrew cask's Ruby syntax and Homebrew style on every push and pull request.
 - The update alert shows what changed, as readable text. It used to show the first 600 characters of the raw release notes: Markdown symbols, plus download-and-install instructions that make no sense inside the updater.
 - Settings no longer pops up every time Tuckaway starts, such as at login or after each update. It opens on the very first launch, and "Open settings on launch" (now off by default) brings back the old behaviour.
