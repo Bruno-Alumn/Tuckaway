@@ -117,7 +117,8 @@ final class SystemMenuBarClock: MenuBarClockProviding {
         guard let agent = NSRunningApplication.runningApplications(withBundleIdentifier: ownerBundleIdentifier).first else { return [] }
         let app = AXUIElementCreateApplication(agent.processIdentifier)
         AXUIElementSetMessagingTimeout(app, messagingTimeout)
-        guard let bar = value(of: app, "AXExtrasMenuBar") else { return [] }
+        guard let bar = value(of: app, "AXExtrasMenuBar"),
+              CFGetTypeID(bar) == AXUIElementGetTypeID() else { return [] }
         var clocks: [(element: AXUIElement, frame: CGRect)] = []
         for group in children(of: bar as! AXUIElement) {
             for item in [group] + children(of: group)
