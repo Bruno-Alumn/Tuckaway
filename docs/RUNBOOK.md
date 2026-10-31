@@ -75,7 +75,9 @@ installed app, test the dev build, then re-import and relaunch.
 1. Verify the stack: every PR reviewed, builds green, behavioral checks above run.
 2. Bump `MARKETING_VERSION` (all four Tuckaway configurations) and
    `CURRENT_PROJECT_VERSION` in the project file.
-3. Build the GitHub release with `scripts/package-dmg.sh`. It builds
+3. Build the GitHub release with `EXPECTED_VERSION=v<version> scripts/package-dmg.sh`.
+   The expected tag is rejected if it differs from the app's
+   `CFBundleShortVersionString`. The script builds
    `Release-Direct` (universal), refuses Debug or sandboxed builds, signs the
    app with the **Tuckaway Release Signing** certificate (see
    [Release signing](#release-signing)), and writes `dist/Tuckaway.dmg`. It
