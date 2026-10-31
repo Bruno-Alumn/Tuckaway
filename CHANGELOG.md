@@ -11,6 +11,7 @@
 - Native hiding no longer waits for the removed separator's window at startup, so icons hide immediately once the arrow is positioned instead of after the full retry delay.
 - Menu Bar Items now treats a move whose target is the item itself as already complete instead of risking an out-of-bounds array access.
 - Shortcut recording no longer accepts Shift by itself, so assigning something like Shift+A can't make ordinary capitalized typing toggle the menu bar. Shift still works alongside Command, Control or Option.
+- Update checks now bypass the local URL cache, so checking manually can't offer an older release because GitHub's previous response was cached.
 - Moving a menu-bar item on an external display now hides the cursor on that display, not on the main one.
 - The updater now rejects truncated or oversized downloads before unpacking them by checking their byte count against GitHub's release metadata.
 - With more than one display, "Show hidden items in separate bar" captured and clicked the wrong spot whenever a display of a different height had keyboard focus, and the "Show Notch Items" menu only appeared while the built-in display had focus. Both now use the right screen.
