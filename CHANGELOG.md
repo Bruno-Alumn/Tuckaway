@@ -30,6 +30,7 @@
 - "Show hidden items in separate bar" is hidden on macOS 27, where it couldn't work: macOS 27 no longer gives menu-bar icons their own windows, so there was nothing to capture, and every click flashed a cover and then just expanded the bar. It still works on macOS 13–26.
 - Tuckaway is fully translated again in all 13 languages (Arabic, Chinese (Simplified and Traditional), Croatian, French, German, Italian, Japanese, Polish, Turkish, Ukrainian, Vietnamese). The new Settings, Menu Bar Items, About and updater screens were English-only, and some languages had only a handful of strings. A test now fails if a string is missing from any language.
 - On macOS 27, the updater and `scripts/package-dmg.sh` use `diskutil image` instead of the deprecated `hdiutil`, which stays on macOS 13–26. "Open Accessibility Settings" uses macOS 27's new Settings link.
+- Main-branch CI now builds a test DMG and runs the mount-copy-eject verifier, covering the updater's installation path on every push.
 
 ## v1.2.0 (2026-10-30)
 
