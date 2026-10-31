@@ -195,7 +195,7 @@ enum MenuBarItemDragger {
             stillReadings = same ? stillReadings + 1 : 0
             last = current
         }
-        return last.isEmpty ? nil : last
+        return stillReadings == 3 && !last.isEmpty ? last : nil
     }
 
     private static func barItems(onRowOf row: CGRect) -> [(item: BarItem, frame: CGRect)] {

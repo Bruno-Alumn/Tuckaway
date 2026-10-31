@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- The item mover no longer uses mid-animation menu-bar positions: if three consecutive frame reads aren't stable, it stops instead of moving an icon to the wrong place.
 - Moving a menu-bar item on an external display now hides the cursor on that display, not on the main one.
 - The updater now rejects truncated or oversized downloads before unpacking them by checking their byte count against GitHub's release metadata.
 - With more than one display, "Show hidden items in separate bar" captured and clicked the wrong spot whenever a display of a different height had keyboard focus, and the "Show Notch Items" menu only appeared while the built-in display had focus. Both now use the right screen.
