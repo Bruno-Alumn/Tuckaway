@@ -63,9 +63,16 @@ final class HiddenBarPreferenceMigrationTests: XCTestCase {
         defaults = UserDefaults(suiteName: suiteName)
     }
 
+    // Emptying a domain leaves its plist behind, so each run would add two
+    // files to ~/Library/Preferences; delete them too.
     override func tearDown() {
         defaults.removePersistentDomain(forName: suiteName)
         defaults.removePersistentDomain(forName: legacyDomain)
+        let preferences = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("Preferences")
+        for name in [suiteName!, legacyDomain!] {
+            try? FileManager.default.removeItem(at: preferences.appendingPathComponent("\(name).plist"))
+        }
         super.tearDown()
     }
 
