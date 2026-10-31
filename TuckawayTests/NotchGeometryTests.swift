@@ -66,15 +66,21 @@ final class NotchGeometryTests: XCTestCase {
 
     // Given a notch is reported but no auxiliaryTopRightArea is available
     // When computing the notch boundary
-    // Then it falls back to the documented default rather than 0 or a crash
-    func test_notchWithoutAuxiliaryArea_fallsBackToDefaultThreshold() {
+    // Then it falls back to the center of the candidate screen rather than a
+    // threshold tuned for one display size.
+    func test_notchWithoutAuxiliaryArea_fallsBackToScreenMidpoint() {
         let boundary = NotchGeometry.computeBoundary(
             screenFrame: CGRect(x: 0, y: 0, width: 1728, height: 1117),
             safeAreaInsetsTop: 32,
             auxiliaryTopRightAreaMinX: nil
         )
+        let offsetBoundary = NotchGeometry.computeBoundary(
+            screenFrame: CGRect(x: 1000, y: 0, width: 1512, height: 982),
+            safeAreaInsetsTop: 32,
+            auxiliaryTopRightAreaMinX: nil
+        )
 
-        XCTAssertEqual(boundary.overflowThresholdX, NotchGeometry.fallbackThresholdX,
-                       "missing aux-area data on a reported notch must degrade to the documented fallback")
+        XCTAssertEqual(boundary.overflowThresholdX, 864)
+        XCTAssertEqual(offsetBoundary.overflowThresholdX, 1756)
     }
 }
