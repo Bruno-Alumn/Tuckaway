@@ -95,7 +95,8 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
         var barValue: CFTypeRef?
         let barError = AXUIElementCopyAttributeValue(element, "AXExtrasMenuBar" as CFString, &barValue)
         if barError == .noValue { return [] }
-        guard barError == .success, let bar = barValue else { return nil }
+        guard barError == .success, let bar = barValue,
+              CFGetTypeID(bar) == AXUIElementGetTypeID() else { return nil }
         var childrenValue: CFTypeRef?
         let childrenError = AXUIElementCopyAttributeValue(bar as! AXUIElement, kAXChildrenAttribute as CFString, &childrenValue)
         if childrenError == .noValue { return [] }
@@ -114,7 +115,10 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
         var positionValue: CFTypeRef?
         var sizeValue: CFTypeRef?
         guard AXUIElementCopyAttributeValue(element, kAXPositionAttribute as CFString, &positionValue) == .success,
-              AXUIElementCopyAttributeValue(element, kAXSizeAttribute as CFString, &sizeValue) == .success else { return nil }
+              AXUIElementCopyAttributeValue(element, kAXSizeAttribute as CFString, &sizeValue) == .success,
+              let positionValue, let sizeValue,
+              CFGetTypeID(positionValue) == AXValueGetTypeID(),
+              CFGetTypeID(sizeValue) == AXValueGetTypeID() else { return nil }
         var position = CGPoint.zero
         var size = CGSize.zero
         AXValueGetValue(positionValue as! AXValue, .cgPoint, &position)
