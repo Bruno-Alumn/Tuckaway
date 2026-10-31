@@ -4,6 +4,7 @@
 
 ### Fixed
 - Accessibility inventory now checks Core Foundation types before casting, so a malformed or changed response fails open instead of crashing Tuckaway.
+- The notch overflow scanner also validates AXValue types before reading positions and sizes, avoiding a force-cast crash on malformed responses.
 - Moving a menu-bar item on an external display now hides the cursor on that display, not on the main one.
 - The updater now rejects truncated or oversized downloads before unpacking them by checking their byte count against GitHub's release metadata.
 - With more than one display, "Show hidden items in separate bar" captured and clicked the wrong spot whenever a display of a different height had keyboard focus, and the "Show Notch Items" menu only appeared while the built-in display had focus. Both now use the right screen.
