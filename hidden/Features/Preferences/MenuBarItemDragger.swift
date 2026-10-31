@@ -114,7 +114,8 @@ enum MenuBarItemDragger {
     // events alone leave macOS believing ⌘ is still held afterwards, which
     // breaks the next drag and the user's typing.
     private static func drag(from source: CGPoint, _ moves: ((CGEventType, CGPoint) -> Void) -> CGPoint) {
-        let display = CGMainDisplayID()
+        let display = MenuBarDisplayInventory.current().first(where: { $0.accessibilityFrame.contains(source) })
+            .flatMap { UInt32($0.identifier) } ?? CGMainDisplayID()
         let savedLocation = CGEvent(source: nil)?.location
         let eventSource = CGEventSource(stateID: .hidSystemState)
 
