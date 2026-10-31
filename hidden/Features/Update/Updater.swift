@@ -43,7 +43,7 @@ final class Updater {
 
     private func checkIfDue() {
         guard Preferences.automaticallyChecksForUpdates else { return }
-        if let last = Preferences.lastUpdateCheck, Date().timeIntervalSince(last) < Self.checkInterval { return }
+        guard UpdateCheckSchedule.isDue(lastCheck: Preferences.lastUpdateCheck, now: Date(), interval: Self.checkInterval) else { return }
         check(userInitiated: false)
     }
 

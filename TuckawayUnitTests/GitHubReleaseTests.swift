@@ -82,6 +82,14 @@ final class GitHubReleaseTests: XCTestCase {
         XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 4_194_305, expected: 4_194_304))
         XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 0, expected: 0))
     }
+    func testUpdateCheckScheduleHandlesClockChanges() {
+        let now = Date(timeIntervalSince1970: 100_000)
+        XCTAssertTrue(UpdateCheckSchedule.isDue(lastCheck: nil, now: now, interval: 100))
+        XCTAssertFalse(UpdateCheckSchedule.isDue(lastCheck: now.addingTimeInterval(-99), now: now, interval: 100))
+        XCTAssertTrue(UpdateCheckSchedule.isDue(lastCheck: now.addingTimeInterval(-100), now: now, interval: 100))
+        XCTAssertTrue(UpdateCheckSchedule.isDue(lastCheck: now.addingTimeInterval(1), now: now, interval: 100))
+    }
+
     func testUpdateRequestIsFreshAndIdentifiesTheApp() {
         let url = URL(string: "https://example.com/releases/latest")!
         let request = GitHubRelease.updateRequest(url: url, currentVersion: "1.2.0")

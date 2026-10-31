@@ -38,6 +38,14 @@ struct ReleaseVersion: Comparable, CustomStringConvertible {
     }
 }
 
+enum UpdateCheckSchedule {
+    static func isDue(lastCheck: Date?, now: Date, interval: TimeInterval) -> Bool {
+        guard let lastCheck else { return true }
+        let elapsed = now.timeIntervalSince(lastCheck)
+        return elapsed < 0 || elapsed >= interval
+    }
+}
+
 // The subset of GitHub's release JSON the updater needs.
 struct GitHubRelease: Decodable {
     struct Asset: Decodable {
