@@ -19,6 +19,7 @@ DERIVED="build/package"
 APP="$DERIVED/Build/Products/Release-Direct/Tuckaway.app"
 STAGING="build/dmg-staging"
 DMG="dist/Tuckaway.dmg"
+trap 'rm -rf "$STAGING"' EXIT INT TERM
 
 if ! security find-identity -p codesigning | grep -qF "\"$IDENTITY\""; then
   if [ "${ALLOW_ADHOC:-}" = 1 ]; then
