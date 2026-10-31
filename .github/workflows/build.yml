@@ -6,6 +6,7 @@ on:
       - main
       - "agent/**"
   pull_request:
+  workflow_dispatch:
 
 # A new push to a pull request makes its earlier run pointless; runs on main
 # are kept so every merge gets its package.
