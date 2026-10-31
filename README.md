@@ -39,6 +39,12 @@ through 26.
 2. Open the disk image and drag **Tuckaway.app** into **Applications**.
 3. Launch it and grant the [permissions](#permissions) it requests.
 
+Prefer Homebrew? Install the same release with:
+
+```sh
+brew install --cask ./Casks/tuckaway.rb
+```
+
 Tuckaway runs on Apple Silicon and Intel Macs with macOS 13 or later. It checks
 GitHub for updates once a day and can install new versions for you.
 
