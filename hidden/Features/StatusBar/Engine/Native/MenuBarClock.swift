@@ -103,9 +103,9 @@ final class SystemMenuBarClock: MenuBarClockProviding {
 
     // Keeps the Accessibility lookups to clicks in a menu bar.
     private static func isInMenuBar(_ location: CGPoint) -> Bool {
-        guard let primaryHeight = NSScreen.screens.first?.frame.maxY else { return false }
+        guard let desktopTop = NSScreen.screens.map(\.frame.maxY).max() else { return false }
         return NSScreen.screens.contains { screen in
-            let top = primaryHeight - screen.frame.maxY
+            let top = desktopTop - screen.frame.maxY
             let height = max(screen.frame.maxY - screen.visibleFrame.maxY, screen.safeAreaInsets.top, NSStatusBar.system.thickness)
             return location.x >= screen.frame.minX && location.x <= screen.frame.maxX
                 && location.y >= top && location.y <= top + height
