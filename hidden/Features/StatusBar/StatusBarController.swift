@@ -377,6 +377,7 @@ class StatusBarController: MenuBarItemProvider {
 
         if let button = btnExpandCollapse.button {
             button.image = Assets.collapseImage
+            button.toolTip = Constant.appName
             button.target = self
             
             button.action = #selector(self.btnExpandCollapsePressed(sender:))

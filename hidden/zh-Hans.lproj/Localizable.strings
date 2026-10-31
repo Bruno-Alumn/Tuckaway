@@ -6,6 +6,8 @@
 */
 
 /* Menu bar: arrow and separator menu */
+"Show hidden icons" = "显示隐藏的图标";
+"Hide icons" = "隐藏图标";
 "Auto-collapse" = "自动折叠";
 "Show separators" = "显示分隔符";
 "Hide separators" = "隐藏分隔符";

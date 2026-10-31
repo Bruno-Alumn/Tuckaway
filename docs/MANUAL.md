@@ -91,7 +91,7 @@ Open it with **Settings…** (⌘,) from the arrow's menu. It has three tabs.
 | Extra Sections | Always-hidden section | A second zone whose icons stay hidden even when expanded. Option-click the arrow to reveal it. |
 | Extra Sections | Icons behind the notch | Notched Macs only. Adds **Show Notch Items** to the arrow's menu, listing icons the notch covers. |
 | Startup | Launch at login | A login item (macOS 13+ `SMAppService`), revocable in System Settings › General › Login Items. |
-| Startup | Open settings on launch | Show this window every time Tuckaway starts. |
+| Startup | Open settings on launch | Show this window every time Tuckaway starts, including at login and after updates. Off by default; the window always opens on the very first launch. |
 | Updates | Check for updates automatically | Direct-download build only. See [Updates](#updates). |
 
 If Accessibility is missing on macOS 27, a banner at the top of General

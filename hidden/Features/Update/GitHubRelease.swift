@@ -49,6 +49,10 @@ struct GitHubRelease: Decodable {
             case name, size
             case browserDownloadURL = "browser_download_url"
         }
+
+        static func isCompleteDownload(size actual: Int, expected: Int) -> Bool {
+            return expected > 0 && actual == expected
+        }
     }
 
     let tagName: String

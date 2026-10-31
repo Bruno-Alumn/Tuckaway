@@ -4,6 +4,7 @@
 
 ### Fixed
 - Moving a menu-bar item on an external display now hides the cursor on that display, not on the main one.
+- The updater now rejects truncated or oversized downloads before unpacking them by checking their byte count against GitHub's release metadata.
 - With more than one display, "Show hidden items in separate bar" captured and clicked the wrong spot whenever a display of a different height had keyboard focus, and the "Show Notch Items" menu only appeared while the built-in display had focus. Both now use the right screen.
 - The notch overflow menu ("Show Notch Items") could freeze Tuckaway for seconds while it opened, because it asked every running process, helpers included, one at a time. It now asks only apps, all at once, with a short timeout: 17 ms instead of 3.1 s on a cold first open.
 - On macOS 27, launching any app, waking the Mac or changing displays showed every hidden icon, and they stayed visible until you clicked the arrow. Tuckaway now hides them again about two seconds after things settle. It waits while your pointer is in the menu bar, and doesn't re-hide if "Expand with an external display" is keeping the bar open.
@@ -11,6 +12,8 @@
 - The app icon had solid black corners: the artwork was drawn on an opaque black square, so black showed in Finder, the Dock, ⌘-Tab, the About window, alerts and the README. It's now cut out with transparent corners and sits on Apple's icon grid (an 824-point rounded square on a 1024 canvas, with the standard shadow), so it's no longer oversized next to other apps.
 
 ### Changed
+- Settings no longer pops up every time Tuckaway starts, such as at login or after each update. It opens on the very first launch, and "Open settings on launch" (now off by default) brings back the old behaviour.
+- VoiceOver now reads Tuckaway's arrow as "Show hidden icons" or "Hide icons", depending on what a click will do. Before, it had no label at all. Hovering the arrow shows a "Tuckaway" tooltip.
 - "Show hidden items in separate bar" is hidden on macOS 27, where it couldn't work: macOS 27 no longer gives menu-bar icons their own windows, so there was nothing to capture, and every click flashed a cover and then just expanded the bar. It still works on macOS 13–26.
 - Tuckaway is fully translated again in all 13 languages (Arabic, Chinese (Simplified and Traditional), Croatian, French, German, Italian, Japanese, Polish, Turkish, Ukrainian, Vietnamese). The new Settings, Menu Bar Items, About and updater screens were English-only, and some languages had only a handful of strings. A test now fails if a string is missing from any language.
 - On macOS 27, the updater and `scripts/package-dmg.sh` use `diskutil image` instead of the deprecated `hdiutil`, which stays on macOS 13–26. "Open Accessibility Settings" uses macOS 27's new Settings link.
