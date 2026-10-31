@@ -10,6 +10,7 @@
 #   scripts/package-dmg.sh
 #   SIGN_IDENTITY="Developer ID Application: …" scripts/package-dmg.sh
 #   ALLOW_ADHOC=1 scripts/package-dmg.sh    # test builds only: resets users' permissions
+#   EXPECTED_VERSION=vX.Y.Z scripts/package-dmg.sh  # fail if the app version differs
 set -eu
 
 cd "$(dirname "$0")/.."
@@ -55,6 +56,10 @@ if [ "$IDENTITY" != "-" ] && ! codesign -dr - "$APP" 2>&1 | grep -q "certificate
 fi
 
 VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$APP/Contents/Info.plist")
+if [ -n "${EXPECTED_VERSION:-}" ] && [ "$EXPECTED_VERSION" != "$VERSION" ] && [ "$EXPECTED_VERSION" != "v$VERSION" ]; then
+  echo "error: expected version $EXPECTED_VERSION, but the app is $VERSION" >&2
+  exit 1
+fi
 
 mkdir -p "$STAGING" dist
 ditto "$APP" "$STAGING/Tuckaway.app"
