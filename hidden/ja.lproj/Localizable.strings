@@ -67,6 +67,7 @@
 
 /* General settings: menu bar diagram and permission banner */
 "⭐️Always Hidden" = "⭐️常に非表示";
+"Always Hidden" = "常に非表示";
 "Hidden" = "非表示";
 "Shown" = "表示";
 "Hold ⌘ and drag icons to the left of the arrow to hide them." = "⌘キーを押しながらアイコンを矢印の左側にドラッグすると非表示になります。";

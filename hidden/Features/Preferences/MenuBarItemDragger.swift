@@ -225,14 +225,16 @@ enum MenuBarItemDragger {
         return perApp.flatMap { $0 }.sorted { $0.frame.minX < $1.frame.minX }
     }
 
-    // Tuckaway's own item at `frame` (the separator or the arrow), found by
-    // position since the window frame is all the controller has.
+    // Tuckaway's own item at `frame` (a separator or the arrow), found by
+    // position since the window frame is all the controller has. Centres are
+    // compared: the always-hidden separator's window is wider than its
+    // Accessibility frame, so their left edges differ by several points.
     private static func ownItem(in bar: [(item: BarItem, frame: CGRect)], at frame: CGRect) -> BarItem? {
         let ownPID = ProcessInfo.processInfo.processIdentifier
         return bar.first { entry in
             var pid: pid_t = 0
             AXUIElementGetPid(entry.item.element, &pid)
-            return pid == ownPID && abs(entry.frame.minX - frame.minX) < 3
+            return pid == ownPID && abs(entry.frame.midX - frame.midX) < 3
         }?.item
     }
 

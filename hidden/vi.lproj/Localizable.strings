@@ -67,6 +67,7 @@
 
 /* General settings: menu bar diagram and permission banner */
 "⭐️Always Hidden" = "⭐️Luôn ẩn";
+"Always Hidden" = "Luôn ẩn";
 "Hidden" = "Ẩn";
 "Shown" = "Hiện";
 "Hold ⌘ and drag icons to the left of the arrow to hide them." = "Giữ ⌘ và kéo biểu tượng sang bên trái mũi tên để ẩn chúng.";
