@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- Item-move settle checks now use monotonic deadlines, so a wall-clock adjustment can't cut them short or leave them hanging.
 - Moving a menu-bar item on an external display now hides the cursor on that display, not on the main one.
 - The updater now rejects truncated or oversized downloads before unpacking them by checking their byte count against GitHub's release metadata.
 - With more than one display, "Show hidden items in separate bar" captured and clicked the wrong spot whenever a display of a different height had keyboard focus, and the "Show Notch Items" menu only appeared while the built-in display had focus. Both now use the right screen.
