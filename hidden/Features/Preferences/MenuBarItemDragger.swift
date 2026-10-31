@@ -97,8 +97,7 @@ enum MenuBarItemDragger {
                 // The neighbour slides the opposite way once it has been passed.
                 // Releasing before it finishes sliding can undo the swap.
                 if let x = frame(of: neighbour)?.minX, (x - neighbourStart) * step < -3 {
-                    passed = true
-                    holdUntilStill(neighbour)
+                    passed = holdUntilStill(neighbour)
                     break
                 }
             }
@@ -148,7 +147,7 @@ enum MenuBarItemDragger {
     }
 
     // Waits, with the button still down, until `element` stops sliding.
-    private static func holdUntilStill(_ element: AXUIElement) {
+    private static func holdUntilStill(_ element: AXUIElement) -> Bool {
         var last = frame(of: element)?.minX
         var stillReadings = 0
         let deadline = Date().addingTimeInterval(0.4)
@@ -158,6 +157,7 @@ enum MenuBarItemDragger {
             stillReadings = (current != nil && last != nil && abs(current! - last!) < 0.5) ? stillReadings + 1 : 0
             last = current
         }
+        return stillReadings == 2
     }
 
     // MARK: - Reading the bar
