@@ -6,6 +6,28 @@
 import XCTest
 
 final class GitHubReleaseTests: XCTestCase {
+    func testFailedRollbackPreservesTheOnlyBackup() throws {
+        let fileManager = FileManager.default
+        let root = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let work = root.appendingPathComponent("work")
+        let destination = root.appendingPathComponent("Installed.app")
+        let backup = work.appendingPathComponent("Previous.app")
+        try fileManager.createDirectory(at: backup, withIntermediateDirectories: true)
+        defer { try? fileManager.removeItem(at: root) }
+
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        XCTAssertTrue(fileManager.fileExists(atPath: backup.path))
+
+        try fileManager.createDirectory(at: destination, withIntermediateDirectories: true)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        XCTAssertFalse(fileManager.fileExists(atPath: work.path))
+
+        try fileManager.createDirectory(at: work, withIntermediateDirectories: true)
+        try fileManager.removeItem(at: destination)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        XCTAssertFalse(fileManager.fileExists(atPath: work.path))
+    }
+
     func testParsesTagsWithAndWithoutPrefix() {
         XCTAssertEqual(ReleaseVersion("v1.2.3")?.components, [1, 2, 3])
         XCTAssertEqual(ReleaseVersion("1.0")?.components, [1, 0])

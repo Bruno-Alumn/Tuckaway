@@ -319,7 +319,9 @@ final class Updater {
                 throw error
             }
         } catch {
-            if isOurWorkDirectory { try? fileManager.removeItem(at: workDirectory) }
+            if isOurWorkDirectory {
+                UpdateReplacementCleanup.discardWorkDirectory(workDirectory, destination: destination, backup: backup)
+            }
             showInstallFailure(.replaceFailed, fallback: fallback)
             return
         }

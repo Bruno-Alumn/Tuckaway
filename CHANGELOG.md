@@ -12,6 +12,7 @@
 - Dropping an icon next to itself in Menu Bar Items can no longer crash Tuckaway.
 - Shortcut recording no longer accepts Shift by itself, so assigning something like Shift+A can't make ordinary capitalized typing toggle the menu bar. Shift still works alongside Command, Control or Option.
 - Update checks now bypass the local URL cache, so checking manually can't offer an older release because GitHub's previous response was cached.
+- If an update fails and restoring the previous app also fails, the updater now keeps that backup instead of deleting the only remaining copy.
 - The updater now rejects truncated or oversized downloads before unpacking them by checking their byte count against GitHub's release metadata.
 - With more than one display, "Show hidden items in separate bar" captured and clicked the wrong spot whenever a display of a different height had keyboard focus, and the "Show Notch Items" menu only appeared while the built-in display had focus. Both now use the right screen.
 - The notch overflow menu ("Show Notch Items") could freeze Tuckaway for seconds while it opened, because it asked every running process, helpers included, one at a time. It now asks only apps, all at once, with a short timeout: 17 ms instead of 3.1 s on a cold first open.
