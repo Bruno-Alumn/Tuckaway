@@ -73,7 +73,7 @@ Settings has three tabs: **General**, **Menu Bar Items**, and **About**. You can
 open it from the arrow’s menu or with <kbd>⌘</kbd><kbd>,</kbd>.
 
 <div align="center">
-  <img src="img/tuckaway-settings.gif" width="720" alt="Tuckaway’s General settings, item manager, and About screen">
+  <img src="img/tuckaway-settings.gif" width="440" alt="Tuckaway’s General settings, item manager, and About screen">
 </div>
 
 ## Features
@@ -126,6 +126,10 @@ AI-assisted contributions are welcome too. Much of Tuckaway was built with AI
 coding agents, then compiled, tested, and exercised on a real menu bar before
 merging. The standard is the same for every contribution: say what you changed
 and be honest about what you tested.
+
+Before opening a pull request, make sure it builds, the tests pass, and you’ve
+tried it on a real menu bar. The [contributing guide](CONTRIBUTING.md) has the
+commands.
 
 <details>
 <summary><strong>Build from source</strong></summary>
