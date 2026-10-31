@@ -63,6 +63,12 @@ jobs:
             "build/DerivedData/Build/Products/Release-Direct/Tuckaway.app" \
             Tuckaway.zip
 
+      - name: Verify DMG packaging
+        if: github.event_name == 'push'
+        run: |
+          ALLOW_ADHOC=1 scripts/package-dmg.sh
+          scripts/verify-dmg.sh
+
       - uses: actions/upload-artifact@v4
         if: github.event_name == 'push'
         with:

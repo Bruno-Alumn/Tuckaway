@@ -72,9 +72,8 @@ final class Updater {
         guard !isBusy else { return }
         isBusy = true
 
-        var request = URLRequest(url: Self.latestReleaseURL, timeoutInterval: 20)
-        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
-        request.setValue("Tuckaway/\(Bundle.main.releaseVersionNumber ?? "0")", forHTTPHeaderField: "User-Agent")
+        let request = GitHubRelease.updateRequest(url: Self.latestReleaseURL,
+                                                  currentVersion: Bundle.main.releaseVersionNumber ?? "0")
 
         URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             let release: GitHubRelease?

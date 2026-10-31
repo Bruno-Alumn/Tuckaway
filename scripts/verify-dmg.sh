@@ -4,6 +4,7 @@ set -eu
 
 DMG="${1:-dist/Tuckaway.dmg}"
 EXPECTED_BUNDLE_ID="${2:-com.brunoalumn.tuckaway}"
+EXPECTED_VERSION="${3:-}"
 if [ ! -f "$DMG" ]; then
   echo "error: DMG not found: $DMG" >&2
   exit 1
@@ -42,4 +43,8 @@ if [ "$ACTUAL_BUNDLE_ID" != "$EXPECTED_BUNDLE_ID" ]; then
   exit 1
 fi
 VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$EXTRACTED/Tuckaway.app/Contents/Info.plist")
+if [ -n "$EXPECTED_VERSION" ] && [ "$EXPECTED_VERSION" != "$VERSION" ] && [ "$EXPECTED_VERSION" != "v$VERSION" ]; then
+  echo "error: expected version $EXPECTED_VERSION, but the app is $VERSION" >&2
+  exit 1
+fi
 echo "Verified $DMG: Tuckaway $VERSION ($ACTUAL_BUNDLE_ID), mounted, copied, signature checked, and ejected."

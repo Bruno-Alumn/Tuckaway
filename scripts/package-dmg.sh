@@ -10,6 +10,7 @@
 #   scripts/package-dmg.sh
 #   SIGN_IDENTITY="Developer ID Application: …" scripts/package-dmg.sh
 #   ALLOW_ADHOC=1 scripts/package-dmg.sh    # test builds only: resets users' permissions
+#   EXPECTED_VERSION=vX.Y.Z scripts/package-dmg.sh  # fail if the app version differs
 set -eu
 
 cd "$(dirname "$0")/.."
@@ -18,6 +19,7 @@ DERIVED="build/package"
 APP="$DERIVED/Build/Products/Release-Direct/Tuckaway.app"
 STAGING="build/dmg-staging"
 DMG="dist/Tuckaway.dmg"
+trap 'rm -rf "$STAGING"' EXIT INT TERM
 
 if ! security find-identity -p codesigning | grep -qF "\"$IDENTITY\""; then
   if [ "${ALLOW_ADHOC:-}" = 1 ]; then
@@ -26,6 +28,14 @@ if ! security find-identity -p codesigning | grep -qF "\"$IDENTITY\""; then
   else
     echo "error: signing identity \"$IDENTITY\" not found in the keychain (see docs/RUNBOOK.md)." >&2
     echo "       Set ALLOW_ADHOC=1 for a throwaway test build." >&2
+    exit 1
+  fi
+fi
+
+if [ -n "${EXPECTED_VERSION:-}" ]; then
+  PROJECT_VERSION=$(grep -m1 'MARKETING_VERSION = ' Tuckaway.xcodeproj/project.pbxproj | cut -d' ' -f3 | tr -d ';')
+  if [ "$EXPECTED_VERSION" != "$PROJECT_VERSION" ] && [ "$EXPECTED_VERSION" != "v$PROJECT_VERSION" ]; then
+    echo "error: expected version $EXPECTED_VERSION, but the project is $PROJECT_VERSION" >&2
     exit 1
   fi
 fi

@@ -9,14 +9,15 @@ final class GlobalShortcutTests: XCTestCase {
                                 carbonFlags: flags, characters: "a", keyCode: keyCode)
     }
 
-    func testBareTypingAndCapsLockAreRejected() {
+    func testOrdinaryTypingModifiersAreRejected() {
         XCTAssertFalse(shortcut().isValidGlobalShortcut)
+        XCTAssertFalse(shortcut(flags: 1 << 9).isValidGlobalShortcut)
         XCTAssertFalse(shortcut(flags: 1 << 10, capsLock: true).isValidGlobalShortcut)
         XCTAssertFalse(shortcut(function: true).isValidGlobalShortcut)
     }
 
     func testCarbonShortcutModifiersAreAccepted() {
-        for flags: UInt32 in [1 << 8, 1 << 9, 1 << 11, 1 << 12] {
+        for flags: UInt32 in [1 << 8, 1 << 11, 1 << 12, (1 << 8) | (1 << 9)] {
             XCTAssertTrue(shortcut(flags: flags).isValidGlobalShortcut)
         }
     }
@@ -36,6 +37,11 @@ final class GlobalShortcutTests: XCTestCase {
                                      characters: "a", charactersIgnoringModifiers: "a",
                                      isARepeat: false, keyCode: 0)!
         controller.updateGlobalShortcut(event)
+        let shifted = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: .shift,
+                                       timestamp: 0, windowNumber: 0, context: nil,
+                                       characters: "A", charactersIgnoringModifiers: "a",
+                                       isARepeat: false, keyCode: 0)!
+        controller.updateGlobalShortcut(shifted)
         XCTAssertEqual(Preferences.globalKey?.carbonFlags, saved.carbonFlags)
         XCTAssertEqual(Preferences.globalKey?.keyCode, saved.keyCode)
     }

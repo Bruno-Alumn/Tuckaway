@@ -82,6 +82,16 @@ final class GitHubReleaseTests: XCTestCase {
         XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 4_194_305, expected: 4_194_304))
         XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 0, expected: 0))
     }
+    func testUpdateRequestIsFreshAndIdentifiesTheApp() {
+        let url = URL(string: "https://example.com/releases/latest")!
+        let request = GitHubRelease.updateRequest(url: url, currentVersion: "1.2.0")
+        XCTAssertEqual(request.url, url)
+        XCTAssertEqual(request.timeoutInterval, 20)
+        XCTAssertEqual(request.cachePolicy, .reloadIgnoringLocalCacheData)
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Accept"), "application/vnd.github+json")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "User-Agent"), "Tuckaway/1.2.0")
+    }
+
     func testUpdateNotesDropInstallSectionsAndMarkdown() {
         let body = """
         ## Install
