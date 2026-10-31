@@ -84,6 +84,59 @@ struct GitHubRelease: Decodable {
         return nil
     }
 
+    // The release notes as plain text for the update alert: install and
+    // download sections are dropped (the updater does that part), Markdown
+    // markup is removed, and long notes are cut at a paragraph.
+    var updateNotes: String? {
+        body.flatMap { Self.updateNotes(fromMarkdown: $0) }
+    }
+
+    static func updateNotes(fromMarkdown markdown: String, limit: Int = 700) -> String? {
+        let skippedHeadings: Set<String> = ["install", "installation", "download", "downloads"]
+        var paragraphs: [String] = []
+        var current: [String] = []
+        var skipping = false
+        func endParagraph() {
+            if !current.isEmpty { paragraphs.append(current.joined(separator: "\n")) }
+            current = []
+        }
+        for rawLine in markdown.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n") {
+            let line = rawLine.trimmingCharacters(in: .whitespaces)
+            if line.hasPrefix("#") {
+                endParagraph()
+                let heading = plainText(String(line.drop(while: { $0 == "#" })).trimmingCharacters(in: .whitespaces))
+                skipping = skippedHeadings.contains(heading.lowercased())
+                if !skipping && !heading.isEmpty { paragraphs.append(heading) }
+            } else if line.isEmpty {
+                endParagraph()
+            } else if !skipping {
+                current.append(plainText(line.hasPrefix("- ") || line.hasPrefix("* ") ? "• " + line.dropFirst(2) : line))
+            }
+        }
+        endParagraph()
+
+        var result = ""
+        for paragraph in paragraphs {
+            let next = result.isEmpty ? paragraph : result + "\n\n" + paragraph
+            if next.count > limit {
+                if result.isEmpty { result = String(paragraph.prefix(limit)) }
+                return result + "…"
+            }
+            result = next
+        }
+        return result.isEmpty ? nil : result
+    }
+
+    // Links keep their text; bold and code markers go. Single * and _ stay,
+    // since they also appear in ordinary text.
+    private static func plainText(_ line: String) -> String {
+        var text = line.replacingOccurrences(of: #"\[([^\]]*)\]\([^)]*\)"#, with: "$1", options: .regularExpression)
+        for marker in ["**", "__", "`"] {
+            text = text.replacingOccurrences(of: marker, with: "")
+        }
+        return text
+    }
+
     // Whether this release should be offered to a user running `current`.
     func isUpdate(over current: ReleaseVersion) -> Bool {
         guard !draft, !prerelease, let version else { return false }

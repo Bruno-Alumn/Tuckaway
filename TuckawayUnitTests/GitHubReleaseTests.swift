@@ -82,4 +82,29 @@ final class GitHubReleaseTests: XCTestCase {
         XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 4_194_305, expected: 4_194_304))
         XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 0, expected: 0))
     }
+    func testUpdateNotesDropInstallSectionsAndMarkdown() {
+        let body = """
+        ## Install
+
+        Download **Tuckaway.dmg** below and drag it into Applications.
+
+        ## Fixes
+
+        - **Rearranging icons is smoother.** See the [changelog](https://example.com).
+        - `Updater` cleans up.
+        """
+        XCTAssertEqual(GitHubRelease.updateNotes(fromMarkdown: body),
+                       "Fixes\n\n• Rearranging icons is smoother. See the changelog.\n• Updater cleans up.")
+    }
+
+    func testUpdateNotesCutAtAParagraph() {
+        let body = "First paragraph.\n\nSecond paragraph that does not fit."
+        XCTAssertEqual(GitHubRelease.updateNotes(fromMarkdown: body, limit: 30), "First paragraph.…")
+        XCTAssertEqual(GitHubRelease.updateNotes(fromMarkdown: "A very long single paragraph", limit: 6), "A very…")
+    }
+
+    func testUpdateNotesAreNilWhenNothingIsLeft() {
+        XCTAssertNil(GitHubRelease.updateNotes(fromMarkdown: ""))
+        XCTAssertNil(GitHubRelease.updateNotes(fromMarkdown: "## Download\n\nGet the DMG."))
+    }
 }
