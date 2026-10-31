@@ -311,7 +311,8 @@ final class MenuBarItemManagerViewController: NSViewController {
             let axApp = AXUIElementCreateApplication(app.pid)
             var extrasValue: AnyObject?
             guard AXUIElementCopyAttributeValue(axApp, "AXExtrasMenuBar" as CFString, &extrasValue) == .success,
-                  let extras = extrasValue
+                  let extras = extrasValue,
+                  CFGetTypeID(extras) == AXUIElementGetTypeID()
             else { continue }
 
             var childrenValue: AnyObject?
