@@ -119,10 +119,15 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
               let positionValue, let sizeValue,
               CFGetTypeID(positionValue) == AXValueGetTypeID(),
               CFGetTypeID(sizeValue) == AXValueGetTypeID() else { return nil }
+        return frame(position: positionValue as! AXValue, size: sizeValue as! AXValue)
+    }
+
+    static func frame(position positionValue: AXValue, size sizeValue: AXValue) -> CGRect? {
         var position = CGPoint.zero
         var size = CGSize.zero
-        AXValueGetValue(positionValue as! AXValue, .cgPoint, &position)
-        AXValueGetValue(sizeValue as! AXValue, .cgSize, &size)
+        guard AXValueGetValue(positionValue, .cgPoint, &position),
+              AXValueGetValue(sizeValue, .cgSize, &size)
+        else { return nil }
         return CGRect(origin: position, size: size)
     }
 }

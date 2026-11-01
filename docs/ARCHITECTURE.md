@@ -201,8 +201,9 @@ flowchart TD
    signed (1.1.0 and earlier) has no certificate to match and skips that last
    check. If anything fails, nothing on disk changes.
 6. **Swap:** the running bundle is moved aside and the new one moved in, rolling
-   back if the second move fails. A detached `/bin/sh` waits for the old process
-   to exit, opens the new app, and deletes the backup.
+   back if the second move fails. If rollback also fails, the old app's backup is
+   preserved rather than deleted with the work folder. A detached `/bin/sh` waits
+   for the old process to exit, opens the new app, and deletes the backup.
 
 Translocated or read-only copies get a **Download** button that opens the
 release page instead.

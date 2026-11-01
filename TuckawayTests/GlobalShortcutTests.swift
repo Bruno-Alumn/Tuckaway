@@ -26,6 +26,13 @@ final class GlobalShortcutTests: XCTestCase {
         XCTAssertTrue(shortcut(keyCode: 79).isValidGlobalShortcut)
     }
 
+    func testInvalidSavedShortcutIsIgnored() {
+        let previous = Preferences.globalKey
+        defer { Preferences.globalKey = previous }
+        Preferences.globalKey = shortcut(flags: 1 << 9)
+        XCTAssertNil(Preferences.globalKey)
+    }
+
     func testInvalidRecordingPreservesSavedShortcut() {
         let previous = Preferences.globalKey
         defer { Preferences.globalKey = previous }

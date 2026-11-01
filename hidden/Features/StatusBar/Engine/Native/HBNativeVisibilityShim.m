@@ -33,15 +33,21 @@ static SEL HBActivate(void) { return @selector(activateWithConfiguration:complet
 static SEL HBInvalidate(void) { return @selector(invalidate); }
 
 BOOL HBNativeVisibilityIsAvailable(void) {
-    if (!dlopen(HBFrameworkPath.fileSystemRepresentation, RTLD_NOW | RTLD_LOCAL)) {
-        return NO;
-    }
-    Class configuration = NSClassFromString(HBConfigurationClassName);
-    Class assertion = NSClassFromString(HBAssertionClassName);
-    return configuration && assertion
-        && [configuration instancesRespondToSelector:HBConfigurationInit()]
-        && [assertion instancesRespondToSelector:HBActivate()]
-        && [assertion instancesRespondToSelector:HBInvalidate()];
+    static dispatch_once_t onceToken;
+    static BOOL available;
+    dispatch_once(&onceToken, ^{
+        if (!dlopen(HBFrameworkPath.fileSystemRepresentation, RTLD_NOW | RTLD_LOCAL)) {
+            available = NO;
+            return;
+        }
+        Class configuration = NSClassFromString(HBConfigurationClassName);
+        Class assertion = NSClassFromString(HBAssertionClassName);
+        available = configuration && assertion
+            && [configuration instancesRespondToSelector:HBConfigurationInit()]
+            && [assertion instancesRespondToSelector:HBActivate()]
+            && [assertion instancesRespondToSelector:HBInvalidate()];
+    });
+    return available;
 }
 
 void HBNativeVisibilityActivate(NSArray<NSNumber *> *allowedSystemItems,

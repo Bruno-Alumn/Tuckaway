@@ -6,6 +6,28 @@
 import XCTest
 
 final class GitHubReleaseTests: XCTestCase {
+    func testFailedRollbackPreservesTheOnlyBackup() throws {
+        let fileManager = FileManager.default
+        let root = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let work = root.appendingPathComponent("work")
+        let destination = root.appendingPathComponent("Installed.app")
+        let backup = work.appendingPathComponent("Previous.app")
+        try fileManager.createDirectory(at: backup, withIntermediateDirectories: true)
+        defer { try? fileManager.removeItem(at: root) }
+
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        XCTAssertTrue(fileManager.fileExists(atPath: backup.path))
+
+        try fileManager.createDirectory(at: destination, withIntermediateDirectories: true)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        XCTAssertFalse(fileManager.fileExists(atPath: work.path))
+
+        try fileManager.createDirectory(at: work, withIntermediateDirectories: true)
+        try fileManager.removeItem(at: destination)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        XCTAssertFalse(fileManager.fileExists(atPath: work.path))
+    }
+
     func testParsesTagsWithAndWithoutPrefix() {
         XCTAssertEqual(ReleaseVersion("v1.2.3")?.components, [1, 2, 3])
         XCTAssertEqual(ReleaseVersion("1.0")?.components, [1, 0])
@@ -82,6 +104,14 @@ final class GitHubReleaseTests: XCTestCase {
         XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 4_194_305, expected: 4_194_304))
         XCTAssertFalse(GitHubRelease.Asset.isCompleteDownload(size: 0, expected: 0))
     }
+    func testUpdateCheckScheduleHandlesClockChanges() {
+        let now = Date(timeIntervalSince1970: 100_000)
+        XCTAssertTrue(UpdateCheckSchedule.isDue(lastCheck: nil, now: now, interval: 100))
+        XCTAssertFalse(UpdateCheckSchedule.isDue(lastCheck: now.addingTimeInterval(-99), now: now, interval: 100))
+        XCTAssertTrue(UpdateCheckSchedule.isDue(lastCheck: now.addingTimeInterval(-100), now: now, interval: 100))
+        XCTAssertTrue(UpdateCheckSchedule.isDue(lastCheck: now.addingTimeInterval(1), now: now, interval: 100))
+    }
+
     func testUpdateRequestIsFreshAndIdentifiesTheApp() {
         let url = URL(string: "https://example.com/releases/latest")!
         let request = GitHubRelease.updateRequest(url: url, currentVersion: "1.2.0")
@@ -105,6 +135,12 @@ final class GitHubReleaseTests: XCTestCase {
         """
         XCTAssertEqual(GitHubRelease.updateNotes(fromMarkdown: body),
                        "Fixes\n\n• Rearranging icons is smoother. See the changelog.\n• Updater cleans up.")
+    }
+
+    func testUpdateNotesPreserveIssueReferencesAtLineStart() {
+        let body = "#437 Native hiding\ncontinues here.\n\n## Fixed\n\n- Clock clicks."
+        XCTAssertEqual(GitHubRelease.updateNotes(fromMarkdown: body),
+                       "#437 Native hiding\ncontinues here.\n\nFixed\n\n• Clock clicks.")
     }
 
     func testUpdateNotesCutAtAParagraph() {
