@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.3.1 (2026-11-01)
 
 ### Fixed
 - On macOS 27, 1.3.0 couldn't install updates: every attempt said the download "didn't contain a valid copy of Tuckaway". It was looking for a system tool in the wrong folder.
