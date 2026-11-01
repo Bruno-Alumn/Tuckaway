@@ -274,7 +274,7 @@ class NotchOverflowController: NSObject {
 
       return MenuBarExtraInfo(
         element: child,
-        appName: app.localizedName ?? "Unknown",
+        appName: app.localizedName ?? "Unknown".localized,
         appIcon: app.icon,
         title: titleRef as? String,
         pid: app.processIdentifier,
