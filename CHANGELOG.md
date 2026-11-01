@@ -7,7 +7,7 @@
 
 ### Fixed
 - Tuckaway could crash if macOS answered an Accessibility query with an unexpected kind of value while reading the menu bar, the notch or the clock. It now ignores such answers.
-- On a Mac with a notch, when macOS doesn't report where the notch is, "Show Notch Items" now assumes it's in the middle of the screen. It used a fixed position that only suited one screen size.
+- On a Mac with a notch, when macOS doesn't report where the notch is, "Show Notch Items" now assumes it's in the middle of the screen. It used a fixed position that only suited one screen size. Its fallback app name "Unknown" is also localized instead of always appearing in English.
 - On macOS 27, icons hide a few seconds sooner after launch. Tuckaway was waiting for a divider that macOS 27 doesn't use.
 - Dropping an icon next to itself in Menu Bar Items can no longer crash Tuckaway.
 - Shortcut recording no longer accepts Shift by itself, so assigning something like Shift+A can't make ordinary capitalized typing toggle the menu bar. Shift still works alongside Command, Control or Option.
