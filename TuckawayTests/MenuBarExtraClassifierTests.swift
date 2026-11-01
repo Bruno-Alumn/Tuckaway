@@ -76,4 +76,18 @@ final class MenuBarExtraClassifierTests: XCTestCase {
         XCTAssertEqual(result.hidden.map(\.appName), ["Near", "Far"],
                        "hidden extras must be ordered with the one closest to the notch boundary first")
     }
+
+    func test_frame_requiresMatchingAXValueTypes() {
+        var point = CGPoint(x: 10, y: 20)
+        var size = CGSize(width: 30, height: 22)
+        var rect = CGRect(x: 0, y: 0, width: 100, height: 100)
+        let pointValue = AXValueCreate(.cgPoint, &point)!
+        let sizeValue = AXValueCreate(.cgSize, &size)!
+        let rectValue = AXValueCreate(.cgRect, &rect)!
+
+        XCTAssertEqual(NotchOverflowController.frame(position: pointValue, size: sizeValue),
+                       CGRect(x: 10, y: 20, width: 30, height: 22))
+        XCTAssertNil(NotchOverflowController.frame(position: rectValue, size: sizeValue))
+        XCTAssertNil(NotchOverflowController.frame(position: pointValue, size: rectValue))
+    }
 }
