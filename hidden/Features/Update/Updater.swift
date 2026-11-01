@@ -183,6 +183,18 @@ final class Updater {
         case replaceFailed
     }
 
+    // The tools the installer runs. diskutil is in /usr/sbin, not /usr/bin:
+    // a wrong path fails the same way as a broken download, so a test checks
+    // that each one exists.
+    enum Tool {
+        static let diskutil = "/usr/sbin/diskutil"
+        static let hdiutil = "/usr/bin/hdiutil"
+        static let ditto = "/usr/bin/ditto"
+        static let codesign = "/usr/bin/codesign"
+        static let xattr = "/usr/bin/xattr"
+        static let all = [diskutil, hdiutil, ditto, codesign, xattr]
+    }
+
     private static let workDirectoryPrefix = "TuckawayUpdate-"
 
     // Copies the app out of the disk image (or zip) and checks it is a signed
@@ -222,20 +234,20 @@ final class Updater {
             let attached: Bool
             let detach: (String, [String])
             if #available(macOS 27.0, *) {
-                attached = run("/usr/bin/diskutil", ["image", "attach", package.path, "--readOnly", "--nobrowse", "--mountPoint", mountPoint.path])
-                detach = ("/usr/bin/diskutil", ["eject", mountPoint.path])
+                attached = run(Tool.diskutil, ["image", "attach", package.path, "--readOnly", "--nobrowse", "--mountPoint", mountPoint.path])
+                detach = (Tool.diskutil, ["eject", mountPoint.path])
             } else {
-                attached = run("/usr/bin/hdiutil", ["attach", package.path, "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mountPoint.path])
-                detach = ("/usr/bin/hdiutil", ["detach", mountPoint.path, "-force"])
+                attached = run(Tool.hdiutil, ["attach", package.path, "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mountPoint.path])
+                detach = (Tool.hdiutil, ["detach", mountPoint.path, "-force"])
             }
             guard attached else { throw UpdateError.invalidArchive }
             defer { run(detach.0, detach.1) }
             let mounted = (try? fileManager.contentsOfDirectory(at: mountPoint, includingPropertiesForKeys: nil)) ?? []
             guard let mountedApp = mounted.first(where: { $0.pathExtension == "app" }),
-                  run("/usr/bin/ditto", [mountedApp.path, extracted.appendingPathComponent(mountedApp.lastPathComponent).path])
+                  run(Tool.ditto, [mountedApp.path, extracted.appendingPathComponent(mountedApp.lastPathComponent).path])
             else { throw UpdateError.invalidArchive }
         } else {
-            guard run("/usr/bin/ditto", ["-x", "-k", package.path, extracted.path]) else { throw UpdateError.invalidArchive }
+            guard run(Tool.ditto, ["-x", "-k", package.path, extracted.path]) else { throw UpdateError.invalidArchive }
         }
 
         let candidates = (try? fileManager.contentsOfDirectory(at: extracted, includingPropertiesForKeys: nil)) ?? []
@@ -248,10 +260,10 @@ final class Updater {
               bundleVersion == version
         else { throw UpdateError.wrongApp }
 
-        guard run("/usr/bin/codesign", ["--verify", "--deep", "--strict", app.path]),
+        guard run(Tool.codesign, ["--verify", "--deep", "--strict", app.path]),
               isSignedLikeThisApp(app)
         else { throw UpdateError.invalidSignature }
-        _ = run("/usr/bin/xattr", ["-dr", "com.apple.quarantine", app.path])
+        _ = run(Tool.xattr, ["-dr", "com.apple.quarantine", app.path])
         return app
     }
 
