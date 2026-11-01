@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.3.0 (2026-11-01)
 
 ### Added
 - Menu Bar Items has an **Always Hidden** list when the always-hidden section is on, so you can see those icons and drag icons into or out of that section. Before, they were mixed into Hidden and couldn't be moved there. While the tab is open, Tuckaway shows that section and holds off auto-collapse, then puts both back when you close it.
