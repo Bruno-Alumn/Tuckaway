@@ -46,7 +46,7 @@ jobs:
       # The package is only useful from main; pull requests stop at tests and
       # the App Store build, which roughly halves their wait.
       - name: Package direct release
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           xcodebuild \
             -project "Tuckaway.xcodeproj" \
@@ -64,13 +64,13 @@ jobs:
             Tuckaway.zip
 
       - name: Verify DMG packaging
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           ALLOW_ADHOC=1 scripts/package-dmg.sh
           scripts/verify-dmg.sh
 
       - uses: actions/upload-artifact@v4
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           name: Tuckaway-direct
           path: Tuckaway.zip
