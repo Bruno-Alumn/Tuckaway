@@ -254,23 +254,18 @@ class NotchOverflowController: NSObject {
       let children = childrenRef as? [AXUIElement]
     else { return [] }
 
-    return children.map { child in
+    return children.compactMap { child in
       var titleRef: AnyObject?
       AXUIElementCopyAttributeValue(child, kAXTitleAttribute as CFString, &titleRef)
 
       var posRef: AnyObject?
-      AXUIElementCopyAttributeValue(child, kAXPositionAttribute as CFString, &posRef)
-      var pos = CGPoint.zero
-      if let pv = posRef, CFGetTypeID(pv) == AXValueGetTypeID() {
-        AXValueGetValue(pv as! AXValue, .cgPoint, &pos)
-      }
-
       var sizeRef: AnyObject?
-      AXUIElementCopyAttributeValue(child, kAXSizeAttribute as CFString, &sizeRef)
-      var size = CGSize.zero
-      if let sv = sizeRef, CFGetTypeID(sv) == AXValueGetTypeID() {
-        AXValueGetValue(sv as! AXValue, .cgSize, &size)
-      }
+      guard AXUIElementCopyAttributeValue(child, kAXPositionAttribute as CFString, &posRef) == .success,
+        AXUIElementCopyAttributeValue(child, kAXSizeAttribute as CFString, &sizeRef) == .success,
+        let pv = posRef, let sv = sizeRef,
+        CFGetTypeID(pv) == AXValueGetTypeID(), CFGetTypeID(sv) == AXValueGetTypeID(),
+        let itemFrame = frame(position: pv as! AXValue, size: sv as! AXValue)
+      else { return nil }
 
       return MenuBarExtraInfo(
         element: child,
@@ -278,10 +273,19 @@ class NotchOverflowController: NSObject {
         appIcon: app.icon,
         title: titleRef as? String,
         pid: app.processIdentifier,
-        position: pos,
-        size: size
+        position: itemFrame.origin,
+        size: itemFrame.size
       )
     }
+  }
+
+  static func frame(position positionValue: AXValue, size sizeValue: AXValue) -> CGRect? {
+    var position = CGPoint.zero
+    var size = CGSize.zero
+    guard AXValueGetValue(positionValue, .cgPoint, &position),
+      AXValueGetValue(sizeValue, .cgSize, &size)
+    else { return nil }
+    return CGRect(origin: position, size: size)
   }
 
 }
