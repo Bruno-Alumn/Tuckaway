@@ -115,6 +115,12 @@ final class GitHubReleaseTests: XCTestCase {
                        "Fixes\n\n• Rearranging icons is smoother. See the changelog.\n• Updater cleans up.")
     }
 
+    func testUpdateNotesPreserveIssueReferencesAtLineStart() {
+        let body = "#437 Native hiding\ncontinues here.\n\n## Fixed\n\n- Clock clicks."
+        XCTAssertEqual(GitHubRelease.updateNotes(fromMarkdown: body),
+                       "#437 Native hiding\ncontinues here.\n\nFixed\n\n• Clock clicks.")
+    }
+
     func testUpdateNotesCutAtAParagraph() {
         let body = "First paragraph.\n\nSecond paragraph that does not fit."
         XCTAssertEqual(GitHubRelease.updateNotes(fromMarkdown: body, limit: 30), "First paragraph.…")

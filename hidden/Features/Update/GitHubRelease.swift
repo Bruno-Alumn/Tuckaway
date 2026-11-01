@@ -118,9 +118,11 @@ struct GitHubRelease: Decodable {
         }
         for rawLine in markdown.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n") {
             let line = rawLine.trimmingCharacters(in: .whitespaces)
-            if line.hasPrefix("#") {
+            let headingBody = line.drop(while: { $0 == "#" })
+            let isHeading = line.hasPrefix("#") && (headingBody.isEmpty || headingBody.first?.isWhitespace == true)
+            if isHeading {
                 endParagraph()
-                let heading = plainText(String(line.drop(while: { $0 == "#" })).trimmingCharacters(in: .whitespaces))
+                let heading = plainText(String(headingBody).trimmingCharacters(in: .whitespaces))
                 skipping = skippedHeadings.contains(heading.lowercased())
                 if !skipping && !heading.isEmpty { paragraphs.append(heading) }
             } else if line.isEmpty {
