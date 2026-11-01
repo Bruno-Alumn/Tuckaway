@@ -183,7 +183,7 @@ To undo any of them: `defaults delete com.brunoalumn.tuckaway <key>`.
 |---|---|
 | Icons I want visible got hidden after an update | On macOS 27 direct builds, ⌘-drag them to the arrow's right; on earlier builds, drag them right of the separator |
 | Login item missing after denying it once | System Settings > General > Login Items: re-enable Tuckaway, then toggle the pref off/on |
-| A ghost "LauncherApplication" login item from old versions | Launch the current version once; it deauthorizes the legacy item automatically |
+| A ghost "LauncherApplication" login item from old versions | Launch the current version; it tries to deauthorize the legacy item and retries on later launches if that fails. If the row remains, remove it in System Settings › General › Login Items |
 | App language stuck | See the `AppleLanguages` command above, or System Settings > General > Language & Region > Applications |
 | Nothing hides on macOS 27 | Use the [direct-download build](https://github.com/Bruno-Alumn/Tuckaway/releases/latest) and grant **Device Control and Data Access**. The App Store build can't hide on macOS 27 and says so once. |
 | Hiding stopped after an update | Expected once, when updating from 1.1.0 or earlier. In System Settings › Privacy & Security › Accessibility (Device Control and Data Access on macOS 27), remove Tuckaway with the − button, then open Tuckaway and allow it again |
