@@ -10,7 +10,7 @@ EXPECTED=${EXPECTED#sha256:}
 
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/tuckaway-release-check.XXXXXX")
 trap 'rm -rf "$WORK"' EXIT INT TERM
-curl --fail --location --silent --show-error --output "$WORK/Tuckaway.dmg" "$DMG_URL"
+curl --fail --location --silent --show-error --connect-timeout 20 --max-time 300 --output "$WORK/Tuckaway.dmg" "$DMG_URL"
 ACTUAL=$(shasum -a 256 "$WORK/Tuckaway.dmg" | cut -d' ' -f1)
 if [ "$ACTUAL" != "$EXPECTED" ]; then
   echo "error: SHA-256 mismatch for $TAG: expected $EXPECTED, got $ACTUAL" >&2
