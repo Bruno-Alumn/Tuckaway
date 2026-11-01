@@ -151,4 +151,18 @@ final class MenuBarLayoutResolverTests: XCTestCase {
                        "in RTL the visible side flips, so left of the arrow must resolve visible")
         XCTAssertEqual(layout.bundles(in: [.visible]), ["com.apple.systemuiserver"])
     }
+
+    func testFrameRequiresMatchingAXValueTypes() {
+        var point = CGPoint(x: 10, y: 20)
+        var size = CGSize(width: 30, height: 22)
+        var rect = CGRect(x: 0, y: 0, width: 100, height: 100)
+        let pointValue = AXValueCreate(.cgPoint, &point)!
+        let sizeValue = AXValueCreate(.cgSize, &size)!
+        let rectValue = AXValueCreate(.cgRect, &rect)!
+
+        XCTAssertEqual(AccessibilityMenuBarInventory.frame(position: pointValue, size: sizeValue),
+                       CGRect(x: 10, y: 20, width: 30, height: 22))
+        XCTAssertNil(AccessibilityMenuBarInventory.frame(position: rectValue, size: sizeValue))
+        XCTAssertNil(AccessibilityMenuBarInventory.frame(position: pointValue, size: rectValue))
+    }
 }
