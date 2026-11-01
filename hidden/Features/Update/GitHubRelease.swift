@@ -38,11 +38,25 @@ struct ReleaseVersion: Comparable, CustomStringConvertible {
     }
 }
 
+// A last check in the future means the clock was turned back; treat it as due
+// rather than waiting until that date comes round.
 enum UpdateCheckSchedule {
     static func isDue(lastCheck: Date?, now: Date, interval: TimeInterval) -> Bool {
         guard let lastCheck else { return true }
         let elapsed = now.timeIntervalSince(lastCheck)
         return elapsed < 0 || elapsed >= interval
+    }
+}
+
+// After a failed swap, the work folder may hold the only copy of the old app
+// (the rollback failed too). Keep it then; otherwise clean up as usual.
+enum UpdateReplacementCleanup {
+    static func discardWorkDirectory(_ workDirectory: URL, destination: URL, backup: URL,
+                                     fileManager: FileManager = .default) {
+        let destinationExists = fileManager.fileExists(atPath: destination.path)
+        let backupExists = fileManager.fileExists(atPath: backup.path)
+        guard destinationExists || !backupExists else { return }
+        try? fileManager.removeItem(at: workDirectory)
     }
 }
 
