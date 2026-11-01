@@ -6,15 +6,12 @@
 - Menu Bar Items has an **Always Hidden** list when the always-hidden section is on, so you can see those icons and drag icons into or out of that section. Before, they were mixed into Hidden and couldn't be moved there. While the tab is open, Tuckaway shows that section and holds off auto-collapse, then puts both back when you close it.
 
 ### Fixed
-- Tuckaway could crash or use a zero frame if macOS answered an Accessibility query with an unexpected kind of value while reading the menu bar, the notch or the clock. It now ignores such answers.
-- On a Mac with a notch, when macOS doesn't report where the notch is, "Show Notch Items" now assumes it's in the middle of the screen. It used a fixed position that only suited one screen size.
-- Tuckaway could crash if macOS answered an Accessibility query with an unexpected kind of value while reading the menu bar, the notch or the clock. It now ignores such answers.
+- Tuckaway could crash, or put an icon in the wrong list, if macOS answered an Accessibility query with an unexpected kind of value while reading the menu bar, the notch or the clock. It now ignores such answers.
 - On a Mac with a notch, when macOS doesn't report where the notch is, "Show Notch Items" now assumes it's in the middle of the screen. It used a fixed position that only suited one screen size. Its fallback app name "Unknown" is also localized instead of always appearing in English.
 - On macOS 27, icons hide a few seconds sooner after launch. Tuckaway was waiting for a divider that macOS 27 doesn't use.
 - Dropping an icon next to itself in Menu Bar Items can no longer crash Tuckaway.
-- Shortcut recording no longer accepts Shift by itself, so assigning something like Shift+A can't make ordinary capitalized typing toggle the menu bar. Shift still works alongside Command, Control or Option.
-- Automatic update checks now recover immediately if the system clock moves behind the previous check's timestamp, instead of staying silent until that future date arrives.
-- Release notes in the update alert now preserve issue references such as #437 at the start of a line instead of treating them as Markdown headings and dropping the #.
+- If the Mac's clock was set back, automatic update checks stopped until the clock caught up again. They now carry on.
+- The update alert no longer drops the # from an issue number such as #437 at the start of a line.
 - Shortcut recording no longer accepts Shift by itself, and invalid shortcuts saved by older versions are ignored at launch, so something like Shift+A can't make ordinary capitalized typing toggle the menu bar. Shift still works alongside Command, Control or Option.
 - Update checks now bypass the local URL cache, so checking manually can't offer an older release because GitHub's previous response was cached.
 - If an update fails and restoring the previous app also fails, the updater now keeps that backup instead of deleting the only remaining copy.
@@ -32,7 +29,6 @@
 - VoiceOver now reads Tuckaway's arrow as "Show hidden icons" or "Hide icons", depending on what a click will do. Before, it had no label at all. Hovering the arrow shows a "Tuckaway" tooltip.
 - "Show hidden items in separate bar" is hidden on macOS 27, where it couldn't work: macOS 27 no longer gives menu-bar icons their own windows, so there was nothing to capture, and every click flashed a cover and then just expanded the bar. It still works on macOS 13–26.
 - Tuckaway is fully translated again in all 13 languages (Arabic, Chinese (Simplified and Traditional), Croatian, French, German, Italian, Japanese, Polish, Turkish, Ukrainian, Vietnamese). The new Settings, Menu Bar Items, About and updater screens were English-only, and some languages had only a handful of strings. A test now fails if a string is missing from any language.
-- Native hiding now resolves macOS's visibility framework only once per launch instead of repeating the same dynamic-library and selector checks whenever availability is queried.
 - On macOS 27, the updater and `scripts/package-dmg.sh` use `diskutil image` instead of the deprecated `hdiutil`, which stays on macOS 13–26. "Open Accessibility Settings" uses macOS 27's new Settings link.
 
 ## v1.2.0 (2026-10-30)
