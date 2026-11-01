@@ -38,6 +38,28 @@ struct ReleaseVersion: Comparable, CustomStringConvertible {
     }
 }
 
+// A last check in the future means the clock was turned back; treat it as due
+// rather than waiting until that date comes round.
+enum UpdateCheckSchedule {
+    static func isDue(lastCheck: Date?, now: Date, interval: TimeInterval) -> Bool {
+        guard let lastCheck else { return true }
+        let elapsed = now.timeIntervalSince(lastCheck)
+        return elapsed < 0 || elapsed >= interval
+    }
+}
+
+// After a failed swap, the work folder may hold the only copy of the old app
+// (the rollback failed too). Keep it then; otherwise clean up as usual.
+enum UpdateReplacementCleanup {
+    static func discardWorkDirectory(_ workDirectory: URL, destination: URL, backup: URL,
+                                     fileManager: FileManager = .default) {
+        let destinationExists = fileManager.fileExists(atPath: destination.path)
+        let backupExists = fileManager.fileExists(atPath: backup.path)
+        guard destinationExists || !backupExists else { return }
+        try? fileManager.removeItem(at: workDirectory)
+    }
+}
+
 // The subset of GitHub's release JSON the updater needs.
 struct GitHubRelease: Decodable {
     struct Asset: Decodable {
@@ -110,9 +132,11 @@ struct GitHubRelease: Decodable {
         }
         for rawLine in markdown.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n") {
             let line = rawLine.trimmingCharacters(in: .whitespaces)
-            if line.hasPrefix("#") {
+            let headingBody = line.drop(while: { $0 == "#" })
+            let isHeading = line.hasPrefix("#") && (headingBody.isEmpty || headingBody.first?.isWhitespace == true)
+            if isHeading {
                 endParagraph()
-                let heading = plainText(String(line.drop(while: { $0 == "#" })).trimmingCharacters(in: .whitespaces))
+                let heading = plainText(String(headingBody).trimmingCharacters(in: .whitespaces))
                 skipping = skippedHeadings.contains(heading.lowercased())
                 if !skipping && !heading.isEmpty { paragraphs.append(heading) }
             } else if line.isEmpty {

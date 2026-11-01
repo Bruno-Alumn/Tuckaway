@@ -45,33 +45,15 @@ jobs:
 
       # The package is only useful from main; pull requests stop at tests and
       # the App Store build, which roughly halves their wait.
-      - name: Package direct release
-        if: github.event_name == 'push'
-        run: |
-          xcodebuild \
-            -project "Tuckaway.xcodeproj" \
-            -scheme "Tuckaway" \
-            -configuration Release-Direct \
-            -destination "platform=macOS" \
-            -derivedDataPath build/DerivedData \
-            CODE_SIGNING_ALLOWED=NO \
-            build
-          xattr -cr "build/DerivedData/Build/Products/Release-Direct/Tuckaway.app"
-          codesign --force --deep --sign - "build/DerivedData/Build/Products/Release-Direct/Tuckaway.app"
-          codesign --verify --deep --strict "build/DerivedData/Build/Products/Release-Direct/Tuckaway.app"
-          ditto -c -k --keepParent \
-            "build/DerivedData/Build/Products/Release-Direct/Tuckaway.app" \
-            Tuckaway.zip
-
-      - name: Verify DMG packaging
-        if: github.event_name == 'push'
+      - name: Package and verify direct release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           ALLOW_ADHOC=1 scripts/package-dmg.sh
           scripts/verify-dmg.sh
 
       - uses: actions/upload-artifact@v4
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           name: Tuckaway-direct
-          path: Tuckaway.zip
+          path: dist/Tuckaway.dmg
           if-no-files-found: error
