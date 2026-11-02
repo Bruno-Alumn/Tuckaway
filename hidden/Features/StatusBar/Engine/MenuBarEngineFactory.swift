@@ -14,7 +14,7 @@ enum MenuBarEngineFactory {
         // direct build hides natively there instead. The App Store build cannot:
         // the sandbox blocks the Accessibility reads that locate the sections.
         if usesNativeVisibility {
-            return NativeVisibilityEngine(items: items)
+            return NativeVisibilityEngine(items: items, newApps: UserDefaultsNewMenuBarAppStore())
         }
         return LegacyLengthEngine(items: items)
     }

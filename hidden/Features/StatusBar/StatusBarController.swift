@@ -99,6 +99,9 @@ class StatusBarController: MenuBarItemProvider {
     // is still in flight doesn't act on a bar the user has since changed.
     private var nativeHiddenItemsRequest = 0
     private var nativeMenuWatchTimer: Timer?
+    private let newAppPrompt = NewMenuBarAppPromptController()
+    // New apps waiting to be asked about, in order; the first is on screen.
+    private var newAppQueue: [String] = []
     private var activeExpandCollapseFrame: CGRect?
     private var activeStatusItemScreen: NSScreen?
     private var didExpandForExternalDisplay = false
@@ -185,6 +188,7 @@ class StatusBarController: MenuBarItemProvider {
         setupUI()
         restoreRemovedStatusItems()
         setupAlwayHideStatusBar()
+        setupNewAppPrompts()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
@@ -1383,6 +1387,58 @@ extension StatusBarController {
             self.nativeMenuWatchTimer = nil
             self.hiddenSectionPeeker?.endPeek()
         }
+    }
+}
+
+//MARK: - New menu bar apps (macOS 27)
+extension StatusBarController {
+    private var newAppReporter: NewMenuBarAppReporting? {
+        menuBarEngine as? NewMenuBarAppReporting
+    }
+
+    private func setupNewAppPrompts() {
+        newAppReporter?.onNewApps = { [weak self] bundles in
+            guard let self else { return }
+            self.newAppQueue += bundles.filter { !self.newAppQueue.contains($0) }
+            self.showNextNewAppPrompt()
+        }
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleApplicationTerminated),
+                                                          name: NSWorkspace.didTerminateApplicationNotification, object: nil)
+    }
+
+    // Helpers can show an icon for a moment and quit. Their question goes with
+    // them; the app stays undecided and is asked about if its icon comes back.
+    @objc private func handleApplicationTerminated(_ notification: Notification) {
+        guard let bundle = (notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.bundleIdentifier,
+              newAppQueue.contains(bundle) else { return }
+        newAppQueue.removeAll { $0 == bundle }
+        if newAppPrompt.bundleIdentifier == bundle {
+            newAppPrompt.hide()
+        }
+        showNextNewAppPrompt()
+    }
+
+    private func showNextNewAppPrompt() {
+        newAppQueue.removeAll { NSRunningApplication.runningApplications(withBundleIdentifier: $0).isEmpty }
+        guard !newAppPrompt.isVisible, let bundle = newAppQueue.first,
+              let arrowFrame = btnExpandCollapse.button?.window?.frame,
+              let screen = btnExpandCollapse.button?.window?.screen
+        else { return }
+        newAppPrompt.show(bundleIdentifier: bundle, below: arrowFrame, on: screen) { [weak self] keep in
+            guard let self else { return }
+            self.newAppQueue.removeAll { $0 == bundle }
+            self.newAppReporter?.resolveNewApp(bundle, keepVisible: keep)
+            self.showNextNewAppPrompt()
+        }
+    }
+
+    // Apps kept visible by bundle; Menu Bar Items lists them as Visible.
+    var keptVisibleApps: Set<String> {
+        newAppReporter?.keptVisibleApps ?? []
+    }
+
+    func stopKeepingVisible(_ bundle: String) {
+        newAppReporter?.resolveNewApp(bundle, keepVisible: false)
     }
 }
 

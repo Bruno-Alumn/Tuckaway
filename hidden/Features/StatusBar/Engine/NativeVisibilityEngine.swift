@@ -49,7 +49,7 @@ import AppKit
 //   Notification Center cannot open from it (#410). A click on the clock lifts
 //   the restriction for a moment and presses it (MenuBarClock); hidden icons
 //   can flash while it is lifted.
-final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking {
+final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenuBarAppReporting {
     // System item identifiers to keep visible. Unknown identifiers are ignored,
     // so the range covers items a given Mac does not have. On 27.0, 0-63 resolves
     // to battery, bluetooth, clock, displays, keyboard, volume, wifi,
@@ -61,6 +61,8 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking {
     private let visibility: NativeVisibilityProviding
     private let captureActivity: CaptureActivityMonitoring
     private let clock: MenuBarClockProviding
+    private let newApps: NewMenuBarAppStore
+    var onNewApps: (([String]) -> Void)?
     private let ownBundleIdentifier: String?
     private let itemFrame: (NSStatusItem) -> CGRect?
     private let displays: () -> [MenuBarDisplay]
@@ -100,6 +102,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking {
          visibility: NativeVisibilityProviding = NativeVisibilityBridge(),
          captureActivity: CaptureActivityMonitoring = CaptureActivityMonitor(),
          clock: MenuBarClockProviding = SystemMenuBarClock(),
+         newApps: NewMenuBarAppStore = InMemoryNewMenuBarAppStore(),
          ownBundleIdentifier: String? = Bundle.main.bundleIdentifier,
          itemFrame: @escaping (NSStatusItem) -> CGRect? = { $0.button?.window?.frame },
          displays: @escaping () -> [MenuBarDisplay] = MenuBarDisplayInventory.current,
@@ -113,6 +116,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking {
         self.visibility = visibility
         self.captureActivity = captureActivity
         self.clock = clock
+        self.newApps = newApps
         self.ownBundleIdentifier = ownBundleIdentifier
         self.itemFrame = itemFrame
         self.displays = displays
@@ -181,7 +185,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking {
     // capture it or to click one of its icons. The cached layout still holds:
     // sections only change by ⌘-dragging, which needs an expanded bar.
     func peekHiddenSection(completion: @escaping (Bool) -> Void) {
-        guard state == .collapsed, let layout = layout else { return completion(false) }
+        guard state == .collapsed, let layout = effectiveLayout else { return completion(false) }
         isPeeking = true
         activate(allowing: layout.bundles(in: [.visible, .hidden]), completion: completion)
     }
@@ -189,8 +193,26 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking {
     func endPeek() {
         guard isPeeking else { return }
         isPeeking = false
-        guard state == .collapsed, let layout = layout else { return }
+        guard state == .collapsed, let layout = effectiveLayout else { return }
         activate(allowing: layout.bundles(in: [.visible])) { _ in }
+    }
+
+    var keptVisibleApps: Set<String> {
+        newApps.tracker.kept
+    }
+
+    // The user chose for a new app, or moved a kept one in Menu Bar Items.
+    // While collapsed the restriction is redone right away.
+    func resolveNewApp(_ bundle: String, keepVisible: Bool) {
+        newApps.tracker.resolve(bundle, keepVisible: keepVisible)
+        guard state == .collapsed, !isPeeking, let layout = effectiveLayout else { return }
+        activate(allowing: layout.bundles(in: [.visible])) { _ in }
+    }
+
+    // The sections as arranged, with kept apps and new ones the user hasn't
+    // decided on yet visible.
+    private var effectiveLayout: MenuBarLayout? {
+        layout.map(newApps.tracker.applied(to:))
     }
 
     func updateAlwaysHiddenSection(enabled: Bool, separatorHidden: Bool) {
@@ -254,7 +276,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking {
     // Superseded by any later expand or activation, like an activation is.
     private func withLayout(_ body: @escaping (MenuBarLayout?) -> Void) {
         if assertion != nil {
-            return body(layout)
+            return body(effectiveLayout)
         }
         guard let arrow = items?.toggleItem,
               let boundary = itemFrame(arrow) else { return body(nil) }
@@ -277,10 +299,21 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking {
             }
             NSLog("NativeVisibility: arrow at x=\(boundary.midX); visible \(layout.bundles(in: [.visible])), hidden \(layout.bundles(in: [.hidden])), always hidden \(layout.bundles(in: [.alwaysHidden]))")
             self.layout = layout
+            let found = self.newApps.tracker.observe(layout)
+            let effective = self.newApps.tracker.applied(to: layout)
             self.hiddenItems = inventory.filter { item in
-                item.bundleIdentifier.map { layout.sections[$0] == .hidden } ?? false
+                item.bundleIdentifier.map { effective.sections[$0] == .hidden } ?? false
             }
-            body(layout)
+            if !found.isEmpty {
+                NSLog("NativeVisibility: keeping new menu-bar apps visible: \(found)")
+            }
+            // Every undecided app that is in the bar, so one found before a
+            // relaunch is still asked about.
+            let undecided = self.newApps.tracker.pending.filter { layout.sections[$0] != nil }.sorted()
+            if !undecided.isEmpty {
+                self.onNewApps?(undecided)
+            }
+            body(effective)
         }
     }
 

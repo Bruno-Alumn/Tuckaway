@@ -124,3 +124,7 @@
 "Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway không thể tự thay thế trong thư mục hiện tại. Thay vào đó, bạn có thể tải bản cập nhật từ GitHub.";
 "Open Release Page" = "Mở trang phát hành";
 "Cancel" = "Hủy";
+"Keep %@ visible?" = "Giữ %@ hiển thị?";
+"Its new menu bar icon landed on the hidden side, so Tuckaway is showing it until you choose." = "Biểu tượng thanh menu mới của ứng dụng này nằm ở phía bị ẩn, nên Tuckaway sẽ hiển thị nó cho đến khi bạn chọn.";
+"Keep Visible" = "Giữ hiển thị";
+"Hide" = "Ẩn";
