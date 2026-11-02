@@ -1,14 +1,14 @@
 import XCTest
 @testable import Tuckaway
 
-private func makeExtra(appName: String, x: CGFloat, width: CGFloat = 22, height: CGFloat = 22, title: String? = nil) -> MenuBarExtraInfo {
+private func makeExtra(appName: String, x: CGFloat, y: CGFloat = 0, width: CGFloat = 22, height: CGFloat = 22, title: String? = nil) -> MenuBarExtraInfo {
     MenuBarExtraInfo(
         element: AXUIElementCreateApplication(0),
         appName: appName,
         appIcon: nil,
         title: title,
         pid: 0,
-        position: CGPoint(x: x, y: 0),
+        position: CGPoint(x: x, y: y),
         size: CGSize(width: width, height: height)
     )
 }
@@ -89,5 +89,17 @@ final class MenuBarExtraClassifierTests: XCTestCase {
                        CGRect(x: 10, y: 20, width: 30, height: 22))
         XCTAssertNil(NotchOverflowController.frame(position: rectValue, size: sizeValue))
         XCTAssertNil(NotchOverflowController.frame(position: pointValue, size: rectValue))
+    }
+
+    // An external display arranged left of the notched one has smaller x than
+    // the notch boundary; its icons must not be listed as behind the notch.
+    func testIconsOnAnotherDisplayAreLeftOut() {
+        let laptop = CGRect(x: 0, y: 0, width: 1512, height: 982)
+        let external = makeExtra(appName: "External", x: -400, y: 5)
+        let behindNotch = makeExtra(appName: "Behind", x: 700, y: 5)
+        let visible = makeExtra(appName: "Visible", x: 1300, y: 5)
+        let (hidden, shown) = MenuBarExtraClassifier.classify([external, behindNotch, visible], boundary: 800, screen: laptop)
+        XCTAssertEqual(hidden.map(\.appName), ["Behind"])
+        XCTAssertEqual(shown.map(\.appName), ["Visible"])
     }
 }

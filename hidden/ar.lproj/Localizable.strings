@@ -137,3 +137,16 @@
 "Search hidden icons" = "البحث في الأيقونات المخفية";
 "No hidden icons" = "لا توجد أيقونات مخفية";
 "No matches" = "لا توجد نتائج";
+"An update is being installed" = "يجري تثبيت تحديث";
+"Tuckaway will relaunch when it’s done." = "سيُعاد تشغيل Tuckaway عند الانتهاء.";
+"Export Settings…" = "تصدير الإعدادات…";
+"Import Settings…" = "استيراد الإعدادات…";
+"Couldn’t export settings" = "تعذّر تصدير الإعدادات";
+"Couldn’t import settings" = "تعذّر استيراد الإعدادات";
+"This file comes from a newer version of Tuckaway. Update Tuckaway, then try again." = "هذا الملف من إصدار أحدث من Tuckaway. حدّث Tuckaway ثم حاول مرة أخرى.";
+"This file isn’t a Tuckaway settings file." = "هذا الملف ليس ملف إعدادات Tuckaway.";
+"Replace your settings with the imported ones?" = "هل تريد استبدال إعداداتك بالإعدادات المستوردة؟";
+"Import" = "استيراد";
+"Settings imported" = "تم استيراد الإعدادات";
+"Quit and reopen Tuckaway to apply them." = "أنهِ Tuckaway ثم افتحه مرة أخرى لتطبيقها.";
+"Tuckaway will relaunch to apply them." = "سيُعاد تشغيل Tuckaway لتطبيقها.";

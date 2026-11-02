@@ -51,11 +51,16 @@ enum UpdateCheckSchedule {
 // After a failed swap, the work folder may hold the only copy of the old app
 // (the rollback failed too). Keep it then; otherwise clean up as usual.
 enum UpdateReplacementCleanup {
+    // Something at the destination isn't enough: a move across volumes is a copy
+    // then a delete, and a half-finished one leaves a broken bundle there. Only
+    // an app with the expected bundle identifier counts as intact.
     static func discardWorkDirectory(_ workDirectory: URL, destination: URL, backup: URL,
-                                     fileManager: FileManager = .default) {
-        let destinationExists = fileManager.fileExists(atPath: destination.path)
+                                     bundleIdentifier: String?, fileManager: FileManager = .default) {
+        // Read directly: Bundle(url:) caches by path and would miss a change.
+        let info = NSDictionary(contentsOf: destination.appendingPathComponent("Contents/Info.plist"))
+        let destinationIsIntact = bundleIdentifier != nil && info?["CFBundleIdentifier"] as? String == bundleIdentifier
         let backupExists = fileManager.fileExists(atPath: backup.path)
-        guard destinationExists || !backupExists else { return }
+        guard destinationIsIntact || !backupExists else { return }
         try? fileManager.removeItem(at: workDirectory)
     }
 }
