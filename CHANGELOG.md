@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- **Show the icon of the app you're using** (macOS 27, Settings › General, off by default): a hidden app's icon shows while that app is in front and hides again when you switch away.
 - **Export Settings… / Import Settings…** in Settings › About save Tuckaway's options, shortcuts and kept-visible apps to a file and load them on another Mac or after a clean install. Importing asks first, then relaunches Tuckaway to apply them. Icon positions belong to macOS and aren't included.
 - **Find Hidden Icon** (macOS 27): from the arrow's menu or a shortcut you set in Settings › General, a small search lists your hidden icons by name. Type to filter, use the arrow keys, and press Return to open that icon's menu; it hides again when the menu closes. It needs no Screen Recording.
 

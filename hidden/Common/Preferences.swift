@@ -136,6 +136,18 @@ enum Preferences {
         }
     }
 
+    // macOS 27: a hidden app's icon shows while that app is frontmost.
+    static var showActiveAppIcon: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: UserDefaults.Key.showActiveAppIcon)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.showActiveAppIcon)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     static var clickEmptyMenuBarToToggle: Bool {
         get {
             UserDefaults.standard.bool(forKey: UserDefaults.Key.clickEmptyMenuBarToToggle)
