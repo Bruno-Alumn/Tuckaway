@@ -90,6 +90,9 @@ reads.
 ## Release
 
 1. Verify the stack: every PR reviewed, builds green, behavioral checks above run.
+   Check main's own CI too (`gh run list --branch main --event push --limit 3`):
+   packaging and verifying the DMG only runs on pushes to main, so a PR can be
+   green while main is red. It was red from #61 to #100 without anyone noticing.
 2. Bump `MARKETING_VERSION` (all four Tuckaway configurations) and
    `CURRENT_PROJECT_VERSION` in the project file.
 3. Build the GitHub release with `EXPECTED_VERSION=v<version> scripts/package-dmg.sh`.
