@@ -66,6 +66,13 @@ protocol NewMenuBarAppReporting: AnyObject {
     func resolveNewApp(_ bundle: String, keepVisible: Bool)
 }
 
+// Presentation mode (macOS 27): hide every app's icon but Tuckaway's own;
+// macOS's own items, such as the clock, stay.
+protocol PresentationModeProviding: AnyObject {
+    var isPresenting: Bool { get }
+    func setPresenting(_ presenting: Bool)
+}
+
 enum MenuBarEngineState {
     case expanded
     case calibrating

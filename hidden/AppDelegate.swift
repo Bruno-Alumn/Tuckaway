@@ -29,6 +29,14 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         }
     }
 
+    var presentationHotKey: HotKey? {
+        didSet {
+            presentationHotKey?.keyDownHandler = { [weak self] in
+                self?.statusBarController.togglePresentationMode()
+            }
+        }
+    }
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard ensureSingleInstance() else { return }
         Preferences.migrateFromHiddenBar()
@@ -115,8 +123,12 @@ class AppDelegate: NSObject, NSApplicationDelegate{
     }
     
     func setupHotKey() {
-        guard let globalKey = Preferences.globalKey else {return}
-        hotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: globalKey.keyCode, carbonModifiers: globalKey.carbonFlags))
+        if let globalKey = Preferences.globalKey {
+            hotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: globalKey.keyCode, carbonModifiers: globalKey.carbonFlags))
+        }
+        if StatusBarController.supportsPresentationMode, let presentationKey = Preferences.presentationModeKey {
+            presentationHotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: presentationKey.keyCode, carbonModifiers: presentationKey.carbonFlags))
+        }
     }
     
     func detectLTRLang() {

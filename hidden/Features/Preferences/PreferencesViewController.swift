@@ -33,9 +33,10 @@ class PreferencesViewController: NSViewController {
     //MARK: - VC Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        model.onRecordShortcut = { [weak self] in self?.register() }
-        model.onClearShortcut = { [weak self] in self?.unregister() }
+        model.onRecordShortcut = { [weak self] kind in self?.register(kind) }
+        model.onClearShortcut = { [weak self] kind in self?.unregister(kind) }
         model.shortcutTitle = Preferences.globalKey?.description
+        model.presentationShortcutTitle = Preferences.presentationModeKey?.description
 
         preferredContentSize = NSSize(width: 480, height: 560)
         let hostingView = NSHostingView(rootView: GeneralSettingsView(model: model))
@@ -73,7 +74,8 @@ class PreferencesViewController: NSViewController {
     // Recording goes through the window controller, which forwards keyDown and
     // flagsChanged here while `listening` is set.
 
-    private func register() {
+    private func register(_ kind: ShortcutKind) {
+        model.recordingKind = kind
         listening = true
     }
 
@@ -99,14 +101,19 @@ class PreferencesViewController: NSViewController {
     }
 
     // Clear the shortcut and tell AppDelegate to stop listening to the previous keybind.
-    private func unregister() {
+    private func unregister(_ kind: ShortcutKind) {
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
-        appDelegate.hotKey = nil
-        model.shortcutTitle = nil
         listening = false
-
-        // Remove globalkey from userdefault
-        Preferences.globalKey = nil
+        switch kind {
+        case .toggle:
+            appDelegate.hotKey = nil
+            model.shortcutTitle = nil
+            Preferences.globalKey = nil
+        case .presentation:
+            appDelegate.presentationHotKey = nil
+            model.presentationShortcutTitle = nil
+            Preferences.presentationModeKey = nil
+        }
     }
 
     public func updateGlobalShortcut(_ event: NSEvent) {
@@ -129,11 +136,18 @@ class PreferencesViewController: NSViewController {
         // Function keys are valid standalone global shortcuts.
         guard newGlobalKeybind.isValidGlobalShortcut else { return }
 
-        Preferences.globalKey = newGlobalKeybind
-        model.shortcutTitle = newGlobalKeybind.description
-
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
-        appDelegate.hotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: UInt32(event.keyCode), carbonModifiers: event.modifierFlags.carbonFlags))
+        let hotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: UInt32(event.keyCode), carbonModifiers: event.modifierFlags.carbonFlags))
+        switch model.recordingKind {
+        case .toggle:
+            Preferences.globalKey = newGlobalKeybind
+            model.shortcutTitle = newGlobalKeybind.description
+            appDelegate.hotKey = hotKey
+        case .presentation:
+            Preferences.presentationModeKey = newGlobalKeybind
+            model.presentationShortcutTitle = newGlobalKeybind.description
+            appDelegate.presentationHotKey = hotKey
+        }
     }
 
     // Shows the modifiers held so far while recording.
@@ -157,16 +171,23 @@ class PreferencesViewController: NSViewController {
 
 // Reads straight from Preferences, so a change made elsewhere (the context
 // menu's auto-collapse toggle, a failed login-item update) shows up on refresh.
+enum ShortcutKind {
+    case toggle, presentation
+}
+
 final class GeneralSettingsModel: ObservableObject {
     @Published var isRecordingShortcut = false {
         didSet { if !isRecordingShortcut { recordingPreview = "" } }
     }
+    // Which of the two shortcuts is being recorded.
+    @Published var recordingKind = ShortcutKind.toggle
     @Published var recordingPreview = ""
     @Published var shortcutTitle: String?
+    @Published var presentationShortcutTitle: String?
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
 
-    var onRecordShortcut: () -> Void = {}
-    var onClearShortcut: () -> Void = {}
+    var onRecordShortcut: (ShortcutKind) -> Void = { _ in }
+    var onClearShortcut: (ShortcutKind) -> Void = { _ in }
 
     @objc func refresh() {
         isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
@@ -297,7 +318,10 @@ struct GeneralSettingsView: View {
                 settingsToggle("Expand by hovering over the menu bar", isOn: model.hoverToExpand)
                 settingsToggle("Click empty menu bar to show or hide icons", isOn: model.clickEmptyMenuBarToToggle)
                 settingsToggle("Expand when an external display is connected", isOn: model.expandWhenExternalDisplayConnected)
-                LabeledContent(Self.label("Shortcut")) { shortcutRecorder }
+                LabeledContent(Self.label("Shortcut")) { shortcutRecorder(.toggle) }
+                if StatusBarController.supportsPresentationMode {
+                    LabeledContent(Self.label("Presentation Mode")) { shortcutRecorder(.presentation) }
+                }
             }
 
             Section(Self.label("Appearance")) {
@@ -383,11 +407,13 @@ struct GeneralSettingsView: View {
         }
     }
 
-    private var shortcutRecorder: some View {
-        HStack(spacing: 6) {
-            if model.shortcutTitle != nil && !model.isRecordingShortcut {
+    private func shortcutRecorder(_ kind: ShortcutKind) -> some View {
+        let title = kind == .toggle ? model.shortcutTitle : model.presentationShortcutTitle
+        let isRecording = model.isRecordingShortcut && model.recordingKind == kind
+        return HStack(spacing: 6) {
+            if title != nil && !isRecording {
                 Button {
-                    model.onClearShortcut()
+                    model.onClearShortcut(kind)
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.secondary)
@@ -397,20 +423,20 @@ struct GeneralSettingsView: View {
                 .help("Clear".localized)
             }
             Button {
-                model.onRecordShortcut()
+                model.onRecordShortcut(kind)
             } label: {
-                Text(verbatim: shortcutButtonTitle)
+                Text(verbatim: shortcutButtonTitle(title: title, isRecording: isRecording))
                     .frame(minWidth: 80)
             }
             .controlSize(.small)
         }
     }
 
-    private var shortcutButtonTitle: String {
-        if model.isRecordingShortcut {
+    private func shortcutButtonTitle(title: String?, isRecording: Bool) -> String {
+        if isRecording {
             return model.recordingPreview.isEmpty ? "Type Shortcut…".localized : model.recordingPreview
         }
-        return model.shortcutTitle ?? "Set Shortcut".localized
+        return title ?? "Set Shortcut".localized
     }
 }
 
