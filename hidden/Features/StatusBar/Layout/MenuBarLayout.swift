@@ -195,3 +195,82 @@ enum MenuBarStripGeometry {
         return clipped.isEmpty ? nil : clipped
     }
 }
+
+// Which apps' menu-bar icons Tuckaway has seen. macOS 27 puts a new app's icon
+// at the far left, on the hidden side of the arrow, so without this a freshly
+// installed app's icon would be hidden before the user ever saw it. A new app
+// found on the hidden side stays visible ("pending") until the user decides.
+//
+// Keeping one visible marks the app instead of ⌘-dragging its icon right of the
+// arrow: synthesized drags don't pass Tuckaway's own arrow (measured on 27.2),
+// and on macOS 27 hiding is per app anyway.
+struct NewMenuBarAppTracker: Equatable {
+    // Nil until the first read, which only records what is already there.
+    var known: Set<String>?
+    var pending: Set<String> = []
+    // Shown wherever their icons are, until moved to a hidden list in Menu Bar Items.
+    var kept: Set<String> = []
+
+    // Records the apps in `layout`; returns the new ones it keeps visible.
+    mutating func observe(_ layout: MenuBarLayout) -> [String] {
+        let bundles = Set(layout.sections.keys)
+        guard let known = known else {
+            self.known = bundles
+            return []
+        }
+        let found = bundles.subtracting(known)
+        self.known = known.union(found)
+        let hidden = found.filter { layout.sections[$0] != .visible }
+        pending.formUnion(hidden)
+        return hidden.sorted()
+    }
+
+    mutating func resolve(_ bundle: String, keepVisible: Bool) {
+        pending.remove(bundle)
+        if keepVisible {
+            kept.insert(bundle)
+        } else {
+            kept.remove(bundle)
+        }
+    }
+
+    func applied(to layout: MenuBarLayout) -> MenuBarLayout {
+        var layout = layout
+        for bundle in pending.union(kept) where layout.sections[bundle] != nil {
+            layout.sections[bundle] = .visible
+        }
+        return layout
+    }
+}
+
+protocol NewMenuBarAppStore: AnyObject {
+    var tracker: NewMenuBarAppTracker { get set }
+}
+
+final class InMemoryNewMenuBarAppStore: NewMenuBarAppStore {
+    var tracker = NewMenuBarAppTracker()
+}
+
+final class UserDefaultsNewMenuBarAppStore: NewMenuBarAppStore {
+    private let defaults: UserDefaults
+    private static let knownKey = "knownMenuBarApps"
+    private static let pendingKey = "pendingMenuBarApps"
+    private static let keptKey = "keptVisibleMenuBarApps"
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
+
+    var tracker: NewMenuBarAppTracker {
+        get {
+            NewMenuBarAppTracker(known: (defaults.array(forKey: Self.knownKey) as? [String]).map(Set.init),
+                                 pending: Set(defaults.array(forKey: Self.pendingKey) as? [String] ?? []),
+                                 kept: Set(defaults.array(forKey: Self.keptKey) as? [String] ?? []))
+        }
+        set {
+            defaults.set(newValue.known.map { $0.sorted() }, forKey: Self.knownKey)
+            defaults.set(newValue.pending.sorted(), forKey: Self.pendingKey)
+            defaults.set(newValue.kept.sorted(), forKey: Self.keptKey)
+        }
+    }
+}

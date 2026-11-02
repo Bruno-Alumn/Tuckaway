@@ -126,3 +126,7 @@
 "Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway se ne može zamijeniti u trenutačnoj mapi. Ažuriranje umjesto toga možete preuzeti sa stranice GitHub.";
 "Open Release Page" = "Otvori stranicu izdanja";
 "Cancel" = "Odustani";
+"Keep %@ visible?" = "Zadržati %@ vidljivim?";
+"Its new menu bar icon landed on the hidden side, so Tuckaway is showing it until you choose." = "Njegova nova ikona na traci izbornika završila je na skrivenoj strani pa je Tuckaway prikazuje dok ne odabereš.";
+"Keep Visible" = "Zadrži vidljivim";
+"Hide" = "Sakrij";

@@ -57,6 +57,15 @@ protocol HiddenSectionPeeking: AnyObject {
     func endPeek()
 }
 
+// New apps whose icons macOS 27 put on the hidden side are kept visible until
+// the user decides (see NewMenuBarAppTracker). onNewApps gets every undecided
+// app in the bar after each fresh read, so it repeats until they're resolved.
+protocol NewMenuBarAppReporting: AnyObject {
+    var onNewApps: (([String]) -> Void)? { get set }
+    var keptVisibleApps: Set<String> { get }
+    func resolveNewApp(_ bundle: String, keepVisible: Bool)
+}
+
 enum MenuBarEngineState {
     case expanded
     case calibrating

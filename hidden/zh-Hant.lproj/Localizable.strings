@@ -124,3 +124,7 @@
 "Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway 無法在目前的檔案夾中取代自身。你可以改從 GitHub 下載更新項目。";
 "Open Release Page" = "打開發佈頁面";
 "Cancel" = "取消";
+"Keep %@ visible?" = "保持顯示 %@？";
+"Its new menu bar icon landed on the hidden side, so Tuckaway is showing it until you choose." = "它的新選單列圖像出現在隱藏區域，因此在你做出選擇前 Tuckaway 會一直顯示它。";
+"Keep Visible" = "保持顯示";
+"Hide" = "隱藏";

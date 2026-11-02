@@ -889,3 +889,116 @@ final class MenuBarStripGeometryTests: XCTestCase {
         XCTAssertEqual(upper.accessibilityRect(fromAppKit: upper.appKitRect(fromAccessibility: icon)), icon)
     }
 }
+
+// MARK: - New menu bar apps
+
+final class NewMenuBarAppTrackerTests: XCTestCase {
+    func testFirstReadOnlyRecordsWhatIsThere() {
+        var tracker = NewMenuBarAppTracker()
+        XCTAssertEqual(tracker.observe(MenuBarLayout(sections: ["com.a": .hidden, "com.b": .visible])), [])
+        XCTAssertEqual(tracker.known, ["com.a", "com.b"])
+        XCTAssertEqual(tracker.pending, [])
+    }
+
+    func testNewAppOnTheHiddenSideStaysVisibleUntilDecided() {
+        var tracker = NewMenuBarAppTracker(known: ["com.a"])
+        let layout = MenuBarLayout(sections: ["com.a": .hidden, "com.new": .hidden, "com.right": .visible, "com.far": .alwaysHidden])
+        XCTAssertEqual(tracker.observe(layout), ["com.far", "com.new"], "a new app already visible needs no question")
+        XCTAssertEqual(tracker.applied(to: layout).sections,
+                       ["com.a": .hidden, "com.new": .visible, "com.right": .visible, "com.far": .visible])
+
+        XCTAssertEqual(tracker.observe(layout), [], "asked about once")
+        tracker.resolve("com.new", keepVisible: false)
+        XCTAssertEqual(tracker.applied(to: layout).sections["com.new"], .hidden)
+
+        tracker.resolve("com.far", keepVisible: true)
+        XCTAssertEqual(tracker.pending, [])
+        XCTAssertEqual(tracker.applied(to: layout).sections["com.far"], .visible, "kept visible wherever its icon is")
+        tracker.resolve("com.far", keepVisible: false)
+        XCTAssertEqual(tracker.applied(to: layout).sections["com.far"], .alwaysHidden)
+    }
+
+    func testStoreRoundTripsThroughUserDefaults() {
+        let suite = "NewMenuBarAppTrackerTests-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = UserDefaultsNewMenuBarAppStore(defaults: defaults)
+        XCTAssertNil(store.tracker.known)
+
+        store.tracker = NewMenuBarAppTracker(known: ["com.a", "com.b", "com.c"], pending: ["com.b"], kept: ["com.c"])
+        XCTAssertEqual(UserDefaultsNewMenuBarAppStore(defaults: defaults).tracker,
+                       NewMenuBarAppTracker(known: ["com.a", "com.b", "com.c"], pending: ["com.b"], kept: ["com.c"]))
+    }
+}
+
+final class NativeVisibilityEngineNewAppTests: XCTestCase {
+    private var items: FakeItems!
+    private var inventory: FakeInventory!
+    private var visibility: FakeVisibility!
+    private var store: InMemoryNewMenuBarAppStore!
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        store = InMemoryNewMenuBarAppStore()
+        store.tracker = NewMenuBarAppTracker(known: ["com.hidden", "com.visible"])
+    }
+
+    private func makeEngine() -> NativeVisibilityEngine {
+        let items = self.items!
+        return NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                      captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                      newApps: store,
+                                      ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                      itemFrame: { _ in separator },
+                                      displays: { [mainDisplay] },
+                                      isLTR: { true })
+    }
+
+    func testNewAppIsKeptVisibleAndReported() {
+        inventory.items.append(item("com.new", x: 1050))
+        let engine = makeEngine()
+        var reported: [[String]] = []
+        engine.onNewApps = { reported.append($0) }
+
+        engine.collapse { _ in }
+        XCTAssertEqual(reported, [["com.new"]])
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.new", "com.visible"])
+        visibility.succeed(visibility.requests.count - 1)
+        XCTAssertEqual(engine.hiddenItems, [item("com.hidden", x: 1100)], "not offered in the separate bar while undecided")
+
+        engine.expand()
+        engine.collapse { _ in }
+        XCTAssertEqual(reported, [["com.new"], ["com.new"]], "still undecided, so asked about again")
+    }
+
+    func testHidingANewAppWhileCollapsedHidesItRightAway() {
+        inventory.items.append(item("com.new", x: 1050))
+        let engine = makeEngine()
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+
+        engine.resolveNewApp("com.new", keepVisible: false)
+        XCTAssertEqual(store.tracker.pending, [])
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+
+    func testKeepingANewAppVisibleSurvivesTheNextRead() {
+        inventory.items.append(item("com.new", x: 1050))
+        let engine = makeEngine()
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+        engine.resolveNewApp("com.new", keepVisible: true)
+        XCTAssertEqual(engine.keptVisibleApps, ["com.new"])
+
+        var reported: [[String]] = []
+        engine.onNewApps = { reported.append($0) }
+        engine.expand()
+        engine.collapse { _ in }
+        XCTAssertEqual(reported, [], "decided, so not asked again")
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.new", "com.visible"])
+    }
+}

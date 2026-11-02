@@ -96,6 +96,14 @@ frontmost app's menus.
   from its frame relative to the separators, per display.
 - **Granularity is per app.** The restriction takes bundle identifiers, so an
   app's icons hide or show together (#427).
+- **New apps.** macOS puts a new app's icon on the hidden side.
+  `NewMenuBarAppTracker` (persisted by `UserDefaultsNewMenuBarAppStore`)
+  remembers every app seen; the first read only records what is there. A new
+  app found on the hidden side stays visible (pending) and is reported through
+  `NewMenuBarAppReporting`; `NewMenuBarAppPromptController` asks under the
+  arrow. Keep Visible marks the app (kept) rather than ⌘-dragging its icon:
+  synthesized drags didn't pass Tuckaway's own arrow on 27.2. Menu Bar Items
+  lists kept apps as Visible and clears the mark when one is moved out.
 - **Assessment-mode side effects (#437).** While collapsed, macOS also hides
   Now Playing, Live Activities and the recording-indicator capsule, and ignores
   clicks on the clock. Two monitors soften this:
