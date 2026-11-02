@@ -1458,6 +1458,54 @@ final class MenuBarProfilesTests: XCTestCase {
         XCTAssertEqual(UserDefaultsMenuBarProfilesStore(defaults: defaults).profiles, profiles)
     }
 
+    func testAnOpenAppSwitchesAndQuittingItSwitchesBack() {
+        var profiles = MenuBarProfiles(profiles: ["Meetings": ["us.zoom"], "Home": ["com.b"]], active: "Home",
+                                       appTriggers: ["Meetings": "us.zoom.xos"])
+        profiles.appsChanged(running: ["com.apple.finder"])
+        XCTAssertEqual(profiles.active, "Home")
+        profiles.appsChanged(running: ["com.apple.finder", "us.zoom.xos"])
+        XCTAssertEqual(profiles.active, "Meetings")
+        XCTAssertEqual(profiles.appSwitched, "Meetings")
+        profiles.appsChanged(running: ["com.apple.finder"])
+        XCTAssertEqual(profiles.active, "Home")
+        XCTAssertNil(profiles.appSwitched)
+    }
+
+    func testAChoiceMadeWhileTheAppIsOpenStays() {
+        var profiles = MenuBarProfiles(profiles: ["Meetings": ["us.zoom"], "Home": ["com.b"]],
+                                       appTriggers: ["Meetings": "us.zoom.xos"])
+        profiles.appsChanged(running: ["us.zoom.xos"])
+        profiles.active = "Home"
+        profiles.appsChanged(running: ["us.zoom.xos", "com.other"])
+        XCTAssertEqual(profiles.active, "Home")
+        profiles.appsChanged(running: [])
+        XCTAssertEqual(profiles.active, "Home")
+    }
+
+    func testRenamingAndDeletingCarryTheAppTrigger() {
+        var profiles = MenuBarProfiles(profiles: ["Meetings": ["us.zoom"]], appTriggers: ["Meetings": "us.zoom.xos"])
+        profiles.appsChanged(running: ["us.zoom.xos"])
+        XCTAssertTrue(profiles.rename("Meetings", to: "Calls"))
+        XCTAssertEqual(profiles.appTriggers, ["Calls": "us.zoom.xos"])
+        XCTAssertEqual(profiles.appSwitched, "Calls")
+        profiles.delete("Calls")
+        XCTAssertTrue(profiles.appTriggers.isEmpty)
+        XCTAssertNil(profiles.appSwitched)
+        XCTAssertNil(profiles.active)
+    }
+
+    func testStoreRoundTripsAppTriggers() {
+        let suite = "MenuBarProfilesTests-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = UserDefaultsMenuBarProfilesStore(defaults: defaults)
+        let profiles = MenuBarProfiles(profiles: ["Meetings": ["us.zoom"]], active: "Meetings",
+                                       appTriggers: ["Meetings": "us.zoom.xos"], appSwitched: "Meetings",
+                                       beforeApp: .from(nil))
+        store.profiles = profiles
+        XCTAssertEqual(UserDefaultsMenuBarProfilesStore(defaults: defaults).profiles, profiles)
+    }
+
     func testAProfileDecidesWhatShowsButKeepsAlwaysHidden() {
         let layout = MenuBarLayout(sections: ["com.a": .visible, "com.b": .hidden, "com.c": .alwaysHidden, "com.new": .hidden])
         // com.c is in the profile, but moving it to Always Hidden wins.

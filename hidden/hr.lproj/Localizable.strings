@@ -219,3 +219,10 @@
 
 /* What "Use the full MenuBar on expanding" does (#143) */
 "While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses." = "Dok je proširen, Tuckaway dolazi u prvi plan pa izbornici trenutne aplikacije napuštaju traku izbornika, a ikone dobivaju cijelu širinu. Vraćaju se kad se sažme.";
+
+/* A profile used while an app is open */
+"Use While an App Is Open…" = "Koristi dok je aplikacija otvorena…";
+"Stop Following %@" = "Prestani pratiti %@";
+"While %@ is open" = "Dok je %@ otvoren";
+"Choose an app. While it's open, Tuckaway uses “%@”." = "Odaberite aplikaciju. Dok je otvorena, Tuckaway koristi „%@”.";
+"Choose" = "Odaberi";

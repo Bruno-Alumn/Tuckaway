@@ -91,6 +91,10 @@ takes one app out, **Schedule…** uses it between two times of day, and
 **Delete Profile…** removes it after asking. Each row
 lists the profile's apps, and its times if it has a schedule, under its name.
 
+**Use While an App Is Open…** picks an app; while it runs, Tuckaway uses
+that profile, and when it quits, goes back to the one you had. It follows the
+same rules as a schedule.
+
 A scheduled profile switches on when its time starts (or when the Mac wakes
 inside it) and back to the profile you were using when it ends. Picking another
 profile in between stays until the next time starts. A window that ends before

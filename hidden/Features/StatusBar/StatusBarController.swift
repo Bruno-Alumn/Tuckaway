@@ -210,6 +210,7 @@ class StatusBarController: MenuBarItemProvider {
         (menuBarEngine as? ProfileApplying)?.setProfile(profilesStore.profiles.activeApps)
         applyDisplayProfile()
         updateProfileSchedule()
+        applyAppTriggeredProfile()
         updateActiveAppIcon()
         updateActivityReveal()
         updateSpacers()
@@ -222,6 +223,8 @@ class StatusBarController: MenuBarItemProvider {
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleApplicationActivated), name: NSWorkspace.didActivateApplicationNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateAutoHide), name: .prefsChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(fitSpacersToState), name: NativeVisibilityEngine.stateDidChange, object: nil)
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(applyAppTriggeredProfile), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(applyAppTriggeredProfile), name: NSWorkspace.didTerminateApplicationNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateExpandIcon), name: .transparentExpandIconToggle, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleLegacyHideUnavailable), name: .legacyHideUnavailable, object: nil)
         if MenuBarEngineFactory.usesNativeVisibility {
@@ -1737,6 +1740,27 @@ extension StatusBarController {
         if profiles != before {
             applyProfiles(profiles)
         }
+    }
+
+    // "While an App Is Open": the running apps decide, checked on every launch
+    // and quit.
+    @objc private func applyAppTriggeredProfile() {
+        guard menuBarEngine is ProfileApplying else { return }
+        var profiles = profilesStore.profiles
+        guard !profiles.appTriggers.isEmpty || profiles.appSwitched != nil else { return }
+        let before = profiles
+        let running = Set(NSWorkspace.shared.runningApplications.filter { !$0.isTerminated }.compactMap(\.bundleIdentifier))
+        profiles.appsChanged(running: running)
+        if profiles != before {
+            applyProfiles(profiles)
+        }
+    }
+
+    func setAppTrigger(_ bundle: String?, forProfile name: String) {
+        var profiles = profilesStore.profiles
+        profiles.setAppTrigger(bundle, for: name)
+        applyProfiles(profiles)
+        applyAppTriggeredProfile()
     }
 
     func setSchedule(_ schedule: ProfileSchedule?, forProfile name: String) {

@@ -217,3 +217,10 @@
 
 /* What "Use the full MenuBar on expanding" does (#143) */
 "While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses." = "展开时,Tuckaway 会切换到前台,当前 App 的菜单会离开菜单栏,图标可使用整个宽度。收起后菜单会恢复。";
+
+/* A profile used while an app is open */
+"Use While an App Is Open…" = "在 App 打开时使用…";
+"Stop Following %@" = "停止跟随“%@”";
+"While %@ is open" = "“%@”打开时";
+"Choose an app. While it's open, Tuckaway uses “%@”." = "选择一个 App。它打开时,Tuckaway 会使用“%@”。";
+"Choose" = "选择";

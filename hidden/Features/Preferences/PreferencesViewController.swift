@@ -10,6 +10,7 @@ import Cocoa
 import Carbon
 import HotKey
 import SwiftUI
+import UniformTypeIdentifiers
 
 // The General tab. The storyboard scene only provides the (empty) view the
 // tab controller displays; the content is the SwiftUI settings view below.
@@ -237,6 +238,7 @@ final class GeneralSettingsModel: ObservableObject {
     @Published private(set) var profileShortcutTitles: [String: String] = [:]
     @Published private(set) var profileApps: [String: [String]] = [:]
     @Published private(set) var profileSchedules: [String: ProfileSchedule] = [:]
+    @Published private(set) var profileAppTriggers: [String: String] = [:]
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
     @Published private(set) var clockDropsDate = GeneralSettingsModel.readClockDropsDate()
 
@@ -259,6 +261,7 @@ final class GeneralSettingsModel: ObservableObject {
         profileNames = profiles.names
         profileApps = profiles.profiles
         profileSchedules = profiles.schedules
+        profileAppTriggers = profiles.appTriggers
         profileShortcutTitles = Preferences.profileShortcuts.mapValues(\.description)
     }
 
@@ -313,6 +316,22 @@ final class GeneralSettingsModel: ObservableObject {
         guard alert.runModal() == .alertFirstButtonReturn else { return }
         let schedule = enabled.state == .on ? ProfileSchedule(start: Self.minute(of: from), end: Self.minute(of: to)) : nil
         statusBarController?.setSchedule(schedule, forProfile: name)
+    }
+
+    // Picks the app whose being open switches to this profile.
+    func chooseTriggerApp(_ name: String) {
+        let panel = NSOpenPanel()
+        panel.message = String(format: "Choose an app. While it's open, Tuckaway uses “%@”.".localized, name)
+        panel.prompt = "Choose".localized
+        panel.allowedContentTypes = [.applicationBundle]
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        guard let bundle = Bundle(url: url)?.bundleIdentifier else { return NSSound.beep() }
+        statusBarController?.setAppTrigger(bundle, forProfile: name)
+    }
+
+    func clearTriggerApp(_ name: String) {
+        statusBarController?.setAppTrigger(nil, forProfile: name)
     }
 
     private static func timePicker(minute: Int) -> NSDatePicker {
@@ -754,6 +773,12 @@ struct GeneralSettingsView: View {
             Button("Rename…".localized) { model.renameProfile(name) }
             Button("Use Current Layout".localized) { model.updateProfileToCurrentLayout(name) }
             Button("Schedule…".localized) { model.scheduleProfile(name) }
+            Button("Use While an App Is Open…".localized) { model.chooseTriggerApp(name) }
+            if let bundle = model.profileAppTriggers[name] {
+                Button(String(format: "Stop Following %@".localized, GeneralSettingsModel.appName(bundle))) {
+                    model.clearTriggerApp(name)
+                }
+            }
             Menu("Remove App".localized) {
                 ForEach(model.profileApps[name] ?? [], id: \.self) { bundle in
                     Button(GeneralSettingsModel.appName(bundle)) { model.removeApp(bundle, fromProfile: name) }
@@ -784,8 +809,14 @@ struct GeneralSettingsView: View {
         } else {
             apps = ListFormatter.localizedString(byJoining: names)
         }
-        guard let schedule = model.profileSchedules[name] else { return apps }
-        return "\(GeneralSettingsModel.describe(schedule)) · \(apps)"
+        var parts: [String] = []
+        if let bundle = model.profileAppTriggers[name] {
+            parts.append(String(format: "While %@ is open".localized, GeneralSettingsModel.appName(bundle)))
+        }
+        if let schedule = model.profileSchedules[name] {
+            parts.append(GeneralSettingsModel.describe(schedule))
+        }
+        return (parts + [apps]).joined(separator: " · ")
     }
 
     private func shortcutRecorder(_ kind: ShortcutKind) -> some View {
