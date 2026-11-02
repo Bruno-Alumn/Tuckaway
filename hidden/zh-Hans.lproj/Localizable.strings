@@ -167,3 +167,4 @@
 "Tight" = "最窄";
 "Custom" = "自定";
 "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "更改菜单栏中所有图标之间的间距，而不仅是 Tuckaway 的。每个 App 会在下次打开时使用新间距；注销并重新登录即可全部应用。";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "按下配置文件的快捷键可切换到该配置文件，再按一次可返回到箭头。";

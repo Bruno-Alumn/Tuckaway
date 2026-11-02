@@ -169,3 +169,4 @@
 "Tight" = "Usko";
 "Custom" = "Prilagođeno";
 "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Mijenja razmak između svih ikona trake izbornika, ne samo Tuckawayjevih. Svaka aplikacija koristi novi razmak kad se sljedeći put otvori; odjavite se i ponovno prijavite da biste ga primijenili svugdje.";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Pritisnite prečac profila da biste se prebacili na njega, a ponovno ga pritisnite za povratak na strelicu.";

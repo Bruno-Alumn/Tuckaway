@@ -169,3 +169,4 @@
 "Tight" = "Serré";
 "Custom" = "Personnalisé";
 "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Modifie l’espace entre toutes les icônes de la barre des menus, pas seulement celles de Tuckaway. Chaque app utilise le nouvel espacement à sa prochaine ouverture ; déconnectez-vous puis reconnectez-vous pour l’appliquer partout.";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Appuyez sur le raccourci d’un profil pour l’activer, puis à nouveau pour revenir à la flèche.";

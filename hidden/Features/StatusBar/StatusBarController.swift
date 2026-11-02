@@ -1678,6 +1678,23 @@ extension StatusBarController {
         var profiles = profilesStore.profiles
         profiles.delete(name)
         applyProfiles(profiles)
+        // A later profile with the same name shouldn't inherit the shortcut.
+        var shortcuts = Preferences.profileShortcuts
+        if shortcuts.removeValue(forKey: name) != nil {
+            Preferences.profileShortcuts = shortcuts
+            (NSApp.delegate as? AppDelegate)?.registerProfileHotKeys()
+        }
+    }
+
+    // A profile's shortcut.
+    func toggleProfile(named name: String) {
+        guard menuBarEngine is ProfileApplying else { return }
+        var profiles = profilesStore.profiles
+        let before = profiles
+        profiles.toggle(name)
+        if profiles != before {
+            applyProfiles(profiles)
+        }
     }
 }
 

@@ -167,3 +167,4 @@
 "Tight" = "最小";
 "Custom" = "カスタム";
 "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Tuckawayだけでなく、メニューバーのすべてのアイコンの間隔を変更します。各アプリは次に開いたときに新しい間隔を使います。すべてに適用するには、ログアウトしてもう一度ログインしてください。";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "プロファイルのショートカットを押すとそのプロファイルに切り替わり、もう一度押すと矢印に戻ります。";

@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- **A shortcut per profile** (macOS 27), under Profiles in Settings › General: press it to switch to that profile, and again to go back to the arrow.
 - Install with Homebrew: `brew install --cask bruno-alumn/tuckaway/tuckaway`.
 - **Menu bar icon spacing** in Settings › General: Compact or Tight fits more icons in the menu bar, which helps on notched Macs. It applies to every app's icon; each app uses it the next time it opens.
 

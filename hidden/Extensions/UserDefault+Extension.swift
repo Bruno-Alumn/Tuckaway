@@ -13,6 +13,7 @@ extension UserDefaults {
         static let globalKey = "globalKey"
         static let presentationModeKey = "presentationModeKey"
         static let findHiddenIconKey = "findHiddenIconKey"
+        static let profileShortcuts = "profileShortcuts"
         static let numberOfSecondForAutoHide = "numberOfSecondForAutoHide"
         static let isAutoStart = "isAutoStart"
         static let isAutoHide = "isAutoHide"

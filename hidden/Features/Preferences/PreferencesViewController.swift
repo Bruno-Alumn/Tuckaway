@@ -38,6 +38,7 @@ class PreferencesViewController: NSViewController {
         model.shortcutTitle = Preferences.globalKey?.description
         model.presentationShortcutTitle = Preferences.presentationModeKey?.description
         model.findShortcutTitle = Preferences.findHiddenIconKey?.description
+        model.refreshProfiles()
 
         preferredContentSize = NSSize(width: 480, height: 560)
         let hostingView = NSHostingView(rootView: GeneralSettingsView(model: model))
@@ -52,6 +53,7 @@ class PreferencesViewController: NSViewController {
 
         NotificationCenter.default.addObserver(model, selector: #selector(GeneralSettingsModel.refresh), name: .prefsChanged, object: nil)
         NotificationCenter.default.addObserver(model, selector: #selector(GeneralSettingsModel.refresh), name: .accessibilityPermissionChanged, object: nil)
+        NotificationCenter.default.addObserver(model, selector: #selector(GeneralSettingsModel.refresh), name: .profileChanged, object: nil)
     }
 
     override func viewWillAppear() {
@@ -118,6 +120,10 @@ class PreferencesViewController: NSViewController {
             appDelegate.findHotKey = nil
             model.findShortcutTitle = nil
             Preferences.findHiddenIconKey = nil
+        case .profile(let name):
+            Preferences.profileShortcuts[name] = nil
+            appDelegate.registerProfileHotKeys()
+            model.refreshProfiles()
         }
     }
 
@@ -142,10 +148,7 @@ class PreferencesViewController: NSViewController {
         guard newGlobalKeybind.isValidGlobalShortcut else { return }
 
         // Two of Tuckaway's shortcuts on the same keys: only one would fire.
-        let others: [(ShortcutKind, GlobalKeybindPreferences?)] = [
-            (.toggle, Preferences.globalKey), (.presentation, Preferences.presentationModeKey), (.find, Preferences.findHiddenIconKey),
-        ]
-        if others.contains(where: { $0.0 != model.recordingKind && $0.1?.isSameCombo(as: newGlobalKeybind) == true }) {
+        if ShortcutKind.conflicts(newGlobalKeybind, recording: model.recordingKind, with: ShortcutKind.saved) {
             NSSound.beep()
             return
         }
@@ -170,6 +173,10 @@ class PreferencesViewController: NSViewController {
             Preferences.findHiddenIconKey = newGlobalKeybind
             model.findShortcutTitle = newGlobalKeybind.description
             appDelegate.findHotKey = HotKey(keyCombo: combo)
+        case .profile(let name):
+            Preferences.profileShortcuts[name] = newGlobalKeybind
+            appDelegate.registerProfileHotKeys()
+            model.refreshProfiles()
         }
     }
 
@@ -194,8 +201,25 @@ class PreferencesViewController: NSViewController {
 
 // Reads straight from Preferences, so a change made elsewhere (the context
 // menu's auto-collapse toggle, a failed login-item update) shows up on refresh.
-enum ShortcutKind {
+enum ShortcutKind: Equatable {
     case toggle, presentation, find
+    case profile(String)
+
+    // Every shortcut Tuckaway has saved, profiles' included.
+    static var saved: [(ShortcutKind, GlobalKeybindPreferences)] {
+        let fixed: [(ShortcutKind, GlobalKeybindPreferences?)] = [
+            (.toggle, Preferences.globalKey), (.presentation, Preferences.presentationModeKey), (.find, Preferences.findHiddenIconKey),
+        ]
+        return fixed.compactMap { kind, key in key.map { (kind, $0) } }
+            + Preferences.profileShortcuts.map { (.profile($0.key), $0.value) }
+    }
+
+    // Whether `shortcut` is already another one's keys. Re-recording the same
+    // shortcut onto its own keys is fine.
+    static func conflicts(_ shortcut: GlobalKeybindPreferences, recording: ShortcutKind,
+                          with saved: [(ShortcutKind, GlobalKeybindPreferences)]) -> Bool {
+        saved.contains { $0.0 != recording && $0.1.isSameCombo(as: shortcut) }
+    }
 }
 
 final class GeneralSettingsModel: ObservableObject {
@@ -208,6 +232,9 @@ final class GeneralSettingsModel: ObservableObject {
     @Published var shortcutTitle: String?
     @Published var presentationShortcutTitle: String?
     @Published var findShortcutTitle: String?
+    // Profile names in menu order, and each one's shortcut.
+    @Published private(set) var profileNames: [String] = []
+    @Published private(set) var profileShortcutTitles: [String: String] = [:]
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
 
     var onRecordShortcut: (ShortcutKind) -> Void = { _ in }
@@ -215,7 +242,13 @@ final class GeneralSettingsModel: ObservableObject {
 
     @objc func refresh() {
         isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
+        refreshProfiles()
         objectWillChange.send()
+    }
+
+    func refreshProfiles() {
+        profileNames = StatusBarController.supportsPresentationMode ? UserDefaultsMenuBarProfilesStore().profiles.names : []
+        profileShortcutTitles = Preferences.profileShortcuts.mapValues(\.description)
     }
 
     func binding(_ get: @escaping () -> Bool, _ set: @escaping (Bool) -> Void) -> Binding<Bool> {
@@ -370,6 +403,21 @@ struct GeneralSettingsView: View {
                 }
             }
 
+            if !model.profileNames.isEmpty {
+                Section {
+                    ForEach(model.profileNames, id: \.self) { name in
+                        LabeledContent { shortcutRecorder(.profile(name)) } label: { Text(verbatim: name) }
+                    }
+                } header: {
+                    Text(verbatim: Self.label("Profiles"))
+                } footer: {
+                    Text(verbatim: "Press a profile's shortcut to switch to it, and press it again to go back to the arrow.".localized)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
             Section(Self.label("Appearance")) {
                 Picker(Self.label("Expand icon"), selection: model.expandIconStyle) {
                     ForEach(ExpandIconStyle.allCases, id: \.self) { style in
@@ -483,6 +531,7 @@ struct GeneralSettingsView: View {
             case .toggle: return model.shortcutTitle
             case .presentation: return model.presentationShortcutTitle
             case .find: return model.findShortcutTitle
+            case .profile(let name): return model.profileShortcutTitles[name]
             }
         }()
         let isRecording = model.isRecordingShortcut && model.recordingKind == kind

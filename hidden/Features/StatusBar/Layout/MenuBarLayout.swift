@@ -368,6 +368,12 @@ struct MenuBarProfiles: Equatable {
         profiles[name] = apps.sorted()
     }
 
+    // A profile's shortcut: switches to it, or back to the arrow if it's active.
+    mutating func toggle(_ name: String) {
+        guard profiles[name] != nil else { return }
+        active = active == name ? nil : name
+    }
+
     mutating func delete(_ name: String) {
         if displayProfile == name { setDisplayProfile(nil) }
         profiles[name] = nil

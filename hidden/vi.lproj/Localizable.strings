@@ -167,3 +167,4 @@
 "Tight" = "Hẹp";
 "Custom" = "Tùy chỉnh";
 "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Thay đổi khoảng cách giữa tất cả biểu tượng trên thanh menu, không chỉ của Tuckaway. Mỗi ứng dụng dùng khoảng cách mới vào lần mở tiếp theo; đăng xuất rồi đăng nhập lại để áp dụng ở mọi nơi.";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Nhấn phím tắt của một hồ sơ để chuyển sang hồ sơ đó, và nhấn lại để quay về mũi tên.";
