@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.4.1 (2026-11-02)
 
 ### Added
 - On macOS 27, a newly installed app's menu bar icon no longer disappears straight away. macOS puts new icons on the hidden side, so Tuckaway keeps the icon showing and asks, under the arrow, whether to keep it visible. **Keep Visible** keeps that app showing wherever its icon sits, and Menu Bar Items lists it under Visible; drag it to Hidden there to change your mind. **Hide** hides it as usual. Apps that were already in your menu bar aren't asked about.
