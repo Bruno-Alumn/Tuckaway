@@ -101,6 +101,8 @@ class StatusBarController: MenuBarItemProvider {
     private var nativeMenuWatchTimer: Timer?
     // Fires at the start of every minute while any profile has a schedule.
     private var profileScheduleTimer: Timer?
+    private var activityRevealTimer: Timer?
+    private let activityReveal = ActivityRevealMonitor()
     private var hoverRowLeaveTimer: Timer?
     private let newAppPrompt = NewMenuBarAppPromptController()
     private let hiddenIconSearch = HiddenIconSearchController()
@@ -208,6 +210,7 @@ class StatusBarController: MenuBarItemProvider {
         applyDisplayProfile()
         updateProfileSchedule()
         updateActiveAppIcon()
+        updateActivityReveal()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
@@ -803,6 +806,33 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     // Tuckaway itself in front (Settings) keeps the previous app shown.
+    // Polls only while the option is on; each tick decides from the bar's
+    // state, so collapsing and expanding need no hooks of their own.
+    private func updateActivityReveal() {
+        guard menuBarEngine is ActivityRevealing else { return }
+        guard Preferences.revealIconsOnActivity else {
+            activityRevealTimer?.invalidate()
+            activityRevealTimer = nil
+            checkActivity()
+            return
+        }
+        guard activityRevealTimer == nil else { return }
+        let timer = Timer(timeInterval: ActivityRevealMonitor.pollInterval, repeats: true) { [weak self] _ in
+            self?.checkActivity()
+        }
+        timer.tolerance = 0.5
+        RunLoop.main.add(timer, forMode: .common)
+        activityRevealTimer = timer
+    }
+
+    private func checkActivity() {
+        guard let revealer = menuBarEngine as? ActivityRevealing else { return }
+        let watching = Preferences.revealIconsOnActivity && isCollapsed && !isPresenting ? revealer.appsWatchedForActivity : nil
+        activityReveal.tick(watching: watching) { [weak revealer] apps in
+            revealer?.setRevealedApps(apps)
+        }
+    }
+
     private func updateActiveAppIcon(_ app: NSRunningApplication? = NSWorkspace.shared.frontmostApplication) {
         guard let shower = menuBarEngine as? ActiveAppShowing else { return }
         guard Preferences.showActiveAppIcon else { return shower.setActiveApp(nil) }
@@ -813,6 +843,7 @@ class StatusBarController: MenuBarItemProvider {
 
     @objc func updateAutoHide() {
         updateActiveAppIcon()
+        updateActivityReveal()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()

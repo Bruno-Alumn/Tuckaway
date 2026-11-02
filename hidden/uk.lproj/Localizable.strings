@@ -203,3 +203,6 @@
 "Switch automatically" = "Перемикати автоматично";
 "From" = "З";
 "To" = "До";
+
+/* Revealing hidden icons that change (#229) */
+"Show hidden icons briefly when they change" = "Ненадовго показувати приховані іконки, коли вони змінюються";

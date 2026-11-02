@@ -203,3 +203,6 @@
 "Switch automatically" = "التبديل تلقائيًا";
 "From" = "من";
 "To" = "إلى";
+
+/* Revealing hidden icons that change (#229) */
+"Show hidden icons briefly when they change" = "إظهار الأيقونات المخفية لحظات عندما تتغير";

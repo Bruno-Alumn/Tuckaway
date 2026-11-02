@@ -164,6 +164,18 @@ enum Preferences {
         }
     }
 
+    // macOS 27: a hidden icon that changes (#229) shows for a few seconds.
+    static var revealIconsOnActivity: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: UserDefaults.Key.revealIconsOnActivity)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.revealIconsOnActivity)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     static var clickEmptyMenuBarToToggle: Bool {
         get {
             UserDefaults.standard.bool(forKey: UserDefaults.Key.clickEmptyMenuBarToToggle)

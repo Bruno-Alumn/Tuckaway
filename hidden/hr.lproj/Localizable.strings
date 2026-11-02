@@ -203,3 +203,6 @@
 "Switch automatically" = "Mijenjaj automatski";
 "From" = "Od";
 "To" = "Do";
+
+/* Revealing hidden icons that change (#229) */
+"Show hidden icons briefly when they change" = "Nakratko prikaži skrivene ikone kad se promijene";

@@ -4,6 +4,7 @@
 
 ### Added
 - **Edit profiles in Settings** (macOS 27): the ⋯ button next to each profile under Profiles in Settings › General renames it, replaces its apps with the ones visible now, removes an app, or deletes it. Each profile also lists its apps.
+- **Show hidden icons briefly when they change** (macOS 27, Settings › General, off by default, #229): while collapsed, a hidden icon whose width or text changes shows for 8 seconds. Put an icon in Always Hidden to keep it out of this. A change to an icon's picture alone isn't noticed.
 - **Profiles by time of day** (macOS 27): **Schedule…** in a profile's ⋯ menu in Settings switches to it between two times, overnight too, and back to the profile you were using when the time ends. A profile you pick in between stays.
 
 ### Fixed

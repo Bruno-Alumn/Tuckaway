@@ -201,3 +201,6 @@
 "Switch automatically" = "自动切换";
 "From" = "从";
 "To" = "到";
+
+/* Revealing hidden icons that change (#229) */
+"Show hidden icons briefly when they change" = "隐藏的图标变化时短暂显示";

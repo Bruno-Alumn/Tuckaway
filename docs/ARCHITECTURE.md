@@ -100,8 +100,14 @@ frontmost app's menus.
   goes through `effectiveLayout`: the sections read from the bar, then kept and
   undecided new apps, or instead the active profile's apps
   (`ProfileApplying.setProfile`, `MenuBarProfiles`), then the frontmost app if
-  "show the icon of the app you're using" is on (`ActiveAppShowing`); Always
-  Hidden wins over both. The collapse allow-list, `hiddenItems` (the separate
+  "show the icon of the app you're using" is on (`ActiveAppShowing`), and apps
+  whose hidden icons just changed (`ActivityRevealing`); Always Hidden wins
+  over all of them. `ActivityRevealMonitor` polls every 2 s while collapsed,
+  reading the hidden icons' width and title, description, help and value
+  through Accessibility off the main thread. A change reveals the app for 8 s.
+  An app's first read after collapsing or after a reveal is only a baseline,
+  so showing and hiding it can't set it off again. Picture-only changes aren't
+  visible to Accessibility. The collapse allow-list, `hiddenItems` (the separate
   bar and Find Hidden Icon), peeking and the fresh read on collapse all use it,
   so a change in one place reaches all of them. A change while a collapse is in
   flight is re-applied when it lands. Profiles can follow a display connection

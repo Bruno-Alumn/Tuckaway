@@ -201,3 +201,6 @@
 "Switch automatically" = "自動的に切り替える";
 "From" = "開始";
 "To" = "終了";
+
+/* Revealing hidden icons that change (#229) */
+"Show hidden icons briefly when they change" = "隠したアイコンが変化したときに一時的に表示";

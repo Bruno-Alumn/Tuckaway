@@ -201,3 +201,6 @@
 "Switch automatically" = "Tự động chuyển";
 "From" = "Từ";
 "To" = "Đến";
+
+/* Revealing hidden icons that change (#229) */
+"Show hidden icons briefly when they change" = "Hiện nhanh các biểu tượng bị ẩn khi chúng thay đổi";
