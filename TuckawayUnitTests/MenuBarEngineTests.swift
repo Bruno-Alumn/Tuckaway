@@ -1341,3 +1341,56 @@ final class ActiveAppIconTests: XCTestCase {
         XCTAssertEqual(visibility.requests.count, requests)
     }
 }
+
+final class MenuBarProfilesTests: XCTestCase {
+    func testSavingSwitchingAndDeleting() {
+        var profiles = MenuBarProfiles()
+        profiles.save("Work", apps: ["com.slack", "com.calendar"])
+        profiles.active = "Work"
+        XCTAssertEqual(profiles.activeApps, ["com.slack", "com.calendar"])
+        profiles.addToActive("com.zoom")
+        XCTAssertEqual(profiles.profiles["Work"], ["com.calendar", "com.slack", "com.zoom"])
+        profiles.delete("Work")
+        XCTAssertNil(profiles.active)
+        XCTAssertNil(profiles.activeApps)
+    }
+
+    func testAProfileDecidesWhatShowsButKeepsAlwaysHidden() {
+        let layout = MenuBarLayout(sections: ["com.a": .visible, "com.b": .hidden, "com.c": .alwaysHidden, "com.new": .hidden])
+        let applied = MenuBarProfiles.applied(["com.b"], alsoVisible: ["com.new"], to: layout)
+        XCTAssertEqual(applied.sections, ["com.a": .hidden, "com.b": .visible, "com.c": .alwaysHidden, "com.new": .visible])
+    }
+
+    func testStoreRoundTrips() {
+        let suite = "MenuBarProfilesTests-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = UserDefaultsMenuBarProfilesStore(defaults: defaults)
+        store.profiles = MenuBarProfiles(profiles: ["Quiet": ["com.a"]], active: "Quiet")
+        XCTAssertEqual(UserDefaultsMenuBarProfilesStore(defaults: defaults).profiles,
+                       MenuBarProfiles(profiles: ["Quiet": ["com.a"]], active: "Quiet"))
+    }
+
+    func testEngineShowsTheProfilesAppsWhileCollapsed() {
+        let items = FakeItems()
+        let inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        let visibility = FakeVisibility()
+        let engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                            captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                            ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                            itemFrame: { _ in separator },
+                                            displays: { [mainDisplay] },
+                                            isLTR: { true })
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+
+        engine.setProfile(["com.hidden"])
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden"])
+        XCTAssertEqual(engine.hiddenItems.map(\.bundleIdentifier), ["com.visible"], "what the profile hides is offered in the separate bar")
+        XCTAssertEqual(engine.visibleApps, ["com.hidden"])
+
+        engine.setProfile(nil)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+}

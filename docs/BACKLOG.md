@@ -68,9 +68,9 @@ before merging.
 - **#207 show the clock/date when collapsed.** The loudest single feature request.
 - **#229 activity-based reveal.** Needs a design that notices changing icon content
   without continuously expanding the real menu bar.
-- **Profiles.** Named sets of kept-visible apps (Work, Minimal…), switched from the
-  arrow's menu, by display or by Focus. On macOS 27 a profile is just an allow-list. Design draft with open
-  questions: [PROFILES.md](PROFILES.md).
+- **Profiles, next steps.** Switching by display or Focus, per-profile shortcuts, a
+  Settings section, and a note in Menu Bar Items while one is active
+  ([PROFILES.md](PROFILES.md)).
 - **Tighter icon spacing (opt-in).** `NSStatusItemSpacing` / `NSStatusItemSelectionPadding`
   in the global domain; apps pick it up after relaunching. Helps notched Macs.
 - **Always-hidden section rework.** Always-hidden items are only reliably hidden when
