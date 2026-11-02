@@ -1211,3 +1211,21 @@ final class NewAppSeparateBarTests: XCTestCase {
         XCTAssertEqual(engine.keptVisibleApps, [])
     }
 }
+
+final class HiddenIconSearchTests: XCTestCase {
+    private let names = ["Dropbox", "LuLu", "Kimi Code", "Tailscale", "Bartender Café"]
+
+    func testEmptyQueryKeepsEveryIconInOrder() {
+        XCTAssertEqual(HiddenIconSearch.matches(names, query: " ", name: { $0 }), names)
+    }
+
+    func testNamesStartingWithTheQueryComeFirst() {
+        XCTAssertEqual(HiddenIconSearch.matches(names, query: "l", name: { $0 }), ["LuLu", "Tailscale"])
+        XCTAssertEqual(HiddenIconSearch.matches(names, query: "code", name: { $0 }), ["Kimi Code"])
+    }
+
+    func testCaseAndAccentsDontMatter() {
+        XCTAssertEqual(HiddenIconSearch.matches(names, query: "CAFE", name: { $0 }), ["Bartender Café"])
+        XCTAssertEqual(HiddenIconSearch.matches(names, query: "zzz", name: { $0 }), [])
+    }
+}

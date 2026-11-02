@@ -37,6 +37,7 @@ class PreferencesViewController: NSViewController {
         model.onClearShortcut = { [weak self] kind in self?.unregister(kind) }
         model.shortcutTitle = Preferences.globalKey?.description
         model.presentationShortcutTitle = Preferences.presentationModeKey?.description
+        model.findShortcutTitle = Preferences.findHiddenIconKey?.description
 
         preferredContentSize = NSSize(width: 480, height: 560)
         let hostingView = NSHostingView(rootView: GeneralSettingsView(model: model))
@@ -113,6 +114,10 @@ class PreferencesViewController: NSViewController {
             appDelegate.presentationHotKey = nil
             model.presentationShortcutTitle = nil
             Preferences.presentationModeKey = nil
+        case .find:
+            appDelegate.findHotKey = nil
+            model.findShortcutTitle = nil
+            Preferences.findHiddenIconKey = nil
         }
     }
 
@@ -147,6 +152,10 @@ class PreferencesViewController: NSViewController {
             Preferences.presentationModeKey = newGlobalKeybind
             model.presentationShortcutTitle = newGlobalKeybind.description
             appDelegate.presentationHotKey = hotKey
+        case .find:
+            Preferences.findHiddenIconKey = newGlobalKeybind
+            model.findShortcutTitle = newGlobalKeybind.description
+            appDelegate.findHotKey = hotKey
         }
     }
 
@@ -172,7 +181,7 @@ class PreferencesViewController: NSViewController {
 // Reads straight from Preferences, so a change made elsewhere (the context
 // menu's auto-collapse toggle, a failed login-item update) shows up on refresh.
 enum ShortcutKind {
-    case toggle, presentation
+    case toggle, presentation, find
 }
 
 final class GeneralSettingsModel: ObservableObject {
@@ -184,6 +193,7 @@ final class GeneralSettingsModel: ObservableObject {
     @Published var recordingPreview = ""
     @Published var shortcutTitle: String?
     @Published var presentationShortcutTitle: String?
+    @Published var findShortcutTitle: String?
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
 
     var onRecordShortcut: (ShortcutKind) -> Void = { _ in }
@@ -322,6 +332,9 @@ struct GeneralSettingsView: View {
                 if StatusBarController.supportsPresentationMode {
                     LabeledContent(Self.label("Presentation Mode")) { shortcutRecorder(.presentation) }
                 }
+                if StatusBarController.supportsHiddenIconSearch {
+                    LabeledContent(Self.label("Find Hidden Icon")) { shortcutRecorder(.find) }
+                }
             }
 
             Section(Self.label("Appearance")) {
@@ -408,7 +421,13 @@ struct GeneralSettingsView: View {
     }
 
     private func shortcutRecorder(_ kind: ShortcutKind) -> some View {
-        let title = kind == .toggle ? model.shortcutTitle : model.presentationShortcutTitle
+        let title: String? = {
+            switch kind {
+            case .toggle: return model.shortcutTitle
+            case .presentation: return model.presentationShortcutTitle
+            case .find: return model.findShortcutTitle
+            }
+        }()
         let isRecording = model.isRecordingShortcut && model.recordingKind == kind
         return HStack(spacing: 6) {
             if title != nil && !isRecording {
