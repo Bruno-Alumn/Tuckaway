@@ -82,8 +82,8 @@ protocol PresentationModeProviding: AnyObject {
 // arrow's layout.
 protocol ProfileApplying: AnyObject {
     func setProfile(_ apps: Set<String>?)
-    // What the collapsed bar shows now, to save as a profile.
-    var visibleApps: [String] { get }
+    // What the collapsed bar would show now, to save as a profile.
+    func readVisibleApps(completion: @escaping ([String]?) -> Void)
 }
 
 // "Show the icon of the app you're using" (macOS 27).

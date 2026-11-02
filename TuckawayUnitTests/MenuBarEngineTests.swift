@@ -1352,6 +1352,8 @@ final class MenuBarProfilesTests: XCTestCase {
         XCTAssertEqual(profiles.activeApps, ["com.slack", "com.calendar"])
         profiles.addToActive("com.zoom")
         XCTAssertEqual(profiles.profiles["Work"], ["com.calendar", "com.slack", "com.zoom"])
+        profiles.removeFromActive("com.slack")
+        XCTAssertEqual(profiles.profiles["Work"], ["com.calendar", "com.zoom"])
         profiles.delete("Work")
         XCTAssertNil(profiles.active)
         XCTAssertNil(profiles.activeApps)
@@ -1359,7 +1361,8 @@ final class MenuBarProfilesTests: XCTestCase {
 
     func testAProfileDecidesWhatShowsButKeepsAlwaysHidden() {
         let layout = MenuBarLayout(sections: ["com.a": .visible, "com.b": .hidden, "com.c": .alwaysHidden, "com.new": .hidden])
-        let applied = MenuBarProfiles.applied(["com.b"], alsoVisible: ["com.new"], to: layout)
+        // com.c is in the profile, but moving it to Always Hidden wins.
+        let applied = MenuBarProfiles.applied(["com.b", "com.c"], alsoVisible: ["com.new"], to: layout)
         XCTAssertEqual(applied.sections, ["com.a": .hidden, "com.b": .visible, "com.c": .alwaysHidden, "com.new": .visible])
     }
 
@@ -1390,7 +1393,9 @@ final class MenuBarProfilesTests: XCTestCase {
         engine.setProfile(["com.hidden"])
         XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden"])
         XCTAssertEqual(engine.hiddenItems.map(\.bundleIdentifier), ["com.visible"], "what the profile hides is offered in the separate bar")
-        XCTAssertEqual(engine.visibleApps, ["com.hidden"])
+        var saved: [String]?
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertEqual(saved, ["com.hidden"])
 
         engine.setProfile(nil)
         XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
@@ -1439,5 +1444,52 @@ final class FreshReadKeepsChoicesTests: XCTestCase {
         XCTAssertEqual(visibility.requests.count, collapse + 1, "nothing new while the collapse is in flight")
         visibility.succeed(collapse)
         XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden", "com.visible"])
+    }
+}
+
+final class SavingProfilesTests: XCTestCase {
+    private var items: FakeItems!
+    private var inventory: FakeInventory!
+    private var visibility: FakeVisibility!
+    private var engine: NativeVisibilityEngine!
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                        captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                        ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                        itemFrame: { _ in separator },
+                                        displays: { [mainDisplay] },
+                                        isLTR: { true })
+    }
+
+    // Before any read there used to be nothing to save, which made a profile
+    // that hid every icon; and an expanded bar may have changed since.
+    func testSavingReadsTheBarAsItIsNow() {
+        var saved: [String]?
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertEqual(saved, ["com.visible"])
+
+        inventory.items = [item("com.hidden", x: 1350), item("com.visible", x: 1400)]
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertEqual(saved, ["com.hidden", "com.visible"], "moved right of the arrow since the last read")
+    }
+
+    func testTheAppInFrontIsntSaved() {
+        engine.setActiveApp("com.hidden")
+        var saved: [String]?
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertEqual(saved, ["com.visible"])
+    }
+
+    func testNothingVisibleSavesNothing() {
+        inventory.items = [item("com.hidden", x: 1100)]
+        var saved: [String]? = ["placeholder"]
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertNil(saved)
     }
 }

@@ -349,6 +349,12 @@ struct MenuBarProfiles: Equatable {
         if active == name { active = nil }
     }
 
+    // Hiding or un-keeping an app takes it out of the active profile too.
+    mutating func removeFromActive(_ bundle: String) {
+        guard let active, let apps = profiles[active] else { return }
+        profiles[active] = apps.filter { $0 != bundle }
+    }
+
     // A kept app joins the active profile too, or keeping it would do nothing.
     mutating func addToActive(_ bundle: String) {
         guard let active, var apps = profiles[active], !apps.contains(bundle) else { return }
@@ -360,12 +366,8 @@ struct MenuBarProfiles: Equatable {
     // visible, every other app is hidden, and always-hidden apps stay so.
     static func applied(_ apps: Set<String>, alsoVisible: Set<String>, to layout: MenuBarLayout) -> MenuBarLayout {
         var layout = layout
-        for (bundle, section) in layout.sections {
-            if apps.contains(bundle) || alsoVisible.contains(bundle) {
-                layout.sections[bundle] = .visible
-            } else if section != .alwaysHidden {
-                layout.sections[bundle] = .hidden
-            }
+        for (bundle, section) in layout.sections where section != .alwaysHidden {
+            layout.sections[bundle] = apps.contains(bundle) || alsoVisible.contains(bundle) ? .visible : .hidden
         }
         return layout
     }
