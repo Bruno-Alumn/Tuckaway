@@ -341,6 +341,11 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     @objc private func handleApplicationActivated(_ notification: Notification) {
+        let activated = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+        // Tuckaway coming forward (Settings) keeps the previous app's icon.
+        if activated?.bundleIdentifier != Bundle.main.bundleIdentifier {
+            updateActiveAppIcon(activated)
+        }
         // Many menu-bar apps activate themselves when their icon is clicked; the
         // pointer is still in the menu bar then, and collapsing would hide the
         // icon whose menu or popover just opened.
@@ -784,7 +789,14 @@ class StatusBarController: MenuBarItemProvider {
         return menu
     }
 
+    private func updateActiveAppIcon(_ app: NSRunningApplication? = NSWorkspace.shared.frontmostApplication) {
+        guard let shower = menuBarEngine as? ActiveAppShowing else { return }
+        let bundle = app?.bundleIdentifier == Bundle.main.bundleIdentifier ? nil : app?.bundleIdentifier
+        shower.setActiveApp(Preferences.showActiveAppIcon ? bundle : nil)
+    }
+
     @objc func updateAutoHide() {
+        updateActiveAppIcon()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()

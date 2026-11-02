@@ -21,6 +21,7 @@ enum SettingsBackup {
         "hoverToExpand", "clickEmptyMenuBarToToggle", "expandWhenExternalDisplayConnected",
         "notchOverflowEnabled", "useTransparentExpandIconEnabled", "expandIconStyle",
         "automaticallyChecksForUpdates", "isAutoStart", "keptVisibleMenuBarApps",
+        "showActiveAppIcon",
     ]
 
     enum ImportError: Error, Equatable {
