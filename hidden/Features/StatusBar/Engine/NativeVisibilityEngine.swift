@@ -199,6 +199,8 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     func expand() {
         state = .expanded
         isPeeking = false
+        // Presentation mode asked for during a collapse this expand cancels.
+        applyPendingPresentation()
         if isPresenting { return }
         applyExpandedPresentation()
     }
@@ -288,10 +290,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // The user chose for a new app, or moved a kept one in Menu Bar Items.
     // While collapsed the restriction is redone right away.
     func resolveNewApp(_ bundle: String, keepVisible: Bool) {
-        newApps.tracker.resolve(bundle, keepVisible: keepVisible)
-        refreshHiddenItems()
-        guard state == .collapsed, !isPeeking, !isPresenting, let layout = effectiveLayout else { return }
-        activate(allowing: layout.bundles(in: [.visible])) { _ in }
+        changeVisibleApps { newApps.tracker.resolve(bundle, keepVisible: keepVisible) }
     }
 
     // The sections as arranged, with kept apps and new ones the user hasn't
@@ -319,6 +318,8 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
 
     private var activeApp: String?
     private var visibleAppsChangedDuringCollapse = false
+    private var activationsInFlight = 0
+    private var isPressingClock = false
     // The active profile's apps; nil when the arrow's layout decides.
     private var profileApps: Set<String>?
 
@@ -337,7 +338,8 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             let apps = self?.effectiveLayout(includingActiveApp: false)?.bundles(in: [.visible])
             completion(apps?.isEmpty == false ? apps : nil)
         }
-        guard assertion == nil else { return finish() }
+        // A fresh read would supersede an activation or clock press in flight.
+        guard assertion == nil, activationsInFlight == 0, !isPressingClock else { return finish() }
         withLayout { _ in finish() }
     }
 
@@ -398,7 +400,18 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             state = .expanded
             setSeparatorsVisible(true)
             NSLog("NativeVisibility: released restriction while menu-bar layout is changing")
+        } else {
+            // Nothing held, but a read, an activation or a clock press may be in
+            // flight with the old layout; drop it. Collapsed with nothing held
+            // (a clock press) or mid-collapse, the bar is effectively expanded.
+            generation += 1
+            isPressingClock = false
+            if state == .calibrating || (state == .collapsed && !captureActivity.isActive) {
+                state = .expanded
+                setSeparatorsVisible(true)
+            }
         }
+        applyPendingPresentation()
     }
 
     // Expanded shows the hidden section; the always-hidden section stays hidden
@@ -486,17 +499,24 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         }
         let allowed = (ownBundleIdentifier.map { [$0] } ?? []) + bundles
         var answered = false
+        activationsInFlight += 1
         afterActivationTimeout { [weak self] in
-            guard let self = self, !answered, generation == self.generation else { return }
+            guard let self = self, !answered else { return }
+            answered = true
+            self.activationsInFlight -= 1
+            guard generation == self.generation else { return }
             NSLog("NativeVisibility: activation timed out")
-            // A late answer is now stale and is invalidated when it arrives.
-            self.generation += 1
+            // A late answer is now stale (failing bumps the generation) and is
+            // invalidated when it arrives.
+            self.didFailToActivate()
             completion(false)
         }
         visibility.activate(allowedSystemItems: Self.systemItemsToKeep,
                             allowedBundleIdentifiers: allowed) { [weak self] result in
+            let timedOut = answered
             answered = true
-            guard let self = self, generation == self.generation else {
+            if !timedOut { self?.activationsInFlight -= 1 }
+            guard let self = self, !timedOut, generation == self.generation else {
                 if case .success(let stale) = result { stale.invalidate() }
                 return
             }
@@ -515,11 +535,25 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
                 self.watchClock()
                 completion(true)
             case .failure(let error):
-                // Fail open: never leave icons hidden after an error.
                 NSLog("NativeVisibility: activation failed: \(error.localizedDescription)")
-                self.releaseAssertion()
+                self.didFailToActivate()
                 completion(false)
             }
+        }
+    }
+
+    // Fail open: never leave icons hidden after an error or a timeout, and never
+    // keep an older restriction that no longer matches what was asked. A
+    // collapse's own completion sets its state; other callers (peeks, profile
+    // and app changes, the clock) leave the bar collapsed in name only, so it
+    // reads as expanded and the next collapse hides again.
+    private func didFailToActivate() {
+        releaseAssertion()
+        isPresenting = false
+        isPeeking = false
+        if state == .collapsed {
+            state = .expanded
+            setSeparatorsVisible(true)
         }
     }
 
@@ -567,7 +601,9 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         let bundles = assertionBundles
         releaseAssertion()
         let generation = self.generation
+        isPressingClock = true
         clock.press(at: location) { [weak self] in
+            self?.isPressingClock = false
             // An expand or collapse meanwhile already applied what the user wants.
             guard let self = self, generation == self.generation else { return }
             self.activate(allowing: bundles) { _ in }
