@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.6.0 (2026-11-02)
 
 ### Added
 - **Presentation Mode** (macOS 27): hides every app's menu bar icon, including the ones you keep visible, so screen shares and recordings show a clean menu bar. macOS's own items (clock, Wi-Fi, battery, Control Center) and Tuckaway's arrow stay. Turn it on from the arrow's menu or with a shortcut you set in Settings › General; click the arrow to turn it off.
