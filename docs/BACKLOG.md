@@ -71,8 +71,8 @@ before merging.
   without continuously expanding the real menu bar.
 - **Profiles, next steps.** Switching by display or Focus, per-profile shortcuts, a
   Settings section ([PROFILES.md](PROFILES.md)).
-- **Tighter icon spacing (opt-in).** `NSStatusItemSpacing` / `NSStatusItemSelectionPadding`
-  in the global domain; apps pick it up after relaunching. Helps notched Macs.
+- **Icon spacing, next step.** An optional "restart menu bar apps" button so the new
+  spacing applies without logging out (the setting itself shipped in Settings › General).
 - **Always-hidden section rework.** Always-hidden items are only reliably hidden when
   "hide separators" is on (see the note in [MANUAL.md](MANUAL.md)). Decouple the two
   and add a way to recover a stuck off-screen item. Reproduce #242 (permanent icon

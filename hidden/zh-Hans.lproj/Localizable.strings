@@ -159,3 +159,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "折叠时显示的内容由配置文件“%@”决定。这些列表用于“使用箭头”。";
 "When a Display Is Connected" = "连接显示器时";
 "Don’t Switch" = "不切换";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "菜单栏图标间距";
+"Default" = "默认";
+"Compact" = "紧凑";
+"Tight" = "最窄";
+"Custom" = "自定";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "更改菜单栏中所有图标之间的间距，而不仅是 Tuckaway 的。每个 App 会在下次打开时使用新间距；注销并重新登录即可全部应用。";

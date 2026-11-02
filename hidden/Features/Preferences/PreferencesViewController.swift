@@ -296,6 +296,18 @@ final class GeneralSettingsModel: ObservableObject {
         })
     }
 
+    // Read from the system each time, so a change made in Terminal shows up.
+    var iconSpacing: Binding<MenuBarItemSpacing> {
+        return Binding(get: { MenuBarItemSpacing.current() }, set: { [weak self] level in
+            MenuBarItemSpacing.apply(level)
+            self?.objectWillChange.send()
+        })
+    }
+
+    var iconSpacingChoices: [MenuBarItemSpacing] {
+        MenuBarItemSpacing.current() == .custom ? MenuBarItemSpacing.choices + [.custom] : MenuBarItemSpacing.choices
+    }
+
     var automaticallyChecksForUpdates: Binding<Bool> {
         return binding({ Preferences.automaticallyChecksForUpdates }) { Preferences.automaticallyChecksForUpdates = $0 }
     }
@@ -368,6 +380,21 @@ struct GeneralSettingsView: View {
                 settingsToggle("Use the full MenuBar on expanding", isOn: model.useFullMenuBar)
             }
 
+            if MenuBarItemSpacing.isSupported {
+                Section {
+                    Picker(Self.label("Menu bar icon spacing"), selection: model.iconSpacing) {
+                        ForEach(model.iconSpacingChoices, id: \.self) { level in
+                            Text(verbatim: Self.title(of: level)).tag(level)
+                        }
+                    }
+                } footer: {
+                    Text(verbatim: "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere.".localized)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
             Section {
                 settingsToggle("Enable always hidden section", isOn: model.alwaysHiddenSection)
                 if NotchOverflowController.hasNotch {
@@ -402,6 +429,15 @@ struct GeneralSettingsView: View {
             }
         }
         .formStyle(.grouped)
+    }
+
+    private static func title(of level: MenuBarItemSpacing) -> String {
+        switch level {
+        case .standard: return "Default".localized
+        case .compact: return "Compact".localized
+        case .tight: return "Tight".localized
+        case .custom: return "Custom".localized
+        }
     }
 
     private func settingsToggle(_ key: String, isOn: Binding<Bool>) -> some View {
