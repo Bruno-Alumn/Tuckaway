@@ -51,9 +51,23 @@ styles, #310), and #153 (Settings no longer opens at every launch by default).
 - **#154 "shown when inactive" group:** on macOS 27 it would mean holding a
   restriction while expanded, which brings assessment mode's side effects
   (Now Playing, Live Activities) into the expanded bar too.
-- **#148, #100, #142, #156, #369, #230, #380, #375, #28:** not triaged
-  against Tuckaway yet. (#104 is what "Expand across full menu bar" does, and
-  #143, that its label was unclear, is answered by the caption under it.)
+- **#104 and #143:** #104 is what "Expand across full menu bar" already does,
+  and #143 (its label was unclear) is answered by the caption under it.
+- **Separator engine only (macOS 13–26), not reproducible on 27:** #156 and
+  #369 (icons drifting back into a hidden section), #230 (icons the separator
+  doesn't push), #375 (WindowServer crashes on 26.5, like #175), and #148 (a
+  second bar so system icons at the end stay visible; macOS 27 hides by app,
+  not position). Each needs a 13–26 Mac to reproduce.
+- **#142:** "Expand across full menu bar" while an app is full screen hides
+  the menu bar. Needs testing in a full-screen Space.
+- **#100 (more sections with their own shortcuts):** profiles (shortcut each)
+  cover switching between sets of visible apps on macOS 27; extra positional
+  sections would only apply to the separator engine.
+- **#380 (notch hides icons on a MacBook Air):** Show Notch Items / Notch
+  Overflow lists icons the notch covers; whether it helps this report's setup
+  is unconfirmed.
+- **#28 (show an app's icon after it updates):** on macOS 27 an app whose icon
+  is new is asked about; an update to a known app isn't noticed.
 
 ## External or OS blockers
 
