@@ -139,3 +139,14 @@
 "No matches" = "Sonuç yok";
 "An update is being installed" = "Bir güncelleme yükleniyor";
 "Tuckaway will relaunch when it’s done." = "Tuckaway işlem bitince yeniden başlatılacak.";
+"Export Settings…" = "Ayarları Dışa Aktar…";
+"Import Settings…" = "Ayarları İçe Aktar…";
+"Couldn’t export settings" = "Ayarlar dışa aktarılamadı";
+"Couldn’t import settings" = "Ayarlar içe aktarılamadı";
+"This file comes from a newer version of Tuckaway. Update Tuckaway, then try again." = "Bu dosya Tuckaway'in daha yeni bir sürümünden. Tuckaway'i güncelleyip yeniden deneyin.";
+"This file isn’t a Tuckaway settings file." = "Bu dosya bir Tuckaway ayar dosyası değil.";
+"Replace your settings with the imported ones?" = "Ayarlarınız içe aktarılanlarla değiştirilsin mi?";
+"Import" = "İçe Aktar";
+"Settings imported" = "Ayarlar içe aktarıldı";
+"Quit and reopen Tuckaway to apply them." = "Uygulamak için Tuckaway'den çıkıp yeniden açın.";
+"Tuckaway will relaunch to apply them." = "Tuckaway bunları uygulamak için yeniden başlatılacak.";

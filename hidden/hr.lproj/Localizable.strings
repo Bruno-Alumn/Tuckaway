@@ -139,3 +139,14 @@
 "No matches" = "Nema rezultata";
 "An update is being installed" = "Instalira se ažuriranje";
 "Tuckaway will relaunch when it’s done." = "Tuckaway će se ponovno pokrenuti kad završi.";
+"Export Settings…" = "Izvezi postavke…";
+"Import Settings…" = "Uvezi postavke…";
+"Couldn’t export settings" = "Postavke nije moguće izvesti";
+"Couldn’t import settings" = "Postavke nije moguće uvesti";
+"This file comes from a newer version of Tuckaway. Update Tuckaway, then try again." = "Ova datoteka potječe iz novije verzije Tuckawaya. Ažuriraj Tuckaway i pokušaj ponovno.";
+"This file isn’t a Tuckaway settings file." = "Ova datoteka nije datoteka postavki Tuckawaya.";
+"Replace your settings with the imported ones?" = "Zamijeniti tvoje postavke uvezenima?";
+"Import" = "Uvezi";
+"Settings imported" = "Postavke su uvezene";
+"Quit and reopen Tuckaway to apply them." = "Zatvori i ponovno otvori Tuckaway da se primijene.";
+"Tuckaway will relaunch to apply them." = "Tuckaway će se ponovno pokrenuti da ih primijeni.";

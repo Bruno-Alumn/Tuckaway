@@ -72,7 +72,6 @@ before merging.
   questions: [PROFILES.md](PROFILES.md).
 - **Tighter icon spacing (opt-in).** `NSStatusItemSpacing` / `NSStatusItemSelectionPadding`
   in the global domain; apps pick it up after relaunching. Helps notched Macs.
-- **Back up and restore the layout** (kept apps, sections, shortcuts).
 - **Always-hidden section rework.** Always-hidden items are only reliably hidden when
   "hide separators" is on (see the note in [MANUAL.md](MANUAL.md)). Decouple the two
   and add a way to recover a stuck off-screen item. Reproduce #242 (permanent icon

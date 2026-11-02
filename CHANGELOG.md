@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- **Export Settings… / Import Settings…** in Settings › About save Tuckaway's options, shortcuts and kept-visible apps to a file and load them on another Mac or after a clean install. Importing asks first, then relaunches Tuckaway to apply them. Icon positions belong to macOS and aren't included.
 - **Find Hidden Icon** (macOS 27): from the arrow's menu or a shortcut you set in Settings › General, a small search lists your hidden icons by name. Type to filter, use the arrow keys, and press Return to open that icon's menu; it hides again when the menu closes. It needs no Screen Recording.
 
 ### Fixed
