@@ -96,6 +96,9 @@ frontmost app's menus.
   from its frame relative to the separators, per display.
 - **Granularity is per app.** The restriction takes bundle identifiers, so an
   app's icons hide or show together (#427).
+- **Presentation mode.** `PresentationModeProviding.setPresenting(true)` holds a
+  restriction that allows no app but Tuckaway; collapse and expand only update
+  `state` meanwhile, and ending it re-applies that state.
 - **New apps.** macOS puts a new app's icon on the hidden side.
   `NewMenuBarAppTracker` (persisted by `UserDefaultsNewMenuBarAppStore`)
   remembers every app seen; the first read only records what is there. A new

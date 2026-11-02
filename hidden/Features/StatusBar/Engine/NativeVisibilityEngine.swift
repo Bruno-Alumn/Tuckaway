@@ -49,7 +49,7 @@ import AppKit
 //   Notification Center cannot open from it (#410). A click on the clock lifts
 //   the restriction for a moment and presses it (MenuBarClock); hidden icons
 //   can flash while it is lifted.
-final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenuBarAppReporting {
+final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenuBarAppReporting, PresentationModeProviding {
     // System item identifiers to keep visible. Unknown identifiers are ignored,
     // so the range covers items a given Mac does not have. On 27.0, 0-63 resolves
     // to battery, bluetooth, clock, displays, keyboard, volume, wifi,
@@ -78,6 +78,10 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // only the always-hidden icons, further out, stay hidden.
     private(set) var hiddenItems: [MenuBarInventoryItem] = []
     private(set) var isPeeking = false
+    // Presentation mode: no app's icon shows but Tuckaway's own, whatever the
+    // sections say. Collapsing and expanding meanwhile only update `state`,
+    // which is applied when presentation mode ends.
+    private(set) var isPresenting = false
 
     private var assertion: NativeVisibilityAssertion?
     // What the held assertion allows besides Hidden Bar, and the generation it was
@@ -129,6 +133,10 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     }
 
     func collapse(completion: @escaping (CollapseResult) -> Void) {
+        if isPresenting {
+            state = .collapsed
+            return completion(.collapsed)
+        }
         switch state {
         case .collapsed:
             endPeek()
@@ -178,6 +186,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     func expand() {
         state = .expanded
         isPeeking = false
+        if isPresenting { return }
         applyExpandedPresentation()
     }
 
@@ -185,7 +194,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // capture it or to click one of its icons. The cached layout still holds:
     // sections only change by ⌘-dragging, which needs an expanded bar.
     func peekHiddenSection(completion: @escaping (Bool) -> Void) {
-        guard state == .collapsed, let layout = effectiveLayout else { return completion(false) }
+        guard state == .collapsed, !isPresenting, let layout = effectiveLayout else { return completion(false) }
         isPeeking = true
         activate(allowing: layout.bundles(in: [.visible, .hidden]), completion: completion)
     }
@@ -193,8 +202,32 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     func endPeek() {
         guard isPeeking else { return }
         isPeeking = false
-        guard state == .collapsed, let layout = effectiveLayout else { return }
+        guard state == .collapsed, !isPresenting, let layout = effectiveLayout else { return }
         activate(allowing: layout.bundles(in: [.visible])) { _ in }
+    }
+
+    func setPresenting(_ presenting: Bool) {
+        guard presenting != isPresenting else { return }
+        isPresenting = presenting
+        isPeeking = false
+        if presenting {
+            guard visibility.isAvailable else { return }
+            setSeparatorsVisible(false)
+            activate(allowing: []) { _ in }
+        } else {
+            switch state {
+            case .collapsed:
+                guard let layout = effectiveLayout else {
+                    state = .expanded
+                    return revealAll()
+                }
+                activate(allowing: layout.bundles(in: [.visible])) { _ in }
+            case .expanded:
+                applyExpandedPresentation()
+            case .calibrating, .unavailable:
+                revealAll()
+            }
+        }
     }
 
     var keptVisibleApps: Set<String> {
@@ -208,7 +241,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         if keepVisible {
             hiddenItems.removeAll { $0.bundleIdentifier == bundle }
         }
-        guard state == .collapsed, !isPeeking, let layout = effectiveLayout else { return }
+        guard state == .collapsed, !isPeeking, !isPresenting, let layout = effectiveLayout else { return }
         activate(allowing: layout.bundles(in: [.visible])) { _ in }
     }
 
@@ -221,6 +254,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     func updateAlwaysHiddenSection(enabled: Bool, separatorHidden: Bool) {
         alwaysHiddenEnabled = enabled
         alwaysHiddenSeparatorHidden = separatorHidden
+        if isPresenting { return setSeparatorsVisible(false) }
         switch state {
         case .collapsed:
             // A separator created while collapsed arrives visible.
@@ -447,6 +481,9 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // Re-applies the current state from a fresh read of the bar, which nothing
     // restricts at this point. A failure leaves the bar whole (fail open).
     private func restorePresentation() {
+        if isPresenting {
+            return activate(allowing: []) { _ in }
+        }
         switch state {
         case .collapsed:
             withLayout { [weak self] layout in
