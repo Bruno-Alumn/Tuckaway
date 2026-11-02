@@ -476,8 +476,9 @@ final class NativeVisibilityEngineTests: XCTestCase {
         visibility.succeed(visibility.requests.count - 1)
         let snapshotsBefore = inventory.snapshots
 
-        // Hidden items would report stale positions now; the cached layout is used.
-        inventory.items = [item("com.visible", x: 100)]
+        // Hidden items would report stale positions now: the always-hidden app
+        // isn't re-read (only the shown ones are), and there's no full read.
+        inventory.items = [item("com.always", x: 1450), item("com.hidden", x: 1100), item("com.visible", x: 1400)]
         engine.collapse { _ in }
         XCTAssertEqual(inventory.snapshots, snapshotsBefore)
         XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
@@ -1662,5 +1663,51 @@ final class EngineInteractionTests: XCTestCase {
         XCTAssertNotNil(saved)
         let assertion = visibility.succeed(expanding)
         XCTAssertFalse(assertion.isInvalidated, "the expanded restriction still lands")
+    }
+}
+
+final class HiddenSeparatorsRereadTests: XCTestCase {
+    private var items: FakeItems!
+    private var inventory: FakeInventory!
+    private var visibility: FakeVisibility!
+    private var engine: NativeVisibilityEngine!
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        inventory = FakeInventory()
+        inventory.items = [item("com.always", x: 900), item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        let items = self.items!
+        engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                        captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                        ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                        itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
+                                        displays: { [mainDisplay] },
+                                        isLTR: { true })
+        // Expanded with "hide separators": a restriction is held from the start.
+        engine.updateAlwaysHiddenSection(enabled: true, separatorHidden: true)
+        visibility.succeed(visibility.requests.count - 1)
+    }
+
+    func testCollapseUsesWhereTheShownIconsAreNow() {
+        // ⌘-dragged right of the arrow while expanded.
+        inventory.items = [item("com.always", x: 900), item("com.hidden", x: 1350), item("com.visible", x: 1400)]
+        engine.collapse { _ in }
+        XCTAssertEqual(inventory.partialSnapshots, 1)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden", "com.visible"])
+    }
+
+    func testAlwaysHiddenAppsKeepTheirSection() {
+        // Hidden by the held restriction, so its frame is stale; it isn't re-read.
+        inventory.items = [item("com.always", x: 1450), item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        engine.collapse { _ in }
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+
+    func testAnUnresolvableReadKeepsTheCachedLayout() {
+        inventory.items = [item("com.hidden", x: 5000), item("com.visible", x: 1400)]
+        engine.collapse { _ in }
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
     }
 }
