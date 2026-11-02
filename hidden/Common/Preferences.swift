@@ -11,20 +11,29 @@ import Foundation
 enum Preferences {
 
     static var globalKey: GlobalKeybindPreferences? {
-        get {
-            guard let data = UserDefaults.standard.value(forKey: UserDefaults.Key.globalKey) as? Data,
-                  let shortcut = try? JSONDecoder().decode(GlobalKeybindPreferences.self, from: data),
-                  shortcut.isValidGlobalShortcut
-            else { return nil }
-            return shortcut
-        }
+        get { shortcut(forKey: UserDefaults.Key.globalKey) }
+        set { setShortcut(newValue, forKey: UserDefaults.Key.globalKey) }
+    }
 
-        set {
-            guard let data = try? JSONEncoder().encode(newValue) else { return }
-            UserDefaults.standard.set(data, forKey: UserDefaults.Key.globalKey)
+    // Turns presentation mode on and off (macOS 27).
+    static var presentationModeKey: GlobalKeybindPreferences? {
+        get { shortcut(forKey: UserDefaults.Key.presentationModeKey) }
+        set { setShortcut(newValue, forKey: UserDefaults.Key.presentationModeKey) }
+    }
 
-            NotificationCenter.default.post(Notification(name: .prefsChanged))
-        }
+    private static func shortcut(forKey key: String) -> GlobalKeybindPreferences? {
+        guard let data = UserDefaults.standard.value(forKey: key) as? Data,
+              let shortcut = try? JSONDecoder().decode(GlobalKeybindPreferences.self, from: data),
+              shortcut.isValidGlobalShortcut
+        else { return nil }
+        return shortcut
+    }
+
+    private static func setShortcut(_ shortcut: GlobalKeybindPreferences?, forKey key: String) {
+        guard let data = try? JSONEncoder().encode(shortcut) else { return }
+        UserDefaults.standard.set(data, forKey: key)
+
+        NotificationCenter.default.post(Notification(name: .prefsChanged))
     }
 
     static var isAutoStart: Bool {
