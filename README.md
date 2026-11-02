@@ -94,6 +94,7 @@ open it from the arrow’s menu or with <kbd>⌘</kbd><kbd>,</kbd>.
   it: Tuckaway asks whether to keep it visible.
 - Presentation mode (macOS 27) hides every app's icon at once for screen
   sharing and recordings.
+- Find a hidden icon by typing its name (macOS 27).
 
 **A tool you can make your own**
 
