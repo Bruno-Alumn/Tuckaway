@@ -463,6 +463,10 @@ final class GeneralSettingsModel: ObservableObject {
         })
     }
 
+    var revealUpdatedApps: Binding<Bool> {
+        return binding({ Preferences.revealUpdatedApps }) { Preferences.revealUpdatedApps = $0 }
+    }
+
     var revealIconsOnActivity: Binding<Bool> {
         return binding({ Preferences.revealIconsOnActivity }) { Preferences.revealIconsOnActivity = $0 }
     }
@@ -586,6 +590,7 @@ struct GeneralSettingsView: View {
                 if StatusBarController.supportsPresentationMode {
                     settingsToggle("Show the icon of the app you're using", isOn: model.showActiveAppIcon)
                     settingsToggle("Show hidden icons briefly when they change", isOn: model.revealIconsOnActivity)
+                    settingsToggle("Show an app's hidden icon for a moment after it updates", isOn: model.revealUpdatedApps)
                 }
                 LabeledContent(Self.label("Shortcut")) { shortcutRecorder(.toggle) }
                 if StatusBarController.supportsPresentationMode {

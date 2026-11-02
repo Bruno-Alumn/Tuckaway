@@ -226,3 +226,6 @@
 "While %@ is open" = "%@ açıkken";
 "Choose an app. While it's open, Tuckaway uses “%@”." = "Bir uygulama seçin. Açık olduğu sürece Tuckaway “%@” profilini kullanır.";
 "Choose" = "Seç";
+
+/* Revealing an app's icon after it updates (#28) */
+"Show an app's hidden icon for a moment after it updates" = "Bir uygulama güncellendikten sonra gizli simgesini kısa süre göster";

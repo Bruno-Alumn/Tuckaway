@@ -226,3 +226,6 @@
 "While %@ is open" = "أثناء فتح %@";
 "Choose an app. While it's open, Tuckaway uses “%@”." = "اختر تطبيقًا. أثناء فتحه، يستخدم Tuckaway “%@”.";
 "Choose" = "اختيار";
+
+/* Revealing an app's icon after it updates (#28) */
+"Show an app's hidden icon for a moment after it updates" = "إظهار الأيقونة المخفية للتطبيق لحظات بعد تحديثه";

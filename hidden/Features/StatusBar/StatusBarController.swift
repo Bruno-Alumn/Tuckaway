@@ -224,6 +224,8 @@ class StatusBarController: MenuBarItemProvider {
         NotificationCenter.default.addObserver(self, selector: #selector(updateAutoHide), name: .prefsChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(fitSpacersToState), name: NativeVisibilityEngine.stateDidChange, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(applyAppTriggeredProfile), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(recordLaunchedVersion(_:)), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
+        recordVersions(of: NSWorkspace.shared.runningApplications, reveal: false)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(applyAppTriggeredProfile), name: NSWorkspace.didTerminateApplicationNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateExpandIcon), name: .transparentExpandIconToggle, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleLegacyHideUnavailable), name: .legacyHideUnavailable, object: nil)
@@ -811,12 +813,11 @@ class StatusBarController: MenuBarItemProvider {
         return menu
     }
 
-    // Tuckaway itself in front (Settings) keeps the previous app shown.
-    // Polls only while the option is on; each tick decides from the bar's
+    // Polls while either option is on; each tick decides from the bar's
     // state, so collapsing and expanding need no hooks of their own.
     private func updateActivityReveal() {
         guard menuBarEngine is ActivityRevealing else { return }
-        guard Preferences.revealIconsOnActivity else {
+        guard Preferences.revealIconsOnActivity || Preferences.revealUpdatedApps else {
             activityRevealTimer?.invalidate()
             activityRevealTimer = nil
             checkActivity()
@@ -833,7 +834,8 @@ class StatusBarController: MenuBarItemProvider {
 
     private func checkActivity() {
         guard let revealer = menuBarEngine as? ActivityRevealing else { return }
-        let watching = Preferences.revealIconsOnActivity && isCollapsed && !isPresenting ? revealer.appsWatchedForActivity : nil
+        let isWatching = (Preferences.revealIconsOnActivity || Preferences.revealUpdatedApps) && isCollapsed && !isPresenting
+        let watching = isWatching ? (Preferences.revealIconsOnActivity ? revealer.appsWatchedForActivity : []) : nil
         activityReveal.tick(watching: watching) { [weak revealer] apps in
             revealer?.setRevealedApps(apps)
         }
@@ -869,6 +871,34 @@ class StatusBarController: MenuBarItemProvider {
         }
     }
 
+    // Every launch records the app's version; one that changed since the last
+    // launch shows for a moment if that option is on (#28). Apps running when
+    // Tuckaway starts are recorded too, so their next update is noticed.
+    @objc private func recordLaunchedVersion(_ notification: Notification) {
+        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else { return }
+        recordVersions(of: [app], reveal: true)
+    }
+
+    private func recordVersions(of apps: [NSRunningApplication], reveal: Bool) {
+        guard menuBarEngine is ActivityRevealing else { return }
+        var versions = AppVersions(known: UserDefaults.standard.dictionary(forKey: Self.appVersionsKey) as? [String: String] ?? [:])
+        var updated: [String] = []
+        for app in apps {
+            guard let bundle = app.bundleIdentifier, bundle != Bundle.main.bundleIdentifier,
+                  let url = app.bundleURL, let version = AppVersions.version(of: Bundle(url: url)?.infoDictionary) else { continue }
+            if versions.launched(bundle, version: version) { updated.append(bundle) }
+        }
+        UserDefaults.standard.set(versions.known, forKey: Self.appVersionsKey)
+        guard reveal, Preferences.revealUpdatedApps, isCollapsed, !isPresenting,
+              let revealer = menuBarEngine as? ActivityRevealing else { return }
+        for bundle in updated {
+            revealer.setRevealedApps(activityReveal.revealUpdated(bundle))
+        }
+    }
+
+    private static let appVersionsKey = "knownAppVersions"
+
+    // Tuckaway itself in front (Settings) keeps the previous app shown.
     private func updateActiveAppIcon(_ app: NSRunningApplication? = NSWorkspace.shared.frontmostApplication) {
         guard let shower = menuBarEngine as? ActiveAppShowing else { return }
         guard Preferences.showActiveAppIcon else { return shower.setActiveApp(nil) }
