@@ -14,12 +14,7 @@ struct ManagedMenuBarItem {
     let section: Section
 
     private var cleanedTitle: String? {
-        let value = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !value.isEmpty,
-              value != "-",
-              !value.hasPrefix("Item-")
-        else { return nil }
-        return value
+        MenuBarItemNaming.cleanedTitle(title)
     }
 
     private var isSystemMenuExtra: Bool {
