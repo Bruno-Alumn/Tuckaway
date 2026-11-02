@@ -101,6 +101,7 @@ class StatusBarController: MenuBarItemProvider {
     private var nativeMenuWatchTimer: Timer?
     private var hoverRowLeaveTimer: Timer?
     private let newAppPrompt = NewMenuBarAppPromptController()
+    private let hiddenIconSearch = HiddenIconSearchController()
     // New apps waiting to be asked about, in order; the first is on screen.
     private var newAppQueue: [String] = []
     private var activeExpandCollapseFrame: CGRect?
@@ -701,6 +702,12 @@ class StatusBarController: MenuBarItemProvider {
             noticeItem.target = self
             menu.addItem(noticeItem)
             menu.addItem(NSMenuItem.separator())
+        }
+
+        if Self.supportsHiddenIconSearch {
+            let findItem = NSMenuItem(title: "Find Hidden Icon…".localized, action: #selector(showHiddenIconSearch), keyEquivalent: "")
+            findItem.target = self
+            menu.addItem(findItem)
         }
 
         if Self.supportsPresentationMode {
@@ -1422,6 +1429,41 @@ extension StatusBarController {
             timer.invalidate()
             self.nativeMenuWatchTimer = nil
             self.hiddenSectionPeeker?.endPeek()
+        }
+    }
+}
+
+//MARK: - Find Hidden Icon (macOS 27)
+extension StatusBarController {
+    // Opening an icon relies on showing the hidden section for a moment.
+    static var supportsHiddenIconSearch: Bool {
+        MenuBarEngineFactory.usesNativeVisibility
+    }
+
+    @objc func showHiddenIconSearch() {
+        guard Self.supportsHiddenIconSearch, !isPresenting, let peeker = hiddenSectionPeeker,
+              let arrowFrame = btnExpandCollapse.button?.window?.frame,
+              let screen = btnExpandCollapse.button?.window?.screen else { return }
+        if hiddenIconSearch.isVisible { return hiddenIconSearch.hide() }
+        let entries = peeker.hiddenItems.sorted { $0.frame.minX < $1.frame.minX }.map { item -> HiddenIconSearchController.Entry in
+            let app = item.bundleIdentifier.flatMap { NSRunningApplication.runningApplications(withBundleIdentifier: $0).first }
+            let name = MenuBarItemNaming.displayName(appName: app?.localizedName, title: item.title,
+                                                     isSystemExtra: item.bundleIdentifier == MenuBarItemNaming.systemExtraOwner)
+            return HiddenIconSearchController.Entry(name: name ?? item.bundleIdentifier ?? "", icon: app?.icon, frame: item.frame)
+        }
+        hiddenItemsBarController.hide()
+        hiddenIconSearch.show(entries: entries, below: arrowFrame, on: screen) { [weak self] entry in
+            self?.openHiddenIcon(at: entry.frame)
+        }
+    }
+
+    // Collapsed, the icon is shown for the click and hidden again once its menu
+    // closes; expanded, it is already there.
+    private func openHiddenIcon(at frame: CGRect) {
+        if isCollapsed {
+            clickNativeHiddenItem(at: frame)
+        } else if canForwardClicksToMenuBarItems() {
+            postClick(atQuartzPoint: CGPoint(x: frame.midX, y: frame.midY))
         }
     }
 }
