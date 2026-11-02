@@ -37,6 +37,14 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         }
     }
 
+    var findHotKey: HotKey? {
+        didSet {
+            findHotKey?.keyDownHandler = { [weak self] in
+                self?.statusBarController.showHiddenIconSearch()
+            }
+        }
+    }
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard ensureSingleInstance() else { return }
         Preferences.migrateFromHiddenBar()
@@ -132,6 +140,9 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         }
         if StatusBarController.supportsPresentationMode, let presentationKey = Preferences.presentationModeKey {
             presentationHotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: presentationKey.keyCode, carbonModifiers: presentationKey.carbonFlags))
+        }
+        if StatusBarController.supportsHiddenIconSearch, let findKey = Preferences.findHiddenIconKey {
+            findHotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: findKey.keyCode, carbonModifiers: findKey.carbonFlags))
         }
     }
     
