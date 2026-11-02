@@ -297,6 +297,10 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // The sections as arranged, with kept apps and new ones the user hasn't
     // decided on yet visible.
     private var effectiveLayout: MenuBarLayout? {
+        effectiveLayout(includingActiveApp: true)
+    }
+
+    private func effectiveLayout(includingActiveApp: Bool) -> MenuBarLayout? {
         layout.map { layout in
             var effective: MenuBarLayout
             if let profileApps {
@@ -306,7 +310,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
                 effective = newApps.tracker.applied(to: layout)
             }
             // An app the user put in Always Hidden stays there.
-            if let activeApp, effective.sections[activeApp] == .hidden {
+            if includingActiveApp, let activeApp, effective.sections[activeApp] == .hidden {
                 effective.sections[activeApp] = .visible
             }
             return effective
@@ -323,8 +327,18 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         changeVisibleApps { activeApp = bundle }
     }
 
-    var visibleApps: [String] {
-        effectiveLayout?.bundles(in: [.visible]) ?? []
+    // What a profile saved now would keep: read fresh while the bar is shown
+    // (icons may have moved since the last read), without the app that's only
+    // shown for being in front. Nil while a collapse is being worked out, or
+    // when nothing could be read.
+    func readVisibleApps(completion: @escaping ([String]?) -> Void) {
+        guard state != .calibrating else { return completion(nil) }
+        let finish = { [weak self] in
+            let apps = self?.effectiveLayout(includingActiveApp: false)?.bundles(in: [.visible])
+            completion(apps?.isEmpty == false ? apps : nil)
+        }
+        guard assertion == nil else { return finish() }
+        withLayout { _ in finish() }
     }
 
     func setProfile(_ apps: Set<String>?) {

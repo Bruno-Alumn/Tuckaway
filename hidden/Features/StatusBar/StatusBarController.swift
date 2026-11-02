@@ -1603,22 +1603,27 @@ extension StatusBarController {
     // Saves what the collapsed bar shows now under a name, and switches to it.
     @objc private func saveProfile() {
         guard let engine = menuBarEngine as? ProfileApplying else { return }
-        let alert = NSAlert()
-        alert.messageText = "Name this profile".localized
-        alert.informativeText = "It keeps the apps that are visible right now.".localized
-        let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 240, height: 24))
-        alert.accessoryView = field
-        alert.addButton(withTitle: "Save".localized)
-        alert.addButton(withTitle: "Cancel".localized)
-        alert.window.initialFirstResponder = field
-        NSApp.activate(ignoringOtherApps: true)
-        guard alert.runModal() == .alertFirstButtonReturn else { return }
-        let name = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty else { return }
-        var profiles = profilesStore.profiles
-        profiles.save(name, apps: engine.visibleApps)
-        profiles.active = name
-        applyProfiles(profiles)
+        engine.readVisibleApps { [weak self] apps in
+            // Nothing read yet, or nothing visible: a profile that hides every
+            // icon isn't what saving the current layout means.
+            guard let self, let apps else { return NSSound.beep() }
+            let alert = NSAlert()
+            alert.messageText = "Name this profile".localized
+            alert.informativeText = "It keeps the apps that are visible right now.".localized
+            let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 240, height: 24))
+            alert.accessoryView = field
+            alert.addButton(withTitle: "Save".localized)
+            alert.addButton(withTitle: "Cancel".localized)
+            alert.window.initialFirstResponder = field
+            NSApp.activate(ignoringOtherApps: true)
+            guard alert.runModal() == .alertFirstButtonReturn else { return }
+            let name = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !name.isEmpty else { return }
+            var profiles = self.profilesStore.profiles
+            profiles.save(name, apps: apps)
+            profiles.active = name
+            self.applyProfiles(profiles)
+        }
     }
 
     @objc private func deleteProfile(_ sender: NSMenuItem) {
@@ -1764,6 +1769,7 @@ extension StatusBarController {
                 self.keepVisible(bundle)
             } else {
                 self.newAppReporter?.resolveNewApp(bundle, keepVisible: false)
+                self.removeFromActiveProfile(bundle)
             }
             self.showNextNewAppPrompt()
         }
@@ -1777,6 +1783,14 @@ extension StatusBarController {
     func stopKeepingVisible(_ bundle: String) {
         dropNewAppQuestion(bundle)
         newAppReporter?.resolveNewApp(bundle, keepVisible: false)
+        removeFromActiveProfile(bundle)
+    }
+
+    private func removeFromActiveProfile(_ bundle: String) {
+        var profiles = profilesStore.profiles
+        guard profiles.active != nil else { return }
+        profiles.removeFromActive(bundle)
+        applyProfiles(profiles)
     }
 
     func keepVisible(_ bundle: String) {
