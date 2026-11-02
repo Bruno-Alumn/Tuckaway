@@ -774,3 +774,118 @@ final class CaptureActivityMonitorTests: XCTestCase {
         XCTAssertFalse(CaptureActivityMonitor.isAlwaysOnSpeechListener(path: "/usr/local/bin/corespeechd"))
     }
 }
+
+// MARK: - Separate bar on macOS 27
+
+final class HiddenSectionPeekTests: XCTestCase {
+    private var items: FakeItems!
+    private var inventory: FakeInventory!
+    private var visibility: FakeVisibility!
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        inventory = FakeInventory()
+        inventory.items = [item("com.always", x: 900), item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+    }
+
+    private func makeCollapsedEngine() -> NativeVisibilityEngine {
+        let items = self.items!
+        let engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                            captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                            ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                            itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
+                                            displays: { [mainDisplay] },
+                                            isLTR: { true })
+        engine.updateAlwaysHiddenSection(enabled: true, separatorHidden: false)
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+        return engine
+    }
+
+    func testHiddenItemsAreTheHiddenSectionsIcons() {
+        let engine = makeCollapsedEngine()
+        XCTAssertEqual(engine.hiddenItems, [item("com.hidden", x: 1100)])
+    }
+
+    func testPeekShowsTheHiddenSectionAndStaysCollapsed() {
+        let engine = makeCollapsedEngine()
+        let snapshots = inventory.snapshots
+        var results: [Bool] = []
+        engine.peekHiddenSection { results.append($0) }
+
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden", "com.visible"])
+        visibility.succeed(visibility.requests.count - 1)
+        XCTAssertEqual(results, [true])
+        XCTAssertTrue(engine.isPeeking)
+        XCTAssertEqual(engine.state, .collapsed)
+        XCTAssertEqual(inventory.snapshots, snapshots, "the cached layout is reused, not re-read")
+
+        engine.endPeek()
+        XCTAssertFalse(engine.isPeeking)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+
+    func testCollapseWhilePeekingHidesAgain() {
+        let engine = makeCollapsedEngine()
+        engine.peekHiddenSection { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+
+        var results: [CollapseResult] = []
+        engine.collapse { results.append($0) }
+        XCTAssertEqual(results, [.collapsed])
+        XCTAssertFalse(engine.isPeeking)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+
+    func testExpandEndsThePeekWithoutHidingAgain() {
+        let engine = makeCollapsedEngine()
+        engine.peekHiddenSection { _ in }
+        let peek = visibility.succeed(visibility.requests.count - 1)
+        let requests = visibility.requests.count
+
+        engine.expand()
+        XCTAssertFalse(engine.isPeeking)
+        XCTAssertTrue(peek.isInvalidated)
+        engine.endPeek()
+        XCTAssertEqual(visibility.requests.count, requests)
+    }
+
+    func testPeekNeedsACollapsedBar() {
+        let engine = makeCollapsedEngine()
+        engine.expand()
+        var results: [Bool] = []
+        engine.peekHiddenSection { results.append($0) }
+        XCTAssertEqual(results, [false])
+        XCTAssertFalse(engine.isPeeking)
+    }
+}
+
+final class MenuBarStripGeometryTests: XCTestCase {
+    func testStripSpansTheIconsAtMenuBarHeight() {
+        let frames = [CGRect(x: 1205, y: 7.5, width: 36, height: 24), CGRect(x: 1346, y: 7.5, width: 40, height: 24)]
+        XCTAssertEqual(MenuBarStripGeometry.strip(covering: frames, menuBarHeight: 39, on: mainDisplay),
+                       CGRect(x: 1205, y: 0, width: 181, height: 39))
+        XCTAssertNil(MenuBarStripGeometry.strip(covering: [], menuBarHeight: 39, on: mainDisplay))
+    }
+
+    func testPixelRectIsLocalScaledAndClipped() {
+        let strip = CGRect(x: 1205, y: 0, width: 181, height: 39)
+        XCTAssertEqual(MenuBarStripGeometry.pixelRect(of: CGRect(x: 1285, y: 7.5, width: 24, height: 24), in: strip, scale: 2),
+                       CGRect(x: 160, y: 15, width: 48, height: 48))
+        XCTAssertEqual(MenuBarStripGeometry.pixelRect(of: CGRect(x: 1380, y: 0, width: 20, height: 39), in: strip, scale: 1),
+                       CGRect(x: 175, y: 0, width: 6, height: 39), "kept inside the image")
+        XCTAssertNil(MenuBarStripGeometry.pixelRect(of: CGRect(x: 10, y: 0, width: 20, height: 20), in: strip, scale: 2))
+    }
+
+    func testAccessibilityAndAppKitRectsRoundTrip() {
+        // A second display above the main one: AX y grows downward from the desktop's top.
+        let upper = MenuBarDisplay(identifier: "upper",
+                                   appKitFrame: CGRect(x: 0, y: 1000, width: 1600, height: 900),
+                                   accessibilityFrame: CGRect(x: 0, y: 0, width: 1600, height: 900))
+        let icon = CGRect(x: 1200, y: 4, width: 24, height: 24)
+        XCTAssertEqual(upper.appKitRect(fromAccessibility: icon), CGRect(x: 1200, y: 1872, width: 24, height: 24))
+        XCTAssertEqual(upper.accessibilityRect(fromAppKit: upper.appKitRect(fromAccessibility: icon)), icon)
+    }
+}

@@ -94,6 +94,11 @@ class StatusBarController: MenuBarItemProvider {
     private let hiddenItemsBarController = HiddenItemsBarPanelController()
     private let hiddenItemsCaptureShieldController = HiddenItemsBarCaptureShieldController()
     private let hiddenItemsSeparatorOverlayController = HiddenItemsBarSeparatorOverlayController()
+    private let hiddenItemsFreezeController = HiddenItemsBarFreezeController()
+    // Bumped by every expand and collapse, so a macOS 27 capture or click that
+    // is still in flight doesn't act on a bar the user has since changed.
+    private var nativeHiddenItemsRequest = 0
+    private var nativeMenuWatchTimer: Timer?
     private var activeExpandCollapseFrame: CGRect?
     private var activeStatusItemScreen: NSScreen?
     private var didExpandForExternalDisplay = false
@@ -117,7 +122,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     private var usesSeparateHiddenItemsBar: Bool {
-        return Preferences.showHiddenItemsInSeparateBar && MenuBarEngineFactory.supportsSeparateHiddenItemsBar
+        return Preferences.showHiddenItemsInSeparateBar
     }
 
     private var isSeparateHiddenItemsBarVisible: Bool {
@@ -481,10 +486,14 @@ class StatusBarController: MenuBarItemProvider {
         if !isCollapsed && Util.isAccessibilityPermissionMissing {
             Util.showPrefWindow()
         }
-        if isSeparateHiddenItemsBarVisible {
+        if isSeparateHiddenItemsBarVisible || hiddenSectionPeeker?.isPeeking == true {
             collapseMenuBar()
         } else if isCollapsed && usesSeparateHiddenItemsBar {
-            expandHiddenItemsBar()
+            if MenuBarEngineFactory.usesNativeVisibility {
+                showNativeHiddenItemsBar()
+            } else {
+                expandHiddenItemsBar()
+            }
         } else {
             isCollapsed ? expandMenubar() : collapseMenuBar()
         }
@@ -538,7 +547,10 @@ class StatusBarController: MenuBarItemProvider {
         hiddenItemsCaptureShieldController.hide()
         hiddenItemsBarController.hide()
         hiddenItemsSeparatorOverlayController.hide()
+        endNativeHiddenItemsRequest()
         guard menuBarEngine.isArrangementValid && !self.isCollapsed else {
+            // The separate bar shows the expanded arrow while it is open.
+            updateExpandIcon()
             autoCollapseIfNeeded()
             return
         }
@@ -616,6 +628,7 @@ class StatusBarController: MenuBarItemProvider {
         hiddenItemsCaptureShieldController.hide()
         hiddenItemsBarController.hide()
         hiddenItemsSeparatorOverlayController.hide()
+        endNativeHiddenItemsRequest()
         menuBarEngine.expand()
         if let button = btnExpandCollapse.button {
             button.image = Assets.collapseImage
@@ -762,9 +775,10 @@ class StatusBarController: MenuBarItemProvider {
 extension StatusBarController {
     // Only the separate hidden-items bar needs to see drags, and this monitor
     // sees every left drag in every app, so install it only while that's on.
+    // On macOS 27 a ⌘-drag works the same with or without that bar.
     // Global monitors already run on the main thread.
     private func updateConfigurationDragMonitor() {
-        if usesSeparateHiddenItemsBar {
+        if usesSeparateHiddenItemsBar && !MenuBarEngineFactory.usesNativeVisibility {
             guard configurationDragMonitor == nil else { return }
             configurationDragMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDragged, .leftMouseUp]) { [weak self] event in
                 self?.handleConfigurationDragEvent(event)
@@ -1199,7 +1213,11 @@ extension StatusBarController {
 
     private func postClick(at appKitPoint: CGPoint) {
         let referenceMaxY = Self.primaryScreenMaxY ?? appKitPoint.y
-        let eventPoint = CGPoint(x: appKitPoint.x, y: referenceMaxY - appKitPoint.y)
+        postClick(atQuartzPoint: CGPoint(x: appKitPoint.x, y: referenceMaxY - appKitPoint.y))
+    }
+
+    // Quartz and Accessibility share the top-left origin.
+    private func postClick(atQuartzPoint eventPoint: CGPoint) {
         guard let mouseDown = CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: eventPoint, mouseButton: .left),
               let mouseUp = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: eventPoint, mouseButton: .left)
         else { return }
@@ -1209,6 +1227,162 @@ extension StatusBarController {
 
     private func canForwardClicksToMenuBarItems() -> Bool {
         AXIsProcessTrusted()
+    }
+}
+
+//MARK: - Separate hidden items bar on macOS 27
+extension StatusBarController {
+    private var hiddenSectionPeeker: HiddenSectionPeeking? {
+        menuBarEngine as? HiddenSectionPeeking
+    }
+
+    private enum NativeSeparateBarTiming {
+        // How long macOS takes to lay out the bar after the restriction changes.
+        static let reflowDelay: DispatchTimeInterval = .milliseconds(200)
+        // How long a click waits for the app to open a menu before the icon is
+        // hidden again, and how often it checks whether that menu is still open.
+        static let menuOpenGrace: TimeInterval = 1.5
+        static let menuPollInterval: TimeInterval = 0.25
+    }
+
+    private func endNativeHiddenItemsRequest() {
+        nativeHiddenItemsRequest += 1
+        nativeMenuWatchTimer?.invalidate()
+        nativeMenuWatchTimer = nil
+        hiddenItemsFreezeController.hide()
+        hiddenSectionPeeker?.endPeek()
+    }
+
+    // macOS 27 draws status items into the menu bar, so the hidden icons are
+    // captured from the bar itself: a still image of the bar covers them, the
+    // hidden section shows behind it for a moment, and the capture leaves out
+    // Tuckaway's windows. Anything missing falls back to expanding.
+    private func showNativeHiddenItemsBar() {
+        guard #available(macOS 14.0, *),
+              let peeker = hiddenSectionPeeker,
+              canCaptureScreenForSeparatePanel(),
+              let arrowFrame = btnExpandCollapse.button?.window?.frame,
+              let display = MenuBarDisplayInventory.current().first(where: { $0.appKitFrame.contains(CGPoint(x: arrowFrame.midX, y: arrowFrame.midY)) }),
+              let screen = NSScreen.screens.first(where: { $0.frame == display.appKitFrame })
+        else { return expandMenubar() }
+        let menuBarHeight = max(22, screen.frame.maxY - screen.visibleFrame.maxY)
+        let frames = peeker.hiddenItems.map(\.frame)
+            .filter { display.accessibilityFrame.contains(CGPoint(x: $0.midX, y: $0.midY)) }
+            .sorted { $0.minX < $1.minX }
+        guard let strip = MenuBarStripGeometry.strip(covering: frames, menuBarHeight: menuBarHeight, on: display) else {
+            return expandMenubar()
+        }
+
+        timer?.invalidate()
+        nativeHiddenItemsRequest += 1
+        let request = nativeHiddenItemsRequest
+        let stripFrame = display.appKitRect(fromAccessibility: strip)
+        MenuBarStripCapture.image(of: strip, on: display, excludingOwnWindows: false) { [weak self] still, _ in
+            guard let self, request == self.nativeHiddenItemsRequest else { return }
+            if let still {
+                self.hiddenItemsFreezeController.show(still, frame: stripFrame)
+            }
+            peeker.peekHiddenSection { [weak self] succeeded in
+                guard let self, request == self.nativeHiddenItemsRequest else { return }
+                guard succeeded else { return self.expandMenubar() }
+                DispatchQueue.main.asyncAfter(deadline: .now() + NativeSeparateBarTiming.reflowDelay) { [weak self] in
+                    guard let self, request == self.nativeHiddenItemsRequest else { return }
+                    MenuBarStripCapture.image(of: strip, on: display, excludingOwnWindows: true) { [weak self] image, scale in
+                        guard let self, request == self.nativeHiddenItemsRequest else { return }
+                        peeker.endPeek()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + NativeSeparateBarTiming.reflowDelay) { [weak self] in
+                            guard let self, request == self.nativeHiddenItemsRequest else { return }
+                            self.hiddenItemsFreezeController.hide()
+                            guard let image,
+                                  let capture = self.nativeHiddenItemsCapture(from: image, scale: scale, strip: strip,
+                                                                              frames: frames, display: display, screen: screen)
+                            else { return self.expandMenubar() }
+                            self.hiddenItemsBarController.show(capture: capture) { [weak self] sourceX in
+                                guard let item = capture.items.first(where: { $0.sourceRect.minX <= sourceX && sourceX <= $0.sourceRect.maxX }) else { return }
+                                self?.clickNativeHiddenItem(at: display.accessibilityRect(fromAppKit: item.sourceRect))
+                            }
+                            self.btnExpandCollapse.button?.image = Assets.collapseImage
+                            self.autoCollapseIfNeeded()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func nativeHiddenItemsCapture(from image: CGImage, scale: CGFloat, strip: CGRect, frames: [CGRect],
+                                          display: MenuBarDisplay, screen: NSScreen) -> HiddenItemsBarCapture? {
+        let items = frames.enumerated().compactMap { index, frame -> HiddenItemsBarItem? in
+            guard let pixels = MenuBarStripGeometry.pixelRect(of: frame, in: strip, scale: scale),
+                  let cropped = image.cropping(to: pixels) else { return nil }
+            let sourceRect = display.appKitRect(fromAccessibility: frame)
+            return HiddenItemsBarItem(image: NSImage(cgImage: cropped, size: sourceRect.size),
+                                      sourceRect: sourceRect, windowNumber: index)
+        }
+        guard !items.isEmpty, let first = frames.first else { return nil }
+        // The bar at the first icon's left edge, at the icons' height: icons
+        // leave their outermost column empty.
+        let sliver = CGRect(x: first.minX, y: first.minY, width: 1 / scale, height: first.height)
+        let background = MenuBarStripGeometry.pixelRect(of: sliver, in: strip, scale: scale)
+            .flatMap { image.cropping(to: $0) }
+        let color = NSBitmapImageRep(cgImage: image).colorAt(x: 0, y: image.height / 2)?.usingColorSpace(.sRGB)
+        let luminance = color.map { 0.2126 * $0.redComponent + 0.7152 * $0.greenComponent + 0.0722 * $0.blueComponent } ?? 1
+        return HiddenItemsBarCapture(items: items, screen: screen, separatorFrame: .zero, menuBarOverlayFrame: .zero,
+                                     prefersDarkBackground: luminance < 0.5,
+                                     backgroundImage: background.map { NSImage(cgImage: $0, size: CGSize(width: 1, height: first.height)) })
+    }
+
+    // Shows the hidden section again, clicks the real icon, and hides it once
+    // the menu or window that click opened has closed.
+    private func clickNativeHiddenItem(at frame: CGRect) {
+        guard canForwardClicksToMenuBarItems(), let peeker = hiddenSectionPeeker else { return }
+        hiddenItemsBarController.hide()
+        updateExpandIcon()
+        timer?.invalidate()
+        nativeHiddenItemsRequest += 1
+        let request = nativeHiddenItemsRequest
+        let owner = ownerPID(ofMenuBarItemAt: frame)
+        peeker.peekHiddenSection { [weak self] succeeded in
+            guard let self, request == self.nativeHiddenItemsRequest else { return }
+            guard succeeded else { return self.expandMenubar() }
+            DispatchQueue.main.asyncAfter(deadline: .now() + NativeSeparateBarTiming.reflowDelay) { [weak self] in
+                guard let self, request == self.nativeHiddenItemsRequest else { return }
+                let windowsBefore = owner.map { self.onScreenWindowNumbers(ownedBy: $0) } ?? []
+                self.postClick(atQuartzPoint: CGPoint(x: frame.midX, y: frame.midY))
+                self.endPeekWhenMenuCloses(owner: owner, ignoring: windowsBefore, request: request)
+            }
+        }
+    }
+
+    private func ownerPID(ofMenuBarItemAt frame: CGRect) -> pid_t? {
+        let center = CGPoint(x: frame.midX, y: frame.midY)
+        guard let bundle = hiddenSectionPeeker?.hiddenItems.first(where: { $0.frame.contains(center) })?.bundleIdentifier else { return nil }
+        return NSRunningApplication.runningApplications(withBundleIdentifier: bundle).first?.processIdentifier
+    }
+
+    private func onScreenWindowNumbers(ownedBy pid: pid_t) -> Set<Int> {
+        let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] ?? []
+        return Set(windows.compactMap { info in
+            (info[kCGWindowOwnerPID as String] as? pid_t) == pid ? info[kCGWindowNumber as String] as? Int : nil
+        })
+    }
+
+    // Some apps keep a window on screen all the time, so only windows that
+    // appeared after the click count as its menu.
+    private func endPeekWhenMenuCloses(owner: pid_t?, ignoring windowsBefore: Set<Int>, request: Int) {
+        let start = Date()
+        var sawMenu = false
+        nativeMenuWatchTimer?.invalidate()
+        nativeMenuWatchTimer = Timer.scheduledTimer(withTimeInterval: NativeSeparateBarTiming.menuPollInterval, repeats: true) { [weak self] timer in
+            guard let self, request == self.nativeHiddenItemsRequest else { return timer.invalidate() }
+            let isMenuOpen = owner.map { !self.onScreenWindowNumbers(ownedBy: $0).subtracting(windowsBefore).isEmpty } ?? false
+            sawMenu = sawMenu || isMenuOpen
+            let waitedForMenu = Date().timeIntervalSince(start) > NativeSeparateBarTiming.menuOpenGrace
+            guard !isMenuOpen && (sawMenu || waitedForMenu) else { return }
+            timer.invalidate()
+            self.nativeMenuWatchTimer = nil
+            self.hiddenSectionPeeker?.endPeek()
+        }
     }
 }
 

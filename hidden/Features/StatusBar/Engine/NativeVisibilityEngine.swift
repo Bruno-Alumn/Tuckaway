@@ -49,7 +49,7 @@ import AppKit
 //   Notification Center cannot open from it (#410). A click on the clock lifts
 //   the restriction for a moment and presses it (MenuBarClock); hidden icons
 //   can flash while it is lifted.
-final class NativeVisibilityEngine: MenuBarEngine {
+final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking {
     // System item identifiers to keep visible. Unknown identifiers are ignored,
     // so the range covers items a given Mac does not have. On 27.0, 0-63 resolves
     // to battery, bluetooth, clock, displays, keyboard, volume, wifi,
@@ -71,6 +71,11 @@ final class NativeVisibilityEngine: MenuBarEngine {
     // .calibrating stands for "an activation is in flight".
     private(set) var state: MenuBarEngineState = .expanded
     private(set) var layout: MenuBarLayout?
+    // The hidden section's icons from the last unrestricted read. While peeking
+    // they show at the same frames: the bar is anchored on the arrow's side, and
+    // only the always-hidden icons, further out, stay hidden.
+    private(set) var hiddenItems: [MenuBarInventoryItem] = []
+    private(set) var isPeeking = false
 
     private var assertion: NativeVisibilityAssertion?
     // What the held assertion allows besides Hidden Bar, and the generation it was
@@ -122,6 +127,7 @@ final class NativeVisibilityEngine: MenuBarEngine {
     func collapse(completion: @escaping (CollapseResult) -> Void) {
         switch state {
         case .collapsed:
+            endPeek()
             return completion(.collapsed)
         case .calibrating:
             // The activation in flight answers the request that started it.
@@ -167,7 +173,24 @@ final class NativeVisibilityEngine: MenuBarEngine {
 
     func expand() {
         state = .expanded
+        isPeeking = false
         applyExpandedPresentation()
+    }
+
+    // Shows the hidden section while staying collapsed, for the separate bar to
+    // capture it or to click one of its icons. The cached layout still holds:
+    // sections only change by ⌘-dragging, which needs an expanded bar.
+    func peekHiddenSection(completion: @escaping (Bool) -> Void) {
+        guard state == .collapsed, let layout = layout else { return completion(false) }
+        isPeeking = true
+        activate(allowing: layout.bundles(in: [.visible, .hidden]), completion: completion)
+    }
+
+    func endPeek() {
+        guard isPeeking else { return }
+        isPeeking = false
+        guard state == .collapsed, let layout = layout else { return }
+        activate(allowing: layout.bundles(in: [.visible])) { _ in }
     }
 
     func updateAlwaysHiddenSection(enabled: Bool, separatorHidden: Bool) {
@@ -254,6 +277,9 @@ final class NativeVisibilityEngine: MenuBarEngine {
             }
             NSLog("NativeVisibility: arrow at x=\(boundary.midX); visible \(layout.bundles(in: [.visible])), hidden \(layout.bundles(in: [.hidden])), always hidden \(layout.bundles(in: [.alwaysHidden]))")
             self.layout = layout
+            self.hiddenItems = inventory.filter { item in
+                item.bundleIdentifier.map { layout.sections[$0] == .hidden } ?? false
+            }
             body(layout)
         }
     }
@@ -389,7 +415,7 @@ final class NativeVisibilityEngine: MenuBarEngine {
         case .collapsed:
             withLayout { [weak self] layout in
                 guard let self = self, let layout = layout else { return }
-                self.activate(allowing: layout.bundles(in: [.visible])) { _ in }
+                self.activate(allowing: layout.bundles(in: self.isPeeking ? [.visible, .hidden] : [.visible])) { _ in }
             }
         case .expanded:
             applyExpandedPresentation()
