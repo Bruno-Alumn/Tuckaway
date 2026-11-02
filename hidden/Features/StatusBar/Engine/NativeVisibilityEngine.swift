@@ -205,6 +205,9 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // While collapsed the restriction is redone right away.
     func resolveNewApp(_ bundle: String, keepVisible: Bool) {
         newApps.tracker.resolve(bundle, keepVisible: keepVisible)
+        if keepVisible {
+            hiddenItems.removeAll { $0.bundleIdentifier == bundle }
+        }
         guard state == .collapsed, !isPeeking, let layout = effectiveLayout else { return }
         activate(allowing: layout.bundles(in: [.visible])) { _ in }
     }

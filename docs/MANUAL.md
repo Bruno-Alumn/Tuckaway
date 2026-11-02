@@ -87,12 +87,12 @@ Open it with **Settings…** (⌘,) from the arrow's menu. It has three tabs.
 | Hiding | Auto-collapse | Re-hide automatically after a delay. Also a checkmark in the arrow's menu. |
 | Hiding | Collapse after | The delay: 5, 10, 15 or 30 seconds, or 1 minute. Shown only while auto-collapse is on. |
 | Hiding | Collapse on app switch | Hide again as soon as another app becomes active. |
-| Revealing | Hover to expand | Expand after hovering over the menu bar for about half a second. |
+| Revealing | Hover to expand | Expand after hovering over the menu bar for about half a second. With the separate bar on, this opens that bar instead. |
 | Revealing | Toggle by clicking empty menu bar | Click an empty part of the menu bar to hide or show icons. |
 | Revealing | Expand with an external display | Show everything while an external display is connected. |
 | Revealing | Shortcut | A system-wide expand/collapse hotkey. Click to record, Esc to cancel, ⓧ to clear. F-keys work on their own. |
 | Appearance | Expand icon | Standard arrow, transparent arrow, or an ellipsis. |
-| Appearance | Show hidden items in separate bar | Shows hidden icons in a floating row below the menu bar. Needs Screen Recording, plus Accessibility to forward clicks. On macOS 27 the hidden icons show in the real menu bar for a moment while they're captured (Tuckaway covers that spot with a still image), and clicking one shows it until its menu closes. |
+| Appearance | Show hidden items in separate bar | Shows hidden icons in a floating row below the menu bar. Needs Screen Recording, plus Accessibility to forward clicks. On macOS 27 the hidden icons show in the real menu bar for a moment while they're captured (Tuckaway covers that spot with a still image), and clicking one shows it until its menu closes. Point at an icon for its app's name; right-click it for **Keep Visible** (macOS 27) or **Manage Menu Bar Items…**. With Hover to expand on, hovering opens this bar instead, and it closes shortly after the pointer leaves. |
 | Appearance | Expand across full menu bar | Activates the app's full menu bar while expanded, without a Dock icon (helps on crowded menu bars). |
 | Extra Sections | Always-hidden section | A second zone whose icons stay hidden even when expanded. Option-click the arrow to reveal it. |
 | Extra Sections | Icons behind the notch | Notched Macs only. Adds **Show Notch Items** to the arrow's menu, listing icons the notch covers. |
