@@ -132,5 +132,10 @@
 "Hide" = "Masquer";
 "Hidden item" = "Élément masqué";
 "Presentation Mode" = "Mode présentation";
+"Find Hidden Icon" = "Trouver une icône masquée";
+"Find Hidden Icon…" = "Trouver une icône masquée…";
+"Search hidden icons" = "Rechercher dans les icônes masquées";
+"No hidden icons" = "Aucune icône masquée";
+"No matches" = "Aucun résultat";
 "An update is being installed" = "Une mise à jour est en cours d’installation";
 "Tuckaway will relaunch when it’s done." = "Tuckaway redémarrera une fois l’installation terminée.";
