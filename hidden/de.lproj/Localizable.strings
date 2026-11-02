@@ -226,3 +226,6 @@
 "While %@ is open" = "Solange %@ geöffnet ist";
 "Choose an app. While it's open, Tuckaway uses “%@”." = "Wähle eine App. Solange sie geöffnet ist, verwendet Tuckaway „%@“.";
 "Choose" = "Auswählen";
+
+/* Revealing an app's icon after it updates (#28) */
+"Show an app's hidden icon for a moment after it updates" = "Ausgeblendetes Symbol einer App nach einem Update kurz zeigen";

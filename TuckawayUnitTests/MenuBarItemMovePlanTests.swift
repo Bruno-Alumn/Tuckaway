@@ -291,3 +291,35 @@ final class MenuBarSpacersTests: XCTestCase {
                                               collapsed: true, width: .narrow), [8, 0])
     }
 }
+
+final class AppUpdateRevealTests: XCTestCase {
+    func testOnlyAChangedVersionCountsAsAnUpdate() {
+        var versions = AppVersions()
+        XCTAssertFalse(versions.launched("com.a", version: "1.0 (1)"))
+        XCTAssertFalse(versions.launched("com.a", version: "1.0 (1)"))
+        XCTAssertTrue(versions.launched("com.a", version: "1.1 (2)"))
+        XCTAssertEqual(versions.known, ["com.a": "1.1 (2)"])
+    }
+
+    func testVersionReadsShortAndBuild() {
+        XCTAssertEqual(AppVersions.version(of: ["CFBundleShortVersionString": "2.3", "CFBundleVersion": "77"]), "2.3 (77)")
+        XCTAssertEqual(AppVersions.version(of: ["CFBundleVersion": "77"]), " (77)")
+        XCTAssertNil(AppVersions.version(of: [:]))
+        XCTAssertNil(AppVersions.version(of: nil))
+    }
+
+    func testAnUpdatedAppShowsForLongerAndNothingIsReadWithoutTheActivityOption() {
+        var clock = Date(timeIntervalSinceReferenceDate: 0)
+        var reads = 0
+        let monitor = ActivityRevealMonitor(read: { _, completion in reads += 1; completion([:]) }, now: { clock })
+        XCTAssertEqual(monitor.revealUpdated("com.a"), ["com.a"])
+        var revealed: [Set<String>] = []
+        clock += ActivityRevealMonitor.updateRevealDuration - 1
+        monitor.tick(watching: []) { revealed.append($0) }
+        XCTAssertEqual(revealed, [])
+        clock += 1
+        monitor.tick(watching: []) { revealed.append($0) }
+        XCTAssertEqual(revealed, [[]])
+        XCTAssertEqual(reads, 0)
+    }
+}

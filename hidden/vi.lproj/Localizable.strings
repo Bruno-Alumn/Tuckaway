@@ -224,3 +224,6 @@
 "While %@ is open" = "Khi %@ đang mở";
 "Choose an app. While it's open, Tuckaway uses “%@”." = "Chọn một ứng dụng. Khi ứng dụng đó đang mở, Tuckaway dùng “%@”.";
 "Choose" = "Chọn";
+
+/* Revealing an app's icon after it updates (#28) */
+"Show an app's hidden icon for a moment after it updates" = "Hiện nhanh biểu tượng bị ẩn của ứng dụng sau khi ứng dụng cập nhật";

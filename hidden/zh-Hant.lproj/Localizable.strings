@@ -224,3 +224,6 @@
 "While %@ is open" = "「%@」開啟時";
 "Choose an app. While it's open, Tuckaway uses “%@”." = "選擇一個 App。它開啟時,Tuckaway 會使用「%@」。";
 "Choose" = "選擇";
+
+/* Revealing an app's icon after it updates (#28) */
+"Show an app's hidden icon for a moment after it updates" = "App 更新後短暫顯示其隱藏的圖像";

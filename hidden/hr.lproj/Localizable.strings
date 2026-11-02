@@ -226,3 +226,6 @@
 "While %@ is open" = "Dok je %@ otvoren";
 "Choose an app. While it's open, Tuckaway uses “%@”." = "Odaberite aplikaciju. Dok je otvorena, Tuckaway koristi „%@”.";
 "Choose" = "Odaberi";
+
+/* Revealing an app's icon after it updates (#28) */
+"Show an app's hidden icon for a moment after it updates" = "Nakratko prikaži skrivenu ikonu aplikacije nakon ažuriranja";

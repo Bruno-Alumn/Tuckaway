@@ -34,11 +34,32 @@ struct ActivityTracker {
     }
 }
 
+// The versions of apps seen launching, to notice one that updated (#28).
+struct AppVersions: Equatable {
+    var known: [String: String] = [:]
+
+    // Records the version; true when the app was seen before with another one.
+    // An app seen for the first time is only recorded.
+    mutating func launched(_ bundle: String, version: String) -> Bool {
+        defer { known[bundle] = version }
+        return known[bundle].map { $0 != version } ?? false
+    }
+
+    // "1.2 (45)", from an app's Info.plist; nil when it has neither.
+    static func version(of info: [String: Any]?) -> String? {
+        let short = info?["CFBundleShortVersionString"] as? String
+        let build = info?["CFBundleVersion"] as? String
+        guard short != nil || build != nil else { return nil }
+        return "\(short ?? "") (\(build ?? ""))"
+    }
+}
+
 // Reveals hidden icons that change, for a few seconds each, while collapsed.
 // The clock and the reader are injected so tests drive them by hand.
 final class ActivityRevealMonitor {
     static let pollInterval: TimeInterval = 2
     static let revealDuration: TimeInterval = 8
+    static let updateRevealDuration: TimeInterval = 30
     // macOS's own items are hidden through MenuBarAgent's allow-list, not by app.
     static let ignoredOwners: Set<String> = ["com.apple.MenuBarAgent", MenuBarItemNaming.systemExtraOwner]
 
@@ -71,6 +92,8 @@ final class ActivityRevealMonitor {
             expired.keys.forEach { revealedUntil[$0] = nil }
             reveal(Set(revealedUntil.keys))
         }
+        // Only updated apps are being shown (the activity option is off).
+        guard !watching.isEmpty else { return tracker.reset() }
         guard !isReading else { return }
         isReading = true
         read(watching.subtracting(Self.ignoredOwners)) { [weak self] signatures in
@@ -82,6 +105,14 @@ final class ActivityRevealMonitor {
             changed.forEach { self.revealedUntil[$0] = until }
             reveal(Set(self.revealedUntil.keys))
         }
+    }
+
+    // An app that just updated shows like a changed icon, for longer. Returns
+    // every app to show now. The next tick ends it on time, or right away if
+    // the bar is expanded.
+    func revealUpdated(_ bundle: String) -> Set<String> {
+        revealedUntil[bundle] = now().addingTimeInterval(Self.updateRevealDuration)
+        return Set(revealedUntil.keys)
     }
 
     // Accessibility can block on a busy app, so the read happens off the main

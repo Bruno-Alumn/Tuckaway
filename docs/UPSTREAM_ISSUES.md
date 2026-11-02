@@ -66,8 +66,8 @@ styles, #310), and #153 (Settings no longer opens at every launch by default).
 - **#380 (notch hides icons on a MacBook Air):** Show Notch Items / Notch
   Overflow lists icons the notch covers; whether it helps this report's setup
   is unconfirmed.
-- **#28 (show an app's icon after it updates):** on macOS 27 an app whose icon
-  is new is asked about; an update to a known app isn't noticed.
+- **#28 (show an app's icon after it updates):** built for macOS 27 (an option
+  under Revealing). The separator engine can't show one app on its own.
 
 ## External or OS blockers
 
