@@ -193,6 +193,22 @@ extension MenuBarDisplay {
     }
 }
 
+// Filters hidden icons by name for Find Hidden Icon. Names that start with the
+// query come first, then ones that contain it; case and accents don't matter.
+// An empty query keeps every entry in its order.
+enum HiddenIconSearch {
+    static func matches<Entry>(_ entries: [Entry], query: String, name: (Entry) -> String) -> [Entry] {
+        let query = query.trimmingCharacters(in: .whitespaces)
+        guard !query.isEmpty else { return entries }
+        let options: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
+        let prefixed = entries.filter { name($0).range(of: query, options: options.union(.anchored)) != nil }
+        let containing = entries.filter {
+            name($0).range(of: query, options: options) != nil && name($0).range(of: query, options: options.union(.anchored)) == nil
+        }
+        return prefixed + containing
+    }
+}
+
 // Where the separate bar's pieces of the menu bar are, in Accessibility
 // coordinates, kept free of capture so it can be unit tested.
 enum MenuBarStripGeometry {
