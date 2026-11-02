@@ -137,6 +137,8 @@
 "Search hidden icons" = "Search hidden icons";
 "No hidden icons" = "No hidden icons";
 "No matches" = "No matches";
+"An update is being installed" = "An update is being installed";
+"Tuckaway will relaunch when it’s done." = "Tuckaway will relaunch when it’s done.";
 "Export Settings…" = "Export Settings…";
 "Import Settings…" = "Import Settings…";
 "Couldn’t export settings" = "Couldn’t export settings";

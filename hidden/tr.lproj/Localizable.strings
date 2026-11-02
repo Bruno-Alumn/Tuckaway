@@ -137,6 +137,8 @@
 "Search hidden icons" = "Gizli simgelerde ara";
 "No hidden icons" = "Gizli simge yok";
 "No matches" = "Sonuç yok";
+"An update is being installed" = "Bir güncelleme yükleniyor";
+"Tuckaway will relaunch when it’s done." = "Tuckaway işlem bitince yeniden başlatılacak.";
 "Export Settings…" = "Ayarları Dışa Aktar…";
 "Import Settings…" = "Ayarları İçe Aktar…";
 "Couldn’t export settings" = "Ayarlar dışa aktarılamadı";

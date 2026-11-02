@@ -135,6 +135,8 @@
 "Search hidden icons" = "搜索隐藏的图标";
 "No hidden icons" = "没有隐藏的图标";
 "No matches" = "无匹配结果";
+"An update is being installed" = "正在安装更新";
+"Tuckaway will relaunch when it’s done." = "完成后 Tuckaway 将重新启动。";
 "Export Settings…" = "导出设置…";
 "Import Settings…" = "导入设置…";
 "Couldn’t export settings" = "无法导出设置";
