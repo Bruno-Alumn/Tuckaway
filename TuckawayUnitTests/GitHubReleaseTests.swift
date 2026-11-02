@@ -16,23 +16,30 @@ final class GitHubReleaseTests: XCTestCase {
         defer { try? fileManager.removeItem(at: root) }
 
         let id = "com.example.app"
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0")
         XCTAssertTrue(fileManager.fileExists(atPath: backup.path))
 
         // A half-moved bundle: there, but not a working app.
         try fileManager.createDirectory(at: destination.appendingPathComponent("Contents"), withIntermediateDirectories: true)
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0")
         XCTAssertTrue(fileManager.fileExists(atPath: backup.path), "a broken destination doesn't count as installed")
 
-        let plist = try PropertyListSerialization.data(fromPropertyList: ["CFBundleIdentifier": id, "CFBundlePackageType": "APPL"],
+        // A partly copied new version: right identifier, other version.
+        let newer = try PropertyListSerialization.data(fromPropertyList: ["CFBundleIdentifier": id, "CFBundleShortVersionString": "2.0"],
+                                                       format: .xml, options: 0)
+        try newer.write(to: destination.appendingPathComponent("Contents/Info.plist"))
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0")
+        XCTAssertTrue(fileManager.fileExists(atPath: backup.path), "a half-copied update doesn't count as the installed app")
+
+        let plist = try PropertyListSerialization.data(fromPropertyList: ["CFBundleIdentifier": id, "CFBundleShortVersionString": "1.0"],
                                                        format: .xml, options: 0)
         try plist.write(to: destination.appendingPathComponent("Contents/Info.plist"))
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0")
         XCTAssertFalse(fileManager.fileExists(atPath: work.path))
 
         try fileManager.createDirectory(at: work, withIntermediateDirectories: true)
         try fileManager.removeItem(at: destination)
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0")
         XCTAssertFalse(fileManager.fileExists(atPath: work.path))
     }
 
