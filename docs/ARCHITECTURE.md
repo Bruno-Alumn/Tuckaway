@@ -96,12 +96,26 @@ frontmost app's menus.
   from its frame relative to the separators, per display.
 - **Granularity is per app.** The restriction takes bundle identifiers, so an
   app's icons hide or show together (#427).
+- **The effective layout.** Everything that decides what shows while collapsed
+  goes through `effectiveLayout`: the sections read from the bar, then kept and
+  undecided new apps, or instead the active profile's apps
+  (`ProfileApplying.setProfile`, `MenuBarProfiles`), then the frontmost app if
+  "show the icon of the app you're using" is on (`ActiveAppShowing`); Always
+  Hidden wins over both. The collapse allow-list, `hiddenItems` (the separate
+  bar and Find Hidden Icon), peeking and the fresh read on collapse all use it,
+  so a change in one place reaches all of them. A change while a collapse is in
+  flight is re-applied when it lands. Profiles can follow a display connection
+  (`MenuBarProfiles.displaysChanged`, using `CGDisplayIsBuiltin`, so a closed
+  MacBook at a desk counts).
 - **Find Hidden Icon.** `HiddenIconSearchController` lists `hiddenItems` by name in
   a key-capable non-activating panel; opening one reuses the separate bar's
   peek-and-click (`clickNativeHiddenItem`). Filtering is `HiddenIconSearch`.
 - **Presentation mode.** `PresentationModeProviding.setPresenting(true)` holds a
   restriction that allows no app but Tuckaway; collapse and expand only update
-  `state` meanwhile, and ending it re-applies that state.
+  `state` meanwhile, and ending it re-applies that state. It survives
+  `invalidateLayout`, waits for a collapse in flight, and, unlike the other
+  states, keeps hiding while a camera or microphone is in use. It wins over
+  profiles and the frontmost app.
 - **New apps.** macOS puts a new app's icon on the hidden side.
   `NewMenuBarAppTracker` (persisted by `UserDefaultsNewMenuBarAppStore`)
   remembers every app seen; the first read only records what is there. A new
