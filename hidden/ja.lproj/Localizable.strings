@@ -159,3 +159,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "折りたたみ時に表示する項目はプロファイル「%@」で決まります。これらのリストは「矢印を使用」用です。";
 "When a Display Is Connected" = "ディスプレイ接続時";
 "Don’t Switch" = "切り替えない";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "メニューバーのアイコンの間隔";
+"Default" = "デフォルト";
+"Compact" = "狭め";
+"Tight" = "最小";
+"Custom" = "カスタム";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Tuckawayだけでなく、メニューバーのすべてのアイコンの間隔を変更します。各アプリは次に開いたときに新しい間隔を使います。すべてに適用するには、ログアウトしてもう一度ログインしてください。";

@@ -161,3 +161,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow.";
 "When a Display Is Connected" = "When a Display Is Connected";
 "Don’t Switch" = "Don’t Switch";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "Menu bar icon spacing";
+"Default" = "Default";
+"Compact" = "Compact";
+"Tight" = "Tight";
+"Custom" = "Custom";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere.";

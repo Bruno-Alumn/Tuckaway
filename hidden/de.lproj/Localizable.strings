@@ -161,3 +161,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Profil „%@“ bestimmt, was im eingeklappten Zustand sichtbar ist. Diese Listen gelten für „Pfeil verwenden“.";
 "When a Display Is Connected" = "Wenn ein Bildschirm angeschlossen ist";
 "Don’t Switch" = "Nicht wechseln";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "Abstand der Menüleisten-Symbole";
+"Default" = "Standardwert";
+"Compact" = "Kompakt";
+"Tight" = "Eng";
+"Custom" = "Eigener Wert";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Ändert den Abstand zwischen allen Symbolen der Menüleiste, nicht nur bei Tuckaway. Jede App übernimmt den neuen Abstand beim nächsten Öffnen; melde dich ab und wieder an, um ihn überall anzuwenden.";

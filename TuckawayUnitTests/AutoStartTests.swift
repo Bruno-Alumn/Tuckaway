@@ -152,3 +152,40 @@ final class LegacyLoginItemMigrationTests: XCTestCase {
         XCTAssertEqual(calls, 0)
     }
 }
+
+final class MenuBarItemSpacingTests: XCTestCase {
+    private final class FakeGlobalPreferences: GlobalIntegerPreferences {
+        var values: [String: Int] = [:]
+        func integer(forKey key: String) -> Int? { values[key] }
+        func set(_ value: Int?, forKey key: String) { values[key] = value }
+    }
+
+    func testUnsetSpacingIsStandard() {
+        XCTAssertEqual(MenuBarItemSpacing.current(in: FakeGlobalPreferences()), .standard)
+    }
+
+    func testApplyingALevelWritesSpacingAndHalfAsMuchPadding() {
+        let store = FakeGlobalPreferences()
+        MenuBarItemSpacing.apply(.tight, to: store)
+
+        XCTAssertEqual(store.values, ["NSStatusItemSpacing": 4, "NSStatusItemSelectionPadding": 2])
+        XCTAssertEqual(MenuBarItemSpacing.current(in: store), .tight)
+    }
+
+    func testStandardRemovesBothKeys() {
+        let store = FakeGlobalPreferences()
+        MenuBarItemSpacing.apply(.compact, to: store)
+        MenuBarItemSpacing.apply(.standard, to: store)
+
+        XCTAssertTrue(store.values.isEmpty)
+    }
+
+    func testAValueSetElsewhereIsCustomAndLeftAlone() {
+        let store = FakeGlobalPreferences()
+        store.values = ["NSStatusItemSpacing": 6, "NSStatusItemSelectionPadding": 12]
+
+        XCTAssertEqual(MenuBarItemSpacing.current(in: store), .custom)
+        MenuBarItemSpacing.apply(.custom, to: store)
+        XCTAssertEqual(store.values, ["NSStatusItemSpacing": 6, "NSStatusItemSelectionPadding": 12])
+    }
+}

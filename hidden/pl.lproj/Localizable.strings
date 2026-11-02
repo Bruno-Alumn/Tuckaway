@@ -161,3 +161,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Profil „%@” decyduje, co widać po zwinięciu. Te listy dotyczą opcji „Używaj strzałki”.";
 "When a Display Is Connected" = "Po podłączeniu monitora";
 "Don’t Switch" = "Nie przełączaj";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "Odstępy ikon na pasku menu";
+"Default" = "Domyślne";
+"Compact" = "Kompaktowe";
+"Tight" = "Wąskie";
+"Custom" = "Własne";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Zmienia odstęp między wszystkimi ikonami na pasku menu, nie tylko ikonami Tuckaway. Każda aplikacja użyje nowego odstępu przy następnym otwarciu; wyloguj się i zaloguj ponownie, aby zastosować go wszędzie.";

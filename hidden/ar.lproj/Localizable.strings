@@ -161,3 +161,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "يحدد الملف الشخصي “%@” ما يظهر عند الطي. هذه القوائم خاصة بخيار “استخدام السهم”.";
 "When a Display Is Connected" = "عند توصيل شاشة";
 "Don’t Switch" = "عدم التبديل";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "تباعد أيقونات شريط القوائم";
+"Default" = "الافتراضي";
+"Compact" = "مضغوط";
+"Tight" = "ضيق";
+"Custom" = "مخصص";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "يغيّر المسافة بين جميع أيقونات شريط القوائم، وليس أيقونات Tuckaway فقط. يستخدم كل تطبيق التباعد الجديد عند فتحه في المرة التالية؛ سجّل الخروج ثم الدخول لتطبيقه في كل مكان.";

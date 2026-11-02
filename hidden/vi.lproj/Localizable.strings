@@ -159,3 +159,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Hồ sơ “%@” quyết định những gì hiển thị khi thu gọn. Các danh sách này dành cho “Dùng mũi tên”.";
 "When a Display Is Connected" = "Khi kết nối màn hình";
 "Don’t Switch" = "Không chuyển";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "Khoảng cách biểu tượng thanh menu";
+"Default" = "Mặc định";
+"Compact" = "Gọn";
+"Tight" = "Hẹp";
+"Custom" = "Tùy chỉnh";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Thay đổi khoảng cách giữa tất cả biểu tượng trên thanh menu, không chỉ của Tuckaway. Mỗi ứng dụng dùng khoảng cách mới vào lần mở tiếp theo; đăng xuất rồi đăng nhập lại để áp dụng ở mọi nơi.";

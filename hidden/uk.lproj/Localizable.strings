@@ -161,3 +161,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Профіль «%@» визначає, що видно в згорнутому стані. Ці списки стосуються «Використовувати стрілку».";
 "When a Display Is Connected" = "Коли під’єднано дисплей";
 "Don’t Switch" = "Не перемикати";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "Відстань між значками рядка меню";
+"Default" = "Стандартна";
+"Compact" = "Компактна";
+"Tight" = "Вузька";
+"Custom" = "Власна";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Змінює відстань між усіма значками рядка меню, а не лише Tuckaway. Кожна програма використає нову відстань під час наступного запуску; вийдіть і знову ввійдіть, щоб застосувати її всюди.";

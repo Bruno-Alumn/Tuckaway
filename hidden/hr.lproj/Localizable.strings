@@ -161,3 +161,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Profil „%@” određuje što se vidi kad je traka skupljena. Ovi su popisi za „Koristi strelicu”.";
 "When a Display Is Connected" = "Kad je zaslon spojen";
 "Don’t Switch" = "Ne mijenjaj";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "Razmak ikona trake izbornika";
+"Default" = "Zadano";
+"Compact" = "Zbijeno";
+"Tight" = "Usko";
+"Custom" = "Prilagođeno";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Mijenja razmak između svih ikona trake izbornika, ne samo Tuckawayjevih. Svaka aplikacija koristi novi razmak kad se sljedeći put otvori; odjavite se i ponovno prijavite da biste ga primijenili svugdje.";

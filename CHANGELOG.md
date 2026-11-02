@@ -4,6 +4,7 @@
 
 ### Added
 - Install with Homebrew: `brew install --cask bruno-alumn/tuckaway/tuckaway`.
+- **Menu bar icon spacing** in Settings › General: Compact or Tight fits more icons in the menu bar, which helps on notched Macs. It applies to every app's icon; each app uses it the next time it opens.
 
 ## v1.7.0 (2026-11-02)
 

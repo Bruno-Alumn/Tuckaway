@@ -161,3 +161,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Daraltılmışken neyin görüneceğine “%@” profili karar verir. Bu listeler “Oku Kullan” içindir.";
 "When a Display Is Connected" = "Bir Ekran Bağlandığında";
 "Don’t Switch" = "Değiştirme";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "Menü çubuğu simge aralığı";
+"Default" = "Varsayılan";
+"Compact" = "Sıkı";
+"Tight" = "Dar";
+"Custom" = "Özel";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Yalnızca Tuckaway’in değil, tüm menü çubuğu simgelerinin arasındaki boşluğu değiştirir. Her uygulama yeni aralığı bir sonraki açılışında kullanır; her yerde uygulamak için oturumu kapatıp yeniden açın.";

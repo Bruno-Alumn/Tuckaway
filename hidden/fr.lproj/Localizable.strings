@@ -161,3 +161,11 @@
 "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Le profil « %@ » détermine ce qui s’affiche une fois la barre réduite. Ces listes s’appliquent à « Utiliser la flèche ».";
 "When a Display Is Connected" = "Quand un écran est connecté";
 "Don’t Switch" = "Ne pas changer";
+
+/* Menu bar icon spacing */
+"Menu bar icon spacing" = "Espacement des icônes de la barre des menus";
+"Default" = "Par défaut";
+"Compact" = "Compact";
+"Tight" = "Serré";
+"Custom" = "Personnalisé";
+"Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Modifie l’espace entre toutes les icônes de la barre des menus, pas seulement celles de Tuckaway. Chaque app utilise le nouvel espacement à sa prochaine ouverture ; déconnectez-vous puis reconnectez-vous pour l’appliquer partout.";
