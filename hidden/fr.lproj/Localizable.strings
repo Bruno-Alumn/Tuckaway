@@ -137,6 +137,8 @@
 "Search hidden icons" = "Rechercher dans les icônes masquées";
 "No hidden icons" = "Aucune icône masquée";
 "No matches" = "Aucun résultat";
+"An update is being installed" = "Une mise à jour est en cours d’installation";
+"Tuckaway will relaunch when it’s done." = "Tuckaway redémarrera une fois l’installation terminée.";
 "Export Settings…" = "Exporter les réglages…";
 "Import Settings…" = "Importer les réglages…";
 "Couldn’t export settings" = "Impossible d’exporter les réglages";

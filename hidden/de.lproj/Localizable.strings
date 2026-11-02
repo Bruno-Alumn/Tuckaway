@@ -137,6 +137,8 @@
 "Search hidden icons" = "Ausgeblendete Symbole durchsuchen";
 "No hidden icons" = "Keine ausgeblendeten Symbole";
 "No matches" = "Keine Treffer";
+"An update is being installed" = "Ein Update wird installiert";
+"Tuckaway will relaunch when it’s done." = "Tuckaway startet neu, sobald es fertig ist.";
 "Export Settings…" = "Einstellungen exportieren…";
 "Import Settings…" = "Einstellungen importieren…";
 "Couldn’t export settings" = "Einstellungen konnten nicht exportiert werden";

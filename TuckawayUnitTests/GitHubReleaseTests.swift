@@ -15,16 +15,24 @@ final class GitHubReleaseTests: XCTestCase {
         try fileManager.createDirectory(at: backup, withIntermediateDirectories: true)
         defer { try? fileManager.removeItem(at: root) }
 
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        let id = "com.example.app"
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
         XCTAssertTrue(fileManager.fileExists(atPath: backup.path))
 
-        try fileManager.createDirectory(at: destination, withIntermediateDirectories: true)
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        // A half-moved bundle: there, but not a working app.
+        try fileManager.createDirectory(at: destination.appendingPathComponent("Contents"), withIntermediateDirectories: true)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
+        XCTAssertTrue(fileManager.fileExists(atPath: backup.path), "a broken destination doesn't count as installed")
+
+        let plist = try PropertyListSerialization.data(fromPropertyList: ["CFBundleIdentifier": id, "CFBundlePackageType": "APPL"],
+                                                       format: .xml, options: 0)
+        try plist.write(to: destination.appendingPathComponent("Contents/Info.plist"))
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
         XCTAssertFalse(fileManager.fileExists(atPath: work.path))
 
         try fileManager.createDirectory(at: work, withIntermediateDirectories: true)
         try fileManager.removeItem(at: destination)
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
         XCTAssertFalse(fileManager.fileExists(atPath: work.path))
     }
 

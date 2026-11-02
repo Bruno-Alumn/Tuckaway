@@ -135,6 +135,8 @@
 "Search hidden icons" = "隠れているアイコンを検索";
 "No hidden icons" = "隠れているアイコンはありません";
 "No matches" = "一致する項目はありません";
+"An update is being installed" = "アップデートをインストール中です";
+"Tuckaway will relaunch when it’s done." = "完了すると Tuckaway が再起動します。";
 "Export Settings…" = "設定を書き出す…";
 "Import Settings…" = "設定を読み込む…";
 "Couldn’t export settings" = "設定を書き出せませんでした";
