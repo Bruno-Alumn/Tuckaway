@@ -472,16 +472,13 @@ final class MenuBarItemManagerViewController: NSViewController {
     private func move(_ item: ManagedMenuBarItem, to table: NSTableView, row: Int) {
         let toSection = section(of: table)
         let fromTable = tables[item.section]!
-        // Out of Visible, an app kept visible by name stops being kept, so the
-        // icon's place decides again.
-        if toSection != .visible, let controller = (NSApp.delegate as? AppDelegate)?.statusBarController {
-            var pid: pid_t = 0
-            AXUIElementGetPid(item.element, &pid)
-            if let bundle = NSRunningApplication(processIdentifier: pid)?.bundleIdentifier,
-               controller.keptVisibleApps.contains(bundle) {
-                controller.stopKeepingVisible(bundle)
-            }
-        }
+        let controller = (NSApp.delegate as? AppDelegate)?.statusBarController
+        var pid: pid_t = 0
+        AXUIElementGetPid(item.element, &pid)
+        let bundle = NSRunningApplication(processIdentifier: pid)?.bundleIdentifier
+        let action = MenuBarItemMovePlan.action(from: item.section, to: toSection,
+                                                isKept: bundle.map { controller?.keptVisibleApps.contains($0) == true } ?? false,
+                                                marksVisibleApps: MenuBarEngineFactory.usesNativeVisibility && bundle != nil)
         let destinationIDs = MenuBarItemMovePlan.inserting(item.id, into: items(for: table).map(\.id), aboveRow: row)
         guard let newIndex = destinationIDs.firstIndex(of: item.id) else { return }
         let oldIndex = items(for: fromTable).firstIndex { $0.id == item.id }
@@ -508,6 +505,18 @@ final class MenuBarItemManagerViewController: NSViewController {
             table.insertRows(at: IndexSet(integer: newIndex), withAnimation: .effectGap)
         }
         updateCounts()
+
+        switch action {
+        case .keepVisible:
+            if let bundle { controller?.keepVisible(bundle) }
+            return
+        case .none:
+            return
+        case .stopKeepingAndDrag:
+            if let bundle { controller?.stopKeepingVisible(bundle) }
+        case .drag:
+            break
+        }
 
         movesInFlight += 1
         let element = item.element
