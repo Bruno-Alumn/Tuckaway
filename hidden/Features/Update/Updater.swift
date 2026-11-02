@@ -312,15 +312,20 @@ final class Updater {
         return app
     }
 
+    // The identity of every release since 1.2: the Tuckaway Release Signing
+    // certificate (docs/RUNBOOK.md). Change it together with that certificate.
+    static let releaseRequirement = #"identifier "com.brunoalumn.tuckaway" and certificate root = H"0105a9f1aad750cf7de24f2c5fbe2ed2483780e8""#
+
     // Whether `app` satisfies the running app's designated requirement: same
     // bundle ID, signed by the same certificate. That keeps a tampered or
     // re-signed download out, and is the same identity macOS uses to keep
-    // Tuckaway's permissions across updates. An ad-hoc signed running app
-    // (releases before 1.2) has no certificate to match, so it accepts the
-    // update on the codesign check alone.
-    private static func isSignedLikeThisApp(_ app: URL) -> Bool {
+    // Tuckaway's permissions across updates. An ad-hoc signed running app (a
+    // Debug build, a CI package, a build from source) has no certificate of its
+    // own; codesign --verify alone would pass any ad-hoc download, so it holds
+    // the update to the release certificate instead.
+    static func isSignedLikeThisApp(_ app: URL, runningApp: URL = Bundle.main.bundleURL) -> Bool {
         var runningCode: SecStaticCode?
-        guard SecStaticCodeCreateWithPath(Bundle.main.bundleURL as CFURL, [], &runningCode) == errSecSuccess,
+        guard SecStaticCodeCreateWithPath(runningApp as CFURL, [], &runningCode) == errSecSuccess,
               let runningCode
         else { return false }
         var information: CFDictionary?
@@ -328,11 +333,14 @@ final class Updater {
               let information = information as? [String: Any]
         else { return false }
         let flags = (information[kSecCodeInfoFlags as String] as? NSNumber)?.uint32Value ?? 0
-        if flags & SecCodeSignatureFlags.adhoc.rawValue != 0 { return true }
+        let isAdHoc = flags & SecCodeSignatureFlags.adhoc.rawValue != 0
 
         var requirement: SecRequirement?
         var updateCode: SecStaticCode?
-        guard SecCodeCopyDesignatedRequirement(runningCode, [], &requirement) == errSecSuccess,
+        let gotRequirement = isAdHoc
+            ? SecRequirementCreateWithString(releaseRequirement as CFString, [], &requirement)
+            : SecCodeCopyDesignatedRequirement(runningCode, [], &requirement)
+        guard gotRequirement == errSecSuccess,
               let requirement,
               SecStaticCodeCreateWithPath(app as CFURL, [], &updateCode) == errSecSuccess,
               let updateCode

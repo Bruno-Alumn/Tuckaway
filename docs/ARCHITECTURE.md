@@ -230,8 +230,12 @@ flowchart TD
    pass `codesign --verify --deep --strict`, and satisfy the running app's
    designated requirement (same bundle ID and signing certificate; checked
    with `SecStaticCodeCheckValidity`). A running app that is itself ad-hoc
-   signed (1.1.0 and earlier) has no certificate to match and skips that last
-   check. If anything fails, nothing on disk changes.
+   signed (a Debug build, a CI package, a build from source) has no certificate
+   of its own, so the download must satisfy `Updater.releaseRequirement`, the
+   Tuckaway Release Signing certificate, instead; `codesign --verify` alone
+   would pass anyone's ad-hoc bundle. (1.1.0 and earlier, which shipped ad-hoc,
+   still run their old updater and accept any validly signed download.) If
+   anything fails, nothing on disk changes.
 6. **Swap:** the running bundle is moved aside and the new one moved in, rolling
    back if the second move fails. If rollback also fails, the old app's backup is
    preserved rather than deleted with the work folder. A detached `/bin/sh` waits
