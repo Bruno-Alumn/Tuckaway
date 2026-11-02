@@ -193,3 +193,11 @@
 /* The date the clock drops while collapsed (macOS 13–26) */
 "While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "アイコンを隠している間は、メニューバーがいっぱいに見えるため、macOSが時計から日付を省きます。表示し続けるには、時計のオプションで“日付を表示”を“常に”にしてください。";
 "Clock Options…" = "時計のオプション…";
+
+/* A profile used at set times of day */
+"Schedule…" = "スケジュール…";
+"Use “%@” at set times" = "“%@”を決まった時間に使用";
+"Tuckaway switches to this profile when the time starts, and back to the one you were using when it ends. A profile you pick in between stays." = "開始時刻になるとTuckawayはこのプロファイルに切り替え、終了時刻に使用していたプロファイルに戻します。その間に選んだプロファイルはそのままです。";
+"Switch automatically" = "自動的に切り替える";
+"From" = "開始";
+"To" = "終了";

@@ -236,6 +236,7 @@ final class GeneralSettingsModel: ObservableObject {
     @Published private(set) var profileNames: [String] = []
     @Published private(set) var profileShortcutTitles: [String: String] = [:]
     @Published private(set) var profileApps: [String: [String]] = [:]
+    @Published private(set) var profileSchedules: [String: ProfileSchedule] = [:]
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
     @Published private(set) var clockDropsDate = GeneralSettingsModel.readClockDropsDate()
 
@@ -257,6 +258,7 @@ final class GeneralSettingsModel: ObservableObject {
         let profiles = StatusBarController.supportsPresentationMode ? UserDefaultsMenuBarProfilesStore().profiles : MenuBarProfiles()
         profileNames = profiles.names
         profileApps = profiles.profiles
+        profileSchedules = profiles.schedules
         profileShortcutTitles = Preferences.profileShortcuts.mapValues(\.description)
     }
 
@@ -285,6 +287,56 @@ final class GeneralSettingsModel: ObservableObject {
         statusBarController?.updateProfileToCurrentLayout(name) { updated in
             if !updated { NSSound.beep() }
         }
+    }
+
+    // An alert with a checkbox and two time pickers. Turning the checkbox off
+    // removes the schedule.
+    func scheduleProfile(_ name: String) {
+        let current = profileSchedules[name]
+        let alert = NSAlert()
+        alert.messageText = String(format: "Use “%@” at set times".localized, name)
+        alert.informativeText = "Tuckaway switches to this profile when the time starts, and back to the one you were using when it ends. A profile you pick in between stays.".localized
+        let enabled = NSButton(checkboxWithTitle: "Switch automatically".localized, target: nil, action: nil)
+        enabled.state = current == nil ? .off : .on
+        let from = Self.timePicker(minute: current?.start ?? 9 * 60)
+        let to = Self.timePicker(minute: current?.end ?? 17 * 60)
+        let times = NSStackView(views: [NSTextField(labelWithString: "From".localized), from,
+                                        NSTextField(labelWithString: "To".localized), to])
+        times.spacing = 6
+        let stack = NSStackView(views: [enabled, times])
+        stack.orientation = .vertical
+        stack.alignment = .leading
+        stack.frame = NSRect(x: 0, y: 0, width: 280, height: 56)
+        alert.accessoryView = stack
+        alert.addButton(withTitle: "Save".localized)
+        alert.addButton(withTitle: "Cancel".localized)
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        let schedule = enabled.state == .on ? ProfileSchedule(start: Self.minute(of: from), end: Self.minute(of: to)) : nil
+        statusBarController?.setSchedule(schedule, forProfile: name)
+    }
+
+    private static func timePicker(minute: Int) -> NSDatePicker {
+        let picker = NSDatePicker()
+        picker.datePickerElements = .hourMinute
+        picker.datePickerStyle = .textFieldAndStepper
+        picker.dateValue = Calendar.current.date(bySettingHour: minute / 60, minute: minute % 60, second: 0, of: Date()) ?? Date()
+        return picker
+    }
+
+    private static func minute(of picker: NSDatePicker) -> Int {
+        let time = Calendar.current.dateComponents([.hour, .minute], from: picker.dateValue)
+        return (time.hour ?? 0) * 60 + (time.minute ?? 0)
+    }
+
+    // "9:00 AM – 5:00 PM" in the user's time format.
+    static func describe(_ schedule: ProfileSchedule) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        let time = { (minute: Int) in
+            Calendar.current.date(bySettingHour: minute / 60, minute: minute % 60, second: 0, of: Date()).map(formatter.string(from:)) ?? ""
+        }
+        return "\(time(schedule.start)) – \(time(schedule.end))"
     }
 
     func removeApp(_ bundle: String, fromProfile name: String) {
@@ -665,6 +717,7 @@ struct GeneralSettingsView: View {
         Menu {
             Button("Rename…".localized) { model.renameProfile(name) }
             Button("Use Current Layout".localized) { model.updateProfileToCurrentLayout(name) }
+            Button("Schedule…".localized) { model.scheduleProfile(name) }
             Menu("Remove App".localized) {
                 ForEach(model.profileApps[name] ?? [], id: \.self) { bundle in
                     Button(GeneralSettingsModel.appName(bundle)) { model.removeApp(bundle, fromProfile: name) }
@@ -683,13 +736,20 @@ struct GeneralSettingsView: View {
         .help("Edit Profile".localized)
     }
 
-    // "Slack, Calendar and 2 more", or "No apps".
+    // "Slack, Calendar and 2 more", or "No apps", after the schedule if any.
     private func profileAppsSummary(_ name: String) -> String {
         let names = (model.profileApps[name] ?? []).map(GeneralSettingsModel.appName)
             .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
-        guard !names.isEmpty else { return "No apps".localized }
-        guard names.count > 3 else { return ListFormatter.localizedString(byJoining: names) }
-        return String(format: "%@ and %d more".localized, names.prefix(2).joined(separator: ", "), names.count - 2)
+        let apps: String
+        if names.isEmpty {
+            apps = "No apps".localized
+        } else if names.count > 3 {
+            apps = String(format: "%@ and %d more".localized, names.prefix(2).joined(separator: ", "), names.count - 2)
+        } else {
+            apps = ListFormatter.localizedString(byJoining: names)
+        }
+        guard let schedule = model.profileSchedules[name] else { return apps }
+        return "\(GeneralSettingsModel.describe(schedule)) · \(apps)"
     }
 
     private func shortcutRecorder(_ kind: ShortcutKind) -> some View {

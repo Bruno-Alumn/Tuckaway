@@ -328,6 +328,18 @@ final class UserDefaultsNewMenuBarAppStore: NewMenuBarAppStore {
 
 // Profiles (macOS 27): named sets of apps that show while collapsed, replacing
 // what the arrow's layout would show. See docs/PROFILES.md.
+// The times of day a profile is used, in minutes since midnight. A window
+// that ends before it starts runs past midnight.
+struct ProfileSchedule: Equatable {
+    var start: Int
+    var end: Int
+
+    func contains(_ minute: Int) -> Bool {
+        if start == end { return false }
+        return start < end ? (start..<end).contains(minute) : minute >= start || minute < end
+    }
+}
+
 struct MenuBarProfiles: Equatable {
     var profiles: [String: [String]] = [:]
     var active: String?
@@ -336,6 +348,11 @@ struct MenuBarProfiles: Equatable {
     // What was active before the display switch, restored when it's unplugged.
     // Nil when nothing was switched (a manual choice while docked sticks).
     var beforeDisplay: Switched?
+    var schedules: [String: ProfileSchedule] = [:]
+    // The profile whose window we're in, once the schedule has acted on it, and
+    // what to go back to when the window ends.
+    var scheduled: String?
+    var beforeSchedule: Switched?
 
     enum Switched: Equatable {
         case from(String?)
@@ -353,6 +370,39 @@ struct MenuBarProfiles: Equatable {
             if active == displayProfile {
                 active = previous.flatMap { profiles[$0] != nil ? $0 : nil }
             }
+        }
+    }
+
+    // The first profile, in menu order, whose window holds this minute.
+    func scheduledProfile(at minute: Int) -> String? {
+        names.first { schedules[$0]?.contains(minute) == true }
+    }
+
+    // Called every minute and on wake. Switches when a window starts and back
+    // when it ends, unless the user picked another profile in between: that
+    // choice stays, as it does while docked.
+    mutating func timeChanged(minute: Int) {
+        let wanted = scheduledProfile(at: minute)
+        guard wanted != scheduled else { return }
+        if let scheduled, case .from(let previous)? = beforeSchedule, active == scheduled {
+            active = previous.flatMap { profiles[$0] != nil ? $0 : nil }
+        }
+        beforeSchedule = nil
+        scheduled = wanted
+        if let wanted, active != wanted {
+            beforeSchedule = .from(active)
+            active = wanted
+        }
+    }
+
+    // Changing or removing a schedule doesn't switch anything by itself; the
+    // next minute's check does, from a clean slate.
+    mutating func setSchedule(_ schedule: ProfileSchedule?, for name: String) {
+        guard profiles[name] != nil else { return }
+        schedules[name] = schedule
+        if scheduled == name {
+            scheduled = nil
+            beforeSchedule = nil
         }
     }
 
@@ -383,6 +433,9 @@ struct MenuBarProfiles: Equatable {
         if active == name { active = newName }
         if displayProfile == name { displayProfile = newName }
         if beforeDisplay == .from(name) { beforeDisplay = .from(newName) }
+        schedules[newName] = schedules.removeValue(forKey: name)
+        if scheduled == name { scheduled = newName }
+        if beforeSchedule == .from(name) { beforeSchedule = .from(newName) }
         return true
     }
 
@@ -393,6 +446,8 @@ struct MenuBarProfiles: Equatable {
 
     mutating func delete(_ name: String) {
         if displayProfile == name { setDisplayProfile(nil) }
+        setSchedule(nil, for: name)
+        if beforeSchedule == .from(name) { beforeSchedule = .from(nil) }
         profiles[name] = nil
         if active == name { active = nil }
     }
@@ -440,6 +495,11 @@ final class UserDefaultsMenuBarProfilesStore {
     private static let displayKey = "displayMenuBarProfile"
     // "" stands for "no profile was active"; profile names are never empty.
     private static let beforeDisplayKey = "menuBarProfileBeforeDisplay"
+    // [name: [start, end]], in minutes since midnight.
+    private static let schedulesKey = "menuBarProfileSchedules"
+    private static let scheduledKey = "scheduledMenuBarProfile"
+    // "" stands for "no profile was active", as for the display switch.
+    private static let beforeScheduleKey = "menuBarProfileBeforeSchedule"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -447,10 +507,15 @@ final class UserDefaultsMenuBarProfilesStore {
 
     var profiles: MenuBarProfiles {
         get {
-            MenuBarProfiles(profiles: defaults.dictionary(forKey: Self.profilesKey) as? [String: [String]] ?? [:],
-                            active: defaults.string(forKey: Self.activeKey),
-                            displayProfile: defaults.string(forKey: Self.displayKey),
-                            beforeDisplay: defaults.string(forKey: Self.beforeDisplayKey).map { .from($0.isEmpty ? nil : $0) })
+            let schedules = (defaults.dictionary(forKey: Self.schedulesKey) as? [String: [Int]] ?? [:])
+                .compactMapValues { $0.count == 2 ? ProfileSchedule(start: $0[0], end: $0[1]) : nil }
+            return MenuBarProfiles(profiles: defaults.dictionary(forKey: Self.profilesKey) as? [String: [String]] ?? [:],
+                                   active: defaults.string(forKey: Self.activeKey),
+                                   displayProfile: defaults.string(forKey: Self.displayKey),
+                                   beforeDisplay: defaults.string(forKey: Self.beforeDisplayKey).map { .from($0.isEmpty ? nil : $0) },
+                                   schedules: schedules,
+                                   scheduled: defaults.string(forKey: Self.scheduledKey),
+                                   beforeSchedule: defaults.string(forKey: Self.beforeScheduleKey).map { .from($0.isEmpty ? nil : $0) })
         }
         set {
             defaults.set(newValue.profiles, forKey: Self.profilesKey)
@@ -460,6 +525,13 @@ final class UserDefaultsMenuBarProfilesStore {
                 defaults.set(previous ?? "", forKey: Self.beforeDisplayKey)
             } else {
                 defaults.removeObject(forKey: Self.beforeDisplayKey)
+            }
+            defaults.set(newValue.schedules.mapValues { [$0.start, $0.end] }, forKey: Self.schedulesKey)
+            defaults.set(newValue.scheduled, forKey: Self.scheduledKey)
+            if case .from(let previous)? = newValue.beforeSchedule {
+                defaults.set(previous ?? "", forKey: Self.beforeScheduleKey)
+            } else {
+                defaults.removeObject(forKey: Self.beforeScheduleKey)
             }
         }
     }

@@ -193,3 +193,11 @@
 /* The date the clock drops while collapsed (macOS 13–26) */
 "While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "隱藏圖像時,選單列看起來已滿,macOS 會從時鐘中移除日期。若要保留,請在時鐘選項中將「顯示日期」設為「永遠」。";
 "Clock Options…" = "時鐘選項⋯";
+
+/* A profile used at set times of day */
+"Schedule…" = "排程⋯";
+"Use “%@” at set times" = "在設定時間使用「%@」";
+"Tuckaway switches to this profile when the time starts, and back to the one you were using when it ends. A profile you pick in between stays." = "開始時間到時,Tuckaway 會切換到此設定檔,結束時切換回你之前使用的設定檔。期間你手動選擇的設定檔會保留。";
+"Switch automatically" = "自動切換";
+"From" = "從";
+"To" = "到";

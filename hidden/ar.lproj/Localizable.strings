@@ -195,3 +195,11 @@
 /* The date the clock drops while collapsed (macOS 13–26) */
 "While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "عندما تكون الأيقونات مخفية، يُسقط macOS التاريخ من الساعة لأن شريط القائمة يبدو ممتلئًا. للإبقاء عليه، اضبط «إظهار التاريخ» على «دائمًا» في خيارات الساعة.";
 "Clock Options…" = "خيارات الساعة…";
+
+/* A profile used at set times of day */
+"Schedule…" = "جدولة…";
+"Use “%@” at set times" = "استخدام “%@” في أوقات محددة";
+"Tuckaway switches to this profile when the time starts, and back to the one you were using when it ends. A profile you pick in between stays." = "يبدّل Tuckaway إلى هذا الملف الشخصي عند بدء الوقت، ويعود إلى الملف الذي كنت تستخدمه عند انتهائه. أما الملف الذي تختاره بينهما فيبقى.";
+"Switch automatically" = "التبديل تلقائيًا";
+"From" = "من";
+"To" = "إلى";

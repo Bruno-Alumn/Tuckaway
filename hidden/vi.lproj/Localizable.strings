@@ -193,3 +193,11 @@
 /* The date the clock drops while collapsed (macOS 13–26) */
 "While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "Khi các biểu tượng bị ẩn, macOS bỏ ngày khỏi đồng hồ vì thanh menu trông như đã đầy. Để giữ ngày, hãy đặt “Hiển thị ngày” thành “Luôn luôn” trong Tùy chọn đồng hồ.";
 "Clock Options…" = "Tùy chọn đồng hồ…";
+
+/* A profile used at set times of day */
+"Schedule…" = "Lên lịch…";
+"Use “%@” at set times" = "Dùng “%@” vào giờ đã đặt";
+"Tuckaway switches to this profile when the time starts, and back to the one you were using when it ends. A profile you pick in between stays." = "Tuckaway chuyển sang hồ sơ này khi đến giờ bắt đầu, và trở lại hồ sơ bạn đang dùng khi hết giờ. Hồ sơ bạn chọn trong khoảng đó sẽ được giữ.";
+"Switch automatically" = "Tự động chuyển";
+"From" = "Từ";
+"To" = "Đến";
