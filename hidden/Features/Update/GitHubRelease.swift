@@ -53,12 +53,15 @@ enum UpdateCheckSchedule {
 enum UpdateReplacementCleanup {
     // Something at the destination isn't enough: a move across volumes is a copy
     // then a delete, and a half-finished one leaves a broken bundle there. Only
-    // an app with the expected bundle identifier counts as intact.
+    // the app that was running (same bundle identifier and version) counts as
+    // intact; a partly copied new version has the same identifier.
     static func discardWorkDirectory(_ workDirectory: URL, destination: URL, backup: URL,
-                                     bundleIdentifier: String?, fileManager: FileManager = .default) {
+                                     bundleIdentifier: String?, version: String?, fileManager: FileManager = .default) {
         // Read directly: Bundle(url:) caches by path and would miss a change.
         let info = NSDictionary(contentsOf: destination.appendingPathComponent("Contents/Info.plist"))
-        let destinationIsIntact = bundleIdentifier != nil && info?["CFBundleIdentifier"] as? String == bundleIdentifier
+        let destinationIsIntact = bundleIdentifier != nil && version != nil
+            && info?["CFBundleIdentifier"] as? String == bundleIdentifier
+            && info?["CFBundleShortVersionString"] as? String == version
         let backupExists = fileManager.fileExists(atPath: backup.path)
         guard destinationIsIntact || !backupExists else { return }
         try? fileManager.removeItem(at: workDirectory)

@@ -92,7 +92,9 @@ final class HiddenIconSearchController: NSObject, NSSearchFieldDelegate, NSWindo
     func show(entries: [Entry], below arrowFrame: CGRect, on screen: NSScreen, onOpen: @escaping (Entry) -> Void) {
         self.entries = entries
         self.onOpen = onOpen
+        // Setting the text in code doesn't call controlTextDidChange.
         searchField.stringValue = ""
+        selection = 0
         emptyLabel.stringValue = "No hidden icons".localized
         update()
         place(below: arrowFrame, on: screen)
@@ -116,9 +118,6 @@ final class HiddenIconSearchController: NSObject, NSSearchFieldDelegate, NSWindo
     private func update() {
         shown = Array(HiddenIconSearch.matches(entries, query: searchField.stringValue, name: \.name).prefix(Self.maxRows))
         selection = min(selection, max(shown.count - 1, 0))
-        if searchField.stringValue.isEmpty == false || entries.isEmpty {
-            selection = 0
-        }
         rows.arrangedSubviews.forEach { $0.removeFromSuperview() }
         for (index, entry) in shown.enumerated() {
             rows.addArrangedSubview(row(for: entry, index: index))
