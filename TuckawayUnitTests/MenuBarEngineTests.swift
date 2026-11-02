@@ -852,6 +852,13 @@ final class HiddenSectionPeekTests: XCTestCase {
         XCTAssertEqual(visibility.requests.count, requests)
     }
 
+    func testKeepingAnAppVisibleTakesItOutOfTheSeparateBar() {
+        let engine = makeCollapsedEngine()
+        engine.resolveNewApp("com.hidden", keepVisible: true)
+        XCTAssertEqual(engine.hiddenItems, [])
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden", "com.visible"])
+    }
+
     func testPeekNeedsACollapsedBar() {
         let engine = makeCollapsedEngine()
         engine.expand()

@@ -24,6 +24,9 @@ struct HiddenItemsBarItem {
     let image: NSImage
     let sourceRect: CGRect
     let windowNumber: Int
+    // The owning app, shown on hover and read by VoiceOver.
+    var name: String? = nil
+    var bundleIdentifier: String? = nil
 }
 
 final class HiddenItemsBarPanelController: NSObject {
@@ -65,10 +68,18 @@ final class HiddenItemsBarPanelController: NSObject {
         panel.ignoresMouseEvents = false
     }
 
-    func show(capture: HiddenItemsBarCapture, clickHandler: @escaping (CGFloat) -> Void) {
+    var frame: CGRect {
+        panel.frame
+    }
+
+    // `menuProvider` builds the right-click menu for an icon; nil shows none.
+    func show(capture: HiddenItemsBarCapture, menuProvider: ((HiddenItemsBarItem) -> NSMenu?)? = nil,
+              clickHandler: @escaping (CGFloat) -> Void) {
         contentView.prefersDarkBackground = capture.prefersDarkBackground
         contentView.backgroundImage = capture.backgroundImage
         contentView.configure(items: capture.items, clickHandler: clickHandler)
+        contentView.menuProvider = menuProvider
+        contentView.startNamingHoveredIcon()
 
         let contentSize = contentView.preferredContentSize
         let panelWidth = max(160, min(contentSize.width, capture.screen.visibleFrame.width - 16))
@@ -92,6 +103,7 @@ final class HiddenItemsBarPanelController: NSObject {
     }
 
     func hide() {
+        contentView.stopNamingHoveredIcon()
         panel.orderOut(nil)
     }
 }
@@ -122,6 +134,10 @@ final class HiddenItemsBarFreezeController: NSObject {
         panel.level = .screenSaver
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
         panel.ignoresMouseEvents = true
+    }
+
+    var isVisible: Bool {
+        panel.isVisible
     }
 
     func show(_ image: CGImage, frame: CGRect) {
@@ -323,8 +339,14 @@ final class HiddenItemsBarView: NSView {
     private var items: [HiddenItemsBarItem] = []
     private var itemRects: [CGRect] = []
     private var clickHandler: ((CGFloat) -> Void)?
+    var menuProvider: ((HiddenItemsBarItem) -> NSMenu?)?
     var prefersDarkBackground = false
     var backgroundImage: NSImage?
+    private let nameLabel = HiddenItemsBarNameLabel()
+    private var hoveredIndex: Int?
+    private var hoverTimer: Timer?
+    // Kept for as long as the items: VoiceOver reads them after this returns.
+    private var accessibilityItems: [HiddenItemsBarAccessibilityItem]?
 
     var preferredContentSize: CGSize {
         let itemWidth = items.reduce(CGFloat(0)) { $0 + max($1.image.size.width, 1) }
@@ -340,7 +362,77 @@ final class HiddenItemsBarView: NSView {
         self.items = items
         itemRects = []
         self.clickHandler = clickHandler
+        accessibilityItems = nil
+        hideName()
         needsDisplay = true
+    }
+
+    // The panel never becomes active, so AppKit tooltips wouldn't show, and it
+    // didn't get mouse-moved events either (measured on 27.2); the pointer is
+    // polled while the row is open and the name goes in a label of its own.
+    func startNamingHoveredIcon() {
+        hoverTimer?.invalidate()
+        hoverTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            self?.updateHoveredIcon()
+        }
+    }
+
+    func stopNamingHoveredIcon() {
+        hoverTimer?.invalidate()
+        hoverTimer = nil
+        hideName()
+    }
+
+    private func updateHoveredIcon() {
+        guard let window else { return hideName() }
+        let location = convert(window.convertPoint(fromScreen: NSEvent.mouseLocation), from: nil)
+        let rects = itemRects.isEmpty ? layoutItemRects() : itemRects
+        let index = rects.firstIndex { $0.contains(location) }
+        guard index != hoveredIndex else { return }
+        hoveredIndex = index
+        guard let index, let name = items[index].name else { return nameLabel.hide() }
+        let iconOnScreen = window.convertToScreen(convert(rects[index], to: nil))
+        nameLabel.show(name, below: CGRect(x: iconOnScreen.minX, y: window.frame.minY, width: iconOnScreen.width, height: 0))
+    }
+
+    func hideName() {
+        hoveredIndex = nil
+        nameLabel.hide()
+    }
+
+    override func rightMouseUp(with event: NSEvent) {
+        let location = convert(event.locationInWindow, from: nil)
+        let rects = itemRects.isEmpty ? layoutItemRects() : itemRects
+        guard let index = rects.firstIndex(where: { $0.contains(location) }),
+              let menu = menuProvider?(items[index]) else { return }
+        hideName()
+        NSMenu.popUpContextMenu(menu, with: event, for: self)
+    }
+
+    // Each icon is a button for VoiceOver, named after its app.
+    override func isAccessibilityElement() -> Bool {
+        false
+    }
+
+    override func accessibilityChildren() -> [Any]? {
+        if let accessibilityItems { return accessibilityItems }
+        let rects = itemRects.isEmpty ? layoutItemRects() : itemRects
+        let built = items.indices.compactMap { index -> HiddenItemsBarAccessibilityItem? in
+            guard rects.indices.contains(index) else { return nil }
+            let element = HiddenItemsBarAccessibilityItem()
+            element.setAccessibilityParent(self)
+            element.setAccessibilityRole(.button)
+            element.setAccessibilityLabel(items[index].name ?? "Hidden item".localized)
+            element.setAccessibilityFrameInParentSpace(rects[index])
+            let sourceX = items[index].sourceRect.midX
+            element.press = { [weak self] in
+                self?.clickHandler?(sourceX)
+                return true
+            }
+            return element
+        }
+        accessibilityItems = built
+        return built
     }
 
     override func draw(_ dirtyRect: NSRect) {
@@ -421,5 +513,53 @@ final class HiddenItemsBarView: NSView {
         }
 
         return NSColor.windowBackgroundColor.withAlphaComponent(0.92)
+    }
+}
+
+private final class HiddenItemsBarAccessibilityItem: NSAccessibilityElement {
+    var press: (() -> Bool)?
+
+    override func accessibilityPerformPress() -> Bool {
+        press?() ?? false
+    }
+}
+
+// A small label, like a tooltip, under an icon in the hidden-items row.
+private final class HiddenItemsBarNameLabel {
+    private let panel: NSPanel
+    private let label = NSTextField(labelWithString: "")
+
+    init() {
+        panel = NSPanel(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: true)
+        let background = NSVisualEffectView()
+        background.material = .toolTip
+        background.state = .active
+        background.wantsLayer = true
+        background.layer?.cornerRadius = 5
+        background.layer?.masksToBounds = true
+        label.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+        background.addSubview(label)
+        panel.contentView = background
+        panel.backgroundColor = .clear
+        panel.isOpaque = false
+        panel.hasShadow = true
+        panel.isReleasedWhenClosed = false
+        panel.ignoresMouseEvents = true
+        panel.level = .statusBar
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
+    }
+
+    func show(_ text: String, below anchor: CGRect) {
+        label.stringValue = text
+        label.sizeToFit()
+        let size = CGSize(width: label.frame.width + 12, height: label.frame.height + 6)
+        label.setFrameOrigin(NSPoint(x: 6, y: 3))
+        panel.setFrame(NSRect(x: anchor.midX - size.width / 2, y: anchor.minY - size.height - 4,
+                              width: size.width, height: size.height), display: true)
+        panel.orderFrontRegardless()
+    }
+
+    func hide() {
+        panel.orderOut(nil)
     }
 }
