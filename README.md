@@ -2,7 +2,7 @@
 
 <img src="img/icon_512%402x.png" width="136" height="136" alt="Tuckaway app icon">
 
-# Tuckaway
+# TuckAway
 
 **A quieter menu bar, on your terms.**
 
