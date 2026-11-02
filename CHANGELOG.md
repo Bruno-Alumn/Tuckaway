@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.8.0 (2026-11-02)
 
 ### Security
 - A build of Tuckaway that isn't signed with the release certificate (a Debug build or one built from source) accepted any update that was validly signed, by anyone. It now only installs updates signed with the Tuckaway Release Signing certificate. Releases from 1.2 on already required that certificate.
