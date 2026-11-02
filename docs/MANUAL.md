@@ -74,7 +74,8 @@ them to the active profile. The active profile is remembered across restarts;
 **Delete Profile** removes one. Profiles are included in Export Settings.
 
 **When a Display Is Connected** picks a profile to switch to while a second
-display is attached; unplugging it switches back to what was active before.
+display is attached, including with the MacBook closed; unplugging it switches
+back to what was active before.
 Choosing a profile yourself while docked sticks until the displays change.
 
 #### Presentation Mode
