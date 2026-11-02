@@ -51,12 +51,16 @@ through 26.
 - Presentation mode (macOS 27) hides every app's icon at once for screen
   sharing and recordings.
 - Find a hidden icon by typing its name (macOS 27).
+- Profiles (macOS 27) save which icons stay visible and switch between them,
+  automatically when a display is connected if you like.
+- Show a hidden app's icon while that app is in front (macOS 27, optional).
 
 **A tool you can make your own**
 
 - Choose a standard arrow, a transparent one, or an ellipsis.
 - Reorder icons directly or through the Menu Bar Items manager.
 - Launch quietly at login, with or without opening Settings.
+- Export your settings to a file and import them on another Mac.
 
 ## Install
 
@@ -75,7 +79,8 @@ GitHub for updates once a day and can install new versions for you.
 > subsequent updates. Updating from 1.1.0 or earlier asks once more.
 
 Switching from Hidden Bar? Quit it first so the two apps don’t compete for the
-menu bar. Tuckaway copies your existing settings on its first run.
+menu bar. Tuckaway copies your Hidden Bar settings on its first run. Settings from the
+App Store version of Hidden Bar may not carry over.
 
 ## Using Tuckaway
 
@@ -92,8 +97,8 @@ Arrange your icons once, then let Tuckaway do the tidying:
 | Click or right-click the arrow | Hide or show your icons |
 | <kbd>⌘</kbd>-drag an icon | Move it between sections |
 | <kbd>⌥</kbd>-click the arrow | Hide or show the always-hidden section |
-| <kbd>Control</kbd>-click the arrow | Open Settings, updates, and Quit |
-| Your global shortcut | Hide or show from anywhere |
+| <kbd>Control</kbd>-click the arrow | Open the menu: Profiles, Presentation Mode, Settings and more |
+| Your global shortcuts | Hide or show, toggle Presentation Mode, or find a hidden icon from anywhere |
 
 Settings has three tabs: **General**, **Menu Bar Items**, and **About**. You can
 open it from the arrow’s menu or with <kbd>⌘</kbd><kbd>,</kbd>.
@@ -104,9 +109,9 @@ open it from the arrow’s menu or with <kbd>⌘</kbd><kbd>,</kbd>.
 
 ## Privacy
 
-Tuckaway has no accounts, analytics, or ads. Its only network request is the
-daily update check to GitHub, which you can turn off in Settings. Everything
-else stays on your Mac.
+Tuckaway has no accounts, analytics, or ads. It only talks to GitHub, to check
+for updates once a day (you can turn that off in Settings) and to download an
+update you choose to install. Everything else stays on your Mac.
 
 ### Permissions
 
