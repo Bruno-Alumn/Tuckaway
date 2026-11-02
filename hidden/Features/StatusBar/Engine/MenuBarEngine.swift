@@ -78,6 +78,12 @@ protocol PresentationModeProviding: AnyObject {
     func setPresenting(_ presenting: Bool)
 }
 
+// "Show the icon of the app you're using" (macOS 27).
+protocol ActiveAppShowing: AnyObject {
+    // The frontmost app, shown even if it's hidden (nil to show none).
+    func setActiveApp(_ bundle: String?)
+}
+
 enum MenuBarEngineState {
     case expanded
     case calibrating

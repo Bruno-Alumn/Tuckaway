@@ -261,6 +261,10 @@ final class GeneralSettingsModel: ObservableObject {
                        })
     }
 
+    var showActiveAppIcon: Binding<Bool> {
+        return binding({ Preferences.showActiveAppIcon }) { Preferences.showActiveAppIcon = $0 }
+    }
+
     var hoverToExpand: Binding<Bool> {
         return binding({ Preferences.hoverToExpand }) { Preferences.hoverToExpand = $0 }
     }
@@ -342,6 +346,9 @@ struct GeneralSettingsView: View {
                 settingsToggle("Expand by hovering over the menu bar", isOn: model.hoverToExpand)
                 settingsToggle("Click empty menu bar to show or hide icons", isOn: model.clickEmptyMenuBarToToggle)
                 settingsToggle("Expand when an external display is connected", isOn: model.expandWhenExternalDisplayConnected)
+                if StatusBarController.supportsPresentationMode {
+                    settingsToggle("Show the icon of the app you're using", isOn: model.showActiveAppIcon)
+                }
                 LabeledContent(Self.label("Shortcut")) { shortcutRecorder(.toggle) }
                 if StatusBarController.supportsPresentationMode {
                     LabeledContent(Self.label("Presentation Mode")) { shortcutRecorder(.presentation) }
