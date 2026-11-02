@@ -1297,10 +1297,12 @@ final class HiddenIconSearchTests: XCTestCase {
 final class ActiveAppIconTests: XCTestCase {
     private var visibility: FakeVisibility!
     private var engine: NativeVisibilityEngine!
+    // The engine holds its items weakly.
+    private var items: FakeItems!
 
     override func setUp() {
         super.setUp()
-        let items = FakeItems()
+        items = FakeItems()
         let inventory = FakeInventory()
         inventory.items = [item("com.hidden", x: 1100), item("com.other", x: 1150), item("com.visible", x: 1400)]
         visibility = FakeVisibility()
@@ -1339,5 +1341,155 @@ final class ActiveAppIconTests: XCTestCase {
         let requests = visibility.requests.count
         engine.setActiveApp("com.hidden")
         XCTAssertEqual(visibility.requests.count, requests)
+    }
+}
+
+final class MenuBarProfilesTests: XCTestCase {
+    func testSavingSwitchingAndDeleting() {
+        var profiles = MenuBarProfiles()
+        profiles.save("Work", apps: ["com.slack", "com.calendar"])
+        profiles.active = "Work"
+        XCTAssertEqual(profiles.activeApps, ["com.slack", "com.calendar"])
+        profiles.addToActive("com.zoom")
+        XCTAssertEqual(profiles.profiles["Work"], ["com.calendar", "com.slack", "com.zoom"])
+        profiles.removeFromActive("com.slack")
+        XCTAssertEqual(profiles.profiles["Work"], ["com.calendar", "com.zoom"])
+        profiles.delete("Work")
+        XCTAssertNil(profiles.active)
+        XCTAssertNil(profiles.activeApps)
+    }
+
+    func testAProfileDecidesWhatShowsButKeepsAlwaysHidden() {
+        let layout = MenuBarLayout(sections: ["com.a": .visible, "com.b": .hidden, "com.c": .alwaysHidden, "com.new": .hidden])
+        // com.c is in the profile, but moving it to Always Hidden wins.
+        let applied = MenuBarProfiles.applied(["com.b", "com.c"], alsoVisible: ["com.new"], to: layout)
+        XCTAssertEqual(applied.sections, ["com.a": .hidden, "com.b": .visible, "com.c": .alwaysHidden, "com.new": .visible])
+    }
+
+    func testStoreRoundTrips() {
+        let suite = "MenuBarProfilesTests-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = UserDefaultsMenuBarProfilesStore(defaults: defaults)
+        store.profiles = MenuBarProfiles(profiles: ["Quiet": ["com.a"]], active: "Quiet")
+        XCTAssertEqual(UserDefaultsMenuBarProfilesStore(defaults: defaults).profiles,
+                       MenuBarProfiles(profiles: ["Quiet": ["com.a"]], active: "Quiet"))
+    }
+
+    func testEngineShowsTheProfilesAppsWhileCollapsed() {
+        let items = FakeItems()
+        let inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        let visibility = FakeVisibility()
+        let engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                            captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                            ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                            itemFrame: { _ in separator },
+                                            displays: { [mainDisplay] },
+                                            isLTR: { true })
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+
+        engine.setProfile(["com.hidden"])
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden"])
+        XCTAssertEqual(engine.hiddenItems.map(\.bundleIdentifier), ["com.visible"], "what the profile hides is offered in the separate bar")
+        var saved: [String]?
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertEqual(saved, ["com.hidden"])
+
+        engine.setProfile(nil)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+}
+
+final class FreshReadKeepsChoicesTests: XCTestCase {
+    private var visibility: FakeVisibility!
+    private var engine: NativeVisibilityEngine!
+    // The engine holds its items weakly.
+    private var items: FakeItems!
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        let inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.other", x: 1150), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                        captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                        ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                        itemFrame: { _ in separator },
+                                        displays: { [mainDisplay] },
+                                        isLTR: { true })
+    }
+
+    // A collapse re-reads the bar; it used to build its list without the
+    // frontmost app or the active profile, undoing both.
+    func testCollapsingKeepsTheFrontmostAppAndTheProfile() {
+        engine.setActiveApp("com.hidden")
+        engine.collapse { _ in }
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden", "com.visible"])
+        visibility.succeed(visibility.requests.count - 1)
+
+        engine.expand()
+        engine.setActiveApp(nil)
+        engine.setProfile(["com.other"])
+        engine.collapse { _ in }
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.other"])
+    }
+
+    func testASwitchDuringACollapseIsAppliedOnceItLands() {
+        engine.collapse { _ in }
+        let collapse = visibility.requests.count - 1
+        engine.setActiveApp("com.hidden")
+        XCTAssertEqual(visibility.requests.count, collapse + 1, "nothing new while the collapse is in flight")
+        visibility.succeed(collapse)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden", "com.visible"])
+    }
+}
+
+final class SavingProfilesTests: XCTestCase {
+    private var items: FakeItems!
+    private var inventory: FakeInventory!
+    private var visibility: FakeVisibility!
+    private var engine: NativeVisibilityEngine!
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                        captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                        ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                        itemFrame: { _ in separator },
+                                        displays: { [mainDisplay] },
+                                        isLTR: { true })
+    }
+
+    // Before any read there used to be nothing to save, which made a profile
+    // that hid every icon; and an expanded bar may have changed since.
+    func testSavingReadsTheBarAsItIsNow() {
+        var saved: [String]?
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertEqual(saved, ["com.visible"])
+
+        inventory.items = [item("com.hidden", x: 1350), item("com.visible", x: 1400)]
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertEqual(saved, ["com.hidden", "com.visible"], "moved right of the arrow since the last read")
+    }
+
+    func testTheAppInFrontIsntSaved() {
+        engine.setActiveApp("com.hidden")
+        var saved: [String]?
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertEqual(saved, ["com.visible"])
+    }
+
+    func testNothingVisibleSavesNothing() {
+        inventory.items = [item("com.hidden", x: 1100)]
+        var saved: [String]? = ["placeholder"]
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertNil(saved)
     }
 }

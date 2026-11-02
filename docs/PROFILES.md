@@ -1,6 +1,12 @@
 # Profiles (design draft)
 
-Status: proposal, not built. Questions for the owner are marked **Decide**.
+Status: built (macOS 27) with these defaults for the **Decide** points, which
+the owner can still change: a profile only affects the collapsed bar; there's no
+Settings section yet; Keep Visible adds the app to the active profile. Not
+built yet: the Menu Bar Items note, automatic switching and per-profile
+shortcuts. The engine took a narrower route than `setVisibleOverride`:
+`ProfileApplying.setProfile` feeds the effective layout, and presentation mode
+stays separate and wins.
 
 ## What it's for
 

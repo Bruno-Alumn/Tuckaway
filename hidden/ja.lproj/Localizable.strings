@@ -149,3 +149,10 @@
 "Quit and reopen Tuckaway to apply them." = "適用するには Tuckaway を終了して再度開いてください。";
 "Tuckaway will relaunch to apply them." = "適用するために Tuckaway が再起動します。";
 "Show the icon of the app you're using" = "使用中のアプリのアイコンを表示";
+"Profiles" = "プロファイル";
+"Use the Arrow" = "矢印を使用";
+"Save Current Layout as Profile…" = "現在の配置をプロファイルとして保存…";
+"Delete Profile" = "プロファイルを削除";
+"Name this profile" = "プロファイルの名前";
+"It keeps the apps that are visible right now." = "現在表示されている App を保持します。";
+"Save" = "保存";

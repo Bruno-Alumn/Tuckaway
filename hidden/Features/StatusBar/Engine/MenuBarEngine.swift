@@ -78,6 +78,14 @@ protocol PresentationModeProviding: AnyObject {
     func setPresenting(_ presenting: Bool)
 }
 
+// Profiles (macOS 27): the apps that show while collapsed, or nil for the
+// arrow's layout.
+protocol ProfileApplying: AnyObject {
+    func setProfile(_ apps: Set<String>?)
+    // What the collapsed bar would show now, to save as a profile.
+    func readVisibleApps(completion: @escaping ([String]?) -> Void)
+}
+
 // "Show the icon of the app you're using" (macOS 27).
 protocol ActiveAppShowing: AnyObject {
     // The frontmost app, shown even if it's hidden (nil to show none).

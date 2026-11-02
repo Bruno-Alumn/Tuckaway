@@ -49,7 +49,7 @@ import AppKit
 //   Notification Center cannot open from it (#410). A click on the clock lifts
 //   the restriction for a moment and presses it (MenuBarClock); hidden icons
 //   can flash while it is lifted.
-final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenuBarAppReporting, PresentationModeProviding, ActiveAppShowing {
+final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenuBarAppReporting, PresentationModeProviding, ActiveAppShowing, ProfileApplying {
     // System item identifiers to keep visible. Unknown identifiers are ignored,
     // so the range covers items a given Mac does not have. On 27.0, 0-63 resolves
     // to battery, bluetooth, clock, displays, keyboard, volume, wifi,
@@ -186,6 +186,12 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
                 }
                 completion(succeeded ? .collapsed : .unavailable)
                 self.applyPendingPresentation()
+                if self.visibleAppsChangedDuringCollapse {
+                    self.visibleAppsChangedDuringCollapse = false
+                    if succeeded, !self.isPresenting, let layout = self.effectiveLayout {
+                        self.activate(allowing: layout.bundles(in: [.visible])) { _ in }
+                    }
+                }
             }
         }
     }
@@ -291,9 +297,20 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // The sections as arranged, with kept apps and new ones the user hasn't
     // decided on yet visible.
     private var effectiveLayout: MenuBarLayout? {
+        effectiveLayout(includingActiveApp: true)
+    }
+
+    private func effectiveLayout(includingActiveApp: Bool) -> MenuBarLayout? {
         layout.map { layout in
-            var effective = newApps.tracker.applied(to: layout)
-            if let activeApp, effective.sections[activeApp] != nil {
+            var effective: MenuBarLayout
+            if let profileApps {
+                // New apps nobody has decided on yet still show, as without a profile.
+                effective = MenuBarProfiles.applied(profileApps, alsoVisible: newApps.tracker.pending, to: layout)
+            } else {
+                effective = newApps.tracker.applied(to: layout)
+            }
+            // An app the user put in Always Hidden stays there.
+            if includingActiveApp, let activeApp, effective.sections[activeApp] == .hidden {
                 effective.sections[activeApp] = .visible
             }
             return effective
@@ -301,14 +318,45 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     }
 
     private var activeApp: String?
+    private var visibleAppsChangedDuringCollapse = false
+    // The active profile's apps; nil when the arrow's layout decides.
+    private var profileApps: Set<String>?
+
+    func setActiveApp(_ bundle: String?) {
+        guard bundle != activeApp else { return }
+        changeVisibleApps { activeApp = bundle }
+    }
+
+    // What a profile saved now would keep: read fresh while the bar is shown
+    // (icons may have moved since the last read), without the app that's only
+    // shown for being in front. Nil while a collapse is being worked out, or
+    // when nothing could be read.
+    func readVisibleApps(completion: @escaping ([String]?) -> Void) {
+        guard state != .calibrating else { return completion(nil) }
+        let finish = { [weak self] in
+            let apps = self?.effectiveLayout(includingActiveApp: false)?.bundles(in: [.visible])
+            completion(apps?.isEmpty == false ? apps : nil)
+        }
+        guard assertion == nil else { return finish() }
+        withLayout { _ in finish() }
+    }
+
+    func setProfile(_ apps: Set<String>?) {
+        guard apps != profileApps else { return }
+        changeVisibleApps { profileApps = apps }
+    }
 
     // While collapsed the restriction is redone, but only when the effect
     // changes: an app that's visible anyway, or not in the bar, needs nothing.
-    func setActiveApp(_ bundle: String?) {
-        guard bundle != activeApp else { return }
+    private func changeVisibleApps(_ change: () -> Void) {
         let before = effectiveLayout?.bundles(in: [.visible])
-        activeApp = bundle
+        change()
         refreshHiddenItems()
+        // A collapse in flight already chose its list; redo it once it lands.
+        if state == .calibrating {
+            visibleAppsChangedDuringCollapse = true
+            return
+        }
         guard state == .collapsed, !isPeeking, !isPresenting, let layout = effectiveLayout,
               layout.bundles(in: [.visible]) != before else { return }
         activate(allowing: layout.bundles(in: [.visible])) { _ in }
@@ -406,7 +454,9 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             NSLog("NativeVisibility: arrow at x=\(boundary.midX); visible \(layout.bundles(in: [.visible])), hidden \(layout.bundles(in: [.hidden])), always hidden \(layout.bundles(in: [.alwaysHidden]))")
             self.layout = layout
             let found = self.newApps.tracker.observe(layout)
-            let effective = self.newApps.tracker.applied(to: layout)
+            // The same layout every other path uses: kept and new apps, the
+            // active profile and the frontmost app.
+            let effective = self.effectiveLayout ?? layout
             self.inventoryItems = inventory
             self.refreshHiddenItems()
             if !found.isEmpty {

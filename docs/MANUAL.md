@@ -10,6 +10,7 @@ Everything Tuckaway can do, including the parts with no UI.
   - **Show/Hide separators** (⌘S)
   - **Manage Menu Bar Items…**
   - **Find Hidden Icon…** (macOS 27, direct-download build)
+  - **Profiles** (macOS 27, direct-download build)
   - **Presentation Mode** (macOS 27, direct-download build)
   - **Check for Updates…** (direct-download build)
   - **Settings…** (⌘,)
@@ -61,6 +62,16 @@ icons by name under the arrow. Type to filter, use ↑ and ↓, and press Return
 (or click a name) to open that icon's menu: Tuckaway shows it for the click and
 hides it again once the menu closes. Esc or clicking elsewhere closes the list.
 It shows app names and icons, so it needs no Screen Recording.
+
+#### Profiles
+
+**Profiles** in the arrow's menu saves sets of visible apps to switch between
+(macOS 27). **Save Current Layout as Profile…** names what the collapsed bar
+shows right now and switches to it. Pick a profile to show only its apps while
+collapsed, or **Use the Arrow** to go back to your ⌘-dragged layout. Expanding
+still shows everything. New apps are still asked about, and Keep Visible adds
+them to the active profile. The active profile is remembered across restarts;
+**Delete Profile** removes one. Profiles are included in Export Settings.
 
 #### Presentation Mode
 
