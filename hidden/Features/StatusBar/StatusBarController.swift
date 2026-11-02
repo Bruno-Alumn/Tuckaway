@@ -1559,6 +1559,10 @@ extension StatusBarController {
     func stopKeepingVisible(_ bundle: String) {
         newAppReporter?.resolveNewApp(bundle, keepVisible: false)
     }
+
+    func keepVisible(_ bundle: String) {
+        newAppReporter?.resolveNewApp(bundle, keepVisible: true)
+    }
 }
 
 //MARK: - Alway hide feature
