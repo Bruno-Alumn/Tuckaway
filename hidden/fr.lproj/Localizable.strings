@@ -151,3 +151,10 @@
 "Quit and reopen Tuckaway to apply them." = "Quittez puis rouvrez Tuckaway pour les appliquer.";
 "Tuckaway will relaunch to apply them." = "Tuckaway redémarrera pour les appliquer.";
 "Show the icon of the app you're using" = "Afficher l’icône de l’app que vous utilisez";
+"Profiles" = "Profils";
+"Use the Arrow" = "Utiliser la flèche";
+"Save Current Layout as Profile…" = "Enregistrer la disposition actuelle comme profil…";
+"Delete Profile" = "Supprimer le profil";
+"Name this profile" = "Nommer ce profil";
+"It keeps the apps that are visible right now." = "Il conserve les apps visibles en ce moment.";
+"Save" = "Enregistrer";

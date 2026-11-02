@@ -325,3 +325,71 @@ final class UserDefaultsNewMenuBarAppStore: NewMenuBarAppStore {
         }
     }
 }
+
+// Profiles (macOS 27): named sets of apps that show while collapsed, replacing
+// what the arrow's layout would show. See docs/PROFILES.md.
+struct MenuBarProfiles: Equatable {
+    var profiles: [String: [String]] = [:]
+    var active: String?
+
+    var activeApps: Set<String>? {
+        active.flatMap { profiles[$0] }.map(Set.init)
+    }
+
+    var names: [String] {
+        profiles.keys.sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+    }
+
+    mutating func save(_ name: String, apps: [String]) {
+        profiles[name] = apps.sorted()
+    }
+
+    mutating func delete(_ name: String) {
+        profiles[name] = nil
+        if active == name { active = nil }
+    }
+
+    // Hiding or un-keeping an app takes it out of the active profile too.
+    mutating func removeFromActive(_ bundle: String) {
+        guard let active, let apps = profiles[active] else { return }
+        profiles[active] = apps.filter { $0 != bundle }
+    }
+
+    // A kept app joins the active profile too, or keeping it would do nothing.
+    mutating func addToActive(_ bundle: String) {
+        guard let active, var apps = profiles[active], !apps.contains(bundle) else { return }
+        apps.append(bundle)
+        profiles[active] = apps.sorted()
+    }
+
+    // The layout as a profile shows it: its apps (and any `alsoVisible`) are
+    // visible, every other app is hidden, and always-hidden apps stay so.
+    static func applied(_ apps: Set<String>, alsoVisible: Set<String>, to layout: MenuBarLayout) -> MenuBarLayout {
+        var layout = layout
+        for (bundle, section) in layout.sections where section != .alwaysHidden {
+            layout.sections[bundle] = apps.contains(bundle) || alsoVisible.contains(bundle) ? .visible : .hidden
+        }
+        return layout
+    }
+}
+
+final class UserDefaultsMenuBarProfilesStore {
+    private let defaults: UserDefaults
+    private static let profilesKey = "menuBarProfiles"
+    private static let activeKey = "activeMenuBarProfile"
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
+
+    var profiles: MenuBarProfiles {
+        get {
+            MenuBarProfiles(profiles: defaults.dictionary(forKey: Self.profilesKey) as? [String: [String]] ?? [:],
+                            active: defaults.string(forKey: Self.activeKey))
+        }
+        set {
+            defaults.set(newValue.profiles, forKey: Self.profilesKey)
+            defaults.set(newValue.active, forKey: Self.activeKey)
+        }
+    }
+}

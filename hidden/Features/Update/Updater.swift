@@ -367,6 +367,11 @@ final class Updater {
             && workDirectory.deletingLastPathComponent().resolvingSymlinksInPath().path
                 == fileManager.temporaryDirectory.resolvingSymlinksInPath().path
         let backup = workDirectory.appendingPathComponent("Previous.app")
+        // Measured before anything moves: afterwards the running app's own path
+        // is the one being checked, and would always match itself.
+        let installedExecutableSize = Bundle.main.executableURL.flatMap {
+            try? fileManager.attributesOfItem(atPath: $0.path)[.size] as? Int
+        }
         do {
             try fileManager.moveItem(at: destination, to: backup)
             do {
@@ -379,7 +384,8 @@ final class Updater {
             if isOurWorkDirectory {
                 UpdateReplacementCleanup.discardWorkDirectory(workDirectory, destination: destination, backup: backup,
                                                               bundleIdentifier: Bundle.main.bundleIdentifier,
-                                                              version: Bundle.main.releaseVersionNumber)
+                                                              version: Bundle.main.releaseVersionNumber,
+                                                              expectedExecutableSize: installedExecutableSize)
             }
             showInstallFailure(.replaceFailed, fallback: fallback)
             return
