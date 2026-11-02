@@ -141,21 +141,35 @@ class PreferencesViewController: NSViewController {
         // Function keys are valid standalone global shortcuts.
         guard newGlobalKeybind.isValidGlobalShortcut else { return }
 
+        // Two of Tuckaway's shortcuts on the same keys: only one would fire.
+        let others: [(ShortcutKind, GlobalKeybindPreferences?)] = [
+            (.toggle, Preferences.globalKey), (.presentation, Preferences.presentationModeKey), (.find, Preferences.findHiddenIconKey),
+        ]
+        if others.contains(where: { $0.0 != model.recordingKind && $0.1?.isSameCombo(as: newGlobalKeybind) == true }) {
+            NSSound.beep()
+            return
+        }
+
+        // Release the old hotkey first: registering the same keys again while
+        // it's still held can fail, and the shortcut would then be dead.
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
-        let hotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: UInt32(event.keyCode), carbonModifiers: event.modifierFlags.carbonFlags))
+        let combo = KeyCombo(carbonKeyCode: UInt32(event.keyCode), carbonModifiers: event.modifierFlags.carbonFlags)
         switch model.recordingKind {
         case .toggle:
+            appDelegate.hotKey = nil
             Preferences.globalKey = newGlobalKeybind
             model.shortcutTitle = newGlobalKeybind.description
-            appDelegate.hotKey = hotKey
+            appDelegate.hotKey = HotKey(keyCombo: combo)
         case .presentation:
+            appDelegate.presentationHotKey = nil
             Preferences.presentationModeKey = newGlobalKeybind
             model.presentationShortcutTitle = newGlobalKeybind.description
-            appDelegate.presentationHotKey = hotKey
+            appDelegate.presentationHotKey = HotKey(keyCombo: combo)
         case .find:
+            appDelegate.findHotKey = nil
             Preferences.findHiddenIconKey = newGlobalKeybind
             model.findShortcutTitle = newGlobalKeybind.description
-            appDelegate.findHotKey = hotKey
+            appDelegate.findHotKey = HotKey(keyCombo: combo)
         }
     }
 
