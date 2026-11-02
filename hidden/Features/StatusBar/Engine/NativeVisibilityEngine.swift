@@ -213,6 +213,20 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         activate(allowing: layout.bundles(in: [.visible])) { _ in }
     }
 
+    func refreshHiddenItemFrames(completion: @escaping ([MenuBarInventoryItem]) -> Void) {
+        let bundles = Set(hiddenItems.compactMap(\.bundleIdentifier))
+        guard isPeeking, !bundles.isEmpty else { return completion(hiddenItems) }
+        inventory.snapshot(of: bundles) { [weak self] items in
+            guard let self else { return }
+            let fresh = items.filter { !$0.isUnreadable && $0.frame.width > 0 }
+            // Keep the old frames if the read came back short (an app timed out).
+            if Set(fresh.compactMap(\.bundleIdentifier)) == bundles, self.isPeeking {
+                self.hiddenItems = fresh
+            }
+            completion(self.hiddenItems)
+        }
+    }
+
     // Presentation mode is meant for screen sharing, so unlike the other states it
     // holds its restriction while a camera or microphone is in use (the dot in
     // the screen corner still shows).
