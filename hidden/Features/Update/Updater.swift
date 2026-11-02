@@ -378,7 +378,8 @@ final class Updater {
         } catch {
             if isOurWorkDirectory {
                 UpdateReplacementCleanup.discardWorkDirectory(workDirectory, destination: destination, backup: backup,
-                                                              bundleIdentifier: Bundle.main.bundleIdentifier)
+                                                              bundleIdentifier: Bundle.main.bundleIdentifier,
+                                                              version: Bundle.main.releaseVersionNumber)
             }
             showInstallFailure(.replaceFailed, fallback: fallback)
             return

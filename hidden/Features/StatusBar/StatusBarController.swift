@@ -108,6 +108,7 @@ class StatusBarController: MenuBarItemProvider {
     private var activeStatusItemScreen: NSScreen?
     private var didExpandForExternalDisplay = false
     private var hasCollapsedSinceLaunch = false
+    private var appliedExpandWhenExternalDisplay = Preferences.expandWhenExternalDisplayConnected
     private var configurationDragMonitor: Any?
     private var isTemporarilyExpandedForConfigurationDrag = false
     private var configurationDragCollapseWorkItem: DispatchWorkItem?
@@ -159,15 +160,19 @@ class StatusBarController: MenuBarItemProvider {
     // with "use the full menu bar" or while Settings is open.
     private var emptyMenuBarLocalMonitor: Any?
 
-    // True while the pointer sits in any screen's menubar band. The band is the
-    // strip above visibleFrame, but with "Automatically hide and show the menu
-    // bar" visibleFrame reaches the top and that strip is empty, so it's at
-    // least the menu bar's (or the notch's) height, as MenuBarClock measures it.
+    // True while the pointer sits in any screen's menubar band: the strip above
+    // visibleFrame. With "Automatically hide and show the menu bar" that strip
+    // is empty even while the bar is shown, so then it's the menu bar's (or the
+    // notch's) height, but only while the menu bar is actually visible: on a
+    // full-screen Space the top of the app isn't the menu bar.
     private var isMouseInMenuBar: Bool {
         let mouse = NSEvent.mouseLocation
         return NSScreen.screens.contains { screen in
-            let height = max(screen.frame.maxY - screen.visibleFrame.maxY, screen.safeAreaInsets.top, NSStatusBar.system.thickness)
-            return mouse.x >= screen.frame.minX && mouse.x <= screen.frame.maxX
+            var height = screen.frame.maxY - screen.visibleFrame.maxY
+            if height < 1 && NSMenu.menuBarVisible() {
+                height = max(screen.safeAreaInsets.top, NSStatusBar.system.thickness)
+            }
+            return height >= 1 && mouse.x >= screen.frame.minX && mouse.x <= screen.frame.maxX
                 && mouse.y >= screen.frame.maxY - height && mouse.y <= screen.frame.maxY
         }
     }
@@ -340,6 +345,7 @@ class StatusBarController: MenuBarItemProvider {
         // pointer is still in the menu bar then, and collapsing would hide the
         // icon whose menu or popover just opened.
         guard Preferences.autoCollapseOnFocusChange, !isCollapsed, !isMouseButtonDown, !isMouseInMenuBar, !isManagingItems,
+              !didExpandForExternalDisplay,
               let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
               app.bundleIdentifier != Bundle.main.bundleIdentifier else { return }
         collapseMenuBar()
@@ -788,7 +794,12 @@ class StatusBarController: MenuBarItemProvider {
             hiddenItemsSeparatorOverlayController.hide()
             updateExpandIcon()
         }
-        applyExternalDisplayPreference()
+        // Any preference posts this; only a change to this one should expand,
+        // or toggling something else would undo the user's collapse.
+        if Preferences.expandWhenExternalDisplayConnected != appliedExpandWhenExternalDisplay {
+            appliedExpandWhenExternalDisplay = Preferences.expandWhenExternalDisplayConnected
+            applyExternalDisplayPreference()
+        }
         autoCollapseIfNeeded()
     }
 
@@ -1493,6 +1504,8 @@ extension StatusBarController {
               let arrowFrame = btnExpandCollapse.button?.window?.frame,
               let screen = btnExpandCollapse.button?.window?.screen else { return }
         if hiddenIconSearch.isVisible { return hiddenIconSearch.hide() }
+        // Close the separate bar properly, including a capture still in flight.
+        endNativeHiddenItemsRequest()
         let entries = peeker.hiddenItems.sorted { $0.frame.minX < $1.frame.minX }.map { item -> HiddenIconSearchController.Entry in
             let app = item.bundleIdentifier.flatMap { NSRunningApplication.runningApplications(withBundleIdentifier: $0).first }
             let name = MenuBarItemNaming.displayName(appName: app?.localizedName, title: item.title,
@@ -1500,6 +1513,7 @@ extension StatusBarController {
             return HiddenIconSearchController.Entry(name: name ?? item.bundleIdentifier ?? "", icon: app?.icon, frame: item.frame)
         }
         hiddenItemsBarController.hide()
+        updateExpandIcon()
         hiddenIconSearch.show(entries: entries, below: arrowFrame, on: screen) { [weak self] entry in
             self?.openHiddenIcon(at: entry.frame)
         }
