@@ -56,12 +56,20 @@ enum UpdateReplacementCleanup {
     // the app that was running (same bundle identifier and version) counts as
     // intact; a partly copied new version has the same identifier.
     static func discardWorkDirectory(_ workDirectory: URL, destination: URL, backup: URL,
-                                     bundleIdentifier: String?, version: String?, fileManager: FileManager = .default) {
+                                     bundleIdentifier: String?, version: String?, expectedExecutableSize: Int?,
+                                     fileManager: FileManager = .default) {
         // Read directly: Bundle(url:) caches by path and would miss a change.
         let info = NSDictionary(contentsOf: destination.appendingPathComponent("Contents/Info.plist"))
+        // A rollback that stopped partway can have copied Info.plist but not
+        // all of the program, so its size has to match the running one too.
+        let executable = (info?["CFBundleExecutable"] as? String).map {
+            destination.appendingPathComponent("Contents/MacOS").appendingPathComponent($0)
+        }
+        let executableSize = executable.flatMap { try? fileManager.attributesOfItem(atPath: $0.path)[.size] as? Int }
         let destinationIsIntact = bundleIdentifier != nil && version != nil
             && info?["CFBundleIdentifier"] as? String == bundleIdentifier
             && info?["CFBundleShortVersionString"] as? String == version
+            && executableSize != nil && executableSize == expectedExecutableSize
         let backupExists = fileManager.fileExists(atPath: backup.path)
         guard destinationIsIntact || !backupExists else { return }
         try? fileManager.removeItem(at: workDirectory)

@@ -203,6 +203,7 @@ class StatusBarController: MenuBarItemProvider {
         setupAlwayHideStatusBar()
         setupNewAppPrompts()
         (menuBarEngine as? ProfileApplying)?.setProfile(profilesStore.profiles.activeApps)
+        updateActiveAppIcon()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
@@ -795,10 +796,13 @@ class StatusBarController: MenuBarItemProvider {
         return menu
     }
 
+    // Tuckaway itself in front (Settings) keeps the previous app shown.
     private func updateActiveAppIcon(_ app: NSRunningApplication? = NSWorkspace.shared.frontmostApplication) {
         guard let shower = menuBarEngine as? ActiveAppShowing else { return }
-        let bundle = app?.bundleIdentifier == Bundle.main.bundleIdentifier ? nil : app?.bundleIdentifier
-        shower.setActiveApp(Preferences.showActiveAppIcon ? bundle : nil)
+        guard Preferences.showActiveAppIcon else { return shower.setActiveApp(nil) }
+        if let app, app.bundleIdentifier != Bundle.main.bundleIdentifier {
+            shower.setActiveApp(app.bundleIdentifier)
+        }
     }
 
     @objc func updateAutoHide() {

@@ -1297,10 +1297,12 @@ final class HiddenIconSearchTests: XCTestCase {
 final class ActiveAppIconTests: XCTestCase {
     private var visibility: FakeVisibility!
     private var engine: NativeVisibilityEngine!
+    // The engine holds its items weakly.
+    private var items: FakeItems!
 
     override func setUp() {
         super.setUp()
-        let items = FakeItems()
+        items = FakeItems()
         let inventory = FakeInventory()
         inventory.items = [item("com.hidden", x: 1100), item("com.other", x: 1150), item("com.visible", x: 1400)]
         visibility = FakeVisibility()
@@ -1392,5 +1394,50 @@ final class MenuBarProfilesTests: XCTestCase {
 
         engine.setProfile(nil)
         XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+}
+
+final class FreshReadKeepsChoicesTests: XCTestCase {
+    private var visibility: FakeVisibility!
+    private var engine: NativeVisibilityEngine!
+    // The engine holds its items weakly.
+    private var items: FakeItems!
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        let inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.other", x: 1150), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                        captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                        ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                        itemFrame: { _ in separator },
+                                        displays: { [mainDisplay] },
+                                        isLTR: { true })
+    }
+
+    // A collapse re-reads the bar; it used to build its list without the
+    // frontmost app or the active profile, undoing both.
+    func testCollapsingKeepsTheFrontmostAppAndTheProfile() {
+        engine.setActiveApp("com.hidden")
+        engine.collapse { _ in }
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden", "com.visible"])
+        visibility.succeed(visibility.requests.count - 1)
+
+        engine.expand()
+        engine.setActiveApp(nil)
+        engine.setProfile(["com.other"])
+        engine.collapse { _ in }
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.other"])
+    }
+
+    func testASwitchDuringACollapseIsAppliedOnceItLands() {
+        engine.collapse { _ in }
+        let collapse = visibility.requests.count - 1
+        engine.setActiveApp("com.hidden")
+        XCTAssertEqual(visibility.requests.count, collapse + 1, "nothing new while the collapse is in flight")
+        visibility.succeed(collapse)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden", "com.visible"])
     }
 }
