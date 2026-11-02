@@ -126,3 +126,7 @@
 "Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway geçerli klasöründe kendini değiştiremedi. Güncellemeyi bunun yerine GitHub’dan indirebilirsiniz.";
 "Open Release Page" = "Sürüm Sayfasını Aç";
 "Cancel" = "Vazgeç";
+"Keep %@ visible?" = "%@ görünür kalsın mı?";
+"Its new menu bar icon landed on the hidden side, so Tuckaway is showing it until you choose." = "Yeni menü çubuğu simgesi gizli tarafa yerleşti; bu yüzden Tuckaway siz seçene kadar onu gösteriyor.";
+"Keep Visible" = "Görünür bırak";
+"Hide" = "Gizle";

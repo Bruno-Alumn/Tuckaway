@@ -68,6 +68,7 @@ struct MenuBarManagementLayout {
 final class MenuBarItemManagerViewController: NSViewController {
     private struct AppSnapshot {
         let pid: pid_t
+        let bundleIdentifier: String?
         let name: String
         let icon: NSImage?
     }
@@ -310,13 +311,15 @@ final class MenuBarItemManagerViewController: NSViewController {
                 .map {
                     AppSnapshot(
                         pid: $0.processIdentifier,
+                        bundleIdentifier: $0.bundleIdentifier,
                         name: $0.localizedName ?? "Unknown".localized,
                         icon: $0.icon
                     )
                 }
 
+            let kept = appDelegate.statusBarController.keptVisibleApps
             DispatchQueue.global(qos: .userInitiated).async {
-                let found = Self.scanItems(layout: layout, apps: apps)
+                let found = Self.scanItems(layout: layout, apps: apps, kept: kept)
                 DispatchQueue.main.async { [weak self] in
                     guard let self else { return }
                     // A drop that landed while scanning makes this result stale.
@@ -330,11 +333,11 @@ final class MenuBarItemManagerViewController: NSViewController {
         }
     }
 
-    private static func scanItems(layout: MenuBarManagementLayout, apps: [AppSnapshot]) -> [ManagedMenuBarItem] {
+    private static func scanItems(layout: MenuBarManagementLayout, apps: [AppSnapshot], kept: Set<String>) -> [ManagedMenuBarItem] {
         var perApp = [[ManagedMenuBarItem]](repeating: [], count: apps.count)
         let lock = NSLock()
         DispatchQueue.concurrentPerform(iterations: apps.count) { index in
-            let found = scanItems(of: apps[index], layout: layout)
+            let found = scanItems(of: apps[index], layout: layout, kept: kept)
             lock.lock()
             perApp[index] = found
             lock.unlock()
@@ -342,7 +345,9 @@ final class MenuBarItemManagerViewController: NSViewController {
         return perApp.flatMap { $0 }
     }
 
-    private static func scanItems(of app: AppSnapshot, layout: MenuBarManagementLayout) -> [ManagedMenuBarItem] {
+    // An app kept visible (see NewMenuBarAppTracker) is listed as Visible
+    // wherever its icons sit.
+    private static func scanItems(of app: AppSnapshot, layout: MenuBarManagementLayout, kept: Set<String>) -> [ManagedMenuBarItem] {
         var found: [ManagedMenuBarItem] = []
         let axApp = AXUIElementCreateApplication(app.pid)
         AXUIElementSetMessagingTimeout(axApp, 0.25)
@@ -365,9 +370,10 @@ final class MenuBarItemManagerViewController: NSViewController {
             let title = stringAttribute(kAXTitleAttribute as CFString, of: element)
                 ?? stringAttribute(kAXDescriptionAttribute as CFString, of: element)
                 ?? ""
-            let section = MenuBarSection.of(centerX: position.x + size.width / 2,
-                                            hiddenBoundaryX: layout.separatorFrame.minX,
-                                            alwaysHiddenBoundaryX: layout.alwaysHiddenFrame?.minX)
+            let section = app.bundleIdentifier.map(kept.contains) == true ? .visible
+                : MenuBarSection.of(centerX: position.x + size.width / 2,
+                                    hiddenBoundaryX: layout.separatorFrame.minX,
+                                    alwaysHiddenBoundaryX: layout.alwaysHiddenFrame?.minX)
             found.append(ManagedMenuBarItem(
                 id: "\(app.pid)-\(index)",
                 element: element,
@@ -466,6 +472,16 @@ final class MenuBarItemManagerViewController: NSViewController {
     private func move(_ item: ManagedMenuBarItem, to table: NSTableView, row: Int) {
         let toSection = section(of: table)
         let fromTable = tables[item.section]!
+        // Out of Visible, an app kept visible by name stops being kept, so the
+        // icon's place decides again.
+        if toSection != .visible, let controller = (NSApp.delegate as? AppDelegate)?.statusBarController {
+            var pid: pid_t = 0
+            AXUIElementGetPid(item.element, &pid)
+            if let bundle = NSRunningApplication(processIdentifier: pid)?.bundleIdentifier,
+               controller.keptVisibleApps.contains(bundle) {
+                controller.stopKeepingVisible(bundle)
+            }
+        }
         let destinationIDs = MenuBarItemMovePlan.inserting(item.id, into: items(for: table).map(\.id), aboveRow: row)
         guard let newIndex = destinationIDs.firstIndex(of: item.id) else { return }
         let oldIndex = items(for: fromTable).firstIndex { $0.id == item.id }

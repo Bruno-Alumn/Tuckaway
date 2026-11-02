@@ -126,3 +126,7 @@
 "Tuckaway couldn’t replace itself in its current folder. You can download the update from GitHub instead." = "Tuckaway n’a pas pu se remplacer dans son dossier actuel. Vous pouvez plutôt télécharger la mise à jour sur GitHub.";
 "Open Release Page" = "Ouvrir la page de la version";
 "Cancel" = "Annuler";
+"Keep %@ visible?" = "Garder %@ visible ?";
+"Its new menu bar icon landed on the hidden side, so Tuckaway is showing it until you choose." = "Sa nouvelle icône de barre des menus est arrivée du côté masqué ; Tuckaway l’affiche donc jusqu’à ce que vous choisissiez.";
+"Keep Visible" = "Garder visible";
+"Hide" = "Masquer";
