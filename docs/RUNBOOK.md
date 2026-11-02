@@ -131,8 +131,12 @@ reads.
    App Store listing, and Hidden Bar's belongs to its original maintainers
    (#393). The sandboxed build also can't hide on macOS 27, so decide
    deliberately before starting one.
-5. Homebrew: there is no Tuckaway cask yet (`hiddenbar` installs the original
-   app). A cask would follow the GitHub DMG; notarization matters (issue #219).
+5. Homebrew: after publishing, run `scripts/update-cask.sh --publish`. It sets
+   the version and sha256 in `packaging/tuckaway.rb` from GitHub's digest of
+   the uploaded DMG and pushes the cask to the tap,
+   [Bruno-Alumn/homebrew-tuckaway](https://github.com/Bruno-Alumn/homebrew-tuckaway).
+   Commit the changed `packaging/tuckaway.rb` in a PR. (`hiddenbar` in
+   Homebrew's own casks installs the original app.)
 6. Before a public release: one upgrade-path run from a launcher-era Hidden Bar
    (v1.9 or older) verifying System Settings shows no ghost
    LauncherApplication login item.
