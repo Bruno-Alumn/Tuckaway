@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- Presentation Mode stopped hiding icons after an app launched, the Mac woke or a display changed, while still showing as on. It also showed every icon while a camera or microphone was in use, which is most screen shares; now it keeps hiding them (the dot in the screen corner still shows). Turning it on just as the bar collapsed could leave the arrow unresponsive until Tuckaway was restarted.
 - After you answered **Hide** for a new app, its icon was hidden but missing from the separate hidden-items bar until something else made Tuckaway re-read the bar.
 - A new-app question left on screen could undo a choice made meanwhile in Menu Bar Items or the separate bar's menu; it now closes when the app is decided elsewhere. Menu Bar Items lists undecided apps under Visible, since they're showing.
 - If an app launched or the Mac woke while the separate bar was opening, a still picture of the menu bar could stay over the real one.

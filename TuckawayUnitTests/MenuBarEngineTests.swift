@@ -1107,6 +1107,70 @@ final class MenuBarItemNamingTests: XCTestCase {
     }
 }
 
+final class PresentationModeRobustnessTests: XCTestCase {
+    private var items: FakeItems!
+    private var inventory: FakeInventory!
+    private var visibility: FakeVisibility!
+    private var capture: FakeCaptureActivity!
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        capture = FakeCaptureActivity()
+    }
+
+    private func makeEngine() -> NativeVisibilityEngine {
+        let items = self.items!
+        return NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                      captureActivity: capture, clock: FakeClock(),
+                                      ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                      itemFrame: { _ in separator },
+                                      displays: { [mainDisplay] },
+                                      isLTR: { true })
+    }
+
+    // An app launch, a wake or a display change used to drop presentation
+    // mode's restriction while it still showed as on.
+    func testLayoutChangesKeepPresenting() {
+        let engine = makeEngine()
+        engine.setPresenting(true)
+        let presenting = visibility.succeed(visibility.requests.count - 1)
+
+        engine.invalidateLayout()
+        XCTAssertFalse(presenting.isInvalidated)
+        XCTAssertTrue(engine.isPresenting)
+    }
+
+    func testPresentingDuringACollapseWaitsForIt() {
+        let engine = makeEngine()
+        var results: [CollapseResult] = []
+        engine.collapse { results.append($0) }
+        XCTAssertEqual(engine.state, .calibrating)
+
+        engine.setPresenting(true)
+        XCTAssertFalse(engine.isPresenting, "applied once the collapse is answered")
+        visibility.succeed(visibility.requests.count - 1)
+        XCTAssertEqual(results, [.collapsed])
+        XCTAssertEqual(engine.state, .collapsed)
+        XCTAssertTrue(engine.isPresenting)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway"])
+    }
+
+    func testPresentingHoldsWhileACameraIsOn() {
+        let engine = makeEngine()
+        capture.set(true)
+        engine.setPresenting(true)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway"], "restricted despite the camera")
+        let presenting = visibility.succeed(visibility.requests.count - 1)
+        capture.set(false)
+        capture.set(true)
+        XCTAssertFalse(presenting.isInvalidated)
+    }
+}
+
 final class NewAppSeparateBarTests: XCTestCase {
     private var visibility: FakeVisibility!
     private var store: InMemoryNewMenuBarAppStore!
