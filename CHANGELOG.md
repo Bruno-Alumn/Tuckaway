@@ -6,6 +6,7 @@
 - **Find Hidden Icon** (macOS 27): from the arrow's menu or a shortcut you set in Settings › General, a small search lists your hidden icons by name. Type to filter, use the arrow keys, and press Return to open that icon's menu; it hides again when the menu closes. It needs no Screen Recording.
 
 ### Fixed
+- With a second display arranged to the left of a notched MacBook, **Show Notch Items** listed that display's icons as hidden behind the notch.
 - Closing Menu Bar Items while it was still moving an icon could leave the menu bar stuck expanded. Reordering icons within Visible could aim next to a kept app's icon, which sits left of the arrow, and hide the icon you moved.
 - Recording a shortcut again with the same keys could leave it not working until Tuckaway restarted, and two of Tuckaway's shortcuts could be set to the same keys, so only one fired. A combination already in use is now refused with a beep.
 - The separate hidden-items bar used icon positions from the last time Tuckaway read the whole bar. If a visible icon had changed width since (a CPU meter, a timer), the row could show cut-off icons and a click could open the wrong app's menu. It now reads where the hidden icons are at that moment.
