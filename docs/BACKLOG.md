@@ -41,6 +41,14 @@ before merging.
 
 ## Verification still owed
 
+- **⌘-dragging past the arrow on macOS 27.** Synthesized drags never passed Tuckaway's
+  own arrow rightward (27.2), so moves into Visible now mark the app instead (#93).
+  Leftward (Visible → Hidden) was never seen failing but wasn't tested either.
+- **Separate bar with several displays and on notched Macs** (captures by the
+  Accessibility frames of the arrow's display only).
+- **Presentation-mode shortcut and the shortcut recorder's second row**: key presses
+  can't be synthesized from the agents' shell, so only the menu path was tested.
+
 - **#351 external-monitor visible bar (26.4).** The widest-attached-screen fix is
   code-only; confirm no full-width bar leak on a real second monitor.
 - **24h memory dogfood (#361, #326, #386).** Stress cycling found no leak; a long-uptime
@@ -51,6 +59,13 @@ before merging.
 - **#207 show the clock/date when collapsed.** The loudest single feature request.
 - **#229 activity-based reveal.** Needs a design that notices changing icon content
   without continuously expanding the real menu bar.
+- **Type to find a hidden icon.** A shortcut opens the separate bar with a search
+  field; Return clicks the match. Builds on the row's names and click forwarding.
+- **Profiles.** Named sets of kept-visible apps (Work, Minimal…), switched from the
+  arrow's menu, by display or by Focus. On macOS 27 a profile is just an allow-list.
+- **Tighter icon spacing (opt-in).** `NSStatusItemSpacing` / `NSStatusItemSelectionPadding`
+  in the global domain; apps pick it up after relaunching. Helps notched Macs.
+- **Back up and restore the layout** (kept apps, sections, shortcuts).
 - **Always-hidden section rework.** Always-hidden items are only reliably hidden when
   "hide separators" is on (see the note in [MANUAL.md](MANUAL.md)). Decouple the two
   and add a way to recover a stuck off-screen item. Reproduce #242 (permanent icon
@@ -65,4 +80,6 @@ settings layout overlap (#355, Settings redesign); notch overflow and the separa
 hidden-items bar; native macOS 27 hiding (#360); automatic updates (#220, #197);
 certificate-signed releases (1.2.0); every string translated into all 13 languages,
 enforced by `LocalizationTests`; an Always Hidden list in Menu Bar Items; the separate
-hidden-items bar on macOS 27; new apps asked about instead of hidden unseen (macOS 27).
+hidden-items bar on macOS 27, with hover, app names, VoiceOver and a right-click menu;
+new apps asked about instead of hidden unseen (macOS 27); presentation mode (macOS 27);
+the updater retries its relaunch.
