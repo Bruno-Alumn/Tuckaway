@@ -154,3 +154,54 @@ final class GitHubReleaseTests: XCTestCase {
         XCTAssertNil(GitHubRelease.updateNotes(fromMarkdown: "## Download\n\nGet the DMG."))
     }
 }
+
+final class SettingsBackupTests: XCTestCase {
+    private var suite: String!
+    private var defaults: UserDefaults!
+
+    override func setUp() {
+        super.setUp()
+        suite = "SettingsBackupTests-\(UUID().uuidString)"
+        defaults = UserDefaults(suiteName: suite)
+    }
+
+    override func tearDown() {
+        defaults.removePersistentDomain(forName: suite)
+        super.tearDown()
+    }
+
+    func testExportsOnlyTheUsersChoices() {
+        defaults.set(true, forKey: "hoverToExpand")
+        defaults.set(["com.example.kept"], forKey: "keptVisibleMenuBarApps")
+        defaults.set(Date(), forKey: "lastUpdateCheck")
+        defaults.set(["com.example.seen"], forKey: "knownMenuBarApps")
+        defaults.set(120.0, forKey: "NSStatusItem Preferred Position hiddenbar_expandcollapse")
+
+        let exported = SettingsBackup.export(from: defaults)
+        XCTAssertEqual(exported["hoverToExpand"] as? Bool, true)
+        XCTAssertEqual(exported["keptVisibleMenuBarApps"] as? [String], ["com.example.kept"])
+        XCTAssertEqual(exported[SettingsBackup.formatKey] as? Int, SettingsBackup.format)
+        XCTAssertNil(exported["lastUpdateCheck"], "this Mac's bookkeeping stays")
+        XCTAssertNil(exported["knownMenuBarApps"])
+        XCTAssertNil(exported["NSStatusItem Preferred Position hiddenbar_expandcollapse"], "positions belong to macOS")
+    }
+
+    func testRoundTripsThroughAFile() throws {
+        defaults.set(15.0, forKey: "numberOfSecondForAutoHide")
+        let data = try SettingsBackup.data(from: SettingsBackup.export(from: defaults))
+        let imported = try SettingsBackup.importable(SettingsBackup.values(from: data))
+        XCTAssertEqual(imported["numberOfSecondForAutoHide"] as? Double, 15)
+        XCTAssertNil(imported[SettingsBackup.formatKey])
+    }
+
+    func testRejectsOtherFilesAndNewerFormats() throws {
+        XCTAssertThrowsError(try SettingsBackup.importable(["hoverToExpand": true])) {
+            XCTAssertEqual($0 as? SettingsBackup.ImportError, .notTuckawaySettings)
+        }
+        XCTAssertThrowsError(try SettingsBackup.importable([SettingsBackup.formatKey: SettingsBackup.format + 1])) {
+            XCTAssertEqual($0 as? SettingsBackup.ImportError, .newerFormat)
+        }
+        let imported = try SettingsBackup.importable([SettingsBackup.formatKey: 1, "hoverToExpand": true, "somethingElse": 1])
+        XCTAssertEqual(Set(imported.keys), ["hoverToExpand"], "unknown keys are dropped")
+    }
+}

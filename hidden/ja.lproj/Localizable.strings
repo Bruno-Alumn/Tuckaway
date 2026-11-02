@@ -135,3 +135,14 @@
 "Search hidden icons" = "隠れているアイコンを検索";
 "No hidden icons" = "隠れているアイコンはありません";
 "No matches" = "一致する項目はありません";
+"Export Settings…" = "設定を書き出す…";
+"Import Settings…" = "設定を読み込む…";
+"Couldn’t export settings" = "設定を書き出せませんでした";
+"Couldn’t import settings" = "設定を読み込めませんでした";
+"This file comes from a newer version of Tuckaway. Update Tuckaway, then try again." = "このファイルは新しいバージョンの Tuckaway で作成されています。Tuckaway をアップデートしてからもう一度お試しください。";
+"This file isn’t a Tuckaway settings file." = "このファイルは Tuckaway の設定ファイルではありません。";
+"Replace your settings with the imported ones?" = "現在の設定を読み込んだ設定で置き換えますか？";
+"Import" = "読み込む";
+"Settings imported" = "設定を読み込みました";
+"Quit and reopen Tuckaway to apply them." = "適用するには Tuckaway を終了して再度開いてください。";
+"Tuckaway will relaunch to apply them." = "適用するために Tuckaway が再起動します。";

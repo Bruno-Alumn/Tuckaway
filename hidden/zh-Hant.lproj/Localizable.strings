@@ -135,3 +135,14 @@
 "Search hidden icons" = "搜尋隱藏的圖像";
 "No hidden icons" = "沒有隱藏的圖像";
 "No matches" = "沒有符合的項目";
+"Export Settings…" = "輸出設定…";
+"Import Settings…" = "輸入設定…";
+"Couldn’t export settings" = "無法輸出設定";
+"Couldn’t import settings" = "無法輸入設定";
+"This file comes from a newer version of Tuckaway. Update Tuckaway, then try again." = "此檔案來自較新版本的 Tuckaway。請更新 Tuckaway 後再試一次。";
+"This file isn’t a Tuckaway settings file." = "此檔案不是 Tuckaway 設定檔。";
+"Replace your settings with the imported ones?" = "要以輸入的設定取代目前的設定嗎？";
+"Import" = "輸入";
+"Settings imported" = "已輸入設定";
+"Quit and reopen Tuckaway to apply them." = "請結束並重新打開 Tuckaway 以套用這些設定。";
+"Tuckaway will relaunch to apply them." = "Tuckaway 將重新啟動以套用這些設定。";
