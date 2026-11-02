@@ -216,3 +216,6 @@
 "Wide" = "Širok";
 "Hold ⌘ and drag a spacer between icons to group them." = "Držite ⌘ i povucite razmak između ikona da ih grupirate.";
 "Spacer" = "Razmak";
+
+/* What "Use the full MenuBar on expanding" does (#143) */
+"While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses." = "Dok je proširen, Tuckaway dolazi u prvi plan pa izbornici trenutne aplikacije napuštaju traku izbornika, a ikone dobivaju cijelu širinu. Vraćaju se kad se sažme.";

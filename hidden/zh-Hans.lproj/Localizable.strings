@@ -214,3 +214,6 @@
 "Wide" = "宽";
 "Hold ⌘ and drag a spacer between icons to group them." = "按住 ⌘ 并将间隔拖到图标之间,即可将图标分组。";
 "Spacer" = "间隔";
+
+/* What "Use the full MenuBar on expanding" does (#143) */
+"While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses." = "展开时,Tuckaway 会切换到前台,当前 App 的菜单会离开菜单栏,图标可使用整个宽度。收起后菜单会恢复。";

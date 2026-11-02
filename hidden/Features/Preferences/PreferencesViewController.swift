@@ -608,6 +608,10 @@ struct GeneralSettingsView: View {
                 }
                 settingsToggle("Show hidden items in separate bar", isOn: model.separateHiddenItemsBar)
                 settingsToggle("Use the full MenuBar on expanding", isOn: model.useFullMenuBar)
+                Text(verbatim: "While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses.".localized)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
                 Picker(Self.label("Spacers"), selection: model.spacerCount) {
                     Text(verbatim: "None".localized).tag(0)
                     ForEach(1...MenuBarSpacers.maxCount, id: \.self) { count in
