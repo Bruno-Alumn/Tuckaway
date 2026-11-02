@@ -325,6 +325,9 @@ class StatusBarController: MenuBarItemProvider {
 
     private func invalidateNativeLayoutAfterEnvironmentChange() {
         let wasCollapsed = isCollapsed
+        // A capture or click in flight would wait on an answer that the
+        // engine now drops, leaving the still image over a live bar.
+        endNativeHiddenItemsRequest()
         // The engine refreshes both sections independently: the always-hidden
         // section can still need a wider spacer while the ordinary one is open.
         menuBarEngine.invalidateLayout()
@@ -1302,6 +1305,14 @@ extension StatusBarController {
             guard let self, request == self.nativeHiddenItemsRequest else { return }
             if let still {
                 self.hiddenItemsFreezeController.show(still, frame: stripFrame)
+                // The whole capture takes well under a second. If an answer
+                // never comes, don't leave a picture over the live bar.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                    guard let self, request == self.nativeHiddenItemsRequest,
+                          self.hiddenItemsFreezeController.isVisible else { return }
+                    NSLog("SeparateBar: capture didn't finish; giving up")
+                    self.endNativeHiddenItemsRequest()
+                }
             }
             peeker.peekHiddenSection { [weak self] succeeded in
                 guard let self, request == self.nativeHiddenItemsRequest else { return }
@@ -1505,7 +1516,7 @@ extension StatusBarController {
     @objc private func keepHiddenItemVisible(_ sender: NSMenuItem) {
         guard let bundle = sender.representedObject as? String else { return }
         collapseMenuBar()
-        newAppReporter?.resolveNewApp(bundle, keepVisible: true)
+        keepVisible(bundle)
     }
 }
 
@@ -1557,11 +1568,22 @@ extension StatusBarController {
     }
 
     func stopKeepingVisible(_ bundle: String) {
+        dropNewAppQuestion(bundle)
         newAppReporter?.resolveNewApp(bundle, keepVisible: false)
     }
 
     func keepVisible(_ bundle: String) {
+        dropNewAppQuestion(bundle)
         newAppReporter?.resolveNewApp(bundle, keepVisible: true)
+    }
+
+    // Decided elsewhere (Menu Bar Items, the row's menu), so a question still
+    // on screen would only undo it.
+    private func dropNewAppQuestion(_ bundle: String) {
+        newAppQueue.removeAll { $0 == bundle }
+        guard newAppPrompt.bundleIdentifier == bundle else { return }
+        newAppPrompt.hide()
+        showNextNewAppPrompt()
     }
 }
 
