@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- Profiles can switch automatically: **When a Display Is Connected** in the Profiles menu picks the profile to use while a second display is attached.
 - **Profiles** (macOS 27): save the apps the collapsed bar shows under a name, and switch between profiles from the arrow's menu. **Use the Arrow** goes back to your ⌘-dragged layout.
 - **Show the icon of the app you're using** (macOS 27, Settings › General, off by default): a hidden app's icon shows while that app is in front and hides again when you switch away.
 - **Export Settings… / Import Settings…** in Settings › About save Tuckaway's options, shortcuts and kept-visible apps to a file and load them on another Mac or after a clean install. Importing asks first, then relaunches Tuckaway to apply them. Icon positions belong to macOS and aren't included.

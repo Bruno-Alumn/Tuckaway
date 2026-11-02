@@ -1493,3 +1493,73 @@ final class SavingProfilesTests: XCTestCase {
         XCTAssertNil(saved)
     }
 }
+
+final class DisplayProfileTests: XCTestCase {
+    private func profiles(active: String?) -> MenuBarProfiles {
+        MenuBarProfiles(profiles: ["Laptop": ["com.a"], "Desk": ["com.a", "com.b"]], active: active, displayProfile: "Desk")
+    }
+
+    func testSwitchesWhileDockedAndBackAfter() {
+        var p = profiles(active: "Laptop")
+        p.displaysChanged(external: true)
+        XCTAssertEqual(p.active, "Desk")
+        p.displaysChanged(external: true)
+        XCTAssertEqual(p.active, "Desk", "repeated display changes don't stack")
+        p.displaysChanged(external: false)
+        XCTAssertEqual(p.active, "Laptop")
+        XCTAssertNil(p.beforeDisplay)
+    }
+
+    func testRestoresTheArrowToo() {
+        var p = profiles(active: nil)
+        p.displaysChanged(external: true)
+        XCTAssertEqual(p.active, "Desk")
+        p.displaysChanged(external: false)
+        XCTAssertNil(p.active)
+    }
+
+    func testAManualChoiceWhileDockedSticks() {
+        var p = profiles(active: "Laptop")
+        p.displaysChanged(external: true)
+        p.active = "Laptop"
+        p.displaysChanged(external: false)
+        XCTAssertEqual(p.active, "Laptop")
+    }
+
+    func testChangingTheDisplayProfileWhileSwitchedUndoesTheSwitch() {
+        var p = profiles(active: "Laptop")
+        p.profiles["Work"] = ["com.c"]
+        p.displaysChanged(external: true)
+        p.setDisplayProfile("Work")
+        XCTAssertEqual(p.active, "Laptop")
+        p.displaysChanged(external: true)
+        XCTAssertEqual(p.active, "Work", "the new choice applies right away while docked")
+        p.displaysChanged(external: false)
+        XCTAssertEqual(p.active, "Laptop")
+
+        p.displaysChanged(external: true)
+        p.delete("Work")
+        XCTAssertEqual(p.active, "Laptop", "deleting the display profile while switched goes back")
+        XCTAssertNil(p.beforeDisplay)
+    }
+
+    func testNoDisplayProfileChangesNothing() {
+        var p = MenuBarProfiles(profiles: ["Laptop": []], active: "Laptop")
+        p.displaysChanged(external: true)
+        XCTAssertEqual(p.active, "Laptop")
+    }
+
+    func testSwitchSurvivesARelaunch() {
+        let suite = "DisplayProfileTests-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = UserDefaultsMenuBarProfilesStore(defaults: defaults)
+        var p = profiles(active: nil)
+        p.displaysChanged(external: true)
+        store.profiles = p
+        var reloaded = UserDefaultsMenuBarProfilesStore(defaults: defaults).profiles
+        XCTAssertEqual(reloaded.beforeDisplay, .from(nil))
+        reloaded.displaysChanged(external: false)
+        XCTAssertNil(reloaded.active)
+    }
+}
