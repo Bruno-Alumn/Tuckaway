@@ -141,8 +141,12 @@ so every icon can be moved; both go back to normal when you close it.
 
 ### About
 
-Version and build number, links to the source and issue tracker, and **Check
-for Updates…** (direct-download build).
+Version and build number, links to the source and issue tracker, **Check for
+Updates…** (direct-download build), and **Export Settings…** / **Import
+Settings…**. Export saves Tuckaway's options, shortcuts and kept-visible apps to
+a `.plist`; Import loads one (from this or another Mac), asks first, and
+relaunches Tuckaway to apply it. Icon positions belong to macOS and aren't
+included, nor is this Mac's update and launch bookkeeping.
 
 > **Always-hidden section, current behavior:** items in the always-hidden zone
 > are reliably pushed off-screen only when "hide separators" is also on

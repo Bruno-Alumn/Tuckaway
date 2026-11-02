@@ -137,3 +137,14 @@
 "No matches" = "Không có kết quả";
 "An update is being installed" = "Đang cài đặt bản cập nhật";
 "Tuckaway will relaunch when it’s done." = "Tuckaway sẽ khởi động lại khi hoàn tất.";
+"Export Settings…" = "Xuất cài đặt…";
+"Import Settings…" = "Nhập cài đặt…";
+"Couldn’t export settings" = "Không thể xuất cài đặt";
+"Couldn’t import settings" = "Không thể nhập cài đặt";
+"This file comes from a newer version of Tuckaway. Update Tuckaway, then try again." = "Tệp này đến từ phiên bản Tuckaway mới hơn. Hãy cập nhật Tuckaway rồi thử lại.";
+"This file isn’t a Tuckaway settings file." = "Tệp này không phải là tệp cài đặt Tuckaway.";
+"Replace your settings with the imported ones?" = "Thay cài đặt của bạn bằng cài đặt đã nhập?";
+"Import" = "Nhập";
+"Settings imported" = "Đã nhập cài đặt";
+"Quit and reopen Tuckaway to apply them." = "Hãy thoát rồi mở lại Tuckaway để áp dụng.";
+"Tuckaway will relaunch to apply them." = "Tuckaway sẽ khởi động lại để áp dụng.";

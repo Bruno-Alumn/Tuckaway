@@ -139,3 +139,14 @@
 "No matches" = "Keine Treffer";
 "An update is being installed" = "Ein Update wird installiert";
 "Tuckaway will relaunch when it’s done." = "Tuckaway startet neu, sobald es fertig ist.";
+"Export Settings…" = "Einstellungen exportieren…";
+"Import Settings…" = "Einstellungen importieren…";
+"Couldn’t export settings" = "Einstellungen konnten nicht exportiert werden";
+"Couldn’t import settings" = "Einstellungen konnten nicht importiert werden";
+"This file comes from a newer version of Tuckaway. Update Tuckaway, then try again." = "Diese Datei stammt aus einer neueren Version von Tuckaway. Aktualisiere Tuckaway und versuche es erneut.";
+"This file isn’t a Tuckaway settings file." = "Diese Datei ist keine Tuckaway-Einstellungsdatei.";
+"Replace your settings with the imported ones?" = "Deine Einstellungen durch die importierten ersetzen?";
+"Import" = "Importieren";
+"Settings imported" = "Einstellungen importiert";
+"Quit and reopen Tuckaway to apply them." = "Beende Tuckaway und öffne es erneut, um sie anzuwenden.";
+"Tuckaway will relaunch to apply them." = "Tuckaway startet neu, um sie anzuwenden.";
