@@ -42,6 +42,9 @@ before merging.
 
 ## Verification still owed
 
+- **Features not yet used in the running app:** see
+  [HANDS_ON_CHECKS.md](HANDS_ON_CHECKS.md).
+
 - **Open review findings (2026-11-02), not fixed.** Checked since on 27.2: the
   legacy login-item cleanup did succeed on the owner's Mac (`smAppServiceMigrated`
   is set), so it doesn't retry there; left-to-right status-item positions are
