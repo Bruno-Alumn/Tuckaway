@@ -158,5 +158,6 @@
 "Name this profile" = "Nazwij ten profil";
 "It keeps the apps that are visible right now." = "Zawiera aplikacje widoczne w tej chwili.";
 "Save" = "Zachowaj";
+"Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Profil „%@” decyduje, co widać po zwinięciu. Te listy dotyczą opcji „Używaj strzałki”.";
 "When a Display Is Connected" = "Po podłączeniu monitora";
 "Don’t Switch" = "Nie przełączaj";

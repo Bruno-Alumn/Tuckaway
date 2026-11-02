@@ -156,5 +156,6 @@
 "Name this profile" = "Đặt tên cho hồ sơ này";
 "It keeps the apps that are visible right now." = "Hồ sơ giữ các ứng dụng đang hiển thị lúc này.";
 "Save" = "Lưu";
+"Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Hồ sơ “%@” quyết định những gì hiển thị khi thu gọn. Các danh sách này dành cho “Dùng mũi tên”.";
 "When a Display Is Connected" = "Khi kết nối màn hình";
 "Don’t Switch" = "Không chuyển";

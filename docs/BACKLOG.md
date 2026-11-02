@@ -69,8 +69,7 @@ before merging.
 - **#229 activity-based reveal.** Needs a design that notices changing icon content
   without continuously expanding the real menu bar.
 - **Profiles, next steps.** Switching by display or Focus, per-profile shortcuts, a
-  Settings section, and a note in Menu Bar Items while one is active
-  ([PROFILES.md](PROFILES.md)).
+  Settings section ([PROFILES.md](PROFILES.md)).
 - **Tighter icon spacing (opt-in).** `NSStatusItemSpacing` / `NSStatusItemSelectionPadding`
   in the global domain; apps pick it up after relaunching. Helps notched Macs.
 - **Always-hidden section rework.** Always-hidden items are only reliably hidden when
