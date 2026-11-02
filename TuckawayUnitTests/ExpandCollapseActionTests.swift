@@ -64,9 +64,9 @@ final class ExpandCollapseActionTests: XCTestCase {
         XCTAssertFalse(ExpandCollapseActionResolver.isEmptyMenuBar(role: nil))
     }
 
-    func testMenuBarClickCoordinatesUseDesktopTop() {
+    func testMenuBarClickCoordinatesUseThePrimaryScreenTop() {
         let point = ExpandCollapseActionResolver.accessibilityPoint(
-            forAppKitPoint: CGPoint(x: 500, y: 900), desktopTop: 1200)
+            forAppKitPoint: CGPoint(x: 500, y: 900), primaryScreenTop: 1200)
         XCTAssertEqual(point, CGPoint(x: 500, y: 300))
     }
 

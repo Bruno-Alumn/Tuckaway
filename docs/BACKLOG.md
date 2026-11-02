@@ -60,7 +60,8 @@ before merging.
 - **#229 activity-based reveal.** Needs a design that notices changing icon content
   without continuously expanding the real menu bar.
 - **Profiles.** Named sets of kept-visible apps (Work, Minimal…), switched from the
-  arrow's menu, by display or by Focus. On macOS 27 a profile is just an allow-list.
+  arrow's menu, by display or by Focus. On macOS 27 a profile is just an allow-list. Design draft with open
+  questions: [PROFILES.md](PROFILES.md).
 - **Tighter icon spacing (opt-in).** `NSStatusItemSpacing` / `NSStatusItemSelectionPadding`
   in the global domain; apps pick it up after relaunching. Helps notched Macs.
 - **Back up and restore the layout** (kept apps, sections, shortcuts).

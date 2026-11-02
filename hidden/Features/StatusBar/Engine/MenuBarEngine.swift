@@ -55,6 +55,10 @@ protocol HiddenSectionPeeking: AnyObject {
     var isPeeking: Bool { get }
     func peekHiddenSection(completion: @escaping (Bool) -> Void)
     func endPeek()
+    // While peeking, re-reads where the hidden icons are now: the bar is anchored
+    // on the arrow's side, so a visible icon that changed width since the last
+    // full read shifts them. Updates hiddenItems; completes on the main queue.
+    func refreshHiddenItemFrames(completion: @escaping ([MenuBarInventoryItem]) -> Void)
 }
 
 // New apps whose icons macOS 27 put on the hidden side are kept visible until

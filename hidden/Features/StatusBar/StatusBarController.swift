@@ -290,10 +290,10 @@ class StatusBarController: MenuBarItemProvider {
 
     private func isEmptyMenuBarClick() -> Bool {
         guard isMouseInMenuBar,
-              let desktopTop = NSScreen.screens.map(\.frame.maxY).max(),
+              let primaryScreenTop = NSScreen.screens.first?.frame.maxY,
               !Util.isAccessibilityPermissionMissing else { return false }
         let mouse = NSEvent.mouseLocation
-        let point = ExpandCollapseActionResolver.accessibilityPoint(forAppKitPoint: mouse, desktopTop: desktopTop)
+        let point = ExpandCollapseActionResolver.accessibilityPoint(forAppKitPoint: mouse, primaryScreenTop: primaryScreenTop)
         var element: AXUIElement?
         guard AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), Float(point.x), Float(point.y), &element) == .success,
               let element else { return false }
@@ -1326,24 +1326,32 @@ extension StatusBarController {
                 guard succeeded else { return self.expandMenubar() }
                 DispatchQueue.main.asyncAfter(deadline: .now() + NativeSeparateBarTiming.reflowDelay) { [weak self] in
                     guard let self, request == self.nativeHiddenItemsRequest else { return }
-                    MenuBarStripCapture.image(of: strip, on: display, excludingOwnWindows: true) { [weak self] image, scale in
+                    // Where the icons are now, not where the last full read saw them.
+                    peeker.refreshHiddenItemFrames { [weak self] fresh in
                         guard let self, request == self.nativeHiddenItemsRequest else { return }
-                        peeker.endPeek()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + NativeSeparateBarTiming.reflowDelay) { [weak self] in
+                        let hiddenItems = fresh
+                            .filter { display.accessibilityFrame.contains(CGPoint(x: $0.frame.midX, y: $0.frame.midY)) }
+                            .sorted { $0.frame.minX < $1.frame.minX }
+                        let freshStrip = MenuBarStripGeometry.strip(covering: hiddenItems.map(\.frame), menuBarHeight: menuBarHeight, on: display) ?? strip
+                        MenuBarStripCapture.image(of: freshStrip, on: display, excludingOwnWindows: true) { [weak self] image, scale in
                             guard let self, request == self.nativeHiddenItemsRequest else { return }
-                            self.hiddenItemsFreezeController.hide()
-                            guard let image,
-                                  let capture = self.nativeHiddenItemsCapture(from: image, scale: scale, strip: strip,
-                                                                              items: hiddenItems, display: display, screen: screen)
-                            else { return self.expandMenubar() }
-                            self.hiddenItemsBarController.show(capture: capture, menuProvider: { [weak self] in
-                                self?.hiddenItemMenu(for: $0)
-                            }) { [weak self] sourceX in
-                                guard let item = capture.items.first(where: { $0.sourceRect.minX <= sourceX && sourceX <= $0.sourceRect.maxX }) else { return }
-                                self?.clickNativeHiddenItem(at: display.accessibilityRect(fromAppKit: item.sourceRect))
+                            peeker.endPeek()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + NativeSeparateBarTiming.reflowDelay) { [weak self] in
+                                guard let self, request == self.nativeHiddenItemsRequest else { return }
+                                self.hiddenItemsFreezeController.hide()
+                                guard let image,
+                                      let capture = self.nativeHiddenItemsCapture(from: image, scale: scale, strip: freshStrip,
+                                                                                  items: hiddenItems, display: display, screen: screen)
+                                else { return self.expandMenubar() }
+                                self.hiddenItemsBarController.show(capture: capture, menuProvider: { [weak self] in
+                                    self?.hiddenItemMenu(for: $0)
+                                }) { [weak self] sourceX in
+                                    guard let item = capture.items.first(where: { $0.sourceRect.minX <= sourceX && sourceX <= $0.sourceRect.maxX }) else { return }
+                                    self?.clickNativeHiddenItem(at: display.accessibilityRect(fromAppKit: item.sourceRect))
+                                }
+                                self.btnExpandCollapse.button?.image = Assets.collapseImage
+                                self.autoCollapseIfNeeded()
                             }
-                            self.btnExpandCollapse.button?.image = Assets.collapseImage
-                            self.autoCollapseIfNeeded()
                         }
                     }
                 }
@@ -1389,14 +1397,23 @@ extension StatusBarController {
         nativeHiddenItemsRequest += 1
         let request = nativeHiddenItemsRequest
         let owner = ownerPID(ofMenuBarItemAt: frame)
+        let center = CGPoint(x: frame.midX, y: frame.midY)
+        let previous = peeker.hiddenItems
+        let clicked = previous.first { $0.frame.contains(center) }
         peeker.peekHiddenSection { [weak self] succeeded in
             guard let self, request == self.nativeHiddenItemsRequest else { return }
             guard succeeded else { return self.expandMenubar() }
             DispatchQueue.main.asyncAfter(deadline: .now() + NativeSeparateBarTiming.reflowDelay) { [weak self] in
                 guard let self, request == self.nativeHiddenItemsRequest else { return }
-                let windowsBefore = owner.map { self.onScreenWindowNumbers(ownedBy: $0) } ?? []
-                self.postClick(atQuartzPoint: CGPoint(x: frame.midX, y: frame.midY))
-                self.endPeekWhenMenuCloses(owner: owner, ignoring: windowsBefore, request: request)
+                // The icon may have shifted since the row was captured; click
+                // where it is now.
+                peeker.refreshHiddenItemFrames { [weak self] fresh in
+                    guard let self, request == self.nativeHiddenItemsRequest else { return }
+                    let target = clicked.flatMap { MenuBarStripGeometry.counterpart(of: $0, among: fresh, in: previous) }?.frame ?? frame
+                    let windowsBefore = owner.map { self.onScreenWindowNumbers(ownedBy: $0) } ?? []
+                    self.postClick(atQuartzPoint: CGPoint(x: target.midX, y: target.midY))
+                    self.endPeekWhenMenuCloses(owner: owner, ignoring: windowsBefore, request: request)
+                }
             }
         }
     }
