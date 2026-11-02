@@ -153,3 +153,45 @@ enum MenuBarLayoutResolver {
         return .hidden
     }
 }
+
+extension MenuBarDisplay {
+    func appKitRect(fromAccessibility rect: CGRect) -> CGRect {
+        return CGRect(x: rect.minX,
+                      y: appKitFrame.maxY - (rect.minY - accessibilityFrame.minY) - rect.height,
+                      width: rect.width,
+                      height: rect.height)
+    }
+
+    func accessibilityRect(fromAppKit rect: CGRect) -> CGRect {
+        return CGRect(x: rect.minX,
+                      y: accessibilityFrame.minY + (appKitFrame.maxY - rect.maxY),
+                      width: rect.width,
+                      height: rect.height)
+    }
+}
+
+// Where the separate bar's pieces of the menu bar are, in Accessibility
+// coordinates, kept free of capture so it can be unit tested.
+enum MenuBarStripGeometry {
+    // The full height of the menu bar, from the leftmost to the rightmost of
+    // `frames`, so one capture holds every hidden icon.
+    static func strip(covering frames: [CGRect], menuBarHeight: CGFloat, on display: MenuBarDisplay) -> CGRect? {
+        guard let first = frames.first else { return nil }
+        let span = frames.dropFirst().reduce(first) { $0.union($1) }
+        let strip = CGRect(x: span.minX, y: display.accessibilityFrame.minY, width: span.width, height: menuBarHeight)
+        let clipped = strip.intersection(display.accessibilityFrame)
+        return clipped.isEmpty ? nil : clipped
+    }
+
+    // The pixels of `frame` in an image of `strip` taken at `scale` pixels per
+    // point, rounded outward to whole pixels and kept inside the image.
+    static func pixelRect(of frame: CGRect, in strip: CGRect, scale: CGFloat) -> CGRect? {
+        let local = frame.intersection(strip).offsetBy(dx: -strip.minX, dy: -strip.minY)
+        guard !local.isEmpty else { return nil }
+        let pixels = CGRect(x: local.minX * scale, y: local.minY * scale,
+                            width: local.width * scale, height: local.height * scale).integral
+        let bounds = CGRect(x: 0, y: 0, width: (strip.width * scale).rounded(), height: (strip.height * scale).rounded())
+        let clipped = pixels.intersection(bounds)
+        return clipped.isEmpty ? nil : clipped
+    }
+}
