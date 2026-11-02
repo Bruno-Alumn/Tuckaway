@@ -21,6 +21,8 @@
 		AABBDD1122334455667788D3 /* SettingsBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD1122334455667788D1 /* SettingsBackup.swift */; };
 		AABBDD1122334455667788E2 /* MenuBarItemSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD1122334455667788E1 /* MenuBarItemSpacing.swift */; };
 		AABBDD1122334455667788E3 /* MenuBarItemSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD1122334455667788E1 /* MenuBarItemSpacing.swift */; };
+		AABBDD11223344556677880B /* ClockDateSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD11223344556677880A /* ClockDateSetting.swift */; };
+		AABBDD11223344556677880C /* ClockDateSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD11223344556677880A /* ClockDateSetting.swift */; };
 		08A5F86423AA09F300981CA5 /* UserDefault+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A5F86323AA09F300981CA5 /* UserDefault+Extension.swift */; };
 		08B9F32C2411883300AA0551 /* NSWindow+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B9F32B2411883300AA0551 /* NSWindow+Extension.swift */; };
 		08C20FE023AB44E60035D978 /* Bundle+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C20FDF23AB44E60035D978 /* Bundle+Extension.swift */; };
@@ -114,6 +116,7 @@
 		08A5F86023AA085B00981CA5 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		AABBDD1122334455667788D1 /* SettingsBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsBackup.swift; sourceTree = "<group>"; };
 		AABBDD1122334455667788E1 /* MenuBarItemSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItemSpacing.swift; sourceTree = "<group>"; };
+		AABBDD11223344556677880A /* ClockDateSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockDateSetting.swift; sourceTree = "<group>"; };
 		08A5F86323AA09F300981CA5 /* UserDefault+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefault+Extension.swift"; sourceTree = "<group>"; };
 		08B9F32B2411883300AA0551 /* NSWindow+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSWindow+Extension.swift"; sourceTree = "<group>"; };
 		08C20FDF23AB44E60035D978 /* Bundle+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extension.swift"; sourceTree = "<group>"; };
@@ -358,6 +361,7 @@
 				08A5F86023AA085B00981CA5 /* Preferences.swift */,
 				AABBDD1122334455667788D1 /* SettingsBackup.swift */,
 				AABBDD1122334455667788E1 /* MenuBarItemSpacing.swift */,
+				AABBDD11223344556677880A /* ClockDateSetting.swift */,
 				9A329E615845473D946DA3C2 /* AutoStart.swift */,
 			);
 			path = Common;
@@ -618,6 +622,7 @@
 				08A5F86123AA085B00981CA5 /* Preferences.swift in Sources */,
 				AABBDD1122334455667788D2 /* SettingsBackup.swift in Sources */,
 				AABBDD1122334455667788E2 /* MenuBarItemSpacing.swift in Sources */,
+				AABBDD11223344556677880B /* ClockDateSetting.swift in Sources */,
 				92C97B9122018C1F0007559C /* StatusBarController.swift in Sources */,
 				62C8B44F0D264D96B75FF0FC /* ExpandCollapseAction.swift in Sources */,
 				E9EB189A80724EBF9669C2AA /* AccessibilityPermissionTransition.swift in Sources */,
@@ -663,6 +668,7 @@
 				78703EDD27C9AA283482C1E3 /* Constant.swift in Sources */,
 				AABBDD1122334455667788D3 /* SettingsBackup.swift in Sources */,
 				AABBDD1122334455667788E3 /* MenuBarItemSpacing.swift in Sources */,
+				AABBDD11223344556677880C /* ClockDateSetting.swift in Sources */,
 				8835DF2D3C3ECAE4C7766945 /* MenuBarEngine.swift in Sources */,
 				D098DA3D69DAABA3A931202C /* LegacyLengthEngine.swift in Sources */,
 				4B5A38D6B3BEBF31D9920742 /* MenuBarLayout.swift in Sources */,

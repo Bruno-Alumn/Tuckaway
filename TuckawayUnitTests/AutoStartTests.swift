@@ -189,3 +189,15 @@ final class MenuBarItemSpacingTests: XCTestCase {
         XCTAssertEqual(store.values, ["NSStatusItemSpacing": 6, "NSStatusItemSelectionPadding": 12])
     }
 }
+
+final class ClockDateSettingTests: XCTestCase {
+    func testOnlyWhenSpaceAllowsWithASeparatorDropsTheDate() {
+        XCTAssertTrue(ClockDateSetting.dropsDateWhileCollapsed(showDate: nil, isAnalog: false, hidesWithSeparator: true))
+        XCTAssertTrue(ClockDateSetting.dropsDateWhileCollapsed(showDate: 0, isAnalog: false, hidesWithSeparator: true))
+        XCTAssertFalse(ClockDateSetting.dropsDateWhileCollapsed(showDate: 1, isAnalog: false, hidesWithSeparator: true))
+        XCTAssertFalse(ClockDateSetting.dropsDateWhileCollapsed(showDate: 2, isAnalog: false, hidesWithSeparator: true))
+        XCTAssertFalse(ClockDateSetting.dropsDateWhileCollapsed(showDate: 0, isAnalog: true, hidesWithSeparator: true))
+        // macOS 27 hides without a separator and keeps the date.
+        XCTAssertFalse(ClockDateSetting.dropsDateWhileCollapsed(showDate: 0, isAnalog: false, hidesWithSeparator: false))
+    }
+}

@@ -191,3 +191,7 @@
 "Edit Profile" = "Profili Düzenle";
 "No apps" = "Uygulama yok";
 "%@ and %d more" = "%@ ve %d tane daha";
+
+/* The date the clock drops while collapsed (macOS 13–26) */
+"While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "Simgeler gizliyken menü çubuğu dolu göründüğü için macOS saatten tarihi kaldırır. Tarihi korumak için Saat Seçenekleri’nde “Tarihi Göster”i “Her Zaman” olarak ayarlayın.";
+"Clock Options…" = "Saat Seçenekleri…";

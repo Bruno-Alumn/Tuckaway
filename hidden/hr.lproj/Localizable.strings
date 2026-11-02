@@ -191,3 +191,7 @@
 "Edit Profile" = "Uredi profil";
 "No apps" = "Nema aplikacija";
 "%@ and %d more" = "%@ i još %d";
+
+/* The date the clock drops while collapsed (macOS 13–26) */
+"While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "Dok su ikone skrivene, macOS uklanja datum iz sata jer traka izbornika izgleda puna. Da ga zadržite, postavite „Prikaži datum” na „Uvijek” u opcijama sata.";
+"Clock Options…" = "Opcije sata…";

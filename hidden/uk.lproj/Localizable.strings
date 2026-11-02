@@ -191,3 +191,7 @@
 "Edit Profile" = "Змінити профіль";
 "No apps" = "Немає програм";
 "%@ and %d more" = "%@ та ще %d";
+
+/* The date the clock drops while collapsed (macOS 13–26) */
+"While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "Поки іконки приховано, macOS прибирає дату з годинника, бо смуга меню здається заповненою. Щоб її залишити, у параметрах годинника встановіть «Показувати дату» на «Завжди».";
+"Clock Options…" = "Параметри годинника…";
