@@ -203,3 +203,6 @@
 "Switch automatically" = "Otomatik olarak geç";
 "From" = "Başlangıç";
 "To" = "Bitiş";
+
+/* Revealing hidden icons that change (#229) */
+"Show hidden icons briefly when they change" = "Gizli simgeler değiştiğinde kısa süre göster";

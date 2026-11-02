@@ -42,14 +42,17 @@ before merging.
 
 ## Verification still owed
 
-- **Open review findings (2026-11-02), not fixed:** Notch Overflow's boundary comes
+- **Open review findings (2026-11-02), not fixed.** Checked since on 27.2: the
+  legacy login-item cleanup did succeed on the owner's Mac (`smAppServiceMigrated`
+  is set), so it doesn't retry there; left-to-right status-item positions are
+  distances from the right edge (Battery 179 left of Control Center 137), as the
+  repair assumes. Still open: Notch Overflow's boundary comes
   from `auxiliaryTopRightArea`, whose coordinate space is unverified when the
   notched display isn't the primary one (icons on other displays are left out
-  since #109); the legacy `LauncherApplication`
-  cleanup probably can't succeed for a helper Tuckaway doesn't embed, so it
-  retries every launch; the Hidden Bar settings migration may find nothing for
-  users of the sandboxed App Store Hidden Bar; the RTL status-item repair may be
-  inverted. Each needs hardware or a fixture to confirm.
+  since #109); the Hidden Bar settings migration may find nothing for users
+  of the sandboxed App Store Hidden Bar; right-to-left, the repair assumes
+  positions are distances from the left edge, which needs an RTL system
+  language to confirm. Each needs hardware or a fixture to confirm.
 
 - **⌘-dragging past the arrow on macOS 27.** Synthesized drags never passed Tuckaway's
   own arrow rightward (27.2), so moves into Visible now mark the app instead (#93).
@@ -66,8 +69,9 @@ before merging.
 
 ## Features
 
-- **#229 activity-based reveal.** Needs a design that notices changing icon content
-  without continuously expanding the real menu bar.
+- **#229, picture-only changes.** Activity reveal (macOS 27) notices width and
+  text changes through Accessibility; an icon whose picture alone changes (a
+  badge dot) would need Screen Recording, and hidden icons aren't drawn.
 - **Profiles by Focus.** Reading which Focus is on needs the Communication
   Notifications entitlement, which only a Developer ID (#219) can carry
   ([PROFILES.md](PROFILES.md)).

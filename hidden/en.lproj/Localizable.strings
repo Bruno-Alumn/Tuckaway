@@ -203,3 +203,6 @@
 "Switch automatically" = "Switch automatically";
 "From" = "From";
 "To" = "To";
+
+/* Revealing hidden icons that change (#229) */
+"Show hidden icons briefly when they change" = "Show hidden icons briefly when they change";

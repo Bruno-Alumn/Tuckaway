@@ -205,3 +205,74 @@ final class MenuBarAppRestartTests: XCTestCase {
         XCTAssertTrue(harness.pending.isEmpty)
     }
 }
+
+final class ActivityRevealTests: XCTestCase {
+    private let quiet = ActivitySignature(width: 24, text: "")
+    private let busy = ActivitySignature(width: 40, text: "3 new")
+
+    func testFirstReadOnlySetsTheBaseline() {
+        var tracker = ActivityTracker()
+        XCTAssertEqual(tracker.changes(in: ["com.a": [quiet]]), [])
+        XCTAssertEqual(tracker.changes(in: ["com.a": [busy], "com.b": [quiet]]), ["com.a"])
+        XCTAssertEqual(tracker.changes(in: ["com.a": [busy], "com.b": [quiet]]), [])
+    }
+
+    func testAnAppThatLeftTheWatchListStartsOver() {
+        var tracker = ActivityTracker()
+        _ = tracker.changes(in: ["com.a": [quiet]])
+        _ = tracker.changes(in: [:])
+        XCTAssertEqual(tracker.changes(in: ["com.a": [busy]]), [])
+    }
+
+    func testAChangedIconShowsForAWhileThenHides() {
+        var reads: [[String: [ActivitySignature]]] = [["com.a": [quiet]], ["com.a": [busy]], [:], [:]]
+        var clock = Date(timeIntervalSinceReferenceDate: 0)
+        var watched: [Set<String>] = []
+        let monitor = ActivityRevealMonitor(read: { bundles, completion in
+            watched.append(bundles)
+            completion(reads.removeFirst())
+        }, now: { clock })
+        var revealed: [Set<String>] = []
+        let record: (Set<String>) -> Void = { revealed.append($0) }
+
+        monitor.tick(watching: ["com.a", "com.apple.MenuBarAgent"], reveal: record)
+        XCTAssertEqual(watched, [["com.a"]])
+        XCTAssertEqual(revealed, [])
+        monitor.tick(watching: ["com.a"], reveal: record)
+        XCTAssertEqual(revealed, [["com.a"]])
+        clock += ActivityRevealMonitor.revealDuration - 1
+        monitor.tick(watching: [], reveal: record)
+        XCTAssertEqual(revealed, [["com.a"]])
+        clock += 1
+        monitor.tick(watching: [], reveal: record)
+        XCTAssertEqual(revealed, [["com.a"], []])
+    }
+
+    func testExpandingEndsRevealsAndForgetsTheBaseline() {
+        var reads: [[String: [ActivitySignature]]] = [["com.a": [quiet]], ["com.a": [busy]], ["com.a": [quiet]]]
+        let monitor = ActivityRevealMonitor(read: { _, completion in completion(reads.removeFirst()) }, now: Date.init)
+        var revealed: [Set<String>] = []
+        monitor.tick(watching: ["com.a"]) { revealed.append($0) }
+        monitor.tick(watching: ["com.a"]) { revealed.append($0) }
+        monitor.tick(watching: nil) { revealed.append($0) }
+        XCTAssertEqual(revealed, [["com.a"], []])
+        // After collapsing again, the first read is a baseline, not a change.
+        monitor.tick(watching: ["com.a"]) { revealed.append($0) }
+        XCTAssertEqual(revealed, [["com.a"], []])
+    }
+
+    func testAReadStillRunningIsNotStartedAgain() {
+        var pending: (([String: [ActivitySignature]]) -> Void)?
+        var reads = 0
+        let monitor = ActivityRevealMonitor(read: { _, completion in
+            reads += 1
+            pending = completion
+        }, now: Date.init)
+        monitor.tick(watching: ["com.a"]) { _ in }
+        monitor.tick(watching: ["com.a"]) { _ in }
+        XCTAssertEqual(reads, 1)
+        pending?([:])
+        monitor.tick(watching: ["com.a"]) { _ in }
+        XCTAssertEqual(reads, 2)
+    }
+}

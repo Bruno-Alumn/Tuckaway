@@ -51,7 +51,7 @@ import AppKit
 //   Notification Center cannot open from it (#410). A click on the clock lifts
 //   the restriction for a moment and presses it (MenuBarClock); hidden icons
 //   can flash while it is lifted.
-final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenuBarAppReporting, PresentationModeProviding, ActiveAppShowing, ProfileApplying {
+final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenuBarAppReporting, PresentationModeProviding, ActiveAppShowing, ProfileApplying, ActivityRevealing {
     // System item identifiers to keep visible. Unknown identifiers are ignored,
     // so the range covers items a given Mac does not have. On 27.0, 0-63 resolves
     // to battery, bluetooth, clock, displays, keyboard, volume, wifi,
@@ -298,10 +298,10 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // The sections as arranged, with kept apps and new ones the user hasn't
     // decided on yet visible.
     private var effectiveLayout: MenuBarLayout? {
-        effectiveLayout(includingActiveApp: true)
+        effectiveLayout(includingShownForNow: true)
     }
 
-    private func effectiveLayout(includingActiveApp: Bool) -> MenuBarLayout? {
+    private func effectiveLayout(includingShownForNow: Bool) -> MenuBarLayout? {
         layout.map { layout in
             var effective: MenuBarLayout
             if let profileApps {
@@ -311,19 +311,31 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
                 effective = newApps.tracker.applied(to: layout)
             }
             // An app the user put in Always Hidden stays there.
-            if includingActiveApp, let activeApp, effective.sections[activeApp] == .hidden {
-                effective.sections[activeApp] = .visible
+            if includingShownForNow {
+                for bundle in revealedApps.union(activeApp.map { [$0] } ?? []) where effective.sections[bundle] == .hidden {
+                    effective.sections[bundle] = .visible
+                }
             }
             return effective
         }
     }
 
     private var activeApp: String?
+    private var revealedApps: Set<String> = []
     private var visibleAppsChangedDuringCollapse = false
     private var activationsInFlight = 0
     private var isPressingClock = false
     // The active profile's apps; nil when the arrow's layout decides.
     private var profileApps: Set<String>?
+
+    var appsWatchedForActivity: Set<String> {
+        Set(hiddenItems.compactMap(\.bundleIdentifier))
+    }
+
+    func setRevealedApps(_ bundles: Set<String>) {
+        guard bundles != revealedApps else { return }
+        changeVisibleApps { revealedApps = bundles }
+    }
 
     func setActiveApp(_ bundle: String?) {
         guard bundle != activeApp else { return }
@@ -337,7 +349,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     func readVisibleApps(completion: @escaping ([String]?) -> Void) {
         guard state != .calibrating else { return completion(nil) }
         let finish = { [weak self] in
-            let apps = self?.effectiveLayout(includingActiveApp: false)?.bundles(in: [.visible])
+            let apps = self?.effectiveLayout(includingShownForNow: false)?.bundles(in: [.visible])
             completion(apps?.isEmpty == false ? apps : nil)
         }
         // A fresh read would supersede an activation or clock press in flight.

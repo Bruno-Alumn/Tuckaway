@@ -444,6 +444,10 @@ final class GeneralSettingsModel: ObservableObject {
         })
     }
 
+    var revealIconsOnActivity: Binding<Bool> {
+        return binding({ Preferences.revealIconsOnActivity }) { Preferences.revealIconsOnActivity = $0 }
+    }
+
     var iconSpacingChoices: [MenuBarItemSpacing] {
         MenuBarItemSpacing.current() == .custom ? MenuBarItemSpacing.choices + [.custom] : MenuBarItemSpacing.choices
     }
@@ -552,6 +556,7 @@ struct GeneralSettingsView: View {
                 settingsToggle("Expand when an external display is connected", isOn: model.expandWhenExternalDisplayConnected)
                 if StatusBarController.supportsPresentationMode {
                     settingsToggle("Show the icon of the app you're using", isOn: model.showActiveAppIcon)
+                    settingsToggle("Show hidden icons briefly when they change", isOn: model.revealIconsOnActivity)
                 }
                 LabeledContent(Self.label("Shortcut")) { shortcutRecorder(.toggle) }
                 if StatusBarController.supportsPresentationMode {

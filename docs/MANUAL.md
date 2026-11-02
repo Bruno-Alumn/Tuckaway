@@ -143,6 +143,7 @@ Open it with **Settings…** (⌘,) from the arrow's menu. It has three tabs.
 | Hiding | Collapse after | The delay: 5, 10, 15 or 30 seconds, or 1 minute. Shown only while auto-collapse is on. |
 | Hiding | Collapse on app switch | Hide again as soon as another app becomes active. |
 | Revealing | Hover to expand | Expand after hovering over the menu bar for about half a second. With the separate bar on, this opens that bar instead. |
+| Revealing | Show hidden icons briefly when they change | macOS 27 only, off by default. While collapsed, a hidden icon whose width or text changes (a timer, a count, a status in its tooltip) shows for 8 seconds. A change to the picture alone isn't noticed. Icons in Always Hidden never show. |
 | Revealing | Show the icon of the app you're using | macOS 27 only, off by default. A hidden app's icon shows while that app is in front, and hides again when you switch away. Each switch can shift the menu bar a little. |
 | Revealing | Toggle by clicking empty menu bar | Click an empty part of the menu bar to hide or show icons. |
 | Revealing | Expand with an external display | Show everything while an external display is connected. |

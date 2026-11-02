@@ -92,6 +92,14 @@ protocol ActiveAppShowing: AnyObject {
     func setActiveApp(_ bundle: String?)
 }
 
+// "Show hidden icons briefly when they change" (macOS 27).
+protocol ActivityRevealing: AnyObject {
+    // The hidden apps to watch: not Always Hidden, and not already revealed.
+    var appsWatchedForActivity: Set<String> { get }
+    // Apps whose icons changed, shown for a moment even though they're hidden.
+    func setRevealedApps(_ bundles: Set<String>)
+}
+
 enum MenuBarEngineState {
     case expanded
     case calibrating

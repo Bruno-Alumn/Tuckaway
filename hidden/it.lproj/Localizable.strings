@@ -203,3 +203,6 @@
 "Switch automatically" = "Cambia automaticamente";
 "From" = "Da";
 "To" = "A";
+
+/* Revealing hidden icons that change (#229) */
+"Show hidden icons briefly when they change" = "Mostra per un momento le icone nascoste quando cambiano";
