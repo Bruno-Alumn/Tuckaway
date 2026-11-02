@@ -156,3 +156,5 @@
 "Name this profile" = "为此配置文件命名";
 "It keeps the apps that are visible right now." = "它会保留当前可见的 App。";
 "Save" = "存储";
+"When a Display Is Connected" = "连接显示器时";
+"Don’t Switch" = "不切换";

@@ -203,6 +203,7 @@ class StatusBarController: MenuBarItemProvider {
         setupAlwayHideStatusBar()
         setupNewAppPrompts()
         (menuBarEngine as? ProfileApplying)?.setProfile(profilesStore.profiles.activeApps)
+        applyDisplayProfile()
         updateActiveAppIcon()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
@@ -334,6 +335,7 @@ class StatusBarController: MenuBarItemProvider {
         let wasCollapsed = isCollapsed
         invalidateNativeLayoutAfterEnvironmentChange()
         applyExternalDisplayPreference(force: wasCollapsed)
+        applyDisplayProfile()
     }
 
     // A new status item or a wake can change the Accessibility inventory just
@@ -1583,10 +1585,41 @@ extension StatusBarController {
             }
             delete.submenu = names
             submenu.addItem(delete)
+
+            let display = NSMenuItem(title: "When a Display Is Connected".localized, action: nil, keyEquivalent: "")
+            let choices = NSMenu()
+            for name in [nil] + profiles.names.map(Optional.some) {
+                let item = NSMenuItem(title: name ?? "Don’t Switch".localized, action: #selector(setDisplayProfile(_:)), keyEquivalent: "")
+                item.target = self
+                item.representedObject = name
+                item.state = profiles.displayProfile == name ? .on : .off
+                choices.addItem(item)
+            }
+            display.submenu = choices
+            submenu.addItem(display)
         }
         let item = NSMenuItem(title: "Profiles".localized, action: nil, keyEquivalent: "")
         item.submenu = submenu
         return item
+    }
+
+    // "When a Display Is Connected": switches to that profile while a second
+    // display is attached, and back when it's unplugged.
+    private func applyDisplayProfile() {
+        guard menuBarEngine is ProfileApplying else { return }
+        var profiles = profilesStore.profiles
+        let before = profiles
+        profiles.displaysChanged(external: NSScreen.screens.count > 1)
+        if profiles != before {
+            applyProfiles(profiles)
+        }
+    }
+
+    @objc private func setDisplayProfile(_ sender: NSMenuItem) {
+        var profiles = profilesStore.profiles
+        profiles.displayProfile = sender.representedObject as? String
+        applyProfiles(profiles)
+        applyDisplayProfile()
     }
 
     private func applyProfiles(_ profiles: MenuBarProfiles) {
