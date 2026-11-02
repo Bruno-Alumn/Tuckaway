@@ -16,30 +16,39 @@ final class GitHubReleaseTests: XCTestCase {
         defer { try? fileManager.removeItem(at: root) }
 
         let id = "com.example.app"
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0")
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0", expectedExecutableSize: 4)
         XCTAssertTrue(fileManager.fileExists(atPath: backup.path))
 
         // A half-moved bundle: there, but not a working app.
         try fileManager.createDirectory(at: destination.appendingPathComponent("Contents"), withIntermediateDirectories: true)
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0")
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0", expectedExecutableSize: 4)
         XCTAssertTrue(fileManager.fileExists(atPath: backup.path), "a broken destination doesn't count as installed")
 
         // A partly copied new version: right identifier, other version.
         let newer = try PropertyListSerialization.data(fromPropertyList: ["CFBundleIdentifier": id, "CFBundleShortVersionString": "2.0"],
                                                        format: .xml, options: 0)
         try newer.write(to: destination.appendingPathComponent("Contents/Info.plist"))
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0")
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0", expectedExecutableSize: 4)
         XCTAssertTrue(fileManager.fileExists(atPath: backup.path), "a half-copied update doesn't count as the installed app")
 
-        let plist = try PropertyListSerialization.data(fromPropertyList: ["CFBundleIdentifier": id, "CFBundleShortVersionString": "1.0"],
+        let plist = try PropertyListSerialization.data(fromPropertyList: ["CFBundleIdentifier": id, "CFBundleShortVersionString": "1.0",
+                                                                         "CFBundleExecutable": "App"],
                                                        format: .xml, options: 0)
         try plist.write(to: destination.appendingPathComponent("Contents/Info.plist"))
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0")
+        // A rollback that stopped partway: the old Info.plist, part of the program.
+        let program = destination.appendingPathComponent("Contents/MacOS/App")
+        try fileManager.createDirectory(at: program.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data([1, 2]).write(to: program)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0", expectedExecutableSize: 4)
+        XCTAssertTrue(fileManager.fileExists(atPath: backup.path), "a half-copied old app doesn't count either")
+
+        try Data([1, 2, 3, 4]).write(to: program)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0", expectedExecutableSize: 4)
         XCTAssertFalse(fileManager.fileExists(atPath: work.path))
 
         try fileManager.createDirectory(at: work, withIntermediateDirectories: true)
         try fileManager.removeItem(at: destination)
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0")
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id, version: "1.0", expectedExecutableSize: 4)
         XCTAssertFalse(fileManager.fileExists(atPath: work.path))
     }
 

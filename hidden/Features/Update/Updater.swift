@@ -379,7 +379,10 @@ final class Updater {
             if isOurWorkDirectory {
                 UpdateReplacementCleanup.discardWorkDirectory(workDirectory, destination: destination, backup: backup,
                                                               bundleIdentifier: Bundle.main.bundleIdentifier,
-                                                              version: Bundle.main.releaseVersionNumber)
+                                                              version: Bundle.main.releaseVersionNumber,
+                                                              expectedExecutableSize: Bundle.main.executableURL.flatMap {
+                                                                  try? FileManager.default.attributesOfItem(atPath: $0.path)[.size] as? Int
+                                                              })
             }
             showInstallFailure(.replaceFailed, fallback: fallback)
             return

@@ -186,6 +186,12 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
                 }
                 completion(succeeded ? .collapsed : .unavailable)
                 self.applyPendingPresentation()
+                if self.visibleAppsChangedDuringCollapse {
+                    self.visibleAppsChangedDuringCollapse = false
+                    if succeeded, !self.isPresenting, let layout = self.effectiveLayout {
+                        self.activate(allowing: layout.bundles(in: [.visible])) { _ in }
+                    }
+                }
             }
         }
     }
@@ -299,7 +305,8 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             } else {
                 effective = newApps.tracker.applied(to: layout)
             }
-            if let activeApp, effective.sections[activeApp] != nil {
+            // An app the user put in Always Hidden stays there.
+            if let activeApp, effective.sections[activeApp] == .hidden {
                 effective.sections[activeApp] = .visible
             }
             return effective
@@ -307,6 +314,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     }
 
     private var activeApp: String?
+    private var visibleAppsChangedDuringCollapse = false
     // The active profile's apps; nil when the arrow's layout decides.
     private var profileApps: Set<String>?
 
@@ -330,6 +338,11 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         let before = effectiveLayout?.bundles(in: [.visible])
         change()
         refreshHiddenItems()
+        // A collapse in flight already chose its list; redo it once it lands.
+        if state == .calibrating {
+            visibleAppsChangedDuringCollapse = true
+            return
+        }
         guard state == .collapsed, !isPeeking, !isPresenting, let layout = effectiveLayout,
               layout.bundles(in: [.visible]) != before else { return }
         activate(allowing: layout.bundles(in: [.visible])) { _ in }
@@ -427,7 +440,9 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             NSLog("NativeVisibility: arrow at x=\(boundary.midX); visible \(layout.bundles(in: [.visible])), hidden \(layout.bundles(in: [.hidden])), always hidden \(layout.bundles(in: [.alwaysHidden]))")
             self.layout = layout
             let found = self.newApps.tracker.observe(layout)
-            let effective = self.newApps.tracker.applied(to: layout)
+            // The same layout every other path uses: kept and new apps, the
+            // active profile and the frontmost app.
+            let effective = self.effectiveLayout ?? layout
             self.inventoryItems = inventory
             self.refreshHiddenItems()
             if !found.isEmpty {
