@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Install with Homebrew: `brew install --cask bruno-alumn/tuckaway/tuckaway`.
+
 ## v1.7.0 (2026-11-02)
 
 ### Added
