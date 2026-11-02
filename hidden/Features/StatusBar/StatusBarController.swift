@@ -106,6 +106,7 @@ class StatusBarController: MenuBarItemProvider {
     private var activeExpandCollapseFrame: CGRect?
     private var activeStatusItemScreen: NSScreen?
     private var didExpandForExternalDisplay = false
+    private var hasCollapsedSinceLaunch = false
     private var configurationDragMonitor: Any?
     private var isTemporarilyExpandedForConfigurationDrag = false
     private var configurationDragCollapseWorkItem: DispatchWorkItem?
@@ -153,16 +154,20 @@ class StatusBarController: MenuBarItemProvider {
     private var hoverMonitor: Any?
     private var hoverDwellTimer: Timer?
     private var emptyMenuBarMonitor: Any?
+    // Global monitors don't see clicks sent to Tuckaway itself, which is active
+    // with "use the full menu bar" or while Settings is open.
+    private var emptyMenuBarLocalMonitor: Any?
 
-    // True while the pointer sits in any screen's menubar band (the strip between
-    // visibleFrame.maxY and frame.maxY, which is the menubar's exact height there).
-    // On fullscreen spaces the menubar is hidden and the band collapses to ~zero,
-    // so this returns false there: intentional, no visible menubar = no deferral.
+    // True while the pointer sits in any screen's menubar band. The band is the
+    // strip above visibleFrame, but with "Automatically hide and show the menu
+    // bar" visibleFrame reaches the top and that strip is empty, so it's at
+    // least the menu bar's (or the notch's) height, as MenuBarClock measures it.
     private var isMouseInMenuBar: Bool {
         let mouse = NSEvent.mouseLocation
         return NSScreen.screens.contains { screen in
-            mouse.x >= screen.frame.minX && mouse.x <= screen.frame.maxX
-                && mouse.y >= screen.visibleFrame.maxY && mouse.y <= screen.frame.maxY
+            let height = max(screen.frame.maxY - screen.visibleFrame.maxY, screen.safeAreaInsets.top, NSStatusBar.system.thickness)
+            return mouse.x >= screen.frame.minX && mouse.x <= screen.frame.maxX
+                && mouse.y >= screen.frame.maxY - height && mouse.y <= screen.frame.maxY
         }
     }
 
@@ -237,6 +242,9 @@ class StatusBarController: MenuBarItemProvider {
         if let emptyMenuBarMonitor {
             NSEvent.removeMonitor(emptyMenuBarMonitor)
         }
+        if let emptyMenuBarLocalMonitor {
+            NSEvent.removeMonitor(emptyMenuBarLocalMonitor)
+        }
     }
 
     private func updateHoverMonitor() {
@@ -281,9 +289,19 @@ class StatusBarController: MenuBarItemProvider {
                 guard let self, self.isEmptyMenuBarClick() else { return }
                 self.expandCollapseIfNeeded()
             }
+            emptyMenuBarLocalMonitor = NSEvent.addLocalMonitorForEvents(matching: .leftMouseUp) { [weak self] event in
+                if let self, self.isEmptyMenuBarClick() {
+                    self.expandCollapseIfNeeded()
+                }
+                return event
+            }
         } else if let emptyMenuBarMonitor {
             NSEvent.removeMonitor(emptyMenuBarMonitor)
             self.emptyMenuBarMonitor = nil
+            if let emptyMenuBarLocalMonitor {
+                NSEvent.removeMonitor(emptyMenuBarLocalMonitor)
+                self.emptyMenuBarLocalMonitor = nil
+            }
         }
     }
 
@@ -317,7 +335,10 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     @objc private func handleApplicationActivated(_ notification: Notification) {
-        guard Preferences.autoCollapseOnFocusChange, !isCollapsed, !isMouseButtonDown, !isManagingItems,
+        // Many menu-bar apps activate themselves when their icon is clicked; the
+        // pointer is still in the menu bar then, and collapsing would hide the
+        // icon whose menu or popover just opened.
+        guard Preferences.autoCollapseOnFocusChange, !isCollapsed, !isMouseButtonDown, !isMouseInMenuBar, !isManagingItems,
               let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
               app.bundleIdentifier != Bundle.main.bundleIdentifier else { return }
         collapseMenuBar()
@@ -598,7 +619,15 @@ class StatusBarController: MenuBarItemProvider {
             NSApp.deactivate()
         }
         rescueArrowIfSwallowed()
-        applyExternalDisplayPreference()
+        // The collapse at launch is where "expand with an external display"
+        // first applies. After that a collapse is the user's and wins until
+        // the displays change; re-applying it here undid every collapse.
+        if hasCollapsedSinceLaunch {
+            didExpandForExternalDisplay = false
+        } else {
+            hasCollapsedSinceLaunch = true
+            applyExternalDisplayPreference()
+        }
     }
 
     // If collapsing hides the only control that can reopen the bar, undo it,
@@ -811,7 +840,9 @@ extension StatusBarController {
     private func handleConfigurationDragEvent(_ event: NSEvent) {
         switch event.type {
         case .leftMouseDragged:
-            guard event.modifierFlags.contains(.command) else { return }
+            // Only a ⌘-drag in the menu bar rearranges icons; elsewhere it's
+            // just a window or a selection.
+            guard event.modifierFlags.contains(.command), isMouseInMenuBar else { return }
             temporarilyExpandForConfigurationDragIfNeeded()
         case .leftMouseUp:
             collapseAfterConfigurationDragIfNeeded()

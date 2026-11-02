@@ -41,6 +41,14 @@ before merging.
 
 ## Verification still owed
 
+- **Open review findings (2026-11-02), not fixed:** Notch Overflow classifies icons
+  by global x only, so another display's icons can be listed as behind the notch
+  (`NotchOverflowController.classify`); the legacy `LauncherApplication`
+  cleanup probably can't succeed for a helper Tuckaway doesn't embed, so it
+  retries every launch; the Hidden Bar settings migration may find nothing for
+  users of the sandboxed App Store Hidden Bar; the RTL status-item repair may be
+  inverted. Each needs hardware or a fixture to confirm.
+
 - **⌘-dragging past the arrow on macOS 27.** Synthesized drags never passed Tuckaway's
   own arrow rightward (27.2), so moves into Visible now mark the app instead (#93).
   Leftward (Visible → Hidden) was never seen failing but wasn't tested either.
