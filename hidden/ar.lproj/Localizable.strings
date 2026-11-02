@@ -158,3 +158,4 @@
 "Name this profile" = "سمِّ هذا الملف الشخصي";
 "It keeps the apps that are visible right now." = "يحتفظ بالتطبيقات الظاهرة الآن.";
 "Save" = "حفظ";
+"Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "يحدد الملف الشخصي “%@” ما يظهر عند الطي. هذه القوائم خاصة بخيار “استخدام السهم”.";
