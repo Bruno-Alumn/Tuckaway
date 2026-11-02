@@ -96,6 +96,9 @@ frontmost app's menus.
   from its frame relative to the separators, per display.
 - **Granularity is per app.** The restriction takes bundle identifiers, so an
   app's icons hide or show together (#427).
+- **Find Hidden Icon.** `HiddenIconSearchController` lists `hiddenItems` by name in
+  a key-capable non-activating panel; opening one reuses the separate bar's
+  peek-and-click (`clickNativeHiddenItem`). Filtering is `HiddenIconSearch`.
 - **Presentation mode.** `PresentationModeProviding.setPresenting(true)` holds a
   restriction that allows no app but Tuckaway; collapse and expand only update
   `state` meanwhile, and ending it re-applies that state.

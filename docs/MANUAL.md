@@ -9,6 +9,7 @@ Everything Tuckaway can do, including the parts with no UI.
   - **Auto-collapse** (checkmark, ⌘T)
   - **Show/Hide separators** (⌘S)
   - **Manage Menu Bar Items…**
+  - **Find Hidden Icon…** (macOS 27, direct-download build)
   - **Presentation Mode** (macOS 27, direct-download build)
   - **Check for Updates…** (direct-download build)
   - **Settings…** (⌘,)
@@ -52,6 +53,14 @@ section is enabled.
   second while it does.
 - Run Tuckaway from `/Applications`; macOS only recognizes that copy as
   Tuckaway, and a copy elsewhere hides its own arrow.
+
+#### Find Hidden Icon
+
+**Find Hidden Icon…** in the arrow's menu (or its shortcut) lists your hidden
+icons by name under the arrow. Type to filter, use ↑ and ↓, and press Return
+(or click a name) to open that icon's menu: Tuckaway shows it for the click and
+hides it again once the menu closes. Esc or clicking elsewhere closes the list.
+It shows app names and icons, so it needs no Screen Recording.
 
 #### Presentation Mode
 
@@ -103,6 +112,7 @@ Open it with **Settings…** (⌘,) from the arrow's menu. It has three tabs.
 | Revealing | Expand with an external display | Show everything while an external display is connected. |
 | Revealing | Shortcut | A system-wide expand/collapse hotkey. Click to record, Esc to cancel, ⓧ to clear. F-keys work on their own. |
 | Revealing | Presentation Mode | macOS 27 only. A second hotkey that turns presentation mode on and off. |
+| Revealing | Find Hidden Icon | macOS 27 only. A hotkey that opens Find Hidden Icon. |
 | Appearance | Expand icon | Standard arrow, transparent arrow, or an ellipsis. |
 | Appearance | Show hidden items in separate bar | Shows hidden icons in a floating row below the menu bar. Needs Screen Recording, plus Accessibility to forward clicks. On macOS 27 the hidden icons show in the real menu bar for a moment while they're captured (Tuckaway covers that spot with a still image), and clicking one shows it until its menu closes. Point at an icon for its app's name; right-click it for **Keep Visible** (macOS 27) or **Manage Menu Bar Items…**. With Hover to expand on, hovering opens this bar instead, and it closes shortly after the pointer leaves. |
 | Appearance | Expand across full menu bar | Activates the app's full menu bar while expanded, without a Dock icon (helps on crowded menu bars). |

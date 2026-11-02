@@ -47,6 +47,11 @@ struct GlobalKeybindPreferences: Codable, CustomStringConvertible {
         }
     }
 
+    // The same keys, whatever the modifiers' left/right side or the characters.
+    func isSameCombo(as other: GlobalKeybindPreferences) -> Bool {
+        keyCode == other.keyCode && carbonFlags == other.carbonFlags
+    }
+
     var isValidGlobalShortcut: Bool {
         // Carbon's actual modifiers decide validity; Shift, Caps Lock and Fn
         // alone must not turn ordinary typing into a system-wide shortcut.
