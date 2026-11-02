@@ -9,21 +9,28 @@ import AppKit
 import ApplicationServices
 
 enum MenuBarDisplayInventory {
-    // AX uses a desktop-wide top-left origin; AppKit uses bottom-left.  Use the
-    // top of the entire desktop rather than the main display so stacked and
-    // offset external displays map to the same coordinate system as AX.
     static func current() -> [MenuBarDisplay] {
-        let screens = NSScreen.screens
-        guard let desktopTop = screens.map(\.frame.maxY).max() else { return [] }
-        return screens.enumerated().map { index, screen in
+        displays(NSScreen.screens.enumerated().map { index, screen in
             let identifier = (screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)
                 .map { String($0.uint32Value) } ?? "screen-\(index)"
+            return (identifier, screen.frame)
+        })
+    }
+
+    // AX uses a top-left origin, AppKit a bottom-left one. AX (like Quartz)
+    // measures down from the top of the primary display, the first screen, not
+    // from the top of the desktop: a display arranged above the primary one has
+    // negative AX y. Measuring from the desktop's top shifted every display by
+    // the height of whatever sat above the primary one.
+    static func displays(_ screens: [(identifier: String, frame: CGRect)]) -> [MenuBarDisplay] {
+        guard let primaryTop = screens.first?.frame.maxY else { return [] }
+        return screens.map { screen in
             let frame = screen.frame
             let accessibilityFrame = CGRect(x: frame.minX,
-                                            y: desktopTop - frame.maxY,
+                                            y: primaryTop - frame.maxY,
                                             width: frame.width,
                                             height: frame.height)
-            return MenuBarDisplay(identifier: identifier, appKitFrame: frame, accessibilityFrame: accessibilityFrame)
+            return MenuBarDisplay(identifier: screen.identifier, appKitFrame: frame, accessibilityFrame: accessibilityFrame)
         }
     }
 }
