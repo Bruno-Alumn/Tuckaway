@@ -49,7 +49,9 @@ enum ExpandCollapseActionResolver {
         return role == "AXMenuBar"
     }
 
-    static func accessibilityPoint(forAppKitPoint point: CGPoint, desktopTop: CGFloat) -> CGPoint {
-        return CGPoint(x: point.x, y: desktopTop - point.y)
+    // `primaryScreenTop` is the top of the first screen: Accessibility measures
+    // from there, not from the top of the whole desktop.
+    static func accessibilityPoint(forAppKitPoint point: CGPoint, primaryScreenTop: CGFloat) -> CGPoint {
+        return CGPoint(x: point.x, y: primaryScreenTop - point.y)
     }
 }

@@ -1106,3 +1106,24 @@ final class MenuBarItemNamingTests: XCTestCase {
         XCTAssertEqual(MenuBarItemNaming.cleanedTitle("  Siri "), "Siri")
     }
 }
+
+final class MenuBarDisplayInventoryTests: XCTestCase {
+    // Accessibility measures from the top of the primary display. A monitor
+    // arranged above it must not shift the primary display's frame.
+    func testDisplayAboveThePrimaryOneHasNegativeAccessibilityY() {
+        let displays = MenuBarDisplayInventory.displays([
+            ("laptop", CGRect(x: 0, y: 0, width: 1800, height: 1169)),
+            ("monitor", CGRect(x: -200, y: 1169, width: 2560, height: 1440)),
+        ])
+        XCTAssertEqual(displays[0].accessibilityFrame, CGRect(x: 0, y: 0, width: 1800, height: 1169))
+        XCTAssertEqual(displays[1].accessibilityFrame, CGRect(x: -200, y: -1440, width: 2560, height: 1440))
+    }
+
+    func testDisplayBesideThePrimaryOneSharesItsTop() {
+        let displays = MenuBarDisplayInventory.displays([
+            ("laptop", CGRect(x: 0, y: 0, width: 1800, height: 1169)),
+            ("monitor", CGRect(x: 1800, y: -271, width: 2560, height: 1440)),
+        ])
+        XCTAssertEqual(displays[1].accessibilityFrame.minY, 0)
+    }
+}

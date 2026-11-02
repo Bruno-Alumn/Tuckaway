@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- On macOS 27 with a display arranged above your main one, Tuckaway misread where menu bar icons were: the bar could stay expanded, the separate hidden-items bar always fell back to expanding, and "click empty menu bar" missed. Positions are now measured from the main display, as macOS does.
 - On macOS 27, dragging an icon into **Visible** in Menu Bar Items now keeps that app visible, as **Keep Visible** does. Before, Tuckaway tried to ⌘-drag the icon past its own arrow, which macOS 27 doesn't allow, so the icon stayed hidden.
 - In the separate hidden-items bar, macOS's own menu bar extras are named by what they are (for example "Siri"), as in Menu Bar Items, instead of "SystemUIServer".
 

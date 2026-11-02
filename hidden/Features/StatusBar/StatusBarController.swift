@@ -289,10 +289,10 @@ class StatusBarController: MenuBarItemProvider {
 
     private func isEmptyMenuBarClick() -> Bool {
         guard isMouseInMenuBar,
-              let desktopTop = NSScreen.screens.map(\.frame.maxY).max(),
+              let primaryScreenTop = NSScreen.screens.first?.frame.maxY,
               !Util.isAccessibilityPermissionMissing else { return false }
         let mouse = NSEvent.mouseLocation
-        let point = ExpandCollapseActionResolver.accessibilityPoint(forAppKitPoint: mouse, desktopTop: desktopTop)
+        let point = ExpandCollapseActionResolver.accessibilityPoint(forAppKitPoint: mouse, primaryScreenTop: primaryScreenTop)
         var element: AXUIElement?
         guard AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), Float(point.x), Float(point.y), &element) == .success,
               let element else { return false }
