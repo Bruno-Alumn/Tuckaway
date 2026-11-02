@@ -1563,3 +1563,104 @@ final class DisplayProfileTests: XCTestCase {
         XCTAssertNil(reloaded.active)
     }
 }
+
+final class EngineInteractionTests: XCTestCase {
+    private var items: FakeItems!
+    private var inventory: FakeInventory!
+    private var visibility: FakeVisibility!
+    private var clock: FakeClock!
+    private var store: InMemoryNewMenuBarAppStore!
+    private var timeouts: [() -> Void] = []
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        inventory = FakeInventory()
+        inventory.items = [item("com.new", x: 1050), item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        clock = FakeClock()
+        store = InMemoryNewMenuBarAppStore()
+        store.tracker = NewMenuBarAppTracker(known: ["com.hidden", "com.visible"])
+        timeouts = []
+    }
+
+    private func makeEngine() -> NativeVisibilityEngine {
+        let items = self.items!
+        return NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                      captureActivity: FakeCaptureActivity(), clock: clock,
+                                      newApps: store,
+                                      ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                      itemFrame: { _ in separator },
+                                      displays: { [mainDisplay] },
+                                      isLTR: { true },
+                                      afterActivationTimeout: { [weak self] in self?.timeouts.append($0) })
+    }
+
+    func testPresentationAskedDuringACollapseSurvivesAnExpand() {
+        let engine = makeEngine()
+        engine.collapse { _ in }
+        engine.setPresenting(true)
+        engine.expand()
+        XCTAssertTrue(engine.isPresenting)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway"])
+    }
+
+    func testHidingANewAppDuringACollapseLandsAfterIt() {
+        let engine = makeEngine()
+        engine.collapse { _ in }
+        let collapse = visibility.requests.count - 1
+        XCTAssertEqual(visibility.requests[collapse].bundles, ["com.brunoalumn.tuckaway", "com.new", "com.visible"])
+        engine.resolveNewApp("com.new", keepVisible: false)
+        visibility.succeed(collapse)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+
+    func testALayoutChangeMidCollapseDropsIt() {
+        let engine = makeEngine()
+        var results: [CollapseResult] = []
+        engine.collapse { results.append($0) }
+        engine.invalidateLayout()
+        XCTAssertEqual(engine.state, .expanded)
+        let late = visibility.succeed(0)
+        XCTAssertTrue(late.isInvalidated, "the old layout's restriction isn't kept")
+        XCTAssertEqual(engine.state, .expanded)
+    }
+
+    func testATimedOutRestoreFailsOpen() {
+        let engine = makeEngine()
+        engine.collapse { _ in }
+        let collapsed = visibility.succeed(visibility.requests.count - 1)
+        engine.setPresenting(true)
+        visibility.succeed(visibility.requests.count - 1)
+
+        engine.setPresenting(false)
+        timeouts.last?()
+        XCTAssertTrue(collapsed.isInvalidated)
+        XCTAssertEqual(engine.state, .expanded, "nothing held, so not collapsed")
+        XCTAssertFalse(engine.isPresenting)
+
+        engine.collapse { _ in }
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.new", "com.visible"], "the next collapse hides again")
+    }
+
+    func testAFailedPeekFailsOpen() {
+        let engine = makeEngine()
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+        engine.peekHiddenSection { _ in }
+        visibility.fail(visibility.requests.count - 1)
+        XCTAssertEqual(engine.state, .expanded)
+        XCTAssertFalse(engine.isPeeking)
+    }
+
+    func testSavingDoesntCancelAnActivationInFlight() {
+        let engine = makeEngine()
+        engine.updateAlwaysHiddenSection(enabled: true, separatorHidden: true)
+        let expanding = visibility.requests.count - 1
+        var saved: [String]?
+        engine.readVisibleApps { saved = $0 }
+        XCTAssertNotNil(saved)
+        let assertion = visibility.succeed(expanding)
+        XCTAssertFalse(assertion.isInvalidated, "the expanded restriction still lands")
+    }
+}
