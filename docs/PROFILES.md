@@ -3,8 +3,8 @@
 Status: built (macOS 27) with these defaults for the **Decide** points, which
 the owner can still change: a profile only affects the collapsed bar; there's no
 Settings section yet; Keep Visible adds the app to the active profile. Not
-built yet: the Menu Bar Items note, switching by Focus or time, and
-per-profile shortcuts. Switching on a display connection is built. The engine took a narrower route than `setVisibleOverride`:
+built yet: switching by Focus or time, and per-profile shortcuts. Switching on
+a display connection is built. The engine took a narrower route than `setVisibleOverride`:
 `ProfileApplying.setProfile` feeds the effective layout, and presentation mode
 stays separate and wins.
 

@@ -156,5 +156,6 @@
 "Name this profile" = "為此設定檔命名";
 "It keeps the apps that are visible right now." = "它會保留目前可見的 App。";
 "Save" = "儲存";
+"Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "收合時顯示的內容由設定檔「%@」決定。這些列表用於「使用箭頭」。";
 "When a Display Is Connected" = "連接顯示器時";
 "Don’t Switch" = "不切換";
