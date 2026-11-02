@@ -137,3 +137,14 @@
 "Search hidden icons" = "Шукати серед прихованих піктограм";
 "No hidden icons" = "Немає прихованих піктограм";
 "No matches" = "Нічого не знайдено";
+"Export Settings…" = "Експортувати параметри…";
+"Import Settings…" = "Імпортувати параметри…";
+"Couldn’t export settings" = "Не вдалося експортувати параметри";
+"Couldn’t import settings" = "Не вдалося імпортувати параметри";
+"This file comes from a newer version of Tuckaway. Update Tuckaway, then try again." = "Цей файл створено новішою версією Tuckaway. Оновіть Tuckaway і спробуйте ще раз.";
+"This file isn’t a Tuckaway settings file." = "Цей файл не є файлом параметрів Tuckaway.";
+"Replace your settings with the imported ones?" = "Замінити ваші параметри імпортованими?";
+"Import" = "Імпортувати";
+"Settings imported" = "Параметри імпортовано";
+"Quit and reopen Tuckaway to apply them." = "Закрийте та знову відкрийте Tuckaway, щоб застосувати їх.";
+"Tuckaway will relaunch to apply them." = "Tuckaway перезапуститься, щоб застосувати їх.";

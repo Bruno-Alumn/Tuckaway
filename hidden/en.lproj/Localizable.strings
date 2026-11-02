@@ -137,3 +137,14 @@
 "Search hidden icons" = "Search hidden icons";
 "No hidden icons" = "No hidden icons";
 "No matches" = "No matches";
+"Export Settings…" = "Export Settings…";
+"Import Settings…" = "Import Settings…";
+"Couldn’t export settings" = "Couldn’t export settings";
+"Couldn’t import settings" = "Couldn’t import settings";
+"This file comes from a newer version of Tuckaway. Update Tuckaway, then try again." = "This file comes from a newer version of Tuckaway. Update Tuckaway, then try again.";
+"This file isn’t a Tuckaway settings file." = "This file isn’t a Tuckaway settings file.";
+"Replace your settings with the imported ones?" = "Replace your settings with the imported ones?";
+"Import" = "Import";
+"Settings imported" = "Settings imported";
+"Quit and reopen Tuckaway to apply them." = "Quit and reopen Tuckaway to apply them.";
+"Tuckaway will relaunch to apply them." = "Tuckaway will relaunch to apply them.";
