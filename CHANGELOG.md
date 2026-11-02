@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- With "Hover to expand" on, hovering over the menu bar opens the separate hidden-items bar instead of expanding, and it closes again shortly after the pointer leaves it.
+- The separate bar shows an app's name when you point at its icon, and VoiceOver reads each icon as a button named after its app.
+- Right-click an icon in the separate bar for **Keep Visible** (macOS 27), which keeps that app showing in the menu bar, and **Manage Menu Bar Items…**.
+
 ## v1.4.1 (2026-11-02)
 
 ### Added

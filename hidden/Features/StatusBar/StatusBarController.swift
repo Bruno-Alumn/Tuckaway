@@ -99,6 +99,7 @@ class StatusBarController: MenuBarItemProvider {
     // is still in flight doesn't act on a bar the user has since changed.
     private var nativeHiddenItemsRequest = 0
     private var nativeMenuWatchTimer: Timer?
+    private var hoverRowLeaveTimer: Timer?
     private let newAppPrompt = NewMenuBarAppPromptController()
     // New apps waiting to be asked about, in order; the first is on screen.
     private var newAppQueue: [String] = []
@@ -263,7 +264,11 @@ class StatusBarController: MenuBarItemProvider {
                 // A press means the user is clicking or ⌘-dragging an icon;
                 // expanding under it would reflow the bar mid-gesture.
                 if self.isCollapsed && self.isMouseInMenuBar && !self.isMouseButtonDown {
-                    self.expandMenubar()
+                    if self.usesSeparateHiddenItemsBar {
+                        self.openHiddenItemsBarOnHover()
+                    } else {
+                        self.expandMenubar()
+                    }
                 }
             }
         }
@@ -493,11 +498,7 @@ class StatusBarController: MenuBarItemProvider {
         if isSeparateHiddenItemsBarVisible || hiddenSectionPeeker?.isPeeking == true {
             collapseMenuBar()
         } else if isCollapsed && usesSeparateHiddenItemsBar {
-            if MenuBarEngineFactory.usesNativeVisibility {
-                showNativeHiddenItemsBar()
-            } else {
-                expandHiddenItemsBar()
-            }
+            showHiddenItemsBar()
         } else {
             isCollapsed ? expandMenubar() : collapseMenuBar()
         }
@@ -893,7 +894,9 @@ extension StatusBarController {
                             return
                         }
                         let coveredCapture = self.captureByCoveringItemsStillVisibleInMenuBar(capture)
-                        self.hiddenItemsBarController.show(capture: coveredCapture) { [weak self] sourceX in
+                        self.hiddenItemsBarController.show(capture: coveredCapture, menuProvider: { [weak self] in
+                            self?.hiddenItemMenu(for: $0)
+                        }) { [weak self] sourceX in
                             self?.activateHiddenItem(atSourceX: sourceX, from: coveredCapture)
                         }
                         self.hiddenItemsSeparatorOverlayController.show(
@@ -968,7 +971,10 @@ extension StatusBarController {
                 item: HiddenItemsBarItem(
                     image: NSImage(cgImage: image, size: appKitRect.size),
                     sourceRect: appKitRect,
-                    windowNumber: windowNumber
+                    windowNumber: windowNumber,
+                    name: info[kCGWindowOwnerName as String] as? String,
+                    bundleIdentifier: (info[kCGWindowOwnerPID as String] as? pid_t)
+                        .flatMap { NSRunningApplication(processIdentifier: $0)?.bundleIdentifier }
                 ),
                 quartzRect: quartzRect
             )
@@ -1270,9 +1276,10 @@ extension StatusBarController {
               let screen = NSScreen.screens.first(where: { $0.frame == display.appKitFrame })
         else { return expandMenubar() }
         let menuBarHeight = max(22, screen.frame.maxY - screen.visibleFrame.maxY)
-        let frames = peeker.hiddenItems.map(\.frame)
-            .filter { display.accessibilityFrame.contains(CGPoint(x: $0.midX, y: $0.midY)) }
-            .sorted { $0.minX < $1.minX }
+        let hiddenItems = peeker.hiddenItems
+            .filter { display.accessibilityFrame.contains(CGPoint(x: $0.frame.midX, y: $0.frame.midY)) }
+            .sorted { $0.frame.minX < $1.frame.minX }
+        let frames = hiddenItems.map(\.frame)
         guard let strip = MenuBarStripGeometry.strip(covering: frames, menuBarHeight: menuBarHeight, on: display) else {
             return expandMenubar()
         }
@@ -1299,9 +1306,11 @@ extension StatusBarController {
                             self.hiddenItemsFreezeController.hide()
                             guard let image,
                                   let capture = self.nativeHiddenItemsCapture(from: image, scale: scale, strip: strip,
-                                                                              frames: frames, display: display, screen: screen)
+                                                                              items: hiddenItems, display: display, screen: screen)
                             else { return self.expandMenubar() }
-                            self.hiddenItemsBarController.show(capture: capture) { [weak self] sourceX in
+                            self.hiddenItemsBarController.show(capture: capture, menuProvider: { [weak self] in
+                                self?.hiddenItemMenu(for: $0)
+                            }) { [weak self] sourceX in
                                 guard let item = capture.items.first(where: { $0.sourceRect.minX <= sourceX && sourceX <= $0.sourceRect.maxX }) else { return }
                                 self?.clickNativeHiddenItem(at: display.accessibilityRect(fromAppKit: item.sourceRect))
                             }
@@ -1314,16 +1323,20 @@ extension StatusBarController {
         }
     }
 
-    private func nativeHiddenItemsCapture(from image: CGImage, scale: CGFloat, strip: CGRect, frames: [CGRect],
+    private func nativeHiddenItemsCapture(from image: CGImage, scale: CGFloat, strip: CGRect, items hiddenItems: [MenuBarInventoryItem],
                                           display: MenuBarDisplay, screen: NSScreen) -> HiddenItemsBarCapture? {
-        let items = frames.enumerated().compactMap { index, frame -> HiddenItemsBarItem? in
-            guard let pixels = MenuBarStripGeometry.pixelRect(of: frame, in: strip, scale: scale),
+        let items = hiddenItems.enumerated().compactMap { index, hidden -> HiddenItemsBarItem? in
+            guard let pixels = MenuBarStripGeometry.pixelRect(of: hidden.frame, in: strip, scale: scale),
                   let cropped = image.cropping(to: pixels) else { return nil }
-            let sourceRect = display.appKitRect(fromAccessibility: frame)
+            let sourceRect = display.appKitRect(fromAccessibility: hidden.frame)
+            let name = hidden.bundleIdentifier.flatMap {
+                NSRunningApplication.runningApplications(withBundleIdentifier: $0).first?.localizedName
+            }
             return HiddenItemsBarItem(image: NSImage(cgImage: cropped, size: sourceRect.size),
-                                      sourceRect: sourceRect, windowNumber: index)
+                                      sourceRect: sourceRect, windowNumber: index,
+                                      name: name, bundleIdentifier: hidden.bundleIdentifier)
         }
-        guard !items.isEmpty, let first = frames.first else { return nil }
+        guard !items.isEmpty, let first = hiddenItems.first?.frame else { return nil }
         // The bar at the first icon's left edge, at the icons' height: icons
         // leave their outermost column empty.
         let sliver = CGRect(x: first.minX, y: first.minY, width: 1 / scale, height: first.height)
@@ -1387,6 +1400,70 @@ extension StatusBarController {
             self.nativeMenuWatchTimer = nil
             self.hiddenSectionPeeker?.endPeek()
         }
+    }
+}
+
+//MARK: - Separate hidden items bar: hover and menus
+extension StatusBarController {
+    private func showHiddenItemsBar() {
+        if MenuBarEngineFactory.usesNativeVisibility {
+            showNativeHiddenItemsBar()
+        } else {
+            expandHiddenItemsBar()
+        }
+    }
+
+    // With "Hover to expand" on, hovering opens the row instead of the bar,
+    // and the row closes once the pointer has left both it and the menu bar.
+    private func openHiddenItemsBarOnHover() {
+        guard !isSeparateHiddenItemsBarVisible, !hiddenItemsFreezeController.isVisible,
+              hiddenSectionPeeker?.isPeeking != true else { return }
+        showHiddenItemsBar()
+        hoverRowLeaveTimer?.invalidate()
+        var outsideSince: Date?
+        hoverRowLeaveTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] timer in
+            guard let self else { return timer.invalidate() }
+            // Still opening: the row isn't up yet.
+            if !self.isSeparateHiddenItemsBarVisible {
+                if self.hiddenItemsFreezeController.isVisible || self.hiddenSectionPeeker?.isPeeking == true { return }
+                return timer.invalidate()
+            }
+            let inside = self.isMouseInMenuBar
+                || self.hiddenItemsBarController.frame.insetBy(dx: -8, dy: -8).contains(NSEvent.mouseLocation)
+            if inside {
+                outsideSince = nil
+            } else if let since = outsideSince {
+                if Date().timeIntervalSince(since) > 0.6 {
+                    timer.invalidate()
+                    self.collapseMenuBar()
+                }
+            } else {
+                outsideSince = Date()
+            }
+        }
+    }
+
+    // Right-click on an icon in the row. On macOS 27 an app can be kept
+    // visible from here, the same mark the new-app question sets.
+    private func hiddenItemMenu(for item: HiddenItemsBarItem) -> NSMenu? {
+        let menu = NSMenu()
+        if let bundle = item.bundleIdentifier, newAppReporter != nil {
+            let keep = NSMenuItem(title: "Keep Visible".localized, action: #selector(keepHiddenItemVisible(_:)), keyEquivalent: "")
+            keep.target = self
+            keep.representedObject = bundle
+            menu.addItem(keep)
+            menu.addItem(NSMenuItem.separator())
+        }
+        let manage = NSMenuItem(title: "Manage Menu Bar Items…".localized, action: #selector(openMenuBarItemManager), keyEquivalent: "")
+        manage.target = self
+        menu.addItem(manage)
+        return menu
+    }
+
+    @objc private func keepHiddenItemVisible(_ sender: NSMenuItem) {
+        guard let bundle = sender.representedObject as? String else { return }
+        collapseMenuBar()
+        newAppReporter?.resolveNewApp(bundle, keepVisible: true)
     }
 }
 
