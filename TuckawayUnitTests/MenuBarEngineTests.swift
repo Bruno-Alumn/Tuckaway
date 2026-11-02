@@ -1009,3 +1009,84 @@ final class NativeVisibilityEngineNewAppTests: XCTestCase {
         XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.new", "com.visible"])
     }
 }
+
+// MARK: - Presentation mode
+
+final class PresentationModeTests: XCTestCase {
+    private var items: FakeItems!
+    private var inventory: FakeInventory!
+    private var visibility: FakeVisibility!
+    private var capture: FakeCaptureActivity!
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        capture = FakeCaptureActivity()
+    }
+
+    private func makeEngine() -> NativeVisibilityEngine {
+        let items = self.items!
+        return NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                      captureActivity: capture, clock: FakeClock(),
+                                      ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                      itemFrame: { _ in separator },
+                                      displays: { [mainDisplay] },
+                                      isLTR: { true })
+    }
+
+    private func collapsed() -> NativeVisibilityEngine {
+        let engine = makeEngine()
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+        return engine
+    }
+
+    func testPresentingShowsOnlyTuckaway() {
+        let engine = collapsed()
+        engine.setPresenting(true)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway"])
+        XCTAssertEqual(visibility.requests.last?.systemItems, NativeVisibilityEngine.systemItemsToKeep, "the clock and other system items stay")
+    }
+
+    func testExpandingAndCollapsingWhilePresentingChangeNothingUntilItEnds() {
+        let engine = collapsed()
+        engine.setPresenting(true)
+        visibility.succeed(visibility.requests.count - 1)
+        let requests = visibility.requests.count
+
+        engine.expand()
+        engine.collapse { _ in }
+        var peeked: [Bool] = []
+        engine.peekHiddenSection { peeked.append($0) }
+        XCTAssertEqual(visibility.requests.count, requests)
+        XCTAssertEqual(peeked, [false])
+        XCTAssertEqual(engine.state, .collapsed)
+
+        engine.setPresenting(false)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+
+    func testEndingWhileExpandedShowsEverything() {
+        let engine = collapsed()
+        engine.setPresenting(true)
+        let presenting = visibility.succeed(visibility.requests.count - 1)
+        engine.expand()
+
+        engine.setPresenting(false)
+        XCTAssertTrue(presenting.isInvalidated)
+        XCTAssertEqual(engine.state, .expanded)
+    }
+
+    func testCaptureEndingWhilePresentingKeepsPresenting() {
+        let engine = collapsed()
+        engine.setPresenting(true)
+        visibility.succeed(visibility.requests.count - 1)
+
+        capture.set(true)
+        capture.set(false)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway"])
+    }
+}

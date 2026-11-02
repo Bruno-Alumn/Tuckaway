@@ -263,7 +263,7 @@ class StatusBarController: MenuBarItemProvider {
                 self.hoverDwellTimer = nil
                 // A press means the user is clicking or ⌘-dragging an icon;
                 // expanding under it would reflow the bar mid-gesture.
-                if self.isCollapsed && self.isMouseInMenuBar && !self.isMouseButtonDown {
+                if self.isCollapsed && self.isMouseInMenuBar && !self.isMouseButtonDown && !self.isPresenting {
                     if self.usesSeparateHiddenItemsBar {
                         self.openHiddenItemsBarOnHover()
                     } else {
@@ -495,7 +495,10 @@ class StatusBarController: MenuBarItemProvider {
         if !isCollapsed && Util.isAccessibilityPermissionMissing {
             Util.showPrefWindow()
         }
-        if isSeparateHiddenItemsBarVisible || hiddenSectionPeeker?.isPeeking == true {
+        if isPresenting {
+            // The arrow is the one icon left, so it ends presentation mode.
+            togglePresentationMode()
+        } else if isSeparateHiddenItemsBarVisible || hiddenSectionPeeker?.isPeeking == true {
             collapseMenuBar()
         } else if isCollapsed && usesSeparateHiddenItemsBar {
             showHiddenItemsBar()
@@ -695,6 +698,13 @@ class StatusBarController: MenuBarItemProvider {
             noticeItem.target = self
             menu.addItem(noticeItem)
             menu.addItem(NSMenuItem.separator())
+        }
+
+        if Self.supportsPresentationMode {
+            let presentationItem = NSMenuItem(title: "Presentation Mode".localized, action: #selector(togglePresentationMode), keyEquivalent: "")
+            presentationItem.state = isPresenting ? .on : .off
+            presentationItem.target = self
+            menu.addItem(presentationItem)
         }
 
         let toggleAutoHideItem = NSMenuItem(title: "Auto-collapse".localized, action: #selector(toggleAutoHide), keyEquivalent: "t")
@@ -1403,6 +1413,36 @@ extension StatusBarController {
     }
 }
 
+//MARK: - Presentation mode (macOS 27)
+extension StatusBarController {
+    // Only the native engine can hide icons on the visible side.
+    static var supportsPresentationMode: Bool {
+        MenuBarEngineFactory.usesNativeVisibility
+    }
+
+    var isPresenting: Bool {
+        (menuBarEngine as? PresentationModeProviding)?.isPresenting ?? false
+    }
+
+    // Hides every app's icon but the arrow, for screen sharing or recording.
+    @objc func togglePresentationMode() {
+        guard let presenter = menuBarEngine as? PresentationModeProviding else { return }
+        let presenting = !presenter.isPresenting
+        if presenting {
+            timer?.invalidate()
+            endNativeHiddenItemsRequest()
+            hiddenItemsBarController.hide()
+            newAppPrompt.hide()
+        }
+        presenter.setPresenting(presenting)
+        NSLog("PresentationMode: \(presenting ? "on" : "off")")
+        if !presenting {
+            showNextNewAppPrompt()
+            autoCollapseIfNeeded()
+        }
+    }
+}
+
 //MARK: - Separate hidden items bar: hover and menus
 extension StatusBarController {
     private func showHiddenItemsBar() {
@@ -1497,7 +1537,7 @@ extension StatusBarController {
 
     private func showNextNewAppPrompt() {
         newAppQueue.removeAll { NSRunningApplication.runningApplications(withBundleIdentifier: $0).isEmpty }
-        guard !newAppPrompt.isVisible, let bundle = newAppQueue.first,
+        guard !newAppPrompt.isVisible, !isPresenting, let bundle = newAppQueue.first,
               let arrowFrame = btnExpandCollapse.button?.window?.frame,
               let screen = btnExpandCollapse.button?.window?.screen
         else { return }
