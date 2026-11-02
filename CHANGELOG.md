@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- "Show hidden items in separate bar" works on macOS 27. Clicking the arrow shows the hidden icons in a row under the menu bar while the bar stays collapsed, and clicking one opens it as usual; it hides again once its menu closes. It needs Screen Recording and Accessibility, as before.
+
 ## v1.3.1 (2026-11-01)
 
 ### Fixed

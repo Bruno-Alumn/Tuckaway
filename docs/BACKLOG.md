@@ -55,10 +55,6 @@ before merging.
   "hide separators" is on (see the note in [MANUAL.md](MANUAL.md)). Decouple the two
   and add a way to recover a stuck off-screen item. Reproduce #242 (permanent icon
   loss) with a throwaway defaults profile first.
-- **Separate hidden-items bar on macOS 27.** Turned off there (#30): macOS 27 draws
-  status items into the menu bar, so there are no per-item windows to capture.
-  Capturing the menu-bar strip at the items' Accessibility frames, which the
-  inventory already reads, could bring it back.
 
 ## Done since the Hidden Bar fork
 
@@ -68,4 +64,5 @@ macOS 27 tutorial text; single-instance guard (#324); ⌘W closes Settings (#276
 settings layout overlap (#355, Settings redesign); notch overflow and the separate
 hidden-items bar; native macOS 27 hiding (#360); automatic updates (#220, #197);
 certificate-signed releases (1.2.0); every string translated into all 13 languages,
-enforced by `LocalizationTests`; an Always Hidden list in Menu Bar Items.
+enforced by `LocalizationTests`; an Always Hidden list in Menu Bar Items; the separate
+hidden-items bar on macOS 27.

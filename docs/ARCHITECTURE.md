@@ -157,11 +157,15 @@ flowchart TD
     General tab is listening.
 - **`HiddenItemsBarPanelController`**: the optional separate bar. It captures
   hidden icons (Screen Recording) into a floating panel and forwards clicks
-  (Accessibility). It finds icons by their status-item windows, which macOS 27
-  no longer creates (icons are drawn into the menu bar itself), so
-  `MenuBarEngineFactory.supportsSeparateHiddenItemsBar` turns it off with the
-  native engine. Bringing it back would mean capturing the menu-bar strip at
-  the Accessibility frames instead.
+  (Accessibility). On macOS 13–26 it captures each icon's status-item window.
+  macOS 27 creates none (icons are drawn into the menu bar itself), so there
+  the controller asks `NativeVisibilityEngine` to *peek*: allow the hidden
+  section too, while staying collapsed and reusing the cached layout. It covers
+  the strip with a still image (`HiddenItemsBarFreezeController`), captures the
+  strip with ScreenCaptureKit leaving out its own windows
+  (`MenuBarStripCapture`), crops each icon at the Accessibility frames from the
+  last unrestricted read, and ends the peek. A click peeks again, clicks the
+  real icon and ends the peek once the windows the click opened have closed.
 - **`NotchOverflowController`**: on notched Macs, lists icons the notch covers
   in a menu (**Show Notch Items**). Its geometry is pure and unit-tested.
 - **`Updater`** (`Features/Update`): see [Updates](#updates).
