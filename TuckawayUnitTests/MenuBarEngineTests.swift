@@ -1090,3 +1090,19 @@ final class PresentationModeTests: XCTestCase {
         XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway"])
     }
 }
+
+final class MenuBarItemNamingTests: XCTestCase {
+    func testSystemExtrasAreNamedByTheirTitle() {
+        XCTAssertEqual(MenuBarItemNaming.displayName(appName: "SystemUIServer", title: "Siri", isSystemExtra: true), "Siri")
+        XCTAssertEqual(MenuBarItemNaming.displayName(appName: "SystemUIServer", title: "Item-0", isSystemExtra: true), "SystemUIServer")
+        XCTAssertEqual(MenuBarItemNaming.displayName(appName: "LuLu", title: "Firewall", isSystemExtra: false), "LuLu",
+                       "other apps keep their own name")
+    }
+
+    func testPlaceholderTitlesAreDropped() {
+        XCTAssertNil(MenuBarItemNaming.cleanedTitle(" - "))
+        XCTAssertNil(MenuBarItemNaming.cleanedTitle(""))
+        XCTAssertNil(MenuBarItemNaming.cleanedTitle(nil))
+        XCTAssertEqual(MenuBarItemNaming.cleanedTitle("  Siri "), "Siri")
+    }
+}
