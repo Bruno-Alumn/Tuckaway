@@ -403,9 +403,13 @@ final class MenuBarItemManagerViewController: NSViewController {
         } else {
             // A quiet re-check keeps any message a failed move just showed.
             if !onlyIfChanged || found.isEmpty {
+                // These lists are the arrow's layout; a profile replaces it while
+                // collapsed, so say which one is in effect.
+                let profile = (NSApp.delegate as? AppDelegate)?.statusBarController.activeProfileName
                 statusLabel.stringValue = found.isEmpty
                     ? "No manageable menu bar items were found.".localized
-                    : "Drop an item to apply the real menu bar position.".localized
+                    : profile.map { String(format: "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow.".localized, $0) }
+                        ?? "Drop an item to apply the real menu bar position.".localized
             }
             permissionButton.isHidden = true
         }

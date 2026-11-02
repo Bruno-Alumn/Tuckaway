@@ -158,3 +158,4 @@
 "Name this profile" = "Nommer ce profil";
 "It keeps the apps that are visible right now." = "Il conserve les apps visibles en ce moment.";
 "Save" = "Enregistrer";
+"Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Le profil « %@ » détermine ce qui s’affiche une fois la barre réduite. Ces listes s’appliquent à « Utiliser la flèche ».";

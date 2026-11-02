@@ -158,3 +158,4 @@
 "Name this profile" = "Bu profili adlandırın";
 "It keeps the apps that are visible right now." = "Şu anda görünen uygulamaları korur.";
 "Save" = "Kaydet";
+"Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "Daraltılmışken neyin görüneceğine “%@” profili karar verir. Bu listeler “Oku Kullan” içindir.";
