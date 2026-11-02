@@ -133,3 +133,75 @@ final class MenuBarItemMovePlanTests: XCTestCase {
         XCTAssertEqual(MenuBarItemMovePlan.anchor(for: "clock", in: ["wifi", "clock"], excluding: []), .after("wifi"))
     }
 }
+
+final class MenuBarAppRestartTests: XCTestCase {
+    private func app(_ id: String, path: String? = nil) -> RestartableApp {
+        RestartableApp(name: id, bundleIdentifier: id,
+                       bundleURL: URL(fileURLWithPath: path ?? "/Applications/\(id).app"), processIdentifiers: [1])
+    }
+
+    private func item(_ id: String, unreadable: Bool = false) -> MenuBarInventoryItem {
+        MenuBarInventoryItem(bundleIdentifier: id, frame: .zero, isUnreadable: unreadable)
+    }
+
+    func testPlanKeepsOnlyReadableIconOwnersOtherThanTuckawayAndSystemExtras() {
+        let running = [app("a"), app("b"), app("c"), app("tuckaway"),
+                       app("cc", path: "/System/Library/CoreServices/ControlCenter.app")]
+        let items = [item("a"), item("a"), item("b", unreadable: true), item("tuckaway"), item("cc")]
+
+        let plan = MenuBarAppRestartPlan.apps(owning: items, running: running, ownBundleIdentifier: "tuckaway")
+
+        XCTAssertEqual(plan.map(\.bundleIdentifier), ["a"])
+    }
+
+    // A fake clock: `after` queues work, and the test fires it by hand.
+    private final class Harness {
+        var running: Set<String>
+        var terminated: [String] = []
+        var opened: [String] = []
+        var pending: [() -> Void] = []
+        init(running: Set<String>) { self.running = running }
+
+        lazy var restarter = MenuBarAppRestarter(
+            terminate: { [unowned self] in terminated.append($0.bundleIdentifier) },
+            isRunning: { [unowned self] in running.contains($0.bundleIdentifier) },
+            open: { [unowned self] in opened.append($0.bundleIdentifier) },
+            after: { [unowned self] _, work in pending.append(work) })
+
+        func tick() {
+            let work = pending
+            pending = []
+            work.forEach { $0() }
+        }
+    }
+
+    func testEachAppReopensOnceItHasQuit() {
+        let harness = Harness(running: ["a", "b"])
+        var result: [RestartableApp]?
+        harness.restarter.restart([app("a"), app("b")]) { result = $0 }
+
+        XCTAssertEqual(harness.terminated, ["a", "b"])
+        XCTAssertEqual(harness.opened, [])
+        harness.running.remove("a")
+        harness.tick()
+        XCTAssertEqual(harness.opened, ["a"])
+        XCTAssertNil(result)
+        harness.running.remove("b")
+        harness.tick()
+        XCTAssertEqual(harness.opened, ["a", "b"])
+        XCTAssertEqual(result, [])
+    }
+
+    func testAnAppStillRunningAtTheDeadlineIsReportedAndNotReopened() {
+        let harness = Harness(running: ["a"])
+        var result: [RestartableApp]?
+        harness.restarter.restart([app("a")]) { result = $0 }
+
+        let ticks = Int(MenuBarAppRestarter.deadline / MenuBarAppRestarter.pollInterval)
+        for _ in 0..<ticks { harness.tick() }
+
+        XCTAssertEqual(result?.map(\.bundleIdentifier), ["a"])
+        XCTAssertEqual(harness.opened, [])
+        XCTAssertTrue(harness.pending.isEmpty)
+    }
+}

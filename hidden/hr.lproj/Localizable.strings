@@ -169,3 +169,9 @@
 "Tight" = "Usko";
 "Custom" = "Prilagođeno";
 "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Mijenja razmak između svih ikona trake izbornika, ne samo Tuckawayjevih. Svaka aplikacija koristi novi razmak kad se sljedeći put otvori; odjavite se i ponovno prijavite da biste ga primijenili svugdje.";
+"Restart Menu Bar Apps…" = "Ponovno pokreni aplikacije trake izbornika…";
+"No other apps have menu bar icons to restart." = "Nijedna druga aplikacija nema ikone u traci izbornika.";
+"Restart apps with menu bar icons?" = "Ponovno pokrenuti aplikacije s ikonama u traci izbornika?";
+"These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "Ove će se aplikacije zatvoriti i ponovno otvoriti kako bi koristile novi razmak: %@. Aplikacija s nespremljenim promjenama možda će prvo pitati.";
+"Restart Apps" = "Ponovno pokreni";
+"Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Neke se aplikacije nisu zatvorile: %@. Zatvorite ih i ponovno otvorite sami da biste koristili novi razmak.";

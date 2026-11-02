@@ -169,3 +169,9 @@
 "Tight" = "Dar";
 "Custom" = "Özel";
 "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Yalnızca Tuckaway’in değil, tüm menü çubuğu simgelerinin arasındaki boşluğu değiştirir. Her uygulama yeni aralığı bir sonraki açılışında kullanır; her yerde uygulamak için oturumu kapatıp yeniden açın.";
+"Restart Menu Bar Apps…" = "Menü Çubuğu Uygulamalarını Yeniden Başlat…";
+"No other apps have menu bar icons to restart." = "Menü çubuğunda simgesi olan başka uygulama yok.";
+"Restart apps with menu bar icons?" = "Menü çubuğu simgesi olan uygulamalar yeniden başlatılsın mı?";
+"These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "Bu uygulamalar yeni aralığı kullanmak için kapanıp yeniden açılacak: %@. Kaydedilmemiş değişiklikleri olan bir uygulama önce size sorabilir.";
+"Restart Apps" = "Yeniden Başlat";
+"Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Bazı uygulamalar kapanmadı: %@. Yeni aralığı kullanmaları için onları kendiniz kapatıp yeniden açın.";
