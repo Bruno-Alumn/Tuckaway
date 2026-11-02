@@ -129,6 +129,8 @@ private enum SettingsBackupFlow {
         for key in SettingsBackup.keys where key != UserDefaults.Key.isAutoStart {
             defaults.set(values[key], forKey: key)
         }
+        // This Mac's pending display switch belongs to the old settings.
+        defaults.removeObject(forKey: SettingsBackup.beforeDisplayKey)
         // Goes through the setter, which registers or removes the login item.
         if let autoStart = values[UserDefaults.Key.isAutoStart] as? Bool {
             Preferences.isAutoStart = autoStart

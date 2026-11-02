@@ -397,7 +397,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     private func applyExternalDisplayPreference(force: Bool = false) {
-        if Preferences.expandWhenExternalDisplayConnected && NSScreen.screens.count > 1 {
+        if Preferences.expandWhenExternalDisplayConnected && Self.hasExternalDisplay {
             guard isCollapsed || force else { return }
             didExpandForExternalDisplay = true
             expandMenubar(force: true)
@@ -1609,15 +1609,24 @@ extension StatusBarController {
         guard menuBarEngine is ProfileApplying else { return }
         var profiles = profilesStore.profiles
         let before = profiles
-        profiles.displaysChanged(external: NSScreen.screens.count > 1)
+        profiles.displaysChanged(external: Self.hasExternalDisplay)
         if profiles != before {
             applyProfiles(profiles)
         }
     }
 
+    // Any display that isn't the built-in one. Counting screens missed a
+    // MacBook closed at a desk (one screen, the external one).
+    static var hasExternalDisplay: Bool {
+        NSScreen.screens.contains { screen in
+            guard let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber else { return false }
+            return CGDisplayIsBuiltin(number.uint32Value) == 0
+        }
+    }
+
     @objc private func setDisplayProfile(_ sender: NSMenuItem) {
         var profiles = profilesStore.profiles
-        profiles.displayProfile = sender.representedObject as? String
+        profiles.setDisplayProfile(sender.representedObject as? String)
         applyProfiles(profiles)
         applyDisplayProfile()
     }
@@ -1629,6 +1638,7 @@ extension StatusBarController {
     private func applyProfiles(_ profiles: MenuBarProfiles) {
         profilesStore.profiles = profiles
         (menuBarEngine as? ProfileApplying)?.setProfile(profiles.activeApps)
+        NotificationCenter.default.post(name: .profileChanged, object: nil)
     }
 
     @objc private func selectProfile(_ sender: NSMenuItem) {

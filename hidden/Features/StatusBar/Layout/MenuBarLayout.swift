@@ -369,9 +369,21 @@ struct MenuBarProfiles: Equatable {
     }
 
     mutating func delete(_ name: String) {
+        if displayProfile == name { setDisplayProfile(nil) }
         profiles[name] = nil
         if active == name { active = nil }
-        if displayProfile == name { displayProfile = nil }
+    }
+
+    // A switch already made for the old choice is undone first, so the new one
+    // starts clean (and unplugging restores what the user had).
+    mutating func setDisplayProfile(_ name: String?) {
+        if case .from(let previous)? = beforeDisplay {
+            beforeDisplay = nil
+            if active == displayProfile {
+                active = previous.flatMap { profiles[$0] != nil ? $0 : nil }
+            }
+        }
+        displayProfile = name
     }
 
     // Hiding or un-keeping an app takes it out of the active profile too.

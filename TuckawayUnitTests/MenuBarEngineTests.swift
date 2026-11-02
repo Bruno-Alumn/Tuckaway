@@ -1526,6 +1526,23 @@ final class DisplayProfileTests: XCTestCase {
         XCTAssertEqual(p.active, "Laptop")
     }
 
+    func testChangingTheDisplayProfileWhileSwitchedUndoesTheSwitch() {
+        var p = profiles(active: "Laptop")
+        p.profiles["Work"] = ["com.c"]
+        p.displaysChanged(external: true)
+        p.setDisplayProfile("Work")
+        XCTAssertEqual(p.active, "Laptop")
+        p.displaysChanged(external: true)
+        XCTAssertEqual(p.active, "Work", "the new choice applies right away while docked")
+        p.displaysChanged(external: false)
+        XCTAssertEqual(p.active, "Laptop")
+
+        p.displaysChanged(external: true)
+        p.delete("Work")
+        XCTAssertEqual(p.active, "Laptop", "deleting the display profile while switched goes back")
+        XCTAssertNil(p.beforeDisplay)
+    }
+
     func testNoDisplayProfileChangesNothing() {
         var p = MenuBarProfiles(profiles: ["Laptop": []], active: "Laptop")
         p.displaysChanged(external: true)
