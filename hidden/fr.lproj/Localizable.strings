@@ -206,3 +206,13 @@
 
 /* Revealing hidden icons that change (#229) */
 "Show hidden icons briefly when they change" = "Afficher brièvement les icônes masquées quand elles changent";
+
+/* Menu bar spacers (#159) */
+"Spacers" = "Espaceurs";
+"None" = "Aucun";
+"Spacer width" = "Largeur des espaceurs";
+"Narrow" = "Étroit";
+"Medium" = "Moyen";
+"Wide" = "Large";
+"Hold ⌘ and drag a spacer between icons to group them." = "Maintenez ⌘ et faites glisser un espaceur entre des icônes pour les regrouper.";
+"Spacer" = "Espaceur";

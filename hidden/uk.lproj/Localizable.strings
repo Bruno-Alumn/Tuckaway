@@ -206,3 +206,13 @@
 
 /* Revealing hidden icons that change (#229) */
 "Show hidden icons briefly when they change" = "Ненадовго показувати приховані іконки, коли вони змінюються";
+
+/* Menu bar spacers (#159) */
+"Spacers" = "Розділювачі";
+"None" = "Немає";
+"Spacer width" = "Ширина розділювача";
+"Narrow" = "Вузька";
+"Medium" = "Середня";
+"Wide" = "Широка";
+"Hold ⌘ and drag a spacer between icons to group them." = "Утримуйте ⌘ і перетягніть розділювач між іконками, щоб згрупувати їх.";
+"Spacer" = "Розділювач";

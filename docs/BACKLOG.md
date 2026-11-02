@@ -50,7 +50,9 @@ before merging.
   from `auxiliaryTopRightArea`, whose coordinate space is unverified when the
   notched display isn't the primary one (icons on other displays are left out
   since #109); the Hidden Bar settings migration may find nothing for users
-  of the sandboxed App Store Hidden Bar; right-to-left, the repair assumes
+  of the sandboxed App Store Hidden Bar (won't fix: its settings are in its
+  sandbox container, and reading another app's container makes macOS 14+ ask
+  for "data from other apps" on first launch); right-to-left, the repair assumes
   positions are distances from the left edge, which needs an RTL system
   language to confirm. Each needs hardware or a fixture to confirm.
 
@@ -91,5 +93,6 @@ certificate-signed releases (1.2.0); every string translated into all 13 languag
 enforced by `LocalizationTests`; an Always Hidden list in Menu Bar Items; the separate
 hidden-items bar on macOS 27, with hover, app names, VoiceOver and a right-click menu;
 new apps asked about instead of hidden unseen (macOS 27); presentation mode (macOS 27);
-the updater retries its relaunch; the clock's dropped date while collapsed (#207)
+the updater retries its relaunch; spacers (#159); activity reveal (#229, width and
+text changes); profiles by time of day; renaming and editing profiles; the clock's dropped date while collapsed (#207)
 explained in Settings, with a button to Clock Options (macOS 13–26; 27 isn't affected).

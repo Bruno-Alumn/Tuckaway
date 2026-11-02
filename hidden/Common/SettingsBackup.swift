@@ -21,7 +21,7 @@ enum SettingsBackup {
         "hoverToExpand", "clickEmptyMenuBarToToggle", "expandWhenExternalDisplayConnected",
         "notchOverflowEnabled", "useTransparentExpandIconEnabled", "expandIconStyle",
         "automaticallyChecksForUpdates", "isAutoStart", "keptVisibleMenuBarApps",
-        "showActiveAppIcon", "revealIconsOnActivity", "menuBarProfiles", "activeMenuBarProfile",
+        "showActiveAppIcon", "revealIconsOnActivity", "menuBarSpacerCount", "menuBarSpacerWidth", "menuBarProfiles", "activeMenuBarProfile",
         "displayMenuBarProfile", "profileShortcuts", "menuBarProfileSchedules",
     ]
 

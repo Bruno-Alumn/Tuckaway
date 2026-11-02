@@ -37,11 +37,22 @@ notch and overflow requests (#174, #206, #225, #228, #245, #267, #269, #280,
 #302, #321, and #334), and other previously implemented requests (#170, #199,
 #249, #291, #295, #302, #309, #319, #324, #336, #355, and #390).
 
+Since 1.8.0: #207 (Settings explains the clock's dropped date on macOS 13–26
+and opens Clock Options), #229 (hidden icons whose width or text changes show
+for a moment, macOS 27), and #159 (spacers). Already covered by earlier work:
+#432 (no restriction while a microphone or camera is in use; screen recording
+is #372 below), #107 (new apps are asked about on macOS 27), #99 (expand icon
+styles, #310), and #153 (Settings no longer opens at every launch by default).
+
 ## Remaining implementation work
 
-- **#229 activity-based reveal:** needs a design that observes changing icon
-  content without continuously expanding the real menu bar or weakening the
-  existing Screen Recording and Accessibility permission boundaries.
+- **#229, picture-only changes:** an icon whose picture alone changes isn't
+  visible to Accessibility, and hidden icons aren't drawn for Screen Recording.
+- **#154 "shown when inactive" group:** on macOS 27 it would mean holding a
+  restriction while expanded, which brings assessment mode's side effects
+  (Now Playing, Live Activities) into the expanded bar too.
+- **#148, #100, #104, #143, #142, #156, #369, #230, #380, #375, #28:** not
+  triaged against Tuckaway yet.
 
 ## External or OS blockers
 

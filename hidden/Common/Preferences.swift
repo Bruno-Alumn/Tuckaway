@@ -176,6 +176,28 @@ enum Preferences {
         }
     }
 
+    static var spacerCount: Int {
+        get {
+            min(max(UserDefaults.standard.integer(forKey: UserDefaults.Key.spacerCount), 0), MenuBarSpacers.maxCount)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.spacerCount)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
+    static var spacerWidth: MenuBarSpacers.Width {
+        get {
+            MenuBarSpacers.Width(rawValue: UserDefaults.standard.integer(forKey: UserDefaults.Key.spacerWidth)) ?? .medium
+        }
+
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: UserDefaults.Key.spacerWidth)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     static var clickEmptyMenuBarToToggle: Bool {
         get {
             UserDefaults.standard.bool(forKey: UserDefaults.Key.clickEmptyMenuBarToToggle)

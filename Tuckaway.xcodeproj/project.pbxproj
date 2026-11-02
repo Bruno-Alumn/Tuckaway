@@ -87,6 +87,8 @@
 		AABBDD1122334455667788F3 /* MenuBarAppRestarter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD1122334455667788F1 /* MenuBarAppRestarter.swift */; };
 		AABBDD11223344556677881B /* ActivityReveal.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD11223344556677881A /* ActivityReveal.swift */; };
 		AABBDD11223344556677881C /* ActivityReveal.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD11223344556677881A /* ActivityReveal.swift */; };
+		AABBDD11223344556677882B /* MenuBarSpacers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD11223344556677882A /* MenuBarSpacers.swift */; };
+		AABBDD11223344556677882C /* MenuBarSpacers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD11223344556677882A /* MenuBarSpacers.swift */; };
 		B2C3D4E5F60718293A4B5C07 /* MenuBarItemMovePlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C03 /* MenuBarItemMovePlanTests.swift */; };
 		B2C3D4E5F60718293A4B5C17 /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C13 /* LocalizationTests.swift */; };
 		83E0D6A1FA184019932AECA5 /* AutoStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A329E615845473D946DA3C2 /* AutoStart.swift */; };
@@ -197,6 +199,7 @@
 		B2C3D4E5F60718293A4B5C01 /* MenuBarItemMovePlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItemMovePlan.swift; sourceTree = "<group>"; };
 		AABBDD1122334455667788F1 /* MenuBarAppRestarter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarAppRestarter.swift; sourceTree = "<group>"; };
 		AABBDD11223344556677881A /* ActivityReveal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityReveal.swift; sourceTree = "<group>"; };
+		AABBDD11223344556677882A /* MenuBarSpacers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarSpacers.swift; sourceTree = "<group>"; };
 		B2C3D4E5F60718293A4B5C02 /* MenuBarItemDragger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItemDragger.swift; sourceTree = "<group>"; };
 		B2C3D4E5F60718293A4B5C03 /* MenuBarItemMovePlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItemMovePlanTests.swift; sourceTree = "<group>"; };
 		B2C3D4E5F60718293A4B5C13 /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
@@ -270,6 +273,7 @@
 				DC851BF8D5E527666907BC71 /* Engine */,
 				92C97B9022018C1F0007559C /* StatusBarController.swift */,
 				AABBDD11223344556677881A /* ActivityReveal.swift */,
+				AABBDD11223344556677882A /* MenuBarSpacers.swift */,
 				6171C0428FE84918BC3FBD91 /* ExpandCollapseAction.swift */,
 				07588662B80C4ACD927C6AF4 /* AccessibilityPermissionTransition.swift */,
 				6C0A10002DEBF00100A5E001 /* HiddenItemsBarPanelController.swift */,
@@ -650,6 +654,7 @@
 				B2C3D4E5F60718293A4B5C04 /* MenuBarItemMovePlan.swift in Sources */,
 				AABBDD1122334455667788F2 /* MenuBarAppRestarter.swift in Sources */,
 				AABBDD11223344556677881B /* ActivityReveal.swift in Sources */,
+				AABBDD11223344556677882B /* MenuBarSpacers.swift in Sources */,
 				B2C3D4E5F60718293A4B5C05 /* MenuBarItemDragger.swift in Sources */,
 				A1B2C3D4E5F6071829304A04 /* GitHubRelease.swift in Sources */,
 				A1B2C3D4E5F6071829304A05 /* Updater.swift in Sources */,
@@ -693,6 +698,7 @@
 				B2C3D4E5F60718293A4B5C06 /* MenuBarItemMovePlan.swift in Sources */,
 				AABBDD1122334455667788F3 /* MenuBarAppRestarter.swift in Sources */,
 				AABBDD11223344556677881C /* ActivityReveal.swift in Sources */,
+				AABBDD11223344556677882C /* MenuBarSpacers.swift in Sources */,
 				B2C3D4E5F60718293A4B5C07 /* MenuBarItemMovePlanTests.swift in Sources */,
 				B2C3D4E5F60718293A4B5C17 /* LocalizationTests.swift in Sources */,
 				A1B2C3D4E5F6071829304A06 /* GitHubRelease.swift in Sources */,

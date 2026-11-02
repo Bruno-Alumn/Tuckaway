@@ -206,3 +206,13 @@
 
 /* Revealing hidden icons that change (#229) */
 "Show hidden icons briefly when they change" = "Nakratko prikaži skrivene ikone kad se promijene";
+
+/* Menu bar spacers (#159) */
+"Spacers" = "Razmaci";
+"None" = "Nijedan";
+"Spacer width" = "Širina razmaka";
+"Narrow" = "Uzak";
+"Medium" = "Srednji";
+"Wide" = "Širok";
+"Hold ⌘ and drag a spacer between icons to group them." = "Držite ⌘ i povucite razmak između ikona da ih grupirate.";
+"Spacer" = "Razmak";

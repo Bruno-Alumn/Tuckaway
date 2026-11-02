@@ -206,3 +206,13 @@
 
 /* Revealing hidden icons that change (#229) */
 "Show hidden icons briefly when they change" = "إظهار الأيقونات المخفية لحظات عندما تتغير";
+
+/* Menu bar spacers (#159) */
+"Spacers" = "الفواصل";
+"None" = "لا شيء";
+"Spacer width" = "عرض الفاصل";
+"Narrow" = "ضيق";
+"Medium" = "متوسط";
+"Wide" = "عريض";
+"Hold ⌘ and drag a spacer between icons to group them." = "اضغط مع الاستمرار على ⌘ واسحب فاصلًا بين الأيقونات لتجميعها.";
+"Spacer" = "فاصل";

@@ -102,6 +102,7 @@ class StatusBarController: MenuBarItemProvider {
     // Fires at the start of every minute while any profile has a schedule.
     private var profileScheduleTimer: Timer?
     private var activityRevealTimer: Timer?
+    private var spacerItems: [NSStatusItem] = []
     private let activityReveal = ActivityRevealMonitor()
     private var hoverRowLeaveTimer: Timer?
     private let newAppPrompt = NewMenuBarAppPromptController()
@@ -211,6 +212,7 @@ class StatusBarController: MenuBarItemProvider {
         updateProfileSchedule()
         updateActiveAppIcon()
         updateActivityReveal()
+        updateSpacers()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
@@ -219,6 +221,7 @@ class StatusBarController: MenuBarItemProvider {
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceMenuBarChange), name: NSWorkspace.didWakeNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleApplicationActivated), name: NSWorkspace.didActivateApplicationNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateAutoHide), name: .prefsChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(fitSpacersToState), name: NativeVisibilityEngine.stateDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateExpandIcon), name: .transparentExpandIconToggle, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleLegacyHideUnavailable), name: .legacyHideUnavailable, object: nil)
         if MenuBarEngineFactory.usesNativeVisibility {
@@ -833,6 +836,36 @@ class StatusBarController: MenuBarItemProvider {
         }
     }
 
+    // Adds or removes spacer items to match the setting. macOS remembers each
+    // one's place by its autosave name, so a spacer comes back where it was.
+    private func updateSpacers() {
+        let count = Preferences.spacerCount
+        while spacerItems.count > count {
+            NSStatusBar.system.removeStatusItem(spacerItems.removeLast())
+        }
+        while spacerItems.count < count {
+            let item = NSStatusBar.system.statusItem(withLength: CGFloat(Preferences.spacerWidth.rawValue))
+            item.autosaveName = MenuBarSpacers.autosaveName(spacerItems.count + 1)
+            item.button?.setAccessibilityLabel("Spacer".localized)
+            spacerItems.append(item)
+        }
+        fitSpacersToState()
+    }
+
+    @objc private func fitSpacersToState() {
+        guard !spacerItems.isEmpty else { return }
+        let arrowMinX = btnExpandCollapse.button?.window?.frame.minX ?? 0
+        let lengths = MenuBarSpacers.lengths(
+            spacerMinX: spacerItems.map { $0.button?.window?.frame.minX ?? arrowMinX },
+            arrowMinX: arrowMinX,
+            isLTR: NSApp.userInterfaceLayoutDirection == .leftToRight,
+            collapsed: MenuBarEngineFactory.usesNativeVisibility && isCollapsed,
+            width: Preferences.spacerWidth)
+        for (item, length) in zip(spacerItems, lengths) where item.length != length {
+            item.length = length
+        }
+    }
+
     private func updateActiveAppIcon(_ app: NSRunningApplication? = NSWorkspace.shared.frontmostApplication) {
         guard let shower = menuBarEngine as? ActiveAppShowing else { return }
         guard Preferences.showActiveAppIcon else { return shower.setActiveApp(nil) }
@@ -844,6 +877,7 @@ class StatusBarController: MenuBarItemProvider {
     @objc func updateAutoHide() {
         updateActiveAppIcon()
         updateActivityReveal()
+        updateSpacers()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()

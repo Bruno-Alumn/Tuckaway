@@ -72,8 +72,15 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
 
     private let expandedLength: CGFloat = 20
 
+    // Posted when the bar collapses or expands.
+    static let stateDidChange = Notification.Name("NativeVisibilityEngineStateDidChange")
+
     // .calibrating stands for "an activation is in flight".
-    private(set) var state: MenuBarEngineState = .expanded
+    private(set) var state: MenuBarEngineState = .expanded {
+        didSet {
+            if state != oldValue { NotificationCenter.default.post(name: Self.stateDidChange, object: self) }
+        }
+    }
     private(set) var layout: MenuBarLayout?
     // The hidden section's icons from the last unrestricted read. While peeking
     // they show at the same frames: the bar is anchored on the arrow's side, and

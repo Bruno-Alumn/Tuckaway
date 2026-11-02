@@ -448,6 +448,16 @@ final class GeneralSettingsModel: ObservableObject {
         return binding({ Preferences.revealIconsOnActivity }) { Preferences.revealIconsOnActivity = $0 }
     }
 
+    var spacerCount: Binding<Int> {
+        return Binding(get: { Preferences.spacerCount },
+                       set: { [weak self] in Preferences.spacerCount = $0; self?.objectWillChange.send() })
+    }
+
+    var spacerWidth: Binding<MenuBarSpacers.Width> {
+        return Binding(get: { Preferences.spacerWidth },
+                       set: { [weak self] in Preferences.spacerWidth = $0; self?.objectWillChange.send() })
+    }
+
     var iconSpacingChoices: [MenuBarItemSpacing] {
         MenuBarItemSpacing.current() == .custom ? MenuBarItemSpacing.choices + [.custom] : MenuBarItemSpacing.choices
     }
@@ -598,6 +608,23 @@ struct GeneralSettingsView: View {
                 }
                 settingsToggle("Show hidden items in separate bar", isOn: model.separateHiddenItemsBar)
                 settingsToggle("Use the full MenuBar on expanding", isOn: model.useFullMenuBar)
+                Picker(Self.label("Spacers"), selection: model.spacerCount) {
+                    Text(verbatim: "None".localized).tag(0)
+                    ForEach(1...MenuBarSpacers.maxCount, id: \.self) { count in
+                        Text(verbatim: "\(count)").tag(count)
+                    }
+                }
+                if model.spacerCount.wrappedValue > 0 {
+                    Picker(Self.label("Spacer width"), selection: model.spacerWidth) {
+                        Text(verbatim: "Narrow".localized).tag(MenuBarSpacers.Width.narrow)
+                        Text(verbatim: "Medium".localized).tag(MenuBarSpacers.Width.medium)
+                        Text(verbatim: "Wide".localized).tag(MenuBarSpacers.Width.wide)
+                    }
+                    Text(verbatim: "Hold ⌘ and drag a spacer between icons to group them.".localized)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
 
             if MenuBarItemSpacing.isSupported {
