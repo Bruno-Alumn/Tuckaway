@@ -1339,9 +1339,11 @@ extension StatusBarController {
             guard let pixels = MenuBarStripGeometry.pixelRect(of: hidden.frame, in: strip, scale: scale),
                   let cropped = image.cropping(to: pixels) else { return nil }
             let sourceRect = display.appKitRect(fromAccessibility: hidden.frame)
-            let name = hidden.bundleIdentifier.flatMap {
+            let appName = hidden.bundleIdentifier.flatMap {
                 NSRunningApplication.runningApplications(withBundleIdentifier: $0).first?.localizedName
             }
+            let name = MenuBarItemNaming.displayName(appName: appName, title: hidden.title,
+                                                     isSystemExtra: hidden.bundleIdentifier == MenuBarItemNaming.systemExtraOwner)
             return HiddenItemsBarItem(image: NSImage(cgImage: cropped, size: sourceRect.size),
                                       sourceRect: sourceRect, windowNumber: index,
                                       name: name, bundleIdentifier: hidden.bundleIdentifier)

@@ -29,6 +29,27 @@ struct MenuBarInventoryItem: Equatable {
     let bundleIdentifier: String?
     let frame: CGRect
     var isUnreadable = false
+    // Read only for SystemUIServer, whose icons are told apart by title.
+    var title: String? = nil
+}
+
+// What to call a status item. macOS's own extras all belong to one process
+// (SystemUIServer), so its name says nothing; their titles do ("Siri").
+enum MenuBarItemNaming {
+    static let systemExtraOwner = "com.apple.systemuiserver"
+
+    // Nil for titles that carry no name: empty, "-", or a placeholder.
+    static func cleanedTitle(_ raw: String?) -> String? {
+        guard let value = raw?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !value.isEmpty, value != "-", !value.hasPrefix("Item-")
+        else { return nil }
+        return value
+    }
+
+    static func displayName(appName: String?, title: String?, isSystemExtra: Bool) -> String? {
+        if isSystemExtra, let title = cleanedTitle(title) { return title }
+        return appName
+    }
 }
 
 // AppKit and Accessibility describe the same desktop with different vertical

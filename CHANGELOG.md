@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- In the separate hidden-items bar, macOS's own menu bar extras are named by what they are (for example "Siri"), as in Menu Bar Items, instead of "SystemUIServer".
+
 ## v1.6.1 (2026-11-02)
 
 ### Fixed

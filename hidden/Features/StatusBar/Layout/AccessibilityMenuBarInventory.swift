@@ -102,11 +102,24 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
         if childrenError == .noValue { return [] }
         guard childrenError == .success, let children = childrenValue as? [AXUIElement] else { return nil }
         var items: [MenuBarInventoryItem] = []
+        let readsTitles = app.bundleIdentifier == MenuBarItemNaming.systemExtraOwner
         for child in children {
             guard let frame = frame(of: child) else { return nil }
-            items.append(MenuBarInventoryItem(bundleIdentifier: app.bundleIdentifier, frame: frame))
+            items.append(MenuBarInventoryItem(bundleIdentifier: app.bundleIdentifier, frame: frame,
+                                              title: readsTitles ? title(of: child) : nil))
         }
         return items
+    }
+
+    private static func title(of element: AXUIElement) -> String? {
+        for attribute in [kAXTitleAttribute, kAXDescriptionAttribute] {
+            var value: CFTypeRef?
+            if AXUIElementCopyAttributeValue(element, attribute as CFString, &value) == .success,
+               let title = MenuBarItemNaming.cleanedTitle(value as? String) {
+                return title
+            }
+        }
+        return nil
     }
 
     // Accessibility frames use a top-left origin, AppKit's bottom-left. Only the
