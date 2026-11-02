@@ -130,3 +130,5 @@
 "Hide" = "隠す";
 "Hidden item" = "隠れている項目";
 "Presentation Mode" = "プレゼンテーションモード";
+"An update is being installed" = "アップデートをインストール中です";
+"Tuckaway will relaunch when it’s done." = "完了すると Tuckaway が再起動します。";

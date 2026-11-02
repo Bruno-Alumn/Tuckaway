@@ -23,6 +23,10 @@ final class Updater {
     }
 
     private var isBusy = false
+    // A Check for Updates request that arrived while a check was running; that
+    // check then reports its result as if the user had asked.
+    private var userAskedDuringCheck = false
+    private var isChecking = false
     private var timer: Timer?
 
     private init() {}
@@ -69,8 +73,20 @@ final class Updater {
             if userInitiated { NSWorkspace.shared.open(Self.releasesPageURL) }
             return
         }
-        guard !isBusy else { return }
+        guard !isBusy else {
+            if userInitiated {
+                if isChecking {
+                    userAskedDuringCheck = true
+                } else {
+                    showAlert(title: "An update is being installed".localized,
+                              message: "Tuckaway will relaunch when it’s done.".localized)
+                }
+            }
+            return
+        }
         isBusy = true
+        isChecking = true
+        userAskedDuringCheck = false
 
         let request = GitHubRelease.updateRequest(url: Self.latestReleaseURL,
                                                   currentVersion: Bundle.main.releaseVersionNumber ?? "0")
@@ -85,8 +101,14 @@ final class Updater {
             DispatchQueue.main.async {
                 guard let self else { return }
                 self.isBusy = false
-                Preferences.lastUpdateCheck = Date()
-                self.handle(release: release, userInitiated: userInitiated)
+                self.isChecking = false
+                // Only a check that got an answer counts: one that ran before the
+                // network was up shouldn't push the next one back a whole day.
+                if release != nil {
+                    Preferences.lastUpdateCheck = Date()
+                }
+                self.handle(release: release, userInitiated: userInitiated || self.userAskedDuringCheck)
+                self.userAskedDuringCheck = false
             }
         }.resume()
     }
@@ -355,7 +377,8 @@ final class Updater {
             }
         } catch {
             if isOurWorkDirectory {
-                UpdateReplacementCleanup.discardWorkDirectory(workDirectory, destination: destination, backup: backup)
+                UpdateReplacementCleanup.discardWorkDirectory(workDirectory, destination: destination, backup: backup,
+                                                              bundleIdentifier: Bundle.main.bundleIdentifier)
             }
             showInstallFailure(.replaceFailed, fallback: fallback)
             return

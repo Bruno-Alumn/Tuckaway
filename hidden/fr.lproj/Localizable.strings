@@ -132,3 +132,5 @@
 "Hide" = "Masquer";
 "Hidden item" = "Élément masqué";
 "Presentation Mode" = "Mode présentation";
+"An update is being installed" = "Une mise à jour est en cours d’installation";
+"Tuckaway will relaunch when it’s done." = "Tuckaway redémarrera une fois l’installation terminée.";

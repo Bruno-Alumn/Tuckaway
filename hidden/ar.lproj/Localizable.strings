@@ -132,3 +132,5 @@
 "Hide" = "إخفاء";
 "Hidden item" = "عنصر مخفي";
 "Presentation Mode" = "وضع العرض التقديمي";
+"An update is being installed" = "يجري تثبيت تحديث";
+"Tuckaway will relaunch when it’s done." = "سيُعاد تشغيل Tuckaway عند الانتهاء.";
