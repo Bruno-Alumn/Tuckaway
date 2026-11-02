@@ -353,6 +353,11 @@ struct MenuBarProfiles: Equatable {
     // what to go back to when the window ends.
     var scheduled: String?
     var beforeSchedule: Switched?
+    // A profile used while an app is open: [profile: bundle ID].
+    var appTriggers: [String: String] = [:]
+    // The profile switched to for an open app, and what to go back to.
+    var appSwitched: String?
+    var beforeApp: Switched?
 
     enum Switched: Equatable {
         case from(String?)
@@ -382,15 +387,43 @@ struct MenuBarProfiles: Equatable {
     // when it ends, unless the user picked another profile in between: that
     // choice stays, as it does while docked.
     mutating func timeChanged(minute: Int) {
-        let wanted = scheduledProfile(at: minute)
-        guard wanted != scheduled else { return }
-        if let scheduled, case .from(let previous)? = beforeSchedule, active == scheduled {
+        Self.follow(scheduledProfile(at: minute), current: &scheduled, before: &beforeSchedule,
+                    active: &active, profiles: profiles)
+    }
+
+    // The first profile, in menu order, whose app is open.
+    func appTriggeredProfile(running: Set<String>) -> String? {
+        names.first { appTriggers[$0].map(running.contains) ?? false }
+    }
+
+    // Called when apps open or quit, with the bundle IDs running now. Same
+    // rules as the schedule.
+    mutating func appsChanged(running: Set<String>) {
+        Self.follow(appTriggeredProfile(running: running), current: &appSwitched, before: &beforeApp,
+                    active: &active, profiles: profiles)
+    }
+
+    mutating func setAppTrigger(_ bundle: String?, for name: String) {
+        guard profiles[name] != nil else { return }
+        appTriggers[name] = bundle
+        if appSwitched == name {
+            appSwitched = nil
+            beforeApp = nil
+        }
+    }
+
+    // Switches when `wanted` changes: to it, remembering what was in use, and
+    // back when it ends, unless the user picked another profile meanwhile.
+    private static func follow(_ wanted: String?, current: inout String?, before: inout Switched?,
+                               active: inout String?, profiles: [String: [String]]) {
+        guard wanted != current else { return }
+        if let current, case .from(let previous)? = before, active == current {
             active = previous.flatMap { profiles[$0] != nil ? $0 : nil }
         }
-        beforeSchedule = nil
-        scheduled = wanted
+        before = nil
+        current = wanted
         if let wanted, active != wanted {
-            beforeSchedule = .from(active)
+            before = .from(active)
             active = wanted
         }
     }
@@ -436,6 +469,9 @@ struct MenuBarProfiles: Equatable {
         schedules[newName] = schedules.removeValue(forKey: name)
         if scheduled == name { scheduled = newName }
         if beforeSchedule == .from(name) { beforeSchedule = .from(newName) }
+        appTriggers[newName] = appTriggers.removeValue(forKey: name)
+        if appSwitched == name { appSwitched = newName }
+        if beforeApp == .from(name) { beforeApp = .from(newName) }
         return true
     }
 
@@ -448,6 +484,8 @@ struct MenuBarProfiles: Equatable {
         if displayProfile == name { setDisplayProfile(nil) }
         setSchedule(nil, for: name)
         if beforeSchedule == .from(name) { beforeSchedule = .from(nil) }
+        setAppTrigger(nil, for: name)
+        if beforeApp == .from(name) { beforeApp = .from(nil) }
         profiles[name] = nil
         if active == name { active = nil }
     }
@@ -500,6 +538,9 @@ final class UserDefaultsMenuBarProfilesStore {
     private static let scheduledKey = "scheduledMenuBarProfile"
     // "" stands for "no profile was active", as for the display switch.
     private static let beforeScheduleKey = "menuBarProfileBeforeSchedule"
+    private static let appTriggersKey = "menuBarProfileApps"
+    private static let appSwitchedKey = "appMenuBarProfile"
+    private static let beforeAppKey = "menuBarProfileBeforeApp"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -515,7 +556,10 @@ final class UserDefaultsMenuBarProfilesStore {
                                    beforeDisplay: defaults.string(forKey: Self.beforeDisplayKey).map { .from($0.isEmpty ? nil : $0) },
                                    schedules: schedules,
                                    scheduled: defaults.string(forKey: Self.scheduledKey),
-                                   beforeSchedule: defaults.string(forKey: Self.beforeScheduleKey).map { .from($0.isEmpty ? nil : $0) })
+                                   beforeSchedule: defaults.string(forKey: Self.beforeScheduleKey).map { .from($0.isEmpty ? nil : $0) },
+                                   appTriggers: defaults.dictionary(forKey: Self.appTriggersKey) as? [String: String] ?? [:],
+                                   appSwitched: defaults.string(forKey: Self.appSwitchedKey),
+                                   beforeApp: defaults.string(forKey: Self.beforeAppKey).map { .from($0.isEmpty ? nil : $0) })
         }
         set {
             defaults.set(newValue.profiles, forKey: Self.profilesKey)
@@ -532,6 +576,13 @@ final class UserDefaultsMenuBarProfilesStore {
                 defaults.set(previous ?? "", forKey: Self.beforeScheduleKey)
             } else {
                 defaults.removeObject(forKey: Self.beforeScheduleKey)
+            }
+            defaults.set(newValue.appTriggers, forKey: Self.appTriggersKey)
+            defaults.set(newValue.appSwitched, forKey: Self.appSwitchedKey)
+            if case .from(let previous)? = newValue.beforeApp {
+                defaults.set(previous ?? "", forKey: Self.beforeAppKey)
+            } else {
+                defaults.removeObject(forKey: Self.beforeAppKey)
             }
         }
     }

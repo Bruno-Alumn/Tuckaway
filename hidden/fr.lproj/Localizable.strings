@@ -219,3 +219,10 @@
 
 /* What "Use the full MenuBar on expanding" does (#143) */
 "While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses." = "Une fois déplié, Tuckaway passe au premier plan : les menus de l’app active quittent la barre des menus et les icônes ont toute la largeur. Ils reviennent quand il se replie.";
+
+/* A profile used while an app is open */
+"Use While an App Is Open…" = "Utiliser tant qu’une app est ouverte…";
+"Stop Following %@" = "Ne plus suivre %@";
+"While %@ is open" = "Tant que %@ est ouvert";
+"Choose an app. While it's open, Tuckaway uses “%@”." = "Choisissez une app. Tant qu’elle est ouverte, Tuckaway utilise « %@ ».";
+"Choose" = "Choisir";

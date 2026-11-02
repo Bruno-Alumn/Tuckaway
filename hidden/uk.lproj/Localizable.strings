@@ -219,3 +219,10 @@
 
 /* What "Use the full MenuBar on expanding" does (#143) */
 "While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses." = "Коли розгорнуто, Tuckaway виходить на передній план, тож меню поточної програми зникають зі смуги меню, а іконки отримують усю її ширину. Вони повертаються, коли смугу згорнуто.";
+
+/* A profile used while an app is open */
+"Use While an App Is Open…" = "Використовувати, поки відкрита програма…";
+"Stop Following %@" = "Не стежити за %@";
+"While %@ is open" = "Поки відкрито %@";
+"Choose an app. While it's open, Tuckaway uses “%@”." = "Виберіть програму. Поки вона відкрита, Tuckaway використовує «%@».";
+"Choose" = "Вибрати";
