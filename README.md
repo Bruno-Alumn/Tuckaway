@@ -88,7 +88,12 @@ open it from the arrow’s menu or with <kbd>⌘</kbd><kbd>,</kbd>.
 
 - Keep rarely used icons in a separate, always-hidden section.
 - Find icons hidden behind a camera notch.
-- Show hidden icons in a floating bar under the menu bar.
+- Show hidden icons in a floating bar under the menu bar: hover to open it,
+  point at an icon for its app's name, right-click for more.
+- On macOS 27, a newly installed app's icon isn't hidden before you've seen
+  it: Tuckaway asks whether to keep it visible.
+- Presentation mode (macOS 27) hides every app's icon at once for screen
+  sharing and recordings.
 
 **A tool you can make your own**
 
@@ -107,7 +112,7 @@ else stays on your Mac.
 | Permission | Why it’s needed |
 |:--|:--|
 | **Accessibility** — called **Device Control and Data Access** on macOS 27 | Finds menu-bar icons, detects clicks on empty space, and forwards clicks to hidden items. |
-| **Screen Recording** | Used only by the separate floating bar on macOS 13–26. Captured icons never leave your Mac. |
+| **Screen Recording** | Used only by the separate floating bar, to show your hidden icons in it. Captured icons never leave your Mac. |
 
 Read the full [Privacy Policy](PRIVACY_POLICY.md).
 
