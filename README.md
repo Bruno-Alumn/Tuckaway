@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="img/icon_512%402x.png" width="136" height="136" alt="Tuckaway app icon">
+<img src="img/icon_512%402x.png" width="128" height="128" alt="Tuckaway app icon">
 
-# TuckAway
+# Tuckaway
 
 **A quieter menu bar, on your terms.**
 
@@ -14,7 +14,7 @@ Hide the icons you don’t need, without quitting the apps behind them.
 <img src="https://img.shields.io/badge/macOS-13%2B-1f2937?style=flat-square&logo=apple&logoColor=white" alt="macOS 13 or later">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2774c8?style=flat-square" alt="MIT license"></a>
 
-[Install](#install) · [Using Tuckaway](#using-tuckaway) · [Features](#features) · [Privacy](#privacy) · [Contribute](#contribute)
+[Features](#features) · [Install](#install) · [Using Tuckaway](#using-tuckaway) · [Privacy](#privacy) · [Contribute](#contribute)
 
 </div>
 
@@ -31,6 +31,32 @@ through 26.
 <div align="center">
   <img src="img/tuckaway-menubar.gif" width="900" alt="Tuckaway’s arrow hiding and revealing menu-bar icons">
 </div>
+
+## Features
+
+**Automation that stays out of your way**
+
+- Collapse after 5 seconds to a minute, or immediately when you switch apps.
+- Reveal with a hover, a click on empty menu-bar space, or a global shortcut.
+- Expand automatically when an external display is connected.
+
+**Room for everything**
+
+- Keep rarely used icons in a separate, always-hidden section.
+- Find icons hidden behind a camera notch.
+- Show hidden icons in a floating bar under the menu bar: hover to open it,
+  point at an icon for its app's name, right-click for more.
+- On macOS 27, a newly installed app's icon isn't hidden before you've seen
+  it: Tuckaway asks whether to keep it visible.
+- Presentation mode (macOS 27) hides every app's icon at once for screen
+  sharing and recordings.
+- Find a hidden icon by typing its name (macOS 27).
+
+**A tool you can make your own**
+
+- Choose a standard arrow, a transparent one, or an ellipsis.
+- Reorder icons directly or through the Menu Bar Items manager.
+- Launch quietly at login, with or without opening Settings.
 
 ## Install
 
@@ -76,32 +102,6 @@ open it from the arrow’s menu or with <kbd>⌘</kbd><kbd>,</kbd>.
   <img src="img/tuckaway-settings.gif" width="440" alt="Tuckaway’s General settings, item manager, and About screen">
 </div>
 
-## Features
-
-**Automation that stays out of your way**
-
-- Collapse after 5 seconds to a minute, or immediately when you switch apps.
-- Reveal with a hover, a click on empty menu-bar space, or a global shortcut.
-- Expand automatically when an external display is connected.
-
-**Room for everything**
-
-- Keep rarely used icons in a separate, always-hidden section.
-- Find icons hidden behind a camera notch.
-- Show hidden icons in a floating bar under the menu bar: hover to open it,
-  point at an icon for its app's name, right-click for more.
-- On macOS 27, a newly installed app's icon isn't hidden before you've seen
-  it: Tuckaway asks whether to keep it visible.
-- Presentation mode (macOS 27) hides every app's icon at once for screen
-  sharing and recordings.
-- Find a hidden icon by typing its name (macOS 27).
-
-**A tool you can make your own**
-
-- Choose a standard arrow, a transparent one, or an ellipsis.
-- Reorder icons directly or through the Menu Bar Items manager.
-- Launch quietly at login, with or without opening Settings.
-
 ## Privacy
 
 Tuckaway has no accounts, analytics, or ads. Its only network request is the
@@ -128,10 +128,10 @@ need to ask before working on a small patch.
 - **Not sure where to begin?** [ARCHITECTURE.md](docs/ARCHITECTURE.md) explains
   the hiding engines, and [BACKLOG.md](docs/BACKLOG.md) lists open work.
 
-AI-assisted contributions are welcome too. Much of Tuckaway was built with AI
-coding agents, then compiled, tested, and exercised on a real menu bar before
-merging. The standard is the same for every contribution: say what you changed
-and be honest about what you tested.
+Much of Tuckaway was built with AI coding agents, then compiled, tested and
+exercised on real hardware before merging. AI-assisted contributions are
+welcome on the same terms as any other: say what you changed and be honest
+about what you tested.
 
 Before opening a pull request, make sure it builds, the tests pass, and you’ve
 tried it on a real menu bar. The [contributing guide](CONTRIBUTING.md) has the
@@ -185,3 +185,5 @@ not affiliated with them.
 
 **MIT License:** original work © 2019 Dwarves Foundation; Tuckaway changes ©
 2026 Bruno-Alumn. See [LICENSE](LICENSE).
+
+<sub>More Mac apps by Bruno-Alumn: [SolStream](https://github.com/Bruno-Alumn/SolStream) · [ThockBox](https://github.com/Bruno-Alumn/ThockBox)</sub>
