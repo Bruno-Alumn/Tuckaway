@@ -77,6 +77,9 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // they show at the same frames: the bar is anchored on the arrow's side, and
     // only the always-hidden icons, further out, stay hidden.
     private(set) var hiddenItems: [MenuBarInventoryItem] = []
+    // Every item from that read, so hiddenItems can follow a decision about a
+    // new or kept app without reading the bar again.
+    private var inventoryItems: [MenuBarInventoryItem] = []
     private(set) var isPeeking = false
     // Presentation mode: no app's icon shows but Tuckaway's own, whatever the
     // sections say. Collapsing and expanding meanwhile only update `state`,
@@ -230,17 +233,23 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         }
     }
 
+    // Kept apps, and new ones not decided on yet: both show whatever their icon's place.
     var keptVisibleApps: Set<String> {
-        newApps.tracker.kept
+        newApps.tracker.kept.union(newApps.tracker.pending)
+    }
+
+    private func refreshHiddenItems() {
+        guard let effective = effectiveLayout else { return }
+        hiddenItems = inventoryItems.filter { item in
+            item.bundleIdentifier.map { effective.sections[$0] == .hidden } ?? false
+        }
     }
 
     // The user chose for a new app, or moved a kept one in Menu Bar Items.
     // While collapsed the restriction is redone right away.
     func resolveNewApp(_ bundle: String, keepVisible: Bool) {
         newApps.tracker.resolve(bundle, keepVisible: keepVisible)
-        if keepVisible {
-            hiddenItems.removeAll { $0.bundleIdentifier == bundle }
-        }
+        refreshHiddenItems()
         guard state == .collapsed, !isPeeking, !isPresenting, let layout = effectiveLayout else { return }
         activate(allowing: layout.bundles(in: [.visible])) { _ in }
     }
@@ -338,9 +347,8 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             self.layout = layout
             let found = self.newApps.tracker.observe(layout)
             let effective = self.newApps.tracker.applied(to: layout)
-            self.hiddenItems = inventory.filter { item in
-                item.bundleIdentifier.map { effective.sections[$0] == .hidden } ?? false
-            }
+            self.inventoryItems = inventory
+            self.refreshHiddenItems()
             if !found.isEmpty {
                 NSLog("NativeVisibility: keeping new menu-bar apps visible: \(found)")
             }
