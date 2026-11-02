@@ -1293,3 +1293,51 @@ final class HiddenIconSearchTests: XCTestCase {
         XCTAssertEqual(HiddenIconSearch.matches(names, query: "zzz", name: { $0 }), [])
     }
 }
+
+final class ActiveAppIconTests: XCTestCase {
+    private var visibility: FakeVisibility!
+    private var engine: NativeVisibilityEngine!
+
+    override func setUp() {
+        super.setUp()
+        let items = FakeItems()
+        let inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.other", x: 1150), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                        captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                        ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                        itemFrame: { _ in separator },
+                                        displays: { [mainDisplay] },
+                                        isLTR: { true })
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+    }
+
+    func testTheFrontmostHiddenAppIsShownUntilAnotherComesForward() {
+        engine.setActiveApp("com.hidden")
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.hidden", "com.visible"])
+        XCTAssertEqual(engine.hiddenItems.map(\.bundleIdentifier), ["com.other"], "not offered in the separate bar meanwhile")
+
+        engine.setActiveApp("com.other")
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.other", "com.visible"])
+
+        engine.setActiveApp(nil)
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+
+    func testAppsThatChangeNothingDontRedoTheRestriction() {
+        let requests = visibility.requests.count
+        engine.setActiveApp("com.visible")
+        engine.setActiveApp("com.not.in.bar")
+        XCTAssertEqual(visibility.requests.count, requests)
+    }
+
+    func testPresentationModeWins() {
+        engine.setPresenting(true)
+        visibility.succeed(visibility.requests.count - 1)
+        let requests = visibility.requests.count
+        engine.setActiveApp("com.hidden")
+        XCTAssertEqual(visibility.requests.count, requests)
+    }
+}

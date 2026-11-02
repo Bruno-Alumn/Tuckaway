@@ -49,7 +49,7 @@ import AppKit
 //   Notification Center cannot open from it (#410). A click on the clock lifts
 //   the restriction for a moment and presses it (MenuBarClock); hidden icons
 //   can flash while it is lifted.
-final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenuBarAppReporting, PresentationModeProviding {
+final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenuBarAppReporting, PresentationModeProviding, ActiveAppShowing {
     // System item identifiers to keep visible. Unknown identifiers are ignored,
     // so the range covers items a given Mac does not have. On 27.0, 0-63 resolves
     // to battery, bluetooth, clock, displays, keyboard, volume, wifi,
@@ -291,7 +291,27 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // The sections as arranged, with kept apps and new ones the user hasn't
     // decided on yet visible.
     private var effectiveLayout: MenuBarLayout? {
-        layout.map(newApps.tracker.applied(to:))
+        layout.map { layout in
+            var effective = newApps.tracker.applied(to: layout)
+            if let activeApp, effective.sections[activeApp] != nil {
+                effective.sections[activeApp] = .visible
+            }
+            return effective
+        }
+    }
+
+    private var activeApp: String?
+
+    // While collapsed the restriction is redone, but only when the effect
+    // changes: an app that's visible anyway, or not in the bar, needs nothing.
+    func setActiveApp(_ bundle: String?) {
+        guard bundle != activeApp else { return }
+        let before = effectiveLayout?.bundles(in: [.visible])
+        activeApp = bundle
+        refreshHiddenItems()
+        guard state == .collapsed, !isPeeking, !isPresenting, let layout = effectiveLayout,
+              layout.bundles(in: [.visible]) != before else { return }
+        activate(allowing: layout.bundles(in: [.visible])) { _ in }
     }
 
     func updateAlwaysHiddenSection(enabled: Bool, separatorHidden: Bool) {
