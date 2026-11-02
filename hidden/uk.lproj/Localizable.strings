@@ -195,3 +195,11 @@
 /* The date the clock drops while collapsed (macOS 13–26) */
 "While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "Поки іконки приховано, macOS прибирає дату з годинника, бо смуга меню здається заповненою. Щоб її залишити, у параметрах годинника встановіть «Показувати дату» на «Завжди».";
 "Clock Options…" = "Параметри годинника…";
+
+/* A profile used at set times of day */
+"Schedule…" = "Розклад…";
+"Use “%@” at set times" = "Використовувати «%@» у визначений час";
+"Tuckaway switches to this profile when the time starts, and back to the one you were using when it ends. A profile you pick in between stays." = "Tuckaway перемикається на цей профіль, коли починається час, і повертається до попереднього, коли він закінчується. Профіль, вибраний у проміжку, залишається.";
+"Switch automatically" = "Перемикати автоматично";
+"From" = "З";
+"To" = "До";

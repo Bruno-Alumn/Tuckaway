@@ -4,6 +4,7 @@
 
 ### Added
 - **Edit profiles in Settings** (macOS 27): the ⋯ button next to each profile under Profiles in Settings › General renames it, replaces its apps with the ones visible now, removes an app, or deletes it. Each profile also lists its apps.
+- **Profiles by time of day** (macOS 27): **Schedule…** in a profile's ⋯ menu in Settings switches to it between two times, overnight too, and back to the profile you were using when the time ends. A profile you pick in between stays.
 
 ### Fixed
 - On macOS 13–26, the clock dropped its date while icons were hidden (#207), because the collapsed separator makes macOS think the menu bar is full. When the clock shows the date only "When Space Allows", Settings › General now explains this and opens Clock Options, where **Show Date: Always** keeps it. macOS 27 isn't affected.

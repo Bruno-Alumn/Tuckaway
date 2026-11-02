@@ -195,3 +195,11 @@
 /* The date the clock drops while collapsed (macOS 13–26) */
 "While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "Dok su ikone skrivene, macOS uklanja datum iz sata jer traka izbornika izgleda puna. Da ga zadržite, postavite „Prikaži datum” na „Uvijek” u opcijama sata.";
 "Clock Options…" = "Opcije sata…";
+
+/* A profile used at set times of day */
+"Schedule…" = "Raspored…";
+"Use “%@” at set times" = "Koristi „%@” u određeno vrijeme";
+"Tuckaway switches to this profile when the time starts, and back to the one you were using when it ends. A profile you pick in between stays." = "Tuckaway prelazi na ovaj profil kad vrijeme počne, a kad završi vraća se na onaj koji ste koristili. Profil koji odaberete u međuvremenu ostaje.";
+"Switch automatically" = "Mijenjaj automatski";
+"From" = "Od";
+"To" = "Do";

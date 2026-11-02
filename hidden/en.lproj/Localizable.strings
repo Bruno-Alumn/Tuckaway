@@ -195,3 +195,11 @@
 /* The date the clock drops while collapsed (macOS 13–26) */
 "While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options.";
 "Clock Options…" = "Clock Options…";
+
+/* A profile used at set times of day */
+"Schedule…" = "Schedule…";
+"Use “%@” at set times" = "Use “%@” at set times";
+"Tuckaway switches to this profile when the time starts, and back to the one you were using when it ends. A profile you pick in between stays." = "Tuckaway switches to this profile when the time starts, and back to the one you were using when it ends. A profile you pick in between stays.";
+"Switch automatically" = "Switch automatically";
+"From" = "From";
+"To" = "To";

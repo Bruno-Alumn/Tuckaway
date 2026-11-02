@@ -1386,6 +1386,78 @@ final class MenuBarProfilesTests: XCTestCase {
         XCTAssertEqual(profiles.profiles, ["Work": ["com.b", "com.c"]])
     }
 
+    func testAScheduleWindowCanRunPastMidnight() {
+        let day = ProfileSchedule(start: 9 * 60, end: 17 * 60)
+        XCTAssertTrue(day.contains(9 * 60))
+        XCTAssertFalse(day.contains(17 * 60))
+        XCTAssertFalse(day.contains(8 * 60 + 59))
+        let night = ProfileSchedule(start: 22 * 60, end: 7 * 60)
+        XCTAssertTrue(night.contains(23 * 60))
+        XCTAssertTrue(night.contains(0))
+        XCTAssertFalse(night.contains(12 * 60))
+        XCTAssertFalse(ProfileSchedule(start: 600, end: 600).contains(600))
+    }
+
+    func testTheScheduleSwitchesInAndBackOut() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"], "Home": ["com.b"]], active: "Home",
+                                       schedules: ["Work": ProfileSchedule(start: 540, end: 1020)])
+        profiles.timeChanged(minute: 500)
+        XCTAssertEqual(profiles.active, "Home")
+        profiles.timeChanged(minute: 540)
+        XCTAssertEqual(profiles.active, "Work")
+        XCTAssertEqual(profiles.scheduled, "Work")
+        profiles.timeChanged(minute: 600)
+        XCTAssertEqual(profiles.active, "Work")
+        profiles.timeChanged(minute: 1020)
+        XCTAssertEqual(profiles.active, "Home")
+        XCTAssertNil(profiles.scheduled)
+        XCTAssertNil(profiles.beforeSchedule)
+    }
+
+    func testAChoiceMadeInsideTheWindowStays() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"], "Home": ["com.b"]],
+                                       schedules: ["Work": ProfileSchedule(start: 540, end: 1020)])
+        profiles.timeChanged(minute: 540)
+        XCTAssertEqual(profiles.active, "Work")
+        profiles.active = "Home"
+        // Not re-applied every minute, and not undone when the window ends.
+        profiles.timeChanged(minute: 541)
+        XCTAssertEqual(profiles.active, "Home")
+        profiles.timeChanged(minute: 1020)
+        XCTAssertEqual(profiles.active, "Home")
+    }
+
+    func testRenamingAndDeletingCarryTheSchedule() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"], "Home": ["com.b"]], active: "Home",
+                                       schedules: ["Work": ProfileSchedule(start: 540, end: 1020)])
+        profiles.timeChanged(minute: 600)
+        XCTAssertTrue(profiles.rename("Work", to: "Office"))
+        XCTAssertEqual(profiles.schedules, ["Office": ProfileSchedule(start: 540, end: 1020)])
+        XCTAssertEqual(profiles.scheduled, "Office")
+        XCTAssertTrue(profiles.rename("Home", to: "House"))
+        XCTAssertEqual(profiles.beforeSchedule, .from("House"))
+        profiles.timeChanged(minute: 1020)
+        XCTAssertEqual(profiles.active, "House")
+
+        profiles.timeChanged(minute: 600)
+        profiles.delete("Office")
+        XCTAssertNil(profiles.active)
+        XCTAssertTrue(profiles.schedules.isEmpty)
+        XCTAssertNil(profiles.scheduled)
+    }
+
+    func testStoreRoundTripsSchedules() {
+        let suite = "MenuBarProfilesTests-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = UserDefaultsMenuBarProfilesStore(defaults: defaults)
+        let profiles = MenuBarProfiles(profiles: ["Work": ["com.a"]], active: "Work",
+                                       schedules: ["Work": ProfileSchedule(start: 1320, end: 420)],
+                                       scheduled: "Work", beforeSchedule: .from(nil))
+        store.profiles = profiles
+        XCTAssertEqual(UserDefaultsMenuBarProfilesStore(defaults: defaults).profiles, profiles)
+    }
+
     func testAProfileDecidesWhatShowsButKeepsAlwaysHidden() {
         let layout = MenuBarLayout(sections: ["com.a": .visible, "com.b": .hidden, "com.c": .alwaysHidden, "com.new": .hidden])
         // com.c is in the profile, but moving it to Always Hidden wins.

@@ -68,7 +68,8 @@ before merging.
 
 - **#229 activity-based reveal.** Needs a design that notices changing icon content
   without continuously expanding the real menu bar.
-- **Profiles, next steps.** Switching by Focus or time of day
+- **Profiles by Focus.** Reading which Focus is on needs the Communication
+  Notifications entitlement, which only a Developer ID (#219) can carry
   ([PROFILES.md](PROFILES.md)).
 - **Always-hidden section rework.** Always-hidden items are only reliably hidden when
   "hide separators" is on (see the note in [MANUAL.md](MANUAL.md)). Decouple the two

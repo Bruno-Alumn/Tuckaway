@@ -99,6 +99,8 @@ class StatusBarController: MenuBarItemProvider {
     // is still in flight doesn't act on a bar the user has since changed.
     private var nativeHiddenItemsRequest = 0
     private var nativeMenuWatchTimer: Timer?
+    // Fires at the start of every minute while any profile has a schedule.
+    private var profileScheduleTimer: Timer?
     private var hoverRowLeaveTimer: Timer?
     private let newAppPrompt = NewMenuBarAppPromptController()
     private let hiddenIconSearch = HiddenIconSearchController()
@@ -204,6 +206,7 @@ class StatusBarController: MenuBarItemProvider {
         setupNewAppPrompts()
         (menuBarEngine as? ProfileApplying)?.setProfile(profilesStore.profiles.activeApps)
         applyDisplayProfile()
+        updateProfileSchedule()
         updateActiveAppIcon()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
@@ -343,6 +346,7 @@ class StatusBarController: MenuBarItemProvider {
     // restriction here instead of applying a stale per-display classification.
     @objc private func handleWorkspaceMenuBarChange() {
         invalidateNativeLayoutAfterEnvironmentChange()
+        applyScheduledProfile()
     }
 
     @objc private func handleApplicationActivated(_ notification: Notification) {
@@ -1631,6 +1635,52 @@ extension StatusBarController {
         applyDisplayProfile()
     }
 
+    // Runs the schedule check now and arms the per-minute timer, or stops it
+    // when no profile has a schedule.
+    func updateProfileSchedule() {
+        guard menuBarEngine is ProfileApplying else { return }
+        applyScheduledProfile()
+        profileScheduleTimer?.invalidate()
+        profileScheduleTimer = nil
+        NotificationCenter.default.removeObserver(self, name: .NSSystemClockDidChange, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .NSSystemTimeZoneDidChange, object: nil)
+        guard !profilesStore.profiles.schedules.isEmpty else { return }
+        let now = Date()
+        let nextMinute = Calendar.current.nextDate(after: now, matching: DateComponents(second: 0), matchingPolicy: .nextTime) ?? now.addingTimeInterval(60)
+        let timer = Timer(fire: nextMinute, interval: 60, repeats: true) { [weak self] _ in
+            self?.applyScheduledProfile()
+        }
+        timer.tolerance = 2
+        RunLoop.main.add(timer, forMode: .common)
+        profileScheduleTimer = timer
+        NotificationCenter.default.addObserver(self, selector: #selector(handleClockChange), name: .NSSystemClockDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleClockChange), name: .NSSystemTimeZoneDidChange, object: nil)
+    }
+
+    // The timer drifts from the minute boundary after the clock jumps.
+    @objc private func handleClockChange() {
+        updateProfileSchedule()
+    }
+
+    private func applyScheduledProfile() {
+        guard menuBarEngine is ProfileApplying else { return }
+        var profiles = profilesStore.profiles
+        guard !profiles.schedules.isEmpty || profiles.scheduled != nil else { return }
+        let before = profiles
+        let time = Calendar.current.dateComponents([.hour, .minute], from: Date())
+        profiles.timeChanged(minute: (time.hour ?? 0) * 60 + (time.minute ?? 0))
+        if profiles != before {
+            applyProfiles(profiles)
+        }
+    }
+
+    func setSchedule(_ schedule: ProfileSchedule?, forProfile name: String) {
+        var profiles = profilesStore.profiles
+        profiles.setSchedule(schedule, for: name)
+        applyProfiles(profiles)
+        updateProfileSchedule()
+    }
+
     var activeProfileName: String? {
         menuBarEngine is ProfileApplying ? profilesStore.profiles.active : nil
     }
@@ -1682,6 +1732,7 @@ extension StatusBarController {
         var profiles = profilesStore.profiles
         profiles.delete(name)
         applyProfiles(profiles)
+        updateProfileSchedule()
         // A later profile with the same name shouldn't inherit the shortcut.
         var shortcuts = Preferences.profileShortcuts
         if shortcuts.removeValue(forKey: name) != nil {

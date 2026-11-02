@@ -87,8 +87,15 @@ shortcut, and the shortcuts are included in Export Settings.
 The **⋯** button next to each profile in Settings edits it. **Rename…** changes
 its name (its shortcut and display switching follow), **Use Current Layout**
 replaces its apps with the ones the collapsed bar shows now, **Remove App**
-takes one app out, and **Delete Profile…** removes it after asking. Each row
-lists the profile's apps under its name.
+takes one app out, **Schedule…** uses it between two times of day, and
+**Delete Profile…** removes it after asking. Each row
+lists the profile's apps, and its times if it has a schedule, under its name.
+
+A scheduled profile switches on when its time starts (or when the Mac wakes
+inside it) and back to the profile you were using when it ends. Picking another
+profile in between stays until the next time starts. A window that ends before
+it starts, such as 22:00 to 7:00, runs overnight. If two windows overlap, the
+first profile in the menu wins.
 
 #### Presentation Mode
 
