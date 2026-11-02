@@ -3,12 +3,19 @@
 ## Unreleased
 
 ### Added
+- **Export Settings… / Import Settings…** in Settings › About save Tuckaway's options, shortcuts and kept-visible apps to a file and load them on another Mac or after a clean install. Importing asks first, then relaunches Tuckaway to apply them. Icon positions belong to macOS and aren't included.
 - **Find Hidden Icon** (macOS 27): from the arrow's menu or a shortcut you set in Settings › General, a small search lists your hidden icons by name. Type to filter, use the arrow keys, and press Return to open that icon's menu; it hides again when the menu closes. It needs no Screen Recording.
 
 ### Fixed
 - With a second display arranged to the left of a notched MacBook, **Show Notch Items** listed that display's icons as hidden behind the notch.
 - Closing Menu Bar Items while it was still moving an icon could leave the menu bar stuck expanded. Reordering icons within Visible could aim next to a kept app's icon, which sits left of the arrow, and hide the icon you moved.
 - Recording a shortcut again with the same keys could leave it not working until Tuckaway restarted, and two of Tuckaway's shortcuts could be set to the same keys, so only one fired. A combination already in use is now refused with a beep.
+- **Check for Updates…** did nothing visible while an automatic check was running; it now shows that check's result. A failed automatic check (for example right after login, before Wi-Fi was up) no longer waits a full day to try again. If an update's install failed halfway on a Mac where Tuckaway lives on another drive, the previous copy is now always kept.
+- With **Expand when an external display is connected** on, collapsing never stuck while a second display was attached: the bar re-expanded at once, and with two other options every app switch could pull focus to Tuckaway. Your collapse now wins until the displays change.
+- With macOS set to automatically hide and show the menu bar, Tuckaway didn't recognize the pointer as being in it: hover to expand and click-empty-menu-bar didn't work, and the bar could collapse while you used it.
+- Clicking the empty menu bar couldn't collapse it while Tuckaway itself was active (with **Use the full menu bar** on, or while Settings was open).
+- On macOS 13–26 with the separate hidden-items bar on, any ⌘-drag (moving a window, selecting files) expanded the menu bar; now only ⌘-drags in the menu bar do.
+- **Collapse on app switch** collapsed the bar right after you clicked a hidden icon whose app then came to the front, hiding the menu that had just opened.
 - The separate hidden-items bar used icon positions from the last time Tuckaway read the whole bar. If a visible icon had changed width since (a CPU meter, a timer), the row could show cut-off icons and a click could open the wrong app's menu. It now reads where the hidden icons are at that moment.
 - Presentation Mode stopped hiding icons after an app launched, the Mac woke or a display changed, while still showing as on. It also showed every icon while a camera or microphone was in use, which is most screen shares; now it keeps hiding them (the dot in the screen corner still shows). Turning it on just as the bar collapsed could leave the arrow unresponsive until Tuckaway was restarted.
 - After you answered **Hide** for a new app, its icon was hidden but missing from the separate hidden-items bar until something else made Tuckaway re-read the bar.

@@ -1,5 +1,6 @@
 import Cocoa
 import SwiftUI
+import UniformTypeIdentifiers
 
 final class AboutViewController: NSViewController {
     static func initWithStoryboard() -> AboutViewController {
@@ -9,7 +10,7 @@ final class AboutViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        preferredContentSize = NSSize(width: 480, height: 300)
+        preferredContentSize = NSSize(width: 480, height: 330)
         let hostingView = NSHostingView(rootView: AboutSettingsView())
         hostingView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(hostingView)
@@ -65,6 +66,12 @@ private struct AboutSettingsView: View {
                 .controlSize(.small)
                 .padding(.top, 12)
             }
+            HStack(spacing: 8) {
+                Button("Export Settings…".localized) { SettingsBackupFlow.export() }
+                Button("Import Settings…".localized) { SettingsBackupFlow.importSettings() }
+            }
+            .controlSize(.small)
+            .padding(.top, 8)
             Spacer(minLength: 16)
             VStack(spacing: 2) {
                 Text("Independent MIT-licensed fork of Hidden Bar")
@@ -79,5 +86,74 @@ private struct AboutSettingsView: View {
         .padding(.top, 24)
         .padding(.bottom, 18)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+// Saves and loads SettingsBackup files. Importing relaunches Tuckaway, so
+// hotkeys, sections and the login item all start from the imported values.
+private enum SettingsBackupFlow {
+    static func export() {
+        let panel = NSSavePanel()
+        panel.nameFieldStringValue = "Tuckaway Settings.plist"
+        panel.allowedContentTypes = [.propertyList]
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        do {
+            try SettingsBackup.data(from: SettingsBackup.export(from: .standard)).write(to: url)
+        } catch {
+            alert("Couldn’t export settings".localized, error.localizedDescription)
+        }
+    }
+
+    static func importSettings() {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.propertyList]
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        let values: [String: Any]
+        do {
+            values = try SettingsBackup.importable(SettingsBackup.values(from: Data(contentsOf: url)))
+        } catch SettingsBackup.ImportError.newerFormat {
+            return alert("Couldn’t import settings".localized,
+                         "This file comes from a newer version of Tuckaway. Update Tuckaway, then try again.".localized)
+        } catch {
+            return alert("Couldn’t import settings".localized, "This file isn’t a Tuckaway settings file.".localized)
+        }
+
+        let confirm = NSAlert()
+        confirm.messageText = "Replace your settings with the imported ones?".localized
+        confirm.informativeText = "Tuckaway will relaunch to apply them.".localized
+        confirm.addButton(withTitle: "Import".localized)
+        confirm.addButton(withTitle: "Cancel".localized)
+        guard confirm.runModal() == .alertFirstButtonReturn else { return }
+
+        let defaults = UserDefaults.standard
+        for key in SettingsBackup.keys where key != UserDefaults.Key.isAutoStart {
+            defaults.set(values[key], forKey: key)
+        }
+        // Goes through the setter, which registers or removes the login item.
+        if let autoStart = values[UserDefaults.Key.isAutoStart] as? Bool {
+            Preferences.isAutoStart = autoStart
+        }
+        relaunch()
+    }
+
+    private static func relaunch() {
+        let shell = Process()
+        shell.executableURL = URL(fileURLWithPath: "/bin/sh")
+        let scratch = FileManager.default.temporaryDirectory.appendingPathComponent("TuckawayImport-\(UUID().uuidString)")
+        try? FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
+        shell.arguments = ["-c", Updater.relaunchScript, "tuckaway-relaunch",
+                           String(ProcessInfo.processInfo.processIdentifier), Bundle.main.bundleURL.path,
+                           scratch.path, Updater.Tool.open, Updater.Tool.pgrep, "0.5", "1.5"]
+        guard (try? shell.run()) != nil else {
+            return alert("Settings imported".localized, "Quit and reopen Tuckaway to apply them.".localized)
+        }
+        NSApp.terminate(nil)
+    }
+
+    private static func alert(_ title: String, _ message: String) {
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = message
+        alert.runModal()
     }
 }
