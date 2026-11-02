@@ -29,3 +29,10 @@ enum MenuBarSpacers {
         }
     }
 }
+
+// "Show how many icons are hidden": a number next to the arrow while collapsed.
+enum HiddenIconCount {
+    static func title(count: Int, collapsed: Bool, enabled: Bool) -> String {
+        enabled && collapsed && count > 0 ? "\(count)" : ""
+    }
+}

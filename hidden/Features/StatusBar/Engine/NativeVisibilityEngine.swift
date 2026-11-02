@@ -74,6 +74,8 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
 
     // Posted when the bar collapses or expands.
     static let stateDidChange = Notification.Name("NativeVisibilityEngineStateDidChange")
+    // Posted when the number of hidden icons changes.
+    static let hiddenItemsDidChange = Notification.Name("NativeVisibilityEngineHiddenItemsDidChange")
 
     // .calibrating stands for "an activation is in flight".
     private(set) var state: MenuBarEngineState = .expanded {
@@ -85,7 +87,11 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // The hidden section's icons from the last unrestricted read. While peeking
     // they show at the same frames: the bar is anchored on the arrow's side, and
     // only the always-hidden icons, further out, stay hidden.
-    private(set) var hiddenItems: [MenuBarInventoryItem] = []
+    private(set) var hiddenItems: [MenuBarInventoryItem] = [] {
+        didSet {
+            if hiddenItems.count != oldValue.count { NotificationCenter.default.post(name: Self.hiddenItemsDidChange, object: self) }
+        }
+    }
     // Every item from that read, so hiddenItems can follow a decision about a
     // new or kept app without reading the bar again.
     private var inventoryItems: [MenuBarInventoryItem] = []

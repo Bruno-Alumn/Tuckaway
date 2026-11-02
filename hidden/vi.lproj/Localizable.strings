@@ -230,3 +230,6 @@
 
 /* Collapsing on lock or sleep */
 "Collapse when the Mac locks or sleeps" = "Thu gọn khi máy Mac khóa hoặc ngủ";
+
+/* The hidden icon count next to the arrow */
+"Show how many icons are hidden" = "Hiện số biểu tượng đang ẩn";

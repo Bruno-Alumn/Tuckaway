@@ -232,3 +232,6 @@
 
 /* Collapsing on lock or sleep */
 "Collapse when the Mac locks or sleeps" = "Collapse when the Mac locks or sleeps";
+
+/* The hidden icon count next to the arrow */
+"Show how many icons are hidden" = "Show how many icons are hidden";

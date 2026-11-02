@@ -7,6 +7,7 @@
 - **Show hidden icons briefly when they change** (macOS 27, Settings › General, off by default, #229): while collapsed, a hidden icon whose width or text changes shows for 8 seconds. Put an icon in Always Hidden to keep it out of this. A change to an icon's picture alone isn't noticed.
 - Settings explains what **Expand across full menu bar** does (#143).
 - **Spacers** in Settings › General › Appearance (#159): up to five blank items, in three widths, to ⌘-drag between menu bar icons and group them.
+- **Show how many icons are hidden** (macOS 27, Settings › General › Appearance, off by default): a number next to the arrow while collapsed.
 - **Collapse when the Mac locks or sleeps** (Settings › General › Hiding, off by default): an expanded bar collapses when the screen locks or the displays sleep, so the hidden icons aren't left showing.
 - **Show an app's hidden icon for a moment after it updates** (macOS 27, Settings › General, off by default, #28): when a hidden app launches with a new version, its icon shows for 30 seconds.
 - **Profiles while an app is open** (macOS 27): **Use While an App Is Open…** in a profile's ⋯ menu switches to it while that app runs (say, a Presenting profile while Zoom is open) and back when it quits.

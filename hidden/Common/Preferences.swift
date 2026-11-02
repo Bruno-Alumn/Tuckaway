@@ -188,6 +188,17 @@ enum Preferences {
         }
     }
 
+    static var showHiddenIconCount: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: UserDefaults.Key.showHiddenIconCount)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.showHiddenIconCount)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     static var collapseWhenLocked: Bool {
         get {
             UserDefaults.standard.bool(forKey: UserDefaults.Key.collapseWhenLocked)

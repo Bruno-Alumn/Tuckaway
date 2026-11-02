@@ -223,6 +223,8 @@ class StatusBarController: MenuBarItemProvider {
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleApplicationActivated), name: NSWorkspace.didActivateApplicationNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateAutoHide), name: .prefsChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(fitSpacersToState), name: NativeVisibilityEngine.stateDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateHiddenCount), name: NativeVisibilityEngine.stateDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateHiddenCount), name: NativeVisibilityEngine.hiddenItemsDidChange, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(applyAppTriggeredProfile), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(recordLaunchedVersion(_:)), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleLockOrSleep), name: NSWorkspace.screensDidSleepNotification, object: nil)
@@ -849,6 +851,19 @@ class StatusBarController: MenuBarItemProvider {
         }
     }
 
+    // The number sits right of the arrow; the arrow's image stays what VoiceOver
+    // reads, and the number follows it.
+    @objc private func updateHiddenCount() {
+        guard let button = btnExpandCollapse.button else { return }
+        let count = (menuBarEngine as? HiddenSectionPeeking)?.hiddenItems.count ?? 0
+        let title = HiddenIconCount.title(count: count, collapsed: isCollapsed,
+                                          enabled: Preferences.showHiddenIconCount && menuBarEngine is HiddenSectionPeeking)
+        guard button.title != title else { return }
+        button.imagePosition = title.isEmpty ? .imageOnly : .imageLeft
+        button.font = .monospacedDigitSystemFont(ofSize: NSFont.smallSystemFontSize, weight: .regular)
+        button.title = title
+    }
+
     // Adds or removes spacer items to match the setting. macOS remembers each
     // one's place by its autosave name, so a spacer comes back where it was.
     private func updateSpacers() {
@@ -919,6 +934,7 @@ class StatusBarController: MenuBarItemProvider {
         updateActiveAppIcon()
         updateActivityReveal()
         updateSpacers()
+        updateHiddenCount()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()

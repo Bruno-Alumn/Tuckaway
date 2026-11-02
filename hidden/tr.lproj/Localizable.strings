@@ -232,3 +232,6 @@
 
 /* Collapsing on lock or sleep */
 "Collapse when the Mac locks or sleeps" = "Mac kilitlendiğinde veya uyuduğunda daralt";
+
+/* The hidden icon count next to the arrow */
+"Show how many icons are hidden" = "Kaç simgenin gizli olduğunu göster";

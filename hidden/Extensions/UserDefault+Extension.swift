@@ -28,6 +28,7 @@ extension UserDefaults {
         static let revealIconsOnActivity = "revealIconsOnActivity"
         static let revealUpdatedApps = "revealUpdatedApps"
         static let collapseWhenLocked = "collapseWhenLocked"
+        static let showHiddenIconCount = "showHiddenIconCount"
         static let spacerCount = "menuBarSpacerCount"
         static let spacerWidth = "menuBarSpacerWidth"
         static let clickEmptyMenuBarToToggle = "clickEmptyMenuBarToToggle"

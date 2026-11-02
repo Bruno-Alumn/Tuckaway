@@ -230,3 +230,6 @@
 
 /* Collapsing on lock or sleep */
 "Collapse when the Mac locks or sleeps" = "Mac 锁定或睡眠时收起";
+
+/* The hidden icon count next to the arrow */
+"Show how many icons are hidden" = "显示隐藏的图标数量";
