@@ -62,6 +62,7 @@ protocol HiddenSectionPeeking: AnyObject {
 // app in the bar after each fresh read, so it repeats until they're resolved.
 protocol NewMenuBarAppReporting: AnyObject {
     var onNewApps: (([String]) -> Void)? { get set }
+    // Apps shown whatever their icon's place: kept, or new and undecided.
     var keptVisibleApps: Set<String> { get }
     func resolveNewApp(_ bundle: String, keepVisible: Bool)
 }
