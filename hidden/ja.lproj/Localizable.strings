@@ -174,3 +174,18 @@
 "Restart Apps" = "アプリを再起動";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "終了しなかったアプリがあります: %@。新しい間隔を使うには、手動で終了してもう一度開いてください。";
 "Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "プロファイルのショートカットを押すとそのプロファイルに切り替わり、もう一度押すと矢印に戻ります。";
+
+/* Editing profiles in Settings › General */
+"Rename this profile" = "プロファイルの名前を変更";
+"Rename" = "名前を変更";
+"A profile named “%@” already exists." = "“%@”という名前のプロファイルはすでにあります。";
+"Delete the profile “%@”?" = "プロファイル“%@”を削除しますか?";
+"Delete" = "削除";
+"Rename…" = "名前を変更…";
+"Use Current Layout" = "現在のレイアウトを使用";
+"Remove App" = "アプリを取り除く";
+"Delete Profile…" = "プロファイルを削除…";
+"Edit %@" = "%@を編集";
+"Edit Profile" = "プロファイルを編集";
+"No apps" = "アプリなし";
+"%@ and %d more" = "%@、ほか%d個";

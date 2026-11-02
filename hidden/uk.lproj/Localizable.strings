@@ -176,3 +176,18 @@
 "Restart Apps" = "Перезапустити";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Деякі програми не закрилися: %@. Закрийте й відкрийте їх самостійно, щоб використати нову відстань.";
 "Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Натисніть сполучення клавіш профілю, щоб перейти до нього, і натисніть його знову, щоб повернутися до стрілки.";
+
+/* Editing profiles in Settings › General */
+"Rename this profile" = "Перейменувати цей профіль";
+"Rename" = "Перейменувати";
+"A profile named “%@” already exists." = "Профіль із назвою «%@» уже існує.";
+"Delete the profile “%@”?" = "Видалити профіль «%@»?";
+"Delete" = "Видалити";
+"Rename…" = "Перейменувати…";
+"Use Current Layout" = "Використати поточне розташування";
+"Remove App" = "Вилучити програму";
+"Delete Profile…" = "Видалити профіль…";
+"Edit %@" = "Змінити %@";
+"Edit Profile" = "Змінити профіль";
+"No apps" = "Немає програм";
+"%@ and %d more" = "%@ та ще %d";

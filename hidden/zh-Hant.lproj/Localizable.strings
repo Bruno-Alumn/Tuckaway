@@ -174,3 +174,18 @@
 "Restart Apps" = "重新啟動 App";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "部分 App 未結束：%@。請自行結束並重新打開它們以使用新間距。";
 "Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "按下設定檔的快速鍵可切換到該設定檔，再按一次可返回到箭頭。";
+
+/* Editing profiles in Settings › General */
+"Rename this profile" = "重新命名此設定檔";
+"Rename" = "重新命名";
+"A profile named “%@” already exists." = "已有名為「%@」的設定檔。";
+"Delete the profile “%@”?" = "要刪除設定檔「%@」嗎?";
+"Delete" = "刪除";
+"Rename…" = "重新命名⋯";
+"Use Current Layout" = "使用目前佈局";
+"Remove App" = "移除App";
+"Delete Profile…" = "刪除設定檔⋯";
+"Edit %@" = "編輯「%@」";
+"Edit Profile" = "編輯設定檔";
+"No apps" = "沒有App";
+"%@ and %d more" = "%@及其他%d個";

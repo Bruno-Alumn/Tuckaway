@@ -176,3 +176,18 @@
 "Restart Apps" = "إعادة تشغيل التطبيقات";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "لم يتم إنهاء بعض التطبيقات: %@. أنهِها وأعد فتحها بنفسك لتستخدم التباعد الجديد.";
 "Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "اضغط اختصار ملف التعريف للانتقال إليه، ثم اضغطه مرة أخرى للعودة إلى السهم.";
+
+/* Editing profiles in Settings › General */
+"Rename this profile" = "إعادة تسمية هذا الملف الشخصي";
+"Rename" = "إعادة التسمية";
+"A profile named “%@” already exists." = "يوجد ملف شخصي باسم “%@” بالفعل.";
+"Delete the profile “%@”?" = "هل تريد حذف الملف الشخصي “%@”؟";
+"Delete" = "حذف";
+"Rename…" = "إعادة التسمية…";
+"Use Current Layout" = "استخدام التخطيط الحالي";
+"Remove App" = "إزالة تطبيق";
+"Delete Profile…" = "حذف الملف الشخصي…";
+"Edit %@" = "تعديل %@";
+"Edit Profile" = "تعديل الملف الشخصي";
+"No apps" = "لا توجد تطبيقات";
+"%@ and %d more" = "%@ و%d غيرها";
