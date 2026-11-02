@@ -214,3 +214,6 @@
 "Wide" = "広い";
 "Hold ⌘ and drag a spacer between icons to group them." = "⌘キーを押したままスペーサーをアイコンの間にドラッグすると、アイコンをグループ分けできます。";
 "Spacer" = "スペーサー";
+
+/* What "Use the full MenuBar on expanding" does (#143) */
+"While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses." = "展開中はTuckawayが前面になり、現在のアプリのメニューがメニューバーから消えて、アイコンが全幅を使えます。折りたたむとメニューは戻ります。";

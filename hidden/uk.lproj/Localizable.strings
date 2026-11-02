@@ -216,3 +216,6 @@
 "Wide" = "Широка";
 "Hold ⌘ and drag a spacer between icons to group them." = "Утримуйте ⌘ і перетягніть розділювач між іконками, щоб згрупувати їх.";
 "Spacer" = "Розділювач";
+
+/* What "Use the full MenuBar on expanding" does (#143) */
+"While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses." = "Коли розгорнуто, Tuckaway виходить на передній план, тож меню поточної програми зникають зі смуги меню, а іконки отримують усю її ширину. Вони повертаються, коли смугу згорнуто.";

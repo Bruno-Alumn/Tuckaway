@@ -216,3 +216,6 @@
 "Wide" = "Geniş";
 "Hold ⌘ and drag a spacer between icons to group them." = "Simgeleri gruplamak için ⌘ tuşunu basılı tutup bir boşluğu simgelerin arasına sürükleyin.";
 "Spacer" = "Boşluk";
+
+/* What "Use the full MenuBar on expanding" does (#143) */
+"While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses." = "Genişletildiğinde Tuckaway öne gelir; böylece geçerli uygulamanın menüleri menü çubuğundan çıkar ve simgeler tüm genişliği kullanır. Daraltıldığında menüler geri gelir.";

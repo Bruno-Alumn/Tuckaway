@@ -214,3 +214,6 @@
 "Wide" = "Rộng";
 "Hold ⌘ and drag a spacer between icons to group them." = "Giữ ⌘ và kéo một khoảng trống vào giữa các biểu tượng để nhóm chúng.";
 "Spacer" = "Khoảng trống";
+
+/* What "Use the full MenuBar on expanding" does (#143) */
+"While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses." = "Khi mở rộng, Tuckaway lên phía trước nên các menu của ứng dụng hiện tại rời khỏi thanh menu và biểu tượng có toàn bộ chiều rộng. Chúng trở lại khi thu gọn.";

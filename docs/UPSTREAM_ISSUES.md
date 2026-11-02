@@ -51,8 +51,9 @@ styles, #310), and #153 (Settings no longer opens at every launch by default).
 - **#154 "shown when inactive" group:** on macOS 27 it would mean holding a
   restriction while expanded, which brings assessment mode's side effects
   (Now Playing, Live Activities) into the expanded bar too.
-- **#148, #100, #104, #143, #142, #156, #369, #230, #380, #375, #28:** not
-  triaged against Tuckaway yet.
+- **#148, #100, #142, #156, #369, #230, #380, #375, #28:** not triaged
+  against Tuckaway yet. (#104 is what "Expand across full menu bar" does, and
+  #143, that its label was unclear, is answered by the caption under it.)
 
 ## External or OS blockers
 
