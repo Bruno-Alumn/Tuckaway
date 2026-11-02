@@ -156,3 +156,4 @@
 "Name this profile" = "プロファイルの名前";
 "It keeps the apps that are visible right now." = "現在表示されている App を保持します。";
 "Save" = "保存";
+"Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow." = "折りたたみ時に表示する項目はプロファイル「%@」で決まります。これらのリストは「矢印を使用」用です。";

@@ -1589,6 +1589,10 @@ extension StatusBarController {
         return item
     }
 
+    var activeProfileName: String? {
+        menuBarEngine is ProfileApplying ? profilesStore.profiles.active : nil
+    }
+
     private func applyProfiles(_ profiles: MenuBarProfiles) {
         profilesStore.profiles = profiles
         (menuBarEngine as? ProfileApplying)?.setProfile(profiles.activeApps)
