@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.7.0 (2026-11-02)
 
 ### Added
 - Profiles can switch automatically: **When a Display Is Connected** in the Profiles menu picks the profile to use while a second display is attached.
