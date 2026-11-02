@@ -227,3 +227,6 @@
 
 /* Revealing an app's icon after it updates (#28) */
 "Show an app's hidden icon for a moment after it updates" = "Hiện nhanh biểu tượng bị ẩn của ứng dụng sau khi ứng dụng cập nhật";
+
+/* Collapsing on lock or sleep */
+"Collapse when the Mac locks or sleeps" = "Thu gọn khi máy Mac khóa hoặc ngủ";
