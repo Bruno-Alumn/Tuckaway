@@ -1170,3 +1170,44 @@ final class PresentationModeRobustnessTests: XCTestCase {
         XCTAssertFalse(presenting.isInvalidated)
     }
 }
+
+final class NewAppSeparateBarTests: XCTestCase {
+    private var visibility: FakeVisibility!
+    private var store: InMemoryNewMenuBarAppStore!
+    private var items: FakeItems!
+    private var inventory: FakeInventory!
+
+    override func setUp() {
+        super.setUp()
+        items = FakeItems()
+        inventory = FakeInventory()
+        inventory.items = [item("com.new", x: 1050), item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        visibility = FakeVisibility()
+        store = InMemoryNewMenuBarAppStore()
+        store.tracker = NewMenuBarAppTracker(known: ["com.hidden", "com.visible"])
+    }
+
+    private func collapsedEngine() -> NativeVisibilityEngine {
+        let items = self.items!
+        let engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                            captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                            newApps: store,
+                                            ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                            itemFrame: { _ in separator },
+                                            displays: { [mainDisplay] },
+                                            isLTR: { true })
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+        return engine
+    }
+
+    func testHidingANewAppPutsItInTheSeparateBar() {
+        let engine = collapsedEngine()
+        XCTAssertEqual(engine.hiddenItems.map(\.bundleIdentifier), ["com.hidden"])
+        XCTAssertEqual(engine.keptVisibleApps, ["com.new"], "undecided apps show by name too")
+
+        engine.resolveNewApp("com.new", keepVisible: false)
+        XCTAssertEqual(engine.hiddenItems.map(\.bundleIdentifier), ["com.new", "com.hidden"])
+        XCTAssertEqual(engine.keptVisibleApps, [])
+    }
+}
