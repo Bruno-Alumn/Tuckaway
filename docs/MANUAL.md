@@ -122,7 +122,8 @@ so every icon can be moved; both go back to normal when you close it.
 
 - **Drag within a list** to reorder icons.
 - **Drag between lists** to change whether an icon is hidden. Tuckaway performs
-  the ⌘-drag in the real menu bar for you.
+  the ⌘-drag in the real menu bar for you. On macOS 27, dragging into **Visible** keeps that app
+  visible by name instead, since the icon can't be dragged past the arrow there.
 - Use the refresh button after you change the menu bar yourself.
 - Needs Accessibility permission. Without it, a **Grant Access** button shows.
 
