@@ -173,3 +173,4 @@
 "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "这些 App 将退出并重新打开，以使用新间距：%@。有未存储更改的 App 可能会先询问你。";
 "Restart Apps" = "重新启动 App";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "部分 App 未退出：%@。请自行退出并重新打开它们以使用新间距。";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "按下配置文件的快捷键可切换到该配置文件，再按一次可返回到箭头。";

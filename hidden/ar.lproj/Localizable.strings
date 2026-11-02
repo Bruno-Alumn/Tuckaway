@@ -175,3 +175,4 @@
 "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "سيتم إنهاء هذه التطبيقات وإعادة فتحها لتستخدم التباعد الجديد: %@. قد يسألك تطبيق به تغييرات غير محفوظة أولاً.";
 "Restart Apps" = "إعادة تشغيل التطبيقات";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "لم يتم إنهاء بعض التطبيقات: %@. أنهِها وأعد فتحها بنفسك لتستخدم التباعد الجديد.";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "اضغط اختصار ملف التعريف للانتقال إليه، ثم اضغطه مرة أخرى للعودة إلى السهم.";

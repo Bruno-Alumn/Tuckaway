@@ -173,3 +173,4 @@
 "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "新しい間隔を使うため、次のアプリを終了してもう一度開きます: %@。保存されていない変更があるアプリは、先に確認を求めることがあります。";
 "Restart Apps" = "アプリを再起動";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "終了しなかったアプリがあります: %@。新しい間隔を使うには、手動で終了してもう一度開いてください。";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "プロファイルのショートカットを押すとそのプロファイルに切り替わり、もう一度押すと矢印に戻ります。";

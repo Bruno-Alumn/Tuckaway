@@ -175,3 +175,4 @@
 "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "Ove će se aplikacije zatvoriti i ponovno otvoriti kako bi koristile novi razmak: %@. Aplikacija s nespremljenim promjenama možda će prvo pitati.";
 "Restart Apps" = "Ponovno pokreni";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Neke se aplikacije nisu zatvorile: %@. Zatvorite ih i ponovno otvorite sami da biste koristili novi razmak.";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Pritisnite prečac profila da biste se prebacili na njega, a ponovno ga pritisnite za povratak na strelicu.";

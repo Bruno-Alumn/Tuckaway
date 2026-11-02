@@ -78,6 +78,12 @@ display is attached, including with the MacBook closed; unplugging it switches
 back to what was active before.
 Choosing a profile yourself while docked sticks until the displays change.
 
+Each profile can have a shortcut, set under **Profiles** in Settings › General
+(the section appears once you've saved a profile). Pressing it switches to that
+profile, and pressing it again goes back to the arrow. Keys already used by
+another Tuckaway shortcut are refused with a beep, deleting a profile drops its
+shortcut, and the shortcuts are included in Export Settings.
+
 #### Presentation Mode
 
 **Presentation Mode** in the arrow's menu (or its shortcut) hides every app's

@@ -173,3 +173,4 @@
 "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "Các ứng dụng này sẽ thoát và mở lại để dùng khoảng cách mới: %@. Ứng dụng có thay đổi chưa lưu có thể hỏi bạn trước.";
 "Restart Apps" = "Khởi động lại";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Một số ứng dụng chưa thoát: %@. Hãy tự thoát và mở lại chúng để dùng khoảng cách mới.";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Nhấn phím tắt của một hồ sơ để chuyển sang hồ sơ đó, và nhấn lại để quay về mũi tên.";

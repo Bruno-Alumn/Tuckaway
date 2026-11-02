@@ -175,3 +175,4 @@
 "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "Ці програми закриються й відкриються знову, щоб використати нову відстань: %@. Програма з незбереженими змінами може спершу запитати.";
 "Restart Apps" = "Перезапустити";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Деякі програми не закрилися: %@. Закрийте й відкрийте їх самостійно, щоб використати нову відстань.";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Натисніть сполучення клавіш профілю, щоб перейти до нього, і натисніть його знову, щоб повернутися до стрілки.";

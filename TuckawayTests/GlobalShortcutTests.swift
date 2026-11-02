@@ -61,4 +61,27 @@ final class GlobalShortcutTests: XCTestCase {
         XCTAssertFalse(commandH.isSameCombo(as: shortcut(keyCode: 4, flags: (1 << 8) | (1 << 9))))
         XCTAssertFalse(commandH.isSameCombo(as: shortcut(keyCode: 5, flags: 1 << 8)))
     }
+
+    func testAProfileShortcutCantReuseAnotherShortcutsKeys() {
+        let commandH = shortcut(keyCode: 4, flags: 1 << 8)
+        let commandJ = shortcut(keyCode: 38, flags: 1 << 8)
+        let saved: [(ShortcutKind, GlobalKeybindPreferences)] = [(.toggle, commandH), (.profile("Work"), commandJ)]
+
+        XCTAssertTrue(ShortcutKind.conflicts(commandH, recording: .profile("Home"), with: saved))
+        XCTAssertTrue(ShortcutKind.conflicts(commandJ, recording: .profile("Home"), with: saved))
+        XCTAssertTrue(ShortcutKind.conflicts(commandJ, recording: .find, with: saved))
+        // Re-recording a profile's own keys is fine.
+        XCTAssertFalse(ShortcutKind.conflicts(commandJ, recording: .profile("Work"), with: saved))
+    }
+
+    func testProfileShortcutsRoundTripAndDropInvalidOnes() {
+        let previous = UserDefaults.standard.data(forKey: UserDefaults.Key.profileShortcuts)
+        defer { UserDefaults.standard.set(previous, forKey: UserDefaults.Key.profileShortcuts) }
+        let commandJ = shortcut(keyCode: 38, flags: 1 << 8)
+
+        Preferences.profileShortcuts = ["Work": commandJ, "Typing": shortcut(flags: 1 << 9)]
+
+        XCTAssertEqual(Array(Preferences.profileShortcuts.keys), ["Work"])
+        XCTAssertTrue(Preferences.profileShortcuts["Work"]?.isSameCombo(as: commandJ) == true)
+    }
 }

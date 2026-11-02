@@ -1711,3 +1711,26 @@ final class HiddenSeparatorsRereadTests: XCTestCase {
         XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
     }
 }
+
+final class ProfileShortcutToggleTests: XCTestCase {
+    private var profiles = MenuBarProfiles(profiles: ["Work": ["a"], "Home": ["b"]])
+
+    func testShortcutSwitchesToItsProfileAndBackToTheArrow() {
+        profiles.toggle("Work")
+        XCTAssertEqual(profiles.active, "Work")
+        profiles.toggle("Work")
+        XCTAssertNil(profiles.active)
+    }
+
+    func testAnotherProfilesShortcutSwitchesStraightToIt() {
+        profiles.active = "Work"
+        profiles.toggle("Home")
+        XCTAssertEqual(profiles.active, "Home")
+    }
+
+    func testShortcutForADeletedProfileDoesNothing() {
+        profiles.active = "Work"
+        profiles.toggle("Gone")
+        XCTAssertEqual(profiles.active, "Work")
+    }
+}

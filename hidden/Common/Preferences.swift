@@ -27,6 +27,22 @@ enum Preferences {
         set { setShortcut(newValue, forKey: UserDefaults.Key.findHiddenIconKey) }
     }
 
+    // A shortcut per profile name (macOS 27): switches to that profile, or back
+    // to the arrow when it's already active.
+    static var profileShortcuts: [String: GlobalKeybindPreferences] {
+        get {
+            guard let data = UserDefaults.standard.data(forKey: UserDefaults.Key.profileShortcuts),
+                  let shortcuts = try? JSONDecoder().decode([String: GlobalKeybindPreferences].self, from: data)
+            else { return [:] }
+            return shortcuts.filter { $0.value.isValidGlobalShortcut }
+        }
+        set {
+            guard let data = try? JSONEncoder().encode(newValue) else { return }
+            UserDefaults.standard.set(data, forKey: UserDefaults.Key.profileShortcuts)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     private static func shortcut(forKey key: String) -> GlobalKeybindPreferences? {
         guard let data = UserDefaults.standard.value(forKey: key) as? Data,
               let shortcut = try? JSONDecoder().decode(GlobalKeybindPreferences.self, from: data),

@@ -45,6 +45,24 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         }
     }
 
+    private var profileHotKeys: [HotKey] = []
+
+    // Rebuilt whenever a profile's shortcut changes or a profile is deleted.
+    // Releasing them all first frees the keys before any is registered again.
+    func registerProfileHotKeys() {
+        profileHotKeys = []
+        guard StatusBarController.supportsPresentationMode else { return }
+        let profiles = UserDefaultsMenuBarProfilesStore().profiles.profiles
+        profileHotKeys = Preferences.profileShortcuts.compactMap { name, key in
+            guard profiles[name] != nil else { return nil }
+            let hotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: key.keyCode, carbonModifiers: key.carbonFlags))
+            hotKey.keyDownHandler = { [weak self] in
+                self?.statusBarController.toggleProfile(named: name)
+            }
+            return hotKey
+        }
+    }
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard ensureSingleInstance() else { return }
         Preferences.migrateFromHiddenBar()
@@ -144,6 +162,7 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         if StatusBarController.supportsHiddenIconSearch, let findKey = Preferences.findHiddenIconKey {
             findHotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: findKey.keyCode, carbonModifiers: findKey.carbonFlags))
         }
+        registerProfileHotKeys()
     }
     
     func detectLTRLang() {

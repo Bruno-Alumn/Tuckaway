@@ -175,3 +175,4 @@
 "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first.";
 "Restart Apps" = "Restart Apps";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing.";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Press a profile's shortcut to switch to it, and press it again to go back to the arrow.";

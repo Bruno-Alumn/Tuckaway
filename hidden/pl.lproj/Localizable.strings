@@ -175,3 +175,4 @@
 "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "Te aplikacje zostaną zamknięte i otwarte ponownie, aby używać nowego odstępu: %@. Aplikacja z niezachowanymi zmianami może najpierw zapytać.";
 "Restart Apps" = "Uruchom ponownie";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Niektóre aplikacje się nie zamknęły: %@. Zamknij je i otwórz ponownie samodzielnie, aby używały nowego odstępu.";
+"Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Naciśnij skrót profilu, aby się na niego przełączyć, i naciśnij go ponownie, aby wrócić do strzałki.";
