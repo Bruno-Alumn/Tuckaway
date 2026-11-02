@@ -192,8 +192,31 @@ final class Updater {
         static let ditto = "/usr/bin/ditto"
         static let codesign = "/usr/bin/codesign"
         static let xattr = "/usr/bin/xattr"
-        static let all = [diskutil, hdiutil, ditto, codesign, xattr]
+        static let open = "/usr/bin/open"
+        static let pgrep = "/usr/bin/pgrep"
+        static let all = [diskutil, hdiutil, ditto, codesign, xattr, open, pgrep]
     }
+
+    // Run by /bin/sh once the new copy is in place. Arguments: the old
+    // process, the app, the folder to delete, the open and pgrep tools, and
+    // how long to wait before each try and after each open.
+    //
+    // One `open` straight after the old process exited didn't relaunch the
+    // 1.3.1 → 1.6.0 update on macOS 27.2 (it had worked from 1.3.0), and no
+    // new process ever started. So it tries again until the app is running,
+    // which also covers a new copy that quits because it still saw the old
+    // one in the list of running apps.
+    static let relaunchScript = """
+        while /bin/kill -0 "$1" 2>/dev/null; do /bin/sleep 0.2; done
+        attempt=0
+        while [ "$attempt" -lt 10 ]; do
+            attempt=$((attempt + 1))
+            /bin/sleep "$6"
+            "$4" "$2" && /bin/sleep "$7"
+            "$5" -qf "$2/Contents/MacOS/" && break
+        done
+        /bin/rm -rf "$3"
+        """
 
     private static let workDirectoryPrefix = "TuckawayUpdate-"
 
@@ -341,12 +364,16 @@ final class Updater {
         let relaunch = Process()
         relaunch.executableURL = URL(fileURLWithPath: "/bin/sh")
         relaunch.arguments = [
-            "-c", "while /bin/kill -0 \"$1\" 2>/dev/null; do /bin/sleep 0.2; done; /usr/bin/open \"$2\"; /bin/rm -rf \"$3\"",
+            "-c", Self.relaunchScript,
             "tuckaway-relaunch",
             String(ProcessInfo.processInfo.processIdentifier),
             destination.path,
             // Only ever a folder this updater created in the temporary directory.
-            isOurWorkDirectory ? workDirectory.path : backup.path
+            isOurWorkDirectory ? workDirectory.path : backup.path,
+            Tool.open,
+            Tool.pgrep,
+            "0.5",
+            "1.5"
         ]
         do {
             try relaunch.run()

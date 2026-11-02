@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- After **Install and Relaunch**, Tuckaway sometimes installed the update but didn't reopen, so it looked like it had quit. It now keeps trying to reopen until it's running. This applies to updates installed from this version on.
+
 ## v1.6.0 (2026-11-02)
 
 ### Added
