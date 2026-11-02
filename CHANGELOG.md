@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.5.0 (2026-11-02)
 
 ### Added
 - With "Hover to expand" on, hovering over the menu bar opens the separate hidden-items bar instead of expanding, and it closes again shortly after the pointer leaves it.
