@@ -21,6 +21,12 @@ enum Preferences {
         set { setShortcut(newValue, forKey: UserDefaults.Key.presentationModeKey) }
     }
 
+    // Opens the search for a hidden icon (macOS 27).
+    static var findHiddenIconKey: GlobalKeybindPreferences? {
+        get { shortcut(forKey: UserDefaults.Key.findHiddenIconKey) }
+        set { setShortcut(newValue, forKey: UserDefaults.Key.findHiddenIconKey) }
+    }
+
     private static func shortcut(forKey key: String) -> GlobalKeybindPreferences? {
         guard let data = UserDefaults.standard.value(forKey: key) as? Data,
               let shortcut = try? JSONDecoder().decode(GlobalKeybindPreferences.self, from: data),

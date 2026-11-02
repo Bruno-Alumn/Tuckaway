@@ -52,4 +52,13 @@ final class GlobalShortcutTests: XCTestCase {
         XCTAssertEqual(Preferences.globalKey?.carbonFlags, saved.carbonFlags)
         XCTAssertEqual(Preferences.globalKey?.keyCode, saved.keyCode)
     }
+
+    func testSameComboIgnoresCharacters() {
+        let commandH = shortcut(keyCode: 4, flags: 1 << 8)
+        let sameKeys = GlobalKeybindPreferences(function: false, control: false, command: true, shift: false, option: false,
+                                                capsLock: false, carbonFlags: 1 << 8, characters: "H", keyCode: 4)
+        XCTAssertTrue(commandH.isSameCombo(as: sameKeys))
+        XCTAssertFalse(commandH.isSameCombo(as: shortcut(keyCode: 4, flags: (1 << 8) | (1 << 9))))
+        XCTAssertFalse(commandH.isSameCombo(as: shortcut(keyCode: 5, flags: 1 << 8)))
+    }
 }

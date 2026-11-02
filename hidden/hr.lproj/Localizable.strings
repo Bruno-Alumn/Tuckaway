@@ -132,5 +132,10 @@
 "Hide" = "Sakrij";
 "Hidden item" = "Skrivena stavka";
 "Presentation Mode" = "Način prezentacije";
+"Find Hidden Icon" = "Pronađi skrivenu ikonu";
+"Find Hidden Icon…" = "Pronađi skrivenu ikonu…";
+"Search hidden icons" = "Pretraži skrivene ikone";
+"No hidden icons" = "Nema skrivenih ikona";
+"No matches" = "Nema rezultata";
 "An update is being installed" = "Instalira se ažuriranje";
 "Tuckaway will relaunch when it’s done." = "Tuckaway će se ponovno pokrenuti kad završi.";

@@ -37,6 +37,7 @@ class PreferencesViewController: NSViewController {
         model.onClearShortcut = { [weak self] kind in self?.unregister(kind) }
         model.shortcutTitle = Preferences.globalKey?.description
         model.presentationShortcutTitle = Preferences.presentationModeKey?.description
+        model.findShortcutTitle = Preferences.findHiddenIconKey?.description
 
         preferredContentSize = NSSize(width: 480, height: 560)
         let hostingView = NSHostingView(rootView: GeneralSettingsView(model: model))
@@ -113,6 +114,10 @@ class PreferencesViewController: NSViewController {
             appDelegate.presentationHotKey = nil
             model.presentationShortcutTitle = nil
             Preferences.presentationModeKey = nil
+        case .find:
+            appDelegate.findHotKey = nil
+            model.findShortcutTitle = nil
+            Preferences.findHiddenIconKey = nil
         }
     }
 
@@ -136,17 +141,35 @@ class PreferencesViewController: NSViewController {
         // Function keys are valid standalone global shortcuts.
         guard newGlobalKeybind.isValidGlobalShortcut else { return }
 
+        // Two of Tuckaway's shortcuts on the same keys: only one would fire.
+        let others: [(ShortcutKind, GlobalKeybindPreferences?)] = [
+            (.toggle, Preferences.globalKey), (.presentation, Preferences.presentationModeKey), (.find, Preferences.findHiddenIconKey),
+        ]
+        if others.contains(where: { $0.0 != model.recordingKind && $0.1?.isSameCombo(as: newGlobalKeybind) == true }) {
+            NSSound.beep()
+            return
+        }
+
+        // Release the old hotkey first: registering the same keys again while
+        // it's still held can fail, and the shortcut would then be dead.
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
-        let hotKey = HotKey(keyCombo: KeyCombo(carbonKeyCode: UInt32(event.keyCode), carbonModifiers: event.modifierFlags.carbonFlags))
+        let combo = KeyCombo(carbonKeyCode: UInt32(event.keyCode), carbonModifiers: event.modifierFlags.carbonFlags)
         switch model.recordingKind {
         case .toggle:
+            appDelegate.hotKey = nil
             Preferences.globalKey = newGlobalKeybind
             model.shortcutTitle = newGlobalKeybind.description
-            appDelegate.hotKey = hotKey
+            appDelegate.hotKey = HotKey(keyCombo: combo)
         case .presentation:
+            appDelegate.presentationHotKey = nil
             Preferences.presentationModeKey = newGlobalKeybind
             model.presentationShortcutTitle = newGlobalKeybind.description
-            appDelegate.presentationHotKey = hotKey
+            appDelegate.presentationHotKey = HotKey(keyCombo: combo)
+        case .find:
+            appDelegate.findHotKey = nil
+            Preferences.findHiddenIconKey = newGlobalKeybind
+            model.findShortcutTitle = newGlobalKeybind.description
+            appDelegate.findHotKey = HotKey(keyCombo: combo)
         }
     }
 
@@ -172,7 +195,7 @@ class PreferencesViewController: NSViewController {
 // Reads straight from Preferences, so a change made elsewhere (the context
 // menu's auto-collapse toggle, a failed login-item update) shows up on refresh.
 enum ShortcutKind {
-    case toggle, presentation
+    case toggle, presentation, find
 }
 
 final class GeneralSettingsModel: ObservableObject {
@@ -184,6 +207,7 @@ final class GeneralSettingsModel: ObservableObject {
     @Published var recordingPreview = ""
     @Published var shortcutTitle: String?
     @Published var presentationShortcutTitle: String?
+    @Published var findShortcutTitle: String?
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
 
     var onRecordShortcut: (ShortcutKind) -> Void = { _ in }
@@ -322,6 +346,9 @@ struct GeneralSettingsView: View {
                 if StatusBarController.supportsPresentationMode {
                     LabeledContent(Self.label("Presentation Mode")) { shortcutRecorder(.presentation) }
                 }
+                if StatusBarController.supportsHiddenIconSearch {
+                    LabeledContent(Self.label("Find Hidden Icon")) { shortcutRecorder(.find) }
+                }
             }
 
             Section(Self.label("Appearance")) {
@@ -408,7 +435,13 @@ struct GeneralSettingsView: View {
     }
 
     private func shortcutRecorder(_ kind: ShortcutKind) -> some View {
-        let title = kind == .toggle ? model.shortcutTitle : model.presentationShortcutTitle
+        let title: String? = {
+            switch kind {
+            case .toggle: return model.shortcutTitle
+            case .presentation: return model.presentationShortcutTitle
+            case .find: return model.findShortcutTitle
+            }
+        }()
         let isRecording = model.isRecordingShortcut && model.recordingKind == kind
         return HStack(spacing: 6) {
             if title != nil && !isRecording {

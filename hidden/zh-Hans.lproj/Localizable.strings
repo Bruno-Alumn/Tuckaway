@@ -130,5 +130,10 @@
 "Hide" = "隐藏";
 "Hidden item" = "隐藏的项目";
 "Presentation Mode" = "演示模式";
+"Find Hidden Icon" = "查找隐藏的图标";
+"Find Hidden Icon…" = "查找隐藏的图标…";
+"Search hidden icons" = "搜索隐藏的图标";
+"No hidden icons" = "没有隐藏的图标";
+"No matches" = "无匹配结果";
 "An update is being installed" = "正在安装更新";
 "Tuckaway will relaunch when it’s done." = "完成后 Tuckaway 将重新启动。";

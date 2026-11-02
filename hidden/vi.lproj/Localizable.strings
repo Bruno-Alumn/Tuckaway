@@ -130,5 +130,10 @@
 "Hide" = "Ẩn";
 "Hidden item" = "Mục bị ẩn";
 "Presentation Mode" = "Chế độ trình bày";
+"Find Hidden Icon" = "Tìm biểu tượng bị ẩn";
+"Find Hidden Icon…" = "Tìm biểu tượng bị ẩn…";
+"Search hidden icons" = "Tìm trong các biểu tượng bị ẩn";
+"No hidden icons" = "Không có biểu tượng bị ẩn";
+"No matches" = "Không có kết quả";
 "An update is being installed" = "Đang cài đặt bản cập nhật";
 "Tuckaway will relaunch when it’s done." = "Tuckaway sẽ khởi động lại khi hoàn tất.";
