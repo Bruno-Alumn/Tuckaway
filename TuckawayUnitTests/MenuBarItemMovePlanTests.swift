@@ -323,3 +323,12 @@ final class AppUpdateRevealTests: XCTestCase {
         XCTAssertEqual(reads, 0)
     }
 }
+
+final class HiddenIconCountTests: XCTestCase {
+    func testTheCountShowsOnlyWhileCollapsedWithIconsHidden() {
+        XCTAssertEqual(HiddenIconCount.title(count: 5, collapsed: true, enabled: true), "5")
+        XCTAssertEqual(HiddenIconCount.title(count: 0, collapsed: true, enabled: true), "")
+        XCTAssertEqual(HiddenIconCount.title(count: 5, collapsed: false, enabled: true), "")
+        XCTAssertEqual(HiddenIconCount.title(count: 5, collapsed: true, enabled: false), "")
+    }
+}

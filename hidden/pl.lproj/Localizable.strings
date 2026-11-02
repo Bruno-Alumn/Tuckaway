@@ -232,3 +232,6 @@
 
 /* Collapsing on lock or sleep */
 "Collapse when the Mac locks or sleeps" = "Zwijaj, gdy Mac się zablokuje lub uśpi";
+
+/* The hidden icon count next to the arrow */
+"Show how many icons are hidden" = "Pokazuj liczbę ukrytych ikon";

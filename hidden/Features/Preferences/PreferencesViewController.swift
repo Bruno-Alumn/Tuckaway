@@ -406,6 +406,10 @@ final class GeneralSettingsModel: ObservableObject {
         return binding({ Preferences.isAutoHide }) { Preferences.isAutoHide = $0 }
     }
 
+    var showHiddenIconCount: Binding<Bool> {
+        return binding({ Preferences.showHiddenIconCount }) { Preferences.showHiddenIconCount = $0 }
+    }
+
     var collapseWhenLocked: Binding<Bool> {
         return binding({ Preferences.collapseWhenLocked }) { Preferences.collapseWhenLocked = $0 }
     }
@@ -636,6 +640,9 @@ struct GeneralSettingsView: View {
                     }
                 }
                 settingsToggle("Show hidden items in separate bar", isOn: model.separateHiddenItemsBar)
+                if StatusBarController.supportsPresentationMode {
+                    settingsToggle("Show how many icons are hidden", isOn: model.showHiddenIconCount)
+                }
                 settingsToggle("Use the full MenuBar on expanding", isOn: model.useFullMenuBar)
                 Text(verbatim: "While expanded, Tuckaway comes to the front, so the current app's menus leave the menu bar and icons get its whole width. They come back when it collapses.".localized)
                     .font(.caption)

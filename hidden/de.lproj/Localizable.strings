@@ -232,3 +232,6 @@
 
 /* Collapsing on lock or sleep */
 "Collapse when the Mac locks or sleeps" = "Einklappen, wenn der Mac gesperrt wird oder in den Ruhezustand wechselt";
+
+/* The hidden icon count next to the arrow */
+"Show how many icons are hidden" = "Anzahl ausgeblendeter Symbole zeigen";

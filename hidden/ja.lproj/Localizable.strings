@@ -230,3 +230,6 @@
 
 /* Collapsing on lock or sleep */
 "Collapse when the Mac locks or sleeps" = "Macのロック時やスリープ時に折りたたむ";
+
+/* The hidden icon count next to the arrow */
+"Show how many icons are hidden" = "隠しているアイコンの数を表示";
