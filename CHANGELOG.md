@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- **Check for Updates…** did nothing visible while an automatic check was running; it now shows that check's result. A failed automatic check (for example right after login, before Wi-Fi was up) no longer waits a full day to try again. If an update's install failed halfway on a Mac where Tuckaway lives on another drive, the previous copy is now always kept.
 - The separate hidden-items bar used icon positions from the last time Tuckaway read the whole bar. If a visible icon had changed width since (a CPU meter, a timer), the row could show cut-off icons and a click could open the wrong app's menu. It now reads where the hidden icons are at that moment.
 - Presentation Mode stopped hiding icons after an app launched, the Mac woke or a display changed, while still showing as on. It also showed every icon while a camera or microphone was in use, which is most screen shares; now it keeps hiding them (the dot in the screen corner still shows). Turning it on just as the bar collapsed could leave the arrow unresponsive until Tuckaway was restarted.
 - After you answered **Hide** for a new app, its icon was hidden but missing from the separate hidden-items bar until something else made Tuckaway re-read the bar.

@@ -132,3 +132,5 @@
 "Hide" = "Ausblenden";
 "Hidden item" = "Ausgeblendetes Objekt";
 "Presentation Mode" = "Präsentationsmodus";
+"An update is being installed" = "Ein Update wird installiert";
+"Tuckaway will relaunch when it’s done." = "Tuckaway startet neu, sobald es fertig ist.";
