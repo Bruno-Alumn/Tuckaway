@@ -55,9 +55,13 @@ class AppDelegate: NSObject, NSApplicationDelegate{
     /// and terminate this one instead.
     private func ensureSingleInstance() -> Bool {
         let current = ProcessInfo.processInfo.processIdentifier
+        // A copy that is quitting doesn't count: right after an update the
+        // old copy can still be listed for a moment.
         let existing = NSWorkspace.shared.runningApplications.first {
             guard $0.bundleIdentifier == Bundle.main.bundleIdentifier,
-                  $0.processIdentifier != current else { return false }
+                  $0.processIdentifier != current,
+                  !$0.isTerminated,
+                  kill($0.processIdentifier, 0) == 0 else { return false }
             #if DEBUG
             // Let a dev build run next to the installed copy; only dedupe
             // relaunches of the same bundle path.
