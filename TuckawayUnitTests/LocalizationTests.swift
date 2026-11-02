@@ -44,4 +44,26 @@ final class LocalizationTests: XCTestCase {
             }
         }
     }
+
+    // A literal looked up with `.localized` that isn't in the English table
+    // shows its key to every user, and the check above can't see it.
+    func testEveryLocalizedLiteralIsInTheEnglishStrings() throws {
+        let english = try strings("en")
+        let literal = try NSRegularExpression(pattern: #""((?:[^"\\]|\\.)*)"\.localized"#)
+        var missing: [String] = []
+        let files = FileManager.default.enumerator(at: resources, includingPropertiesForKeys: nil)?
+            .compactMap { $0 as? URL }.filter { $0.pathExtension == "swift" } ?? []
+        XCTAssertFalse(files.isEmpty)
+        for file in files {
+            let source = try String(contentsOf: file, encoding: .utf8)
+            for match in literal.matches(in: source, range: NSRange(source.startIndex..., in: source)) {
+                let key = (source as NSString).substring(with: match.range(at: 1))
+                    .replacingOccurrences(of: "\\\"", with: "\"")
+                if english[key] == nil {
+                    missing.append("\(file.lastPathComponent): \(key)")
+                }
+            }
+        }
+        XCTAssertEqual(missing, [], "add these to en.lproj/Localizable.strings and the other languages")
+    }
 }
