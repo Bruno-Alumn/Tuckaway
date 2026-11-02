@@ -128,10 +128,10 @@ need to ask before working on a small patch.
 - **Not sure where to begin?** [ARCHITECTURE.md](docs/ARCHITECTURE.md) explains
   the hiding engines, and [BACKLOG.md](docs/BACKLOG.md) lists open work.
 
-AI-assisted contributions are welcome too. Much of Tuckaway was built with AI
-coding agents, then compiled, tested, and exercised on a real menu bar before
-merging. The standard is the same for every contribution: say what you changed
-and be honest about what you tested.
+Much of Tuckaway was built with AI coding agents, then compiled, tested and
+exercised on real hardware before merging. AI-assisted contributions are
+welcome on the same terms as any other: say what you changed and be honest
+about what you tested.
 
 Before opening a pull request, make sure it builds, the tests pass, and you’ve
 tried it on a real menu bar. The [contributing guide](CONTRIBUTING.md) has the
