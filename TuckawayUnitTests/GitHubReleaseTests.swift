@@ -15,16 +15,24 @@ final class GitHubReleaseTests: XCTestCase {
         try fileManager.createDirectory(at: backup, withIntermediateDirectories: true)
         defer { try? fileManager.removeItem(at: root) }
 
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        let id = "com.example.app"
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
         XCTAssertTrue(fileManager.fileExists(atPath: backup.path))
 
-        try fileManager.createDirectory(at: destination, withIntermediateDirectories: true)
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        // A half-moved bundle: there, but not a working app.
+        try fileManager.createDirectory(at: destination.appendingPathComponent("Contents"), withIntermediateDirectories: true)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
+        XCTAssertTrue(fileManager.fileExists(atPath: backup.path), "a broken destination doesn't count as installed")
+
+        let plist = try PropertyListSerialization.data(fromPropertyList: ["CFBundleIdentifier": id, "CFBundlePackageType": "APPL"],
+                                                       format: .xml, options: 0)
+        try plist.write(to: destination.appendingPathComponent("Contents/Info.plist"))
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
         XCTAssertFalse(fileManager.fileExists(atPath: work.path))
 
         try fileManager.createDirectory(at: work, withIntermediateDirectories: true)
         try fileManager.removeItem(at: destination)
-        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup)
+        UpdateReplacementCleanup.discardWorkDirectory(work, destination: destination, backup: backup, bundleIdentifier: id)
         XCTAssertFalse(fileManager.fileExists(atPath: work.path))
     }
 
@@ -152,5 +160,56 @@ final class GitHubReleaseTests: XCTestCase {
     func testUpdateNotesAreNilWhenNothingIsLeft() {
         XCTAssertNil(GitHubRelease.updateNotes(fromMarkdown: ""))
         XCTAssertNil(GitHubRelease.updateNotes(fromMarkdown: "## Download\n\nGet the DMG."))
+    }
+}
+
+final class SettingsBackupTests: XCTestCase {
+    private var suite: String!
+    private var defaults: UserDefaults!
+
+    override func setUp() {
+        super.setUp()
+        suite = "SettingsBackupTests-\(UUID().uuidString)"
+        defaults = UserDefaults(suiteName: suite)
+    }
+
+    override func tearDown() {
+        defaults.removePersistentDomain(forName: suite)
+        super.tearDown()
+    }
+
+    func testExportsOnlyTheUsersChoices() {
+        defaults.set(true, forKey: "hoverToExpand")
+        defaults.set(["com.example.kept"], forKey: "keptVisibleMenuBarApps")
+        defaults.set(Date(), forKey: "lastUpdateCheck")
+        defaults.set(["com.example.seen"], forKey: "knownMenuBarApps")
+        defaults.set(120.0, forKey: "NSStatusItem Preferred Position hiddenbar_expandcollapse")
+
+        let exported = SettingsBackup.export(from: defaults)
+        XCTAssertEqual(exported["hoverToExpand"] as? Bool, true)
+        XCTAssertEqual(exported["keptVisibleMenuBarApps"] as? [String], ["com.example.kept"])
+        XCTAssertEqual(exported[SettingsBackup.formatKey] as? Int, SettingsBackup.format)
+        XCTAssertNil(exported["lastUpdateCheck"], "this Mac's bookkeeping stays")
+        XCTAssertNil(exported["knownMenuBarApps"])
+        XCTAssertNil(exported["NSStatusItem Preferred Position hiddenbar_expandcollapse"], "positions belong to macOS")
+    }
+
+    func testRoundTripsThroughAFile() throws {
+        defaults.set(15.0, forKey: "numberOfSecondForAutoHide")
+        let data = try SettingsBackup.data(from: SettingsBackup.export(from: defaults))
+        let imported = try SettingsBackup.importable(SettingsBackup.values(from: data))
+        XCTAssertEqual(imported["numberOfSecondForAutoHide"] as? Double, 15)
+        XCTAssertNil(imported[SettingsBackup.formatKey])
+    }
+
+    func testRejectsOtherFilesAndNewerFormats() throws {
+        XCTAssertThrowsError(try SettingsBackup.importable(["hoverToExpand": true])) {
+            XCTAssertEqual($0 as? SettingsBackup.ImportError, .notTuckawaySettings)
+        }
+        XCTAssertThrowsError(try SettingsBackup.importable([SettingsBackup.formatKey: SettingsBackup.format + 1])) {
+            XCTAssertEqual($0 as? SettingsBackup.ImportError, .newerFormat)
+        }
+        let imported = try SettingsBackup.importable([SettingsBackup.formatKey: 1, "hoverToExpand": true, "somethingElse": 1])
+        XCTAssertEqual(Set(imported.keys), ["hoverToExpand"], "unknown keys are dropped")
     }
 }

@@ -137,3 +137,16 @@
 "Search hidden icons" = "Szukaj ukrytych ikon";
 "No hidden icons" = "Brak ukrytych ikon";
 "No matches" = "Brak wyników";
+"An update is being installed" = "Trwa instalowanie uaktualnienia";
+"Tuckaway will relaunch when it’s done." = "Tuckaway uruchomi się ponownie po zakończeniu.";
+"Export Settings…" = "Eksportuj ustawienia…";
+"Import Settings…" = "Importuj ustawienia…";
+"Couldn’t export settings" = "Nie można wyeksportować ustawień";
+"Couldn’t import settings" = "Nie można zaimportować ustawień";
+"This file comes from a newer version of Tuckaway. Update Tuckaway, then try again." = "Ten plik pochodzi z nowszej wersji Tuckaway. Uaktualnij Tuckaway i spróbuj ponownie.";
+"This file isn’t a Tuckaway settings file." = "Ten plik nie jest plikiem ustawień Tuckaway.";
+"Replace your settings with the imported ones?" = "Zastąpić Twoje ustawienia zaimportowanymi?";
+"Import" = "Importuj";
+"Settings imported" = "Zaimportowano ustawienia";
+"Quit and reopen Tuckaway to apply them." = "Zamknij i otwórz ponownie Tuckaway, aby je zastosować.";
+"Tuckaway will relaunch to apply them." = "Tuckaway uruchomi się ponownie, aby je zastosować.";
