@@ -188,6 +188,17 @@ enum Preferences {
         }
     }
 
+    static var collapseWhenLocked: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: UserDefaults.Key.collapseWhenLocked)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.collapseWhenLocked)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     static var spacerCount: Int {
         get {
             min(max(UserDefaults.standard.integer(forKey: UserDefaults.Key.spacerCount), 0), MenuBarSpacers.maxCount)

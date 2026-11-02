@@ -227,3 +227,6 @@
 
 /* Revealing an app's icon after it updates (#28) */
 "Show an app's hidden icon for a moment after it updates" = "アプリのアップデート後に隠したアイコンを一時的に表示";
+
+/* Collapsing on lock or sleep */
+"Collapse when the Mac locks or sleeps" = "Macのロック時やスリープ時に折りたたむ";

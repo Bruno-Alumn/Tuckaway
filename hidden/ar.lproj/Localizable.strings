@@ -229,3 +229,6 @@
 
 /* Revealing an app's icon after it updates (#28) */
 "Show an app's hidden icon for a moment after it updates" = "إظهار الأيقونة المخفية للتطبيق لحظات بعد تحديثه";
+
+/* Collapsing on lock or sleep */
+"Collapse when the Mac locks or sleeps" = "الطي عند قفل الـ Mac أو دخوله في وضع السكون";

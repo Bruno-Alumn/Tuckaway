@@ -225,6 +225,8 @@ class StatusBarController: MenuBarItemProvider {
         NotificationCenter.default.addObserver(self, selector: #selector(fitSpacersToState), name: NativeVisibilityEngine.stateDidChange, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(applyAppTriggeredProfile), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(recordLaunchedVersion(_:)), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleLockOrSleep), name: NSWorkspace.screensDidSleepNotification, object: nil)
+        DistributedNotificationCenter.default().addObserver(self, selector: #selector(handleLockOrSleep), name: NSNotification.Name("com.apple.screenIsLocked"), object: nil)
         recordVersions(of: NSWorkspace.shared.runningApplications, reveal: false)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(applyAppTriggeredProfile), name: NSWorkspace.didTerminateApplicationNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateExpandIcon), name: .transparentExpandIconToggle, object: nil)
@@ -373,6 +375,12 @@ class StatusBarController: MenuBarItemProvider {
               !didExpandForExternalDisplay,
               let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
               app.bundleIdentifier != Bundle.main.bundleIdentifier else { return }
+        collapseMenuBar()
+    }
+
+    // So nobody walking up to a locked Mac sees the hidden icons.
+    @objc private func handleLockOrSleep() {
+        guard Preferences.collapseWhenLocked, !isCollapsed, !isManagingItems else { return }
         collapseMenuBar()
     }
 

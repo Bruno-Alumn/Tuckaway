@@ -227,3 +227,6 @@
 
 /* Revealing an app's icon after it updates (#28) */
 "Show an app's hidden icon for a moment after it updates" = "App 更新後短暫顯示其隱藏的圖像";
+
+/* Collapsing on lock or sleep */
+"Collapse when the Mac locks or sleeps" = "Mac 鎖定或睡眠時收合";
