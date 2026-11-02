@@ -62,12 +62,20 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
     // Accessibility round-trips to every app take about a second in total, so the
     // walk runs off the main thread.
     func snapshot(completion: @escaping ([MenuBarInventoryItem]) -> Void) {
+        snapshot(matching: { _ in true }, completion: completion)
+    }
+
+    func snapshot(of bundles: Set<String>, completion: @escaping ([MenuBarInventoryItem]) -> Void) {
+        snapshot(matching: { $0.map(bundles.contains) ?? false }, completion: completion)
+    }
+
+    private func snapshot(matching wanted: @escaping (String?) -> Bool, completion: @escaping ([MenuBarInventoryItem]) -> Void) {
         // Only app bundles own status items. Skipping the rest (dozens of WebKit
         // and XPC helpers, each of which would sit out the timeout) cuts the walk
         // from ~2.8s to ~1s.
         let ownPID = ProcessInfo.processInfo.processIdentifier
         let apps = NSWorkspace.shared.runningApplications
-            .filter { $0.processIdentifier != ownPID && $0.bundleURL?.pathExtension == "app" }
+            .filter { $0.processIdentifier != ownPID && $0.bundleURL?.pathExtension == "app" && wanted($0.bundleIdentifier) }
             .map { (pid: $0.processIdentifier, bundleIdentifier: $0.bundleIdentifier) }
         DispatchQueue.global(qos: .userInitiated).async {
             let start = Date()

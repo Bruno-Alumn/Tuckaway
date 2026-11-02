@@ -45,6 +45,11 @@ private final class FakeInventory: MenuBarInventoryProviding {
         snapshots += 1
         completion(items)
     }
+    var partialSnapshots = 0
+    func snapshot(of bundles: Set<String>, completion: @escaping ([MenuBarInventoryItem]) -> Void) {
+        partialSnapshots += 1
+        completion(items.filter { $0.bundleIdentifier.map(bundles.contains) ?? false })
+    }
 }
 
 private final class FakeAssertion: NativeVisibilityAssertion {
@@ -1230,5 +1235,43 @@ final class MenuBarDisplayInventoryTests: XCTestCase {
             ("monitor", CGRect(x: 1800, y: -271, width: 2560, height: 1440)),
         ])
         XCTAssertEqual(displays[1].accessibilityFrame.minY, 0)
+    }
+}
+
+final class FreshHiddenFramesTests: XCTestCase {
+    func testPeekingRereadsWhereHiddenIconsAreNow() {
+        let items = FakeItems()
+        let inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        let visibility = FakeVisibility()
+        let engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                            captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                            ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                            itemFrame: { _ in separator },
+                                            displays: { [mainDisplay] },
+                                            isLTR: { true })
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+
+        var refreshed: [MenuBarInventoryItem] = []
+        engine.refreshHiddenItemFrames { refreshed = $0 }
+        XCTAssertEqual(inventory.partialSnapshots, 0, "only while peeking")
+        XCTAssertEqual(refreshed, [item("com.hidden", x: 1100)])
+
+        engine.peekHiddenSection { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+        inventory.items = [item("com.hidden", x: 1130), item("com.visible", x: 1400)]
+        engine.refreshHiddenItemFrames { refreshed = $0 }
+        XCTAssertEqual(inventory.partialSnapshots, 1)
+        XCTAssertEqual(refreshed, [item("com.hidden", x: 1130)])
+        XCTAssertEqual(engine.hiddenItems, [item("com.hidden", x: 1130)])
+    }
+
+    func testCounterpartFollowsAnAppsIconsInOrder() {
+        let previous = [item("com.a", x: 100), item("com.a", x: 130), item("com.b", x: 160)]
+        let shifted = [item("com.a", x: 120), item("com.a", x: 150), item("com.b", x: 180)]
+        XCTAssertEqual(MenuBarStripGeometry.counterpart(of: previous[1], among: shifted, in: previous), shifted[1])
+        XCTAssertEqual(MenuBarStripGeometry.counterpart(of: previous[2], among: shifted, in: previous), shifted[2])
+        XCTAssertNil(MenuBarStripGeometry.counterpart(of: previous[1], among: [item("com.a", x: 120)], in: previous))
     }
 }
