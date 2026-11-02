@@ -41,9 +41,10 @@ before merging.
 
 ## Verification still owed
 
-- **Open review findings (2026-11-02), not fixed:** Notch Overflow classifies icons
-  by global x only, so another display's icons can be listed as behind the notch
-  (`NotchOverflowController.classify`); the legacy `LauncherApplication`
+- **Open review findings (2026-11-02), not fixed:** Notch Overflow's boundary comes
+  from `auxiliaryTopRightArea`, whose coordinate space is unverified when the
+  notched display isn't the primary one (icons on other displays are left out
+  since #109); the legacy `LauncherApplication`
   cleanup probably can't succeed for a helper Tuckaway doesn't embed, so it
   retries every launch; the Hidden Bar settings migration may find nothing for
   users of the sandboxed App Store Hidden Bar; the RTL status-item repair may be
