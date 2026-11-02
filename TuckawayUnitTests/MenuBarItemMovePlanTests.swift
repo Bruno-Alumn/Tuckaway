@@ -107,4 +107,22 @@ final class MenuBarItemMovePlanTests: XCTestCase {
             }
         }
     }
+
+    func testMovesIntoVisibleMarkTheAppOnMacOS27() {
+        XCTAssertEqual(MenuBarItemMovePlan.action(from: .hidden, to: .visible, isKept: false, marksVisibleApps: true), .keepVisible)
+        XCTAssertEqual(MenuBarItemMovePlan.action(from: .alwaysHidden, to: .visible, isKept: false, marksVisibleApps: true), .keepVisible)
+        XCTAssertEqual(MenuBarItemMovePlan.action(from: .visible, to: .visible, isKept: false, marksVisibleApps: true), .drag)
+        XCTAssertEqual(MenuBarItemMovePlan.action(from: .visible, to: .visible, isKept: true, marksVisibleApps: true), .none,
+                       "a kept app's icon sits left of the arrow")
+        XCTAssertEqual(MenuBarItemMovePlan.action(from: .visible, to: .hidden, isKept: true, marksVisibleApps: true), .stopKeepingAndDrag)
+        XCTAssertEqual(MenuBarItemMovePlan.action(from: .hidden, to: .alwaysHidden, isKept: false, marksVisibleApps: true), .drag)
+    }
+
+    func testEverythingIsDraggedBeforeMacOS27() {
+        for from in MenuBarSection.leftToRight {
+            for to in MenuBarSection.leftToRight {
+                XCTAssertEqual(MenuBarItemMovePlan.action(from: from, to: to, isKept: false, marksVisibleApps: false), .drag)
+            }
+        }
+    }
 }

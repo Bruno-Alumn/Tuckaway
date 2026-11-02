@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- On macOS 27, dragging an icon into **Visible** in Menu Bar Items now keeps that app visible, as **Keep Visible** does. Before, Tuckaway tried to ⌘-drag the icon past its own arrow, which macOS 27 doesn't allow, so the icon stayed hidden.
 - In the separate hidden-items bar, macOS's own menu bar extras are named by what they are (for example "Siri"), as in Menu Bar Items, instead of "SystemUIServer".
 
 ## v1.6.1 (2026-11-02)

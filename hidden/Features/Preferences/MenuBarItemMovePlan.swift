@@ -39,9 +39,33 @@ extension MenuBarSection {
     }
 }
 
+// How a move between the Menu Bar Items lists reaches the real menu bar.
+enum MenuBarMoveAction: Equatable {
+    case drag
+    // Keep the app visible by name (macOS 27) instead of dragging its icon.
+    case keepVisible
+    // An app kept visible by name goes back to being placed by its icon.
+    case stopKeepingAndDrag
+    // Nothing to do in the menu bar.
+    case none
+}
+
 // The pure part of moving an item from the Menu Bar Items lists, kept free of
 // AppKit and Accessibility so it can be unit tested.
 enum MenuBarItemMovePlan {
+    // On macOS 27 a synthesized ⌘-drag doesn't pass Tuckaway's own arrow
+    // (measured on 27.2), so a move into Visible marks the app instead, as
+    // Keep Visible does. `marksVisibleApps` is true there.
+    static func action(from: MenuBarSection, to: MenuBarSection, isKept: Bool, marksVisibleApps: Bool) -> MenuBarMoveAction {
+        guard marksVisibleApps else { return .drag }
+        if to == .visible {
+            // A kept app's icon sits on the hidden side, so reordering it
+            // within Visible would have to pass the arrow too.
+            return from == .visible ? (isKept ? .none : .drag) : .keepVisible
+        }
+        return isKept ? .stopKeepingAndDrag : .drag
+    }
+
     // The list's order after dropping `id` above `row`. `row` is NSTableView's
     // proposed row in the list as shown, which still contains the item when it
     // is moved within one list.
