@@ -156,6 +156,10 @@ per-build hash. That identity stays the same across releases, so:
 Releases up to 1.1.0 were ad-hoc signed. Updating from one of them to the first
 certificate-signed release still asks for permissions once; after that, never.
 
+The certificate's hash is also in `Updater.releaseRequirement`, which ad-hoc
+builds hold updates to. A new certificate (Developer ID, or a lost key) has to
+change it in the same release.
+
 **Back up the key now.** If it is lost, the next release has to use a new
 certificate. Every user then gets asked for permissions again, and the updaters
 already installed refuse that release, so everyone has to download it by hand.

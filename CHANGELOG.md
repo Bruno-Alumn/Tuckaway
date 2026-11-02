@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Security
+- A build of Tuckaway that isn't signed with the release certificate (a Debug build or one built from source) accepted any update that was validly signed, by anyone. It now only installs updates signed with the Tuckaway Release Signing certificate. Releases from 1.2 on already required that certificate.
+
 ### Added
 - Install with Homebrew: `brew install --cask bruno-alumn/tuckaway/tuckaway`.
 - **Menu bar icon spacing** in Settings › General: Compact or Tight fits more icons in the menu bar, which helps on notched Macs. It applies to every app's icon; each app uses it the next time it opens, or **Restart Menu Bar Apps…** quits and reopens them for you.

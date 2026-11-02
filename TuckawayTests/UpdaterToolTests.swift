@@ -69,3 +69,64 @@ final class UpdaterRelaunchScriptTests: XCTestCase {
         XCTAssertFalse(result.workFolderLeft)
     }
 }
+
+final class UpdaterSignatureTests: XCTestCase {
+    private var folder: URL!
+
+    override func setUpWithError() throws {
+        folder = FileManager.default.temporaryDirectory.appendingPathComponent("UpdaterSignatureTests-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+    }
+
+    override func tearDownWithError() throws {
+        try? FileManager.default.removeItem(at: folder)
+    }
+
+    // A minimal Tuckaway-shaped bundle, ad-hoc signed the way codesign -s - does
+    // for anyone, so it passes codesign --verify.
+    private func adHocApp(_ name: String) throws -> URL {
+        let app = folder.appendingPathComponent("\(name).app")
+        let macOS = app.appendingPathComponent("Contents/MacOS")
+        try FileManager.default.createDirectory(at: macOS, withIntermediateDirectories: true)
+        let info: [String: Any] = ["CFBundleIdentifier": "com.brunoalumn.tuckaway", "CFBundleExecutable": "Tuckaway",
+                                   "CFBundlePackageType": "APPL"]
+        try PropertyListSerialization.data(fromPropertyList: info, format: .xml, options: 0)
+            .write(to: app.appendingPathComponent("Contents/Info.plist"))
+        try FileManager.default.copyItem(atPath: "/usr/bin/true", toPath: macOS.appendingPathComponent("Tuckaway").path)
+        let sign = Process()
+        sign.executableURL = URL(fileURLWithPath: Updater.Tool.codesign)
+        sign.arguments = ["--force", "--sign", "-", app.path]
+        try sign.run()
+        sign.waitUntilExit()
+        XCTAssertEqual(sign.terminationStatus, 0)
+        return app
+    }
+
+    func testReleaseRequirementParses() {
+        var requirement: SecRequirement?
+        XCTAssertEqual(SecRequirementCreateWithString(Updater.releaseRequirement as CFString, [], &requirement), errSecSuccess)
+    }
+
+    // An ad-hoc running app used to accept any download that passed
+    // codesign --verify, which an attacker's ad-hoc bundle does.
+    func testAdHocRunningAppRefusesAnAdHocUpdate() throws {
+        let running = try adHocApp("Running")
+        let update = try adHocApp("Update")
+
+        XCTAssertFalse(Updater.isSignedLikeThisApp(update, runningApp: running))
+    }
+
+    // Runs only where a release is installed (not on CI): an ad-hoc build still
+    // accepts a real release, so updating a Debug build keeps working.
+    func testAdHocRunningAppAcceptsARelease() throws {
+        let release = URL(fileURLWithPath: "/Applications/Tuckaway.app")
+        var code: SecStaticCode?
+        var requirement: SecRequirement?
+        guard SecStaticCodeCreateWithPath(release as CFURL, [], &code) == errSecSuccess, let code,
+              SecRequirementCreateWithString(Updater.releaseRequirement as CFString, [], &requirement) == errSecSuccess,
+              SecStaticCodeCheckValidity(code, [], requirement) == errSecSuccess
+        else { throw XCTSkip("No release-signed Tuckaway in /Applications") }
+
+        XCTAssertTrue(Updater.isSignedLikeThisApp(release, runningApp: try adHocApp("Running")))
+    }
+}
