@@ -114,10 +114,25 @@ final class MenuBarItemManagerViewController: NSViewController {
     override func viewDidAppear() {
         super.viewDidAppear()
         refresh()
+        NotificationCenter.default.addObserver(self, selector: #selector(profileChanged), name: .profileChanged, object: nil)
+    }
+
+    @objc private func profileChanged() {
+        guard !isScanning, !allItems.isEmpty else { return }
+        statusLabel.stringValue = idleStatus
+    }
+
+    // These lists are the arrow's layout; a profile replaces it while
+    // collapsed, so say which one is in effect.
+    private var idleStatus: String {
+        let profile = (NSApp.delegate as? AppDelegate)?.statusBarController.activeProfileName
+        return profile.map { String(format: "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow.".localized, $0) }
+            ?? "Drop an item to apply the real menu bar position.".localized
     }
 
     override func viewWillDisappear() {
         super.viewWillDisappear()
+        NotificationCenter.default.removeObserver(self, name: .profileChanged, object: nil)
         (NSApp.delegate as? AppDelegate)?.statusBarController.endItemManagement()
     }
 
@@ -403,13 +418,9 @@ final class MenuBarItemManagerViewController: NSViewController {
         } else {
             // A quiet re-check keeps any message a failed move just showed.
             if !onlyIfChanged || found.isEmpty {
-                // These lists are the arrow's layout; a profile replaces it while
-                // collapsed, so say which one is in effect.
-                let profile = (NSApp.delegate as? AppDelegate)?.statusBarController.activeProfileName
                 statusLabel.stringValue = found.isEmpty
                     ? "No manageable menu bar items were found.".localized
-                    : profile.map { String(format: "Profile “%@” decides what shows while collapsed. These lists are for Use the Arrow.".localized, $0) }
-                        ?? "Drop an item to apply the real menu bar position.".localized
+                    : idleStatus
             }
             permissionButton.isHidden = true
         }

@@ -203,6 +203,7 @@ class StatusBarController: MenuBarItemProvider {
         setupAlwayHideStatusBar()
         setupNewAppPrompts()
         (menuBarEngine as? ProfileApplying)?.setProfile(profilesStore.profiles.activeApps)
+        applyDisplayProfile()
         updateActiveAppIcon()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
@@ -334,6 +335,7 @@ class StatusBarController: MenuBarItemProvider {
         let wasCollapsed = isCollapsed
         invalidateNativeLayoutAfterEnvironmentChange()
         applyExternalDisplayPreference(force: wasCollapsed)
+        applyDisplayProfile()
     }
 
     // A new status item or a wake can change the Accessibility inventory just
@@ -395,7 +397,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     private func applyExternalDisplayPreference(force: Bool = false) {
-        if Preferences.expandWhenExternalDisplayConnected && NSScreen.screens.count > 1 {
+        if Preferences.expandWhenExternalDisplayConnected && Self.hasExternalDisplay {
             guard isCollapsed || force else { return }
             didExpandForExternalDisplay = true
             expandMenubar(force: true)
@@ -1583,10 +1585,50 @@ extension StatusBarController {
             }
             delete.submenu = names
             submenu.addItem(delete)
+
+            let display = NSMenuItem(title: "When a Display Is Connected".localized, action: nil, keyEquivalent: "")
+            let choices = NSMenu()
+            for name in [nil] + profiles.names.map(Optional.some) {
+                let item = NSMenuItem(title: name ?? "Don’t Switch".localized, action: #selector(setDisplayProfile(_:)), keyEquivalent: "")
+                item.target = self
+                item.representedObject = name
+                item.state = profiles.displayProfile == name ? .on : .off
+                choices.addItem(item)
+            }
+            display.submenu = choices
+            submenu.addItem(display)
         }
         let item = NSMenuItem(title: "Profiles".localized, action: nil, keyEquivalent: "")
         item.submenu = submenu
         return item
+    }
+
+    // "When a Display Is Connected": switches to that profile while a second
+    // display is attached, and back when it's unplugged.
+    private func applyDisplayProfile() {
+        guard menuBarEngine is ProfileApplying else { return }
+        var profiles = profilesStore.profiles
+        let before = profiles
+        profiles.displaysChanged(external: Self.hasExternalDisplay)
+        if profiles != before {
+            applyProfiles(profiles)
+        }
+    }
+
+    // Any display that isn't the built-in one. Counting screens missed a
+    // MacBook closed at a desk (one screen, the external one).
+    static var hasExternalDisplay: Bool {
+        NSScreen.screens.contains { screen in
+            guard let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber else { return false }
+            return CGDisplayIsBuiltin(number.uint32Value) == 0
+        }
+    }
+
+    @objc private func setDisplayProfile(_ sender: NSMenuItem) {
+        var profiles = profilesStore.profiles
+        profiles.setDisplayProfile(sender.representedObject as? String)
+        applyProfiles(profiles)
+        applyDisplayProfile()
     }
 
     var activeProfileName: String? {
@@ -1596,6 +1638,7 @@ extension StatusBarController {
     private func applyProfiles(_ profiles: MenuBarProfiles) {
         profilesStore.profiles = profiles
         (menuBarEngine as? ProfileApplying)?.setProfile(profiles.activeApps)
+        NotificationCenter.default.post(name: .profileChanged, object: nil)
     }
 
     @objc private func selectProfile(_ sender: NSMenuItem) {

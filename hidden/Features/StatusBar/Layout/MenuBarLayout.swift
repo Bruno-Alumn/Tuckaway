@@ -331,6 +331,30 @@ final class UserDefaultsNewMenuBarAppStore: NewMenuBarAppStore {
 struct MenuBarProfiles: Equatable {
     var profiles: [String: [String]] = [:]
     var active: String?
+    // Switched to while a second display is connected.
+    var displayProfile: String?
+    // What was active before the display switch, restored when it's unplugged.
+    // Nil when nothing was switched (a manual choice while docked sticks).
+    var beforeDisplay: Switched?
+
+    enum Switched: Equatable {
+        case from(String?)
+    }
+
+    // Called on every display change with whether more than one is connected.
+    mutating func displaysChanged(external: Bool) {
+        if external {
+            guard let displayProfile, profiles[displayProfile] != nil, active != displayProfile,
+                  beforeDisplay == nil else { return }
+            beforeDisplay = .from(active)
+            active = displayProfile
+        } else if case .from(let previous)? = beforeDisplay {
+            beforeDisplay = nil
+            if active == displayProfile {
+                active = previous.flatMap { profiles[$0] != nil ? $0 : nil }
+            }
+        }
+    }
 
     var activeApps: Set<String>? {
         active.flatMap { profiles[$0] }.map(Set.init)
@@ -345,8 +369,21 @@ struct MenuBarProfiles: Equatable {
     }
 
     mutating func delete(_ name: String) {
+        if displayProfile == name { setDisplayProfile(nil) }
         profiles[name] = nil
         if active == name { active = nil }
+    }
+
+    // A switch already made for the old choice is undone first, so the new one
+    // starts clean (and unplugging restores what the user had).
+    mutating func setDisplayProfile(_ name: String?) {
+        if case .from(let previous)? = beforeDisplay {
+            beforeDisplay = nil
+            if active == displayProfile {
+                active = previous.flatMap { profiles[$0] != nil ? $0 : nil }
+            }
+        }
+        displayProfile = name
     }
 
     // Hiding or un-keeping an app takes it out of the active profile too.
@@ -377,6 +414,9 @@ final class UserDefaultsMenuBarProfilesStore {
     private let defaults: UserDefaults
     private static let profilesKey = "menuBarProfiles"
     private static let activeKey = "activeMenuBarProfile"
+    private static let displayKey = "displayMenuBarProfile"
+    // "" stands for "no profile was active"; profile names are never empty.
+    private static let beforeDisplayKey = "menuBarProfileBeforeDisplay"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -385,11 +425,19 @@ final class UserDefaultsMenuBarProfilesStore {
     var profiles: MenuBarProfiles {
         get {
             MenuBarProfiles(profiles: defaults.dictionary(forKey: Self.profilesKey) as? [String: [String]] ?? [:],
-                            active: defaults.string(forKey: Self.activeKey))
+                            active: defaults.string(forKey: Self.activeKey),
+                            displayProfile: defaults.string(forKey: Self.displayKey),
+                            beforeDisplay: defaults.string(forKey: Self.beforeDisplayKey).map { .from($0.isEmpty ? nil : $0) })
         }
         set {
             defaults.set(newValue.profiles, forKey: Self.profilesKey)
             defaults.set(newValue.active, forKey: Self.activeKey)
+            defaults.set(newValue.displayProfile, forKey: Self.displayKey)
+            if case .from(let previous)? = newValue.beforeDisplay {
+                defaults.set(previous ?? "", forKey: Self.beforeDisplayKey)
+            } else {
+                defaults.removeObject(forKey: Self.beforeDisplayKey)
+            }
         }
     }
 }

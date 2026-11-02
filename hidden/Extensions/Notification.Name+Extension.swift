@@ -15,4 +15,5 @@ extension Notification.Name {
     static let accessibilityPermissionChanged = Notification.Name("accessibilityPermissionChanged")
     static let transparentExpandIconToggle = Notification.Name("transparentExpandToggle")
     static let legacyHideUnavailable = Notification.Name("legacyHideUnavailable")
+    static let profileChanged = Notification.Name("profileChanged")
 }

@@ -228,4 +228,12 @@ final class SettingsBackupTests: XCTestCase {
         let imported = try SettingsBackup.importable([SettingsBackup.formatKey: 1, "hoverToExpand": true, "somethingElse": 1])
         XCTAssertEqual(Set(imported.keys), ["hoverToExpand"], "unknown keys are dropped")
     }
+
+    func testExportMidDisplaySwitchKeepsTheUsersChoice() {
+        defaults.set("Desk", forKey: "activeMenuBarProfile")
+        defaults.set("Laptop", forKey: SettingsBackup.beforeDisplayKey)
+        XCTAssertEqual(SettingsBackup.export(from: defaults)["activeMenuBarProfile"] as? String, "Laptop")
+        defaults.set("", forKey: SettingsBackup.beforeDisplayKey)
+        XCTAssertNil(SettingsBackup.export(from: defaults)["activeMenuBarProfile"])
+    }
 }

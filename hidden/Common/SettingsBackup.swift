@@ -22,6 +22,7 @@ enum SettingsBackup {
         "notchOverflowEnabled", "useTransparentExpandIconEnabled", "expandIconStyle",
         "automaticallyChecksForUpdates", "isAutoStart", "keptVisibleMenuBarApps",
         "showActiveAppIcon", "menuBarProfiles", "activeMenuBarProfile",
+        "displayMenuBarProfile",
     ]
 
     enum ImportError: Error, Equatable {
@@ -29,12 +30,20 @@ enum SettingsBackup {
         case newerFormat
     }
 
+    // Set while a display switch is in effect: the profile to go back to.
+    static let beforeDisplayKey = "menuBarProfileBeforeDisplay"
+
     static func export(from defaults: UserDefaults) -> [String: Any] {
         var values: [String: Any] = [formatKey: format]
         for key in keys {
             if let value = defaults.object(forKey: key) {
                 values[key] = value
             }
+        }
+        // Mid display switch, the active profile is the display's; the user's
+        // own choice is the one to carry over ("" means none).
+        if let before = defaults.string(forKey: beforeDisplayKey) {
+            values["activeMenuBarProfile"] = before.isEmpty ? nil : before
         }
         return values
     }
