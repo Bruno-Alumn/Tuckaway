@@ -156,3 +156,5 @@
 "Name this profile" = "プロファイルの名前";
 "It keeps the apps that are visible right now." = "現在表示されている App を保持します。";
 "Save" = "保存";
+"When a Display Is Connected" = "ディスプレイ接続時";
+"Don’t Switch" = "切り替えない";

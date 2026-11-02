@@ -156,3 +156,5 @@
 "Name this profile" = "為此設定檔命名";
 "It keeps the apps that are visible right now." = "它會保留目前可見的 App。";
 "Save" = "儲存";
+"When a Display Is Connected" = "連接顯示器時";
+"Don’t Switch" = "不切換";

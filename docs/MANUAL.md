@@ -73,6 +73,10 @@ still shows everything. New apps are still asked about, and Keep Visible adds
 them to the active profile. The active profile is remembered across restarts;
 **Delete Profile** removes one. Profiles are included in Export Settings.
 
+**When a Display Is Connected** picks a profile to switch to while a second
+display is attached; unplugging it switches back to what was active before.
+Choosing a profile yourself while docked sticks until the displays change.
+
 #### Presentation Mode
 
 **Presentation Mode** in the arrow's menu (or its shortcut) hides every app's
