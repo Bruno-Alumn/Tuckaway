@@ -191,3 +191,7 @@
 "Edit Profile" = "Profil bearbeiten";
 "No apps" = "Keine Apps";
 "%@ and %d more" = "%@ und %d weitere";
+
+/* The date the clock drops while collapsed (macOS 13–26) */
+"While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "Solange Symbole ausgeblendet sind, lässt macOS das Datum in der Uhr weg, weil die Menüleiste voll wirkt. Um es zu behalten, setze in den Uhroptionen „Datum anzeigen“ auf „Immer“.";
+"Clock Options…" = "Uhroptionen …";

@@ -237,14 +237,20 @@ final class GeneralSettingsModel: ObservableObject {
     @Published private(set) var profileShortcutTitles: [String: String] = [:]
     @Published private(set) var profileApps: [String: [String]] = [:]
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
+    @Published private(set) var clockDropsDate = GeneralSettingsModel.readClockDropsDate()
 
     var onRecordShortcut: (ShortcutKind) -> Void = { _ in }
     var onClearShortcut: (ShortcutKind) -> Void = { _ in }
 
     @objc func refresh() {
         isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
+        clockDropsDate = Self.readClockDropsDate()
         refreshProfiles()
         objectWillChange.send()
+    }
+
+    private static func readClockDropsDate() -> Bool {
+        ClockDateSetting.dropsDateWhileCollapsed(hidesWithSeparator: !MenuBarEngineFactory.usesNativeVisibility)
     }
 
     func refreshProfiles() {
@@ -472,6 +478,9 @@ struct GeneralSettingsView: View {
                 Section { accessibilityNotice }
             }
             Section { tutorial }
+            if model.clockDropsDate {
+                Section { clockDateNotice }
+            }
 
             Section(Self.label("Hiding")) {
                 settingsToggle("Auto-collapse", isOn: model.autoHide)
@@ -632,6 +641,21 @@ struct GeneralSettingsView: View {
             Spacer(minLength: 0)
             Button("Open Settings…".localized) {
                 Util.requestAccessibilityPermission()
+            }
+            .controlSize(.small)
+        }
+    }
+
+    private var clockDateNotice: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "calendar")
+                .foregroundStyle(.secondary)
+            Text(verbatim: "While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options.".localized)
+                .font(.caption)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+            Button("Clock Options…".localized) {
+                ClockDateSetting.openClockSettings()
             }
             .controlSize(.small)
         }

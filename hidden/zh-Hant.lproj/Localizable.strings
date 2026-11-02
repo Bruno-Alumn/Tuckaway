@@ -189,3 +189,7 @@
 "Edit Profile" = "編輯設定檔";
 "No apps" = "沒有App";
 "%@ and %d more" = "%@及其他%d個";
+
+/* The date the clock drops while collapsed (macOS 13–26) */
+"While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "隱藏圖像時,選單列看起來已滿,macOS 會從時鐘中移除日期。若要保留,請在時鐘選項中將「顯示日期」設為「永遠」。";
+"Clock Options…" = "時鐘選項⋯";

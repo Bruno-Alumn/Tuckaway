@@ -189,3 +189,7 @@
 "Edit Profile" = "Sửa hồ sơ";
 "No apps" = "Không có ứng dụng";
 "%@ and %d more" = "%@ và %d ứng dụng khác";
+
+/* The date the clock drops while collapsed (macOS 13–26) */
+"While icons are hidden, macOS drops the date from the clock because the menu bar looks full. To keep it, set Show Date to Always in Clock Options." = "Khi các biểu tượng bị ẩn, macOS bỏ ngày khỏi đồng hồ vì thanh menu trông như đã đầy. Để giữ ngày, hãy đặt “Hiển thị ngày” thành “Luôn luôn” trong Tùy chọn đồng hồ.";
+"Clock Options…" = "Tùy chọn đồng hồ…";

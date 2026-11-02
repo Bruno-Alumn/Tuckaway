@@ -66,7 +66,6 @@ before merging.
 
 ## Features
 
-- **#207 show the clock/date when collapsed.** The loudest single feature request.
 - **#229 activity-based reveal.** Needs a design that notices changing icon content
   without continuously expanding the real menu bar.
 - **Profiles, next steps.** Switching by Focus or time of day
@@ -87,4 +86,5 @@ certificate-signed releases (1.2.0); every string translated into all 13 languag
 enforced by `LocalizationTests`; an Always Hidden list in Menu Bar Items; the separate
 hidden-items bar on macOS 27, with hover, app names, VoiceOver and a right-click menu;
 new apps asked about instead of hidden unseen (macOS 27); presentation mode (macOS 27);
-the updater retries its relaunch.
+the updater retries its relaunch; the clock's dropped date while collapsed (#207)
+explained in Settings, with a button to Clock Options (macOS 13–26; 27 isn't affected).
