@@ -169,3 +169,9 @@
 "Tight" = "Вузька";
 "Custom" = "Власна";
 "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Змінює відстань між усіма значками рядка меню, а не лише Tuckaway. Кожна програма використає нову відстань під час наступного запуску; вийдіть і знову ввійдіть, щоб застосувати її всюди.";
+"Restart Menu Bar Apps…" = "Перезапустити програми рядка меню…";
+"No other apps have menu bar icons to restart." = "Немає інших програм зі значками в рядку меню.";
+"Restart apps with menu bar icons?" = "Перезапустити програми зі значками в рядку меню?";
+"These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "Ці програми закриються й відкриються знову, щоб використати нову відстань: %@. Програма з незбереженими змінами може спершу запитати.";
+"Restart Apps" = "Перезапустити";
+"Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Деякі програми не закрилися: %@. Закрийте й відкрийте їх самостійно, щоб використати нову відстань.";

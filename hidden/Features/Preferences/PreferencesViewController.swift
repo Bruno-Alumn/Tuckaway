@@ -308,6 +308,55 @@ final class GeneralSettingsModel: ObservableObject {
         MenuBarItemSpacing.current() == .custom ? MenuBarItemSpacing.choices + [.custom] : MenuBarItemSpacing.choices
     }
 
+    @Published private(set) var isRestartingApps = false
+    private var restarter: MenuBarAppRestarter?
+
+    // Apps read the spacing once, at launch, so this restarts the ones with
+    // menu bar icons after asking. Finding them needs Accessibility.
+    func restartMenuBarApps() {
+        isRestartingApps = true
+        AccessibilityMenuBarInventory().snapshot { [weak self] items in
+            guard let self else { return }
+            let apps = MenuBarAppRestartPlan.apps(owning: items, running: MenuBarAppRestarter.runningApps(),
+                                                  ownBundleIdentifier: Bundle.main.bundleIdentifier)
+            guard !apps.isEmpty else {
+                self.isRestartingApps = false
+                Self.inform("No other apps have menu bar icons to restart.".localized)
+                return
+            }
+            let confirm = NSAlert()
+            confirm.messageText = "Restart apps with menu bar icons?".localized
+            confirm.informativeText = String(format: "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first.".localized,
+                                             Self.list(apps))
+            confirm.addButton(withTitle: "Restart Apps".localized)
+            confirm.addButton(withTitle: "Cancel".localized)
+            guard confirm.runModal() == .alertFirstButtonReturn else {
+                self.isRestartingApps = false
+                return
+            }
+            let restarter = MenuBarAppRestarter()
+            self.restarter = restarter
+            restarter.restart(apps) { [weak self] didNotQuit in
+                self?.restarter = nil
+                self?.isRestartingApps = false
+                if !didNotQuit.isEmpty {
+                    Self.inform(String(format: "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing.".localized,
+                                       Self.list(didNotQuit)))
+                }
+            }
+        }
+    }
+
+    private static func list(_ apps: [RestartableApp]) -> String {
+        ListFormatter.localizedString(byJoining: apps.map(\.name))
+    }
+
+    private static func inform(_ message: String) {
+        let alert = NSAlert()
+        alert.messageText = message
+        alert.runModal()
+    }
+
     var automaticallyChecksForUpdates: Binding<Bool> {
         return binding({ Preferences.automaticallyChecksForUpdates }) { Preferences.automaticallyChecksForUpdates = $0 }
     }
@@ -386,6 +435,12 @@ struct GeneralSettingsView: View {
                         ForEach(model.iconSpacingChoices, id: \.self) { level in
                             Text(verbatim: Self.title(of: level)).tag(level)
                         }
+                    }
+                    HStack {
+                        Spacer()
+                        Button("Restart Menu Bar Apps…".localized) { model.restartMenuBarApps() }
+                            .controlSize(.small)
+                            .disabled(model.isAccessibilityPermissionMissing || model.isRestartingApps)
                     }
                 } footer: {
                     Text(verbatim: "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere.".localized)

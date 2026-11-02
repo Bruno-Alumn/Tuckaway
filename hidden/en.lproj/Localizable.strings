@@ -169,3 +169,9 @@
 "Tight" = "Tight";
 "Custom" = "Custom";
 "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere." = "Changes the space between all menu bar icons, not only Tuckaway's. Each app uses the new spacing the next time it opens; log out and back in to apply it everywhere.";
+"Restart Menu Bar Apps…" = "Restart Menu Bar Apps…";
+"No other apps have menu bar icons to restart." = "No other apps have menu bar icons to restart.";
+"Restart apps with menu bar icons?" = "Restart apps with menu bar icons?";
+"These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first." = "These apps will quit and reopen so they use the new spacing: %@. An app with unsaved work may ask you first.";
+"Restart Apps" = "Restart Apps";
+"Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing.";
