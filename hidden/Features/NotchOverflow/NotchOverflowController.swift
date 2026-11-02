@@ -64,11 +64,19 @@ enum NotchGeometry {
 /// from AX enumeration so the sorting/filtering rules are testable without
 /// a live Accessibility permission or other running apps.
 enum MenuBarExtraClassifier {
+  /// `screen` is the notched display's Accessibility frame: an icon on
+  /// another display can't be behind this notch, whatever its x.
   static func classify(
     _ extras: [MenuBarExtraInfo],
-    boundary: CGFloat
+    boundary: CGFloat,
+    screen: CGRect? = nil
   ) -> (hidden: [MenuBarExtraInfo], visible: [MenuBarExtraInfo]) {
-    let renderable = extras.filter { $0.size.width > 0 && $0.size.height > 0 }
+    let renderable = extras.filter { extra in
+      guard extra.size.width > 0 && extra.size.height > 0 else { return false }
+      guard let screen else { return true }
+      return screen.insetBy(dx: -1, dy: -1).contains(CGPoint(x: extra.position.x + extra.size.width / 2,
+                                                             y: extra.position.y + extra.size.height / 2))
+    }
     let hidden = renderable
       .filter { $0.position.x < boundary }
       .sorted { $0.position.x > $1.position.x }
@@ -98,6 +106,14 @@ class NotchOverflowController: NSObject {
     )
   }
 
+  // The notched display in Accessibility coordinates, to leave out icons on
+  // other displays. Nil with a single display, where there is nothing to leave out.
+  private static func notchedScreenAccessibilityFrame() -> CGRect? {
+    let screens = NSScreen.screens
+    guard screens.count > 1, let index = screens.firstIndex(where: { $0.safeAreaInsets.top > 0 }) else { return nil }
+    return MenuBarDisplayInventory.displays(screens.map { ("", $0.frame) })[index].accessibilityFrame
+  }
+
   static var hasNotch: Bool {
     currentBoundary().hasNotch
   }
@@ -121,7 +137,8 @@ class NotchOverflowController: NSObject {
   ) -> NSMenu {
     let allExtras = extras ?? getAllMenuBarExtras()
     let resolvedBoundary = boundary ?? Self.currentBoundary().overflowThresholdX
-    let (hiddenExtras, visibleExtras) = MenuBarExtraClassifier.classify(allExtras, boundary: resolvedBoundary)
+    let (hiddenExtras, visibleExtras) = MenuBarExtraClassifier.classify(allExtras, boundary: resolvedBoundary,
+                                                                        screen: extras == nil ? Self.notchedScreenAccessibilityFrame() : nil)
 
     let menu = NSMenu()
     menu.autoenablesItems = false
