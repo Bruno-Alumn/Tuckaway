@@ -176,3 +176,18 @@
 "Restart Apps" = "Ponovno pokreni";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Neke se aplikacije nisu zatvorile: %@. Zatvorite ih i ponovno otvorite sami da biste koristili novi razmak.";
 "Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Pritisnite prečac profila da biste se prebacili na njega, a ponovno ga pritisnite za povratak na strelicu.";
+
+/* Editing profiles in Settings › General */
+"Rename this profile" = "Preimenuj ovaj profil";
+"Rename" = "Preimenuj";
+"A profile named “%@” already exists." = "Profil „%@” već postoji.";
+"Delete the profile “%@”?" = "Obrisati profil „%@”?";
+"Delete" = "Obriši";
+"Rename…" = "Preimenuj…";
+"Use Current Layout" = "Koristi trenutni raspored";
+"Remove App" = "Ukloni aplikaciju";
+"Delete Profile…" = "Obriši profil…";
+"Edit %@" = "Uredi %@";
+"Edit Profile" = "Uredi profil";
+"No apps" = "Nema aplikacija";
+"%@ and %d more" = "%@ i još %d";

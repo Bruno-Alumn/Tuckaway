@@ -374,6 +374,23 @@ struct MenuBarProfiles: Equatable {
         active = active == name ? nil : name
     }
 
+    // Everything that refers to the profile by name follows it. Refused when
+    // the new name is empty or another profile has it.
+    mutating func rename(_ name: String, to newName: String) -> Bool {
+        guard let apps = profiles[name], !newName.isEmpty, newName == name || profiles[newName] == nil else { return false }
+        profiles[name] = nil
+        profiles[newName] = apps
+        if active == name { active = newName }
+        if displayProfile == name { displayProfile = newName }
+        if beforeDisplay == .from(name) { beforeDisplay = .from(newName) }
+        return true
+    }
+
+    mutating func setApps(_ apps: [String], for name: String) {
+        guard profiles[name] != nil else { return }
+        profiles[name] = apps.sorted()
+    }
+
     mutating func delete(_ name: String) {
         if displayProfile == name { setDisplayProfile(nil) }
         profiles[name] = nil

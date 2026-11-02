@@ -1675,6 +1675,10 @@ extension StatusBarController {
 
     @objc private func deleteProfile(_ sender: NSMenuItem) {
         guard let name = sender.representedObject as? String else { return }
+        deleteProfile(named: name)
+    }
+
+    func deleteProfile(named name: String) {
         var profiles = profilesStore.profiles
         profiles.delete(name)
         applyProfiles(profiles)
@@ -1684,6 +1688,40 @@ extension StatusBarController {
             Preferences.profileShortcuts = shortcuts
             (NSApp.delegate as? AppDelegate)?.registerProfileHotKeys()
         }
+    }
+
+    // From Settings. The shortcut moves with the name.
+    func renameProfile(_ name: String, to newName: String) -> Bool {
+        var profiles = profilesStore.profiles
+        guard profiles.rename(name, to: newName) else { return false }
+        applyProfiles(profiles)
+        var shortcuts = Preferences.profileShortcuts
+        if name != newName, let shortcut = shortcuts.removeValue(forKey: name) {
+            shortcuts[newName] = shortcut
+            Preferences.profileShortcuts = shortcuts
+            (NSApp.delegate as? AppDelegate)?.registerProfileHotKeys()
+        }
+        return true
+    }
+
+    // Replaces the profile's apps with what the collapsed bar shows now, the
+    // way saving it did. Calls back with false when nothing could be read.
+    func updateProfileToCurrentLayout(_ name: String, completion: @escaping (Bool) -> Void) {
+        guard let engine = menuBarEngine as? ProfileApplying else { return completion(false) }
+        engine.readVisibleApps { [weak self] apps in
+            guard let self, let apps else { return completion(false) }
+            var profiles = self.profilesStore.profiles
+            profiles.setApps(apps, for: name)
+            self.applyProfiles(profiles)
+            completion(true)
+        }
+    }
+
+    func removeApp(_ bundle: String, fromProfile name: String) {
+        var profiles = profilesStore.profiles
+        guard let apps = profiles.profiles[name] else { return }
+        profiles.setApps(apps.filter { $0 != bundle }, for: name)
+        applyProfiles(profiles)
     }
 
     // A profile's shortcut.

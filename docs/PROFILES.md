@@ -2,7 +2,8 @@
 
 Status: built (macOS 27) with these defaults for the **Decide** points, which
 the owner can still change: a profile only affects the collapsed bar; Settings
-only holds the profiles' shortcuts (no rename or editing yet); Keep Visible adds
+holds each profile's shortcut and a ⋯ menu to rename it, replace its apps with
+the current layout, remove one app or delete it; Keep Visible adds
 the app to the active profile. Not built yet: switching by Focus or time.
 Switching on a display connection and a shortcut per profile are built. The engine took a narrower route than `setVisibleOverride`:
 `ProfileApplying.setProfile` feeds the effective layout, and presentation mode

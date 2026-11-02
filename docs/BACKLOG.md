@@ -69,8 +69,8 @@ before merging.
 - **#207 show the clock/date when collapsed.** The loudest single feature request.
 - **#229 activity-based reveal.** Needs a design that notices changing icon content
   without continuously expanding the real menu bar.
-- **Profiles, next steps.** Switching by Focus or time of day, and renaming or
-  editing a profile in Settings ([PROFILES.md](PROFILES.md)).
+- **Profiles, next steps.** Switching by Focus or time of day
+  ([PROFILES.md](PROFILES.md)).
 - **Always-hidden section rework.** Always-hidden items are only reliably hidden when
   "hide separators" is on (see the note in [MANUAL.md](MANUAL.md)). Decouple the two
   and add a way to recover a stuck off-screen item. Reproduce #242 (permanent icon

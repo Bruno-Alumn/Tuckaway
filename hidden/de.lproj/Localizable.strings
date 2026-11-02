@@ -176,3 +176,18 @@
 "Restart Apps" = "Apps neu starten";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Einige Apps wurden nicht beendet: %@. Beende sie und öffne sie erneut, um den neuen Abstand zu verwenden.";
 "Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Drücke den Kurzbefehl eines Profils, um zu ihm zu wechseln, und drücke ihn erneut, um zum Pfeil zurückzukehren.";
+
+/* Editing profiles in Settings › General */
+"Rename this profile" = "Profil umbenennen";
+"Rename" = "Umbenennen";
+"A profile named “%@” already exists." = "Es gibt bereits ein Profil namens „%@“.";
+"Delete the profile “%@”?" = "Profil „%@“ löschen?";
+"Delete" = "Löschen";
+"Rename…" = "Umbenennen …";
+"Use Current Layout" = "Aktuelles Layout verwenden";
+"Remove App" = "App entfernen";
+"Delete Profile…" = "Profil löschen …";
+"Edit %@" = "%@ bearbeiten";
+"Edit Profile" = "Profil bearbeiten";
+"No apps" = "Keine Apps";
+"%@ and %d more" = "%@ und %d weitere";

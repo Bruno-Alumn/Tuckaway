@@ -84,6 +84,12 @@ profile, and pressing it again goes back to the arrow. Keys already used by
 another Tuckaway shortcut are refused with a beep, deleting a profile drops its
 shortcut, and the shortcuts are included in Export Settings.
 
+The **⋯** button next to each profile in Settings edits it. **Rename…** changes
+its name (its shortcut and display switching follow), **Use Current Layout**
+replaces its apps with the ones the collapsed bar shows now, **Remove App**
+takes one app out, and **Delete Profile…** removes it after asking. Each row
+lists the profile's apps under its name.
+
 #### Presentation Mode
 
 **Presentation Mode** in the arrow's menu (or its shortcut) hides every app's

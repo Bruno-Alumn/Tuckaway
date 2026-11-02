@@ -1360,6 +1360,32 @@ final class MenuBarProfilesTests: XCTestCase {
         XCTAssertNil(profiles.activeApps)
     }
 
+    func testRenamingMovesEveryReferenceToTheProfile() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"], "Home": ["com.b"]], active: "Work",
+                                       displayProfile: "Work", beforeDisplay: .from("Work"))
+        XCTAssertTrue(profiles.rename("Work", to: "Office"))
+        XCTAssertEqual(profiles, MenuBarProfiles(profiles: ["Office": ["com.a"], "Home": ["com.b"]], active: "Office",
+                                                 displayProfile: "Office", beforeDisplay: .from("Office")))
+    }
+
+    func testRenamingRefusesATakenOrEmptyName() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"], "Home": ["com.b"]], active: "Home")
+        let before = profiles
+        XCTAssertFalse(profiles.rename("Work", to: "Home"))
+        XCTAssertFalse(profiles.rename("Work", to: ""))
+        XCTAssertFalse(profiles.rename("Missing", to: "New"))
+        XCTAssertEqual(profiles, before)
+        XCTAssertTrue(profiles.rename("Work", to: "Work"))
+        XCTAssertEqual(profiles, before)
+    }
+
+    func testSettingAppsOnlyChangesAnExistingProfile() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"]])
+        profiles.setApps(["com.c", "com.b"], for: "Work")
+        profiles.setApps(["com.d"], for: "Missing")
+        XCTAssertEqual(profiles.profiles, ["Work": ["com.b", "com.c"]])
+    }
+
     func testAProfileDecidesWhatShowsButKeepsAlwaysHidden() {
         let layout = MenuBarLayout(sections: ["com.a": .visible, "com.b": .hidden, "com.c": .alwaysHidden, "com.new": .hidden])
         // com.c is in the profile, but moving it to Always Hidden wins.

@@ -176,3 +176,18 @@
 "Restart Apps" = "Yeniden Başlat";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Bazı uygulamalar kapanmadı: %@. Yeni aralığı kullanmaları için onları kendiniz kapatıp yeniden açın.";
 "Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Bir profile geçmek için kısayoluna basın, oka geri dönmek için yeniden basın.";
+
+/* Editing profiles in Settings › General */
+"Rename this profile" = "Bu profili yeniden adlandırın";
+"Rename" = "Yeniden Adlandır";
+"A profile named “%@” already exists." = "“%@” adlı bir profil zaten var.";
+"Delete the profile “%@”?" = "“%@” profili silinsin mi?";
+"Delete" = "Sil";
+"Rename…" = "Yeniden Adlandır…";
+"Use Current Layout" = "Şu Anki Yerleşimi Kullan";
+"Remove App" = "Uygulamayı Kaldır";
+"Delete Profile…" = "Profili Sil…";
+"Edit %@" = "%@ profilini düzenle";
+"Edit Profile" = "Profili Düzenle";
+"No apps" = "Uygulama yok";
+"%@ and %d more" = "%@ ve %d tane daha";

@@ -235,6 +235,7 @@ final class GeneralSettingsModel: ObservableObject {
     // Profile names in menu order, and each one's shortcut.
     @Published private(set) var profileNames: [String] = []
     @Published private(set) var profileShortcutTitles: [String: String] = [:]
+    @Published private(set) var profileApps: [String: [String]] = [:]
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
 
     var onRecordShortcut: (ShortcutKind) -> Void = { _ in }
@@ -247,8 +248,56 @@ final class GeneralSettingsModel: ObservableObject {
     }
 
     func refreshProfiles() {
-        profileNames = StatusBarController.supportsPresentationMode ? UserDefaultsMenuBarProfilesStore().profiles.names : []
+        let profiles = StatusBarController.supportsPresentationMode ? UserDefaultsMenuBarProfilesStore().profiles : MenuBarProfiles()
+        profileNames = profiles.names
+        profileApps = profiles.profiles
         profileShortcutTitles = Preferences.profileShortcuts.mapValues(\.description)
+    }
+
+    private var statusBarController: StatusBarController? {
+        (NSApp.delegate as? AppDelegate)?.statusBarController
+    }
+
+    func renameProfile(_ name: String) {
+        let alert = NSAlert()
+        alert.messageText = "Rename this profile".localized
+        let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 240, height: 24))
+        field.stringValue = name
+        alert.accessoryView = field
+        alert.addButton(withTitle: "Rename".localized)
+        alert.addButton(withTitle: "Cancel".localized)
+        alert.window.initialFirstResponder = field
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        let newName = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !newName.isEmpty, newName != name else { return }
+        if statusBarController?.renameProfile(name, to: newName) != true {
+            Self.inform(String(format: "A profile named “%@” already exists.".localized, newName))
+        }
+    }
+
+    func updateProfileToCurrentLayout(_ name: String) {
+        statusBarController?.updateProfileToCurrentLayout(name) { updated in
+            if !updated { NSSound.beep() }
+        }
+    }
+
+    func removeApp(_ bundle: String, fromProfile name: String) {
+        statusBarController?.removeApp(bundle, fromProfile: name)
+    }
+
+    func deleteProfile(_ name: String) {
+        let confirm = NSAlert()
+        confirm.messageText = String(format: "Delete the profile “%@”?".localized, name)
+        confirm.addButton(withTitle: "Delete".localized)
+        confirm.addButton(withTitle: "Cancel".localized)
+        guard confirm.runModal() == .alertFirstButtonReturn else { return }
+        statusBarController?.deleteProfile(named: name)
+    }
+
+    // An app's name as Finder shows it, or its bundle ID if it isn't installed.
+    static func appName(_ bundle: String) -> String {
+        guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle) else { return bundle }
+        return FileManager.default.displayName(atPath: url.path).replacingOccurrences(of: ".app", with: "")
     }
 
     func binding(_ get: @escaping () -> Bool, _ set: @escaping (Bool) -> Void) -> Binding<Bool> {
@@ -455,7 +504,15 @@ struct GeneralSettingsView: View {
             if !model.profileNames.isEmpty {
                 Section {
                     ForEach(model.profileNames, id: \.self) { name in
-                        LabeledContent { shortcutRecorder(.profile(name)) } label: { Text(verbatim: name) }
+                        LabeledContent {
+                            HStack(spacing: 6) {
+                                shortcutRecorder(.profile(name))
+                                profileMenu(name)
+                            }
+                        } label: {
+                            Text(verbatim: name)
+                            Text(verbatim: profileAppsSummary(name))
+                        }
                     }
                 } header: {
                     Text(verbatim: Self.label("Profiles"))
@@ -578,6 +635,37 @@ struct GeneralSettingsView: View {
             }
             .controlSize(.small)
         }
+    }
+
+    private func profileMenu(_ name: String) -> some View {
+        Menu {
+            Button("Rename…".localized) { model.renameProfile(name) }
+            Button("Use Current Layout".localized) { model.updateProfileToCurrentLayout(name) }
+            Menu("Remove App".localized) {
+                ForEach(model.profileApps[name] ?? [], id: \.self) { bundle in
+                    Button(GeneralSettingsModel.appName(bundle)) { model.removeApp(bundle, fromProfile: name) }
+                }
+            }
+            .disabled((model.profileApps[name] ?? []).isEmpty)
+            Divider()
+            Button("Delete Profile…".localized) { model.deleteProfile(name) }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .accessibilityLabel(String(format: "Edit %@".localized, name))
+        .help("Edit Profile".localized)
+    }
+
+    // "Slack, Calendar and 2 more", or "No apps".
+    private func profileAppsSummary(_ name: String) -> String {
+        let names = (model.profileApps[name] ?? []).map(GeneralSettingsModel.appName)
+            .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        guard !names.isEmpty else { return "No apps".localized }
+        guard names.count > 3 else { return ListFormatter.localizedString(byJoining: names) }
+        return String(format: "%@ and %d more".localized, names.prefix(2).joined(separator: ", "), names.count - 2)
     }
 
     private func shortcutRecorder(_ kind: ShortcutKind) -> some View {

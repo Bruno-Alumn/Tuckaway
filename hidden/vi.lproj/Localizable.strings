@@ -174,3 +174,18 @@
 "Restart Apps" = "Khởi động lại";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "Một số ứng dụng chưa thoát: %@. Hãy tự thoát và mở lại chúng để dùng khoảng cách mới.";
 "Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "Nhấn phím tắt của một hồ sơ để chuyển sang hồ sơ đó, và nhấn lại để quay về mũi tên.";
+
+/* Editing profiles in Settings › General */
+"Rename this profile" = "Đổi tên hồ sơ này";
+"Rename" = "Đổi tên";
+"A profile named “%@” already exists." = "Đã có hồ sơ tên “%@”.";
+"Delete the profile “%@”?" = "Xoá hồ sơ “%@”?";
+"Delete" = "Xoá";
+"Rename…" = "Đổi tên…";
+"Use Current Layout" = "Dùng bố cục hiện tại";
+"Remove App" = "Gỡ ứng dụng";
+"Delete Profile…" = "Xoá hồ sơ…";
+"Edit %@" = "Sửa %@";
+"Edit Profile" = "Sửa hồ sơ";
+"No apps" = "Không có ứng dụng";
+"%@ and %d more" = "%@ và %d ứng dụng khác";

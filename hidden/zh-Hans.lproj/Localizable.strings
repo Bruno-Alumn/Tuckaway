@@ -174,3 +174,18 @@
 "Restart Apps" = "重新启动 App";
 "Some apps didn't quit: %@. Quit and reopen them yourself to use the new spacing." = "部分 App 未退出：%@。请自行退出并重新打开它们以使用新间距。";
 "Press a profile's shortcut to switch to it, and press it again to go back to the arrow." = "按下配置文件的快捷键可切换到该配置文件，再按一次可返回到箭头。";
+
+/* Editing profiles in Settings › General */
+"Rename this profile" = "重命名此配置文件";
+"Rename" = "重命名";
+"A profile named “%@” already exists." = "已有名为“%@”的配置文件。";
+"Delete the profile “%@”?" = "要删除配置文件“%@”吗?";
+"Delete" = "删除";
+"Rename…" = "重命名…";
+"Use Current Layout" = "使用当前布局";
+"Remove App" = "移除App";
+"Delete Profile…" = "删除配置文件…";
+"Edit %@" = "编辑“%@”";
+"Edit Profile" = "编辑配置文件";
+"No apps" = "没有App";
+"%@ and %d more" = "%@及另外%d个";
