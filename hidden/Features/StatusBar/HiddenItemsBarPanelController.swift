@@ -6,6 +6,7 @@
 //
 
 import AppKit
+import ScreenCaptureKit
 
 struct HiddenItemsBarCapture {
     let items: [HiddenItemsBarItem]
@@ -13,6 +14,10 @@ struct HiddenItemsBarCapture {
     let separatorFrame: CGRect
     let menuBarOverlayFrame: CGRect
     let prefersDarkBackground: Bool
+    // macOS 27 captures include the menu bar behind each icon. The panel is
+    // filled with a sliver of that same capture, stretched, so the icons don't
+    // look like tiles; a sampled color comes out a shade off.
+    var backgroundImage: NSImage? = nil
 }
 
 struct HiddenItemsBarItem {
@@ -62,6 +67,7 @@ final class HiddenItemsBarPanelController: NSObject {
 
     func show(capture: HiddenItemsBarCapture, clickHandler: @escaping (CGFloat) -> Void) {
         contentView.prefersDarkBackground = capture.prefersDarkBackground
+        contentView.backgroundImage = capture.backgroundImage
         contentView.configure(items: capture.items, clickHandler: clickHandler)
 
         let contentSize = contentView.preferredContentSize
@@ -87,6 +93,85 @@ final class HiddenItemsBarPanelController: NSObject {
 
     func hide() {
         panel.orderOut(nil)
+    }
+}
+
+// Holds a still image of part of the menu bar over the real one, so the hidden
+// icons macOS 27 shows for a capture or a click don't flash.
+final class HiddenItemsBarFreezeController: NSObject {
+    private let panel: NSPanel
+    private let imageView = NSImageView(frame: .zero)
+
+    override init() {
+        panel = NSPanel(
+            contentRect: .zero,
+            styleMask: [.borderless, .nonactivatingPanel],
+            backing: .buffered,
+            defer: true
+        )
+        super.init()
+
+        imageView.imageScaling = .scaleAxesIndependently
+        panel.contentView = imageView
+        panel.backgroundColor = .clear
+        panel.hasShadow = false
+        panel.hidesOnDeactivate = false
+        panel.isMovable = false
+        panel.isOpaque = false
+        panel.isReleasedWhenClosed = false
+        panel.level = .screenSaver
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
+        panel.ignoresMouseEvents = true
+    }
+
+    func show(_ image: CGImage, frame: CGRect) {
+        imageView.image = NSImage(cgImage: image, size: frame.size)
+        panel.setFrame(frame, display: true)
+        panel.orderFrontRegardless()
+    }
+
+    func hide() {
+        panel.orderOut(nil)
+        imageView.image = nil
+    }
+}
+
+// Captures part of the menu bar. macOS 27 draws status items into the menu
+// bar's own window, so per-item windows, which the older capture used, no
+// longer exist.
+@available(macOS 14.0, *)
+enum MenuBarStripCapture {
+    // `rect` is in Accessibility coordinates. Leaving out Tuckaway's own
+    // windows lets the capture see past the still image covering the bar.
+    // Completes on the main queue with the image and its pixels per point.
+    static func image(of rect: CGRect, on display: MenuBarDisplay, excludingOwnWindows: Bool,
+                      completion: @escaping (CGImage?, CGFloat) -> Void) {
+        let finish = { (image: CGImage?, scale: CGFloat) in
+            DispatchQueue.main.async { completion(image, scale) }
+        }
+        SCShareableContent.getExcludingDesktopWindows(false, onScreenWindowsOnly: true) { content, error in
+            guard let content,
+                  let scDisplay = content.displays.first(where: { String($0.displayID) == display.identifier })
+            else {
+                NSLog("SeparateBar: no display to capture: \(error?.localizedDescription ?? "not listed")")
+                return finish(nil, 1)
+            }
+            let ownPID = ProcessInfo.processInfo.processIdentifier
+            let excluded = excludingOwnWindows ? content.applications.filter { $0.processID == ownPID } : []
+            let filter = SCContentFilter(display: scDisplay, excludingApplications: excluded, exceptingWindows: [])
+            let scale = CGFloat(filter.pointPixelScale)
+            let configuration = SCStreamConfiguration()
+            configuration.sourceRect = rect.offsetBy(dx: -display.accessibilityFrame.minX, dy: -display.accessibilityFrame.minY)
+            configuration.width = Int((rect.width * scale).rounded())
+            configuration.height = Int((rect.height * scale).rounded())
+            configuration.showsCursor = false
+            SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration) { image, error in
+                if let error {
+                    NSLog("SeparateBar: capture failed: \(error.localizedDescription)")
+                }
+                finish(image, scale)
+            }
+        }
     }
 }
 
@@ -239,6 +324,7 @@ final class HiddenItemsBarView: NSView {
     private var itemRects: [CGRect] = []
     private var clickHandler: ((CGFloat) -> Void)?
     var prefersDarkBackground = false
+    var backgroundImage: NSImage?
 
     var preferredContentSize: CGSize {
         let itemWidth = items.reduce(CGFloat(0)) { $0 + max($1.image.size.width, 1) }
@@ -261,8 +347,15 @@ final class HiddenItemsBarView: NSView {
         super.draw(dirtyRect)
 
         let path = NSBezierPath(roundedRect: bounds, xRadius: 8, yRadius: 8)
-        panelBackgroundColor.setFill()
-        path.fill()
+        if let backgroundImage {
+            NSGraphicsContext.saveGraphicsState()
+            path.addClip()
+            backgroundImage.draw(in: bounds, from: .zero, operation: .copy, fraction: 1)
+            NSGraphicsContext.restoreGraphicsState()
+        } else {
+            panelBackgroundColor.setFill()
+            path.fill()
+        }
 
         let strokeColor = prefersDarkBackground ? NSColor.white.withAlphaComponent(0.28) : NSColor.separatorColor
         strokeColor.withAlphaComponent(0.35).setStroke()

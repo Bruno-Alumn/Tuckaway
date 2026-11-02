@@ -46,6 +46,17 @@ protocol MenuBarEngine: AnyObject {
     func invalidateLayout()
 }
 
+// macOS 27's separate hidden-items bar: macOS draws status items into the menu
+// bar itself, so the bar shows the hidden section for a moment to capture it,
+// and again to click one of its icons, without leaving the collapsed state.
+protocol HiddenSectionPeeking: AnyObject {
+    // Accessibility frames (top-left origin) of the hidden section's icons.
+    var hiddenItems: [MenuBarInventoryItem] { get }
+    var isPeeking: Bool { get }
+    func peekHiddenSection(completion: @escaping (Bool) -> Void)
+    func endPeek()
+}
+
 enum MenuBarEngineState {
     case expanded
     case calibrating

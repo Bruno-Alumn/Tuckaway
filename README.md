@@ -88,7 +88,7 @@ open it from the arrow’s menu or with <kbd>⌘</kbd><kbd>,</kbd>.
 
 - Keep rarely used icons in a separate, always-hidden section.
 - Find icons hidden behind a camera notch.
-- Show hidden icons in a floating bar on macOS 13–26.
+- Show hidden icons in a floating bar under the menu bar.
 
 **A tool you can make your own**
 
