@@ -32,6 +32,12 @@ section is enabled.
   & Security), called **Accessibility** on earlier macOS versions, to see where
   your icons are. Without it the bar stays expanded.
 - Hiding is per app: an app with several icons hides or shows them together.
+- **New apps are asked about.** macOS puts a new app's icon on the hidden side.
+  Tuckaway keeps it showing and asks under the arrow whether to keep it
+  visible. **Keep Visible** keeps that app showing wherever its icon sits (Menu
+  Bar Items lists it under Visible; drag it to Hidden there to undo).
+  **Hide** hides it like the rest. A helper that shows an icon and quits takes
+  its question with it.
 - These macOS items always stay visible: clock, Control Center, Wi-Fi,
   Bluetooth, Sound, Battery, Display, Keyboard and Screen Mirroring.
 - With more than one display, an app stays visible if it is on the arrow's
@@ -189,7 +195,7 @@ To undo any of them: `defaults delete com.brunoalumn.tuckaway <key>`.
 | Hiding stopped after an update | Expected once, when updating from 1.1.0 or earlier. In System Settings › Privacy & Security › Accessibility (Device Control and Data Access on macOS 27), remove Tuckaway with the − button, then open Tuckaway and allow it again |
 | "Check for Updates" says it couldn't check | Check your internet connection. GitHub's API also limits anonymous requests per hour, so try again later. |
 | A fast ⌘-drag springs back to where it started, or the bar stalls for a moment | macOS 27 behaviour; it happens with Tuckaway quit too. Drag steadily: press, pause briefly, then move. Or drag the icon in Settings › Menu Bar Items, and Tuckaway does the drag for you |
-| A new or just-updated app's icon shows up already hidden | Expected, see "Why new icons start hidden" below; ⌘-drag it to the right of the separator (the arrow on macOS 27) once, or move it in Settings › Menu Bar Items |
+| A new or just-updated app's icon shows up already hidden | Expected, see "Why new icons start hidden" below; ⌘-drag it to the right of the separator once, or move it in Settings › Menu Bar Items. On macOS 27 Tuckaway asks about new apps instead |
 
 ### Why new icons start hidden
 
@@ -198,9 +204,10 @@ it slides off-screen. macOS always inserts a brand-new menu-bar icon at the
 far-left slot, which is inside that hidden zone, so a freshly launched or updated
 app can appear "swallowed". This is macOS positioning behavior, not Tuckaway
 moving your icon: there is no way for one app to reposition another app's menu-bar
-icon. The one-time fix is to ⌘-drag the icon to the right of the separator (the
-arrow on macOS 27), or drag it to **Visible** in Settings › Menu Bar Items;
-macOS remembers that placement per app.
+icon. The one-time fix is to ⌘-drag the icon to the right of the separator, or
+drag it to **Visible** in Settings › Menu Bar Items; macOS remembers that
+placement per app. On macOS 27 (direct download) Tuckaway notices new apps and
+asks whether to keep them visible, so their icons don't vanish unseen.
 
 ## Requirements
 

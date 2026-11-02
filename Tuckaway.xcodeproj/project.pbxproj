@@ -30,6 +30,7 @@
 		73B9E6554B24487EA995C7C3 /* MenuBarLayoutResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE30458A6074188B93CD466 /* MenuBarLayoutResolverTests.swift */; };
 		8557996B406181A91CBF5917 /* MenuBarExtraClassifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6D80CB37CBB7622AC8455D /* MenuBarExtraClassifierTests.swift */; };
 		6C0A10012DEBF00100A5E001 /* HiddenItemsBarPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C0A10002DEBF00100A5E001 /* HiddenItemsBarPanelController.swift */; };
+		AABBDD1122334455667788B2 /* NewMenuBarAppPromptController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD1122334455667788B1 /* NewMenuBarAppPromptController.swift */; };
 		929113F521F9D04100173149 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 929113F421F9D04100173149 /* AppDelegate.swift */; };
 		929113F921F9D04200173149 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 929113F821F9D04200173149 /* Assets.xcassets */; };
 		929113FC21F9D04200173149 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 929113FA21F9D04200173149 /* Main.storyboard */; };
@@ -125,6 +126,7 @@
 		6B6D80CB37CBB7622AC8455D /* MenuBarExtraClassifierTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MenuBarExtraClassifierTests.swift; sourceTree = "<group>"; };
 		6F2F828CAAE82A4D34BDDCBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		6C0A10002DEBF00100A5E001 /* HiddenItemsBarPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenItemsBarPanelController.swift; sourceTree = "<group>"; };
+		AABBDD1122334455667788B1 /* NewMenuBarAppPromptController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMenuBarAppPromptController.swift; sourceTree = "<group>"; };
 		9220587D22127050008A8B03 /* Hidden.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Hidden.entitlements; path = Hidden/Hidden.entitlements; sourceTree = "<group>"; };
 		929113F121F9D04100173149 /* Tuckaway.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tuckaway.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		929113F421F9D04100173149 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -253,6 +255,7 @@
 				6171C0428FE84918BC3FBD91 /* ExpandCollapseAction.swift */,
 				07588662B80C4ACD927C6AF4 /* AccessibilityPermissionTransition.swift */,
 				6C0A10002DEBF00100A5E001 /* HiddenItemsBarPanelController.swift */,
+				AABBDD1122334455667788B1 /* NewMenuBarAppPromptController.swift */,
 			);
 			path = StatusBar;
 			sourceTree = "<group>";
@@ -612,6 +615,7 @@
 				800F5C1749A0BF5F18E5CB1E /* MenuBarEngineFactory.swift in Sources */,
 				7B3502A74602F87B6207E929 /* LegacyLengthEngine.swift in Sources */,
 				6C0A10012DEBF00100A5E001 /* HiddenItemsBarPanelController.swift in Sources */,
+				AABBDD1122334455667788B2 /* NewMenuBarAppPromptController.swift in Sources */,
 				08B9F32C2411883300AA0551 /* NSWindow+Extension.swift in Sources */,
 				929113F521F9D04100173149 /* AppDelegate.swift in Sources */,
 				92C97B88220032ED0007559C /* Util.swift in Sources */,

@@ -65,4 +65,4 @@ settings layout overlap (#355, Settings redesign); notch overflow and the separa
 hidden-items bar; native macOS 27 hiding (#360); automatic updates (#220, #197);
 certificate-signed releases (1.2.0); every string translated into all 13 languages,
 enforced by `LocalizationTests`; an Always Hidden list in Menu Bar Items; the separate
-hidden-items bar on macOS 27.
+hidden-items bar on macOS 27; new apps asked about instead of hidden unseen (macOS 27).
