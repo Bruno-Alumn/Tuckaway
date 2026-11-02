@@ -204,3 +204,13 @@
 
 /* Revealing hidden icons that change (#229) */
 "Show hidden icons briefly when they change" = "Hiện nhanh các biểu tượng bị ẩn khi chúng thay đổi";
+
+/* Menu bar spacers (#159) */
+"Spacers" = "Khoảng trống";
+"None" = "Không có";
+"Spacer width" = "Độ rộng khoảng trống";
+"Narrow" = "Hẹp";
+"Medium" = "Vừa";
+"Wide" = "Rộng";
+"Hold ⌘ and drag a spacer between icons to group them." = "Giữ ⌘ và kéo một khoảng trống vào giữa các biểu tượng để nhóm chúng.";
+"Spacer" = "Khoảng trống";

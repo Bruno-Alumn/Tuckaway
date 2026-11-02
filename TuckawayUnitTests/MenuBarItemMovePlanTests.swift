@@ -276,3 +276,18 @@ final class ActivityRevealTests: XCTestCase {
         XCTAssertEqual(reads, 2)
     }
 }
+
+final class MenuBarSpacersTests: XCTestCase {
+    func testOnlyHiddenSideSpacersShrinkWhileCollapsed() {
+        let frames: [CGFloat] = [100, 300, 500]
+        XCTAssertEqual(MenuBarSpacers.lengths(spacerMinX: frames, arrowMinX: 400, isLTR: true,
+                                              collapsed: true, width: .medium), [0, 0, 16])
+        XCTAssertEqual(MenuBarSpacers.lengths(spacerMinX: frames, arrowMinX: 400, isLTR: true,
+                                              collapsed: false, width: .wide), [32, 32, 32])
+    }
+
+    func testRightToLeftHidesTheOtherSide() {
+        XCTAssertEqual(MenuBarSpacers.lengths(spacerMinX: [100, 500], arrowMinX: 400, isLTR: false,
+                                              collapsed: true, width: .narrow), [8, 0])
+    }
+}

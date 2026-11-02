@@ -206,3 +206,13 @@
 
 /* Revealing hidden icons that change (#229) */
 "Show hidden icons briefly when they change" = "Gizli simgeler değiştiğinde kısa süre göster";
+
+/* Menu bar spacers (#159) */
+"Spacers" = "Boşluklar";
+"None" = "Yok";
+"Spacer width" = "Boşluk genişliği";
+"Narrow" = "Dar";
+"Medium" = "Orta";
+"Wide" = "Geniş";
+"Hold ⌘ and drag a spacer between icons to group them." = "Simgeleri gruplamak için ⌘ tuşunu basılı tutup bir boşluğu simgelerin arasına sürükleyin.";
+"Spacer" = "Boşluk";

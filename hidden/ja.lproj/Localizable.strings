@@ -204,3 +204,13 @@
 
 /* Revealing hidden icons that change (#229) */
 "Show hidden icons briefly when they change" = "隠したアイコンが変化したときに一時的に表示";
+
+/* Menu bar spacers (#159) */
+"Spacers" = "スペーサー";
+"None" = "なし";
+"Spacer width" = "スペーサーの幅";
+"Narrow" = "狭い";
+"Medium" = "中";
+"Wide" = "広い";
+"Hold ⌘ and drag a spacer between icons to group them." = "⌘キーを押したままスペーサーをアイコンの間にドラッグすると、アイコンをグループ分けできます。";
+"Spacer" = "スペーサー";

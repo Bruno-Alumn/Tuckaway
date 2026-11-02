@@ -204,3 +204,13 @@
 
 /* Revealing hidden icons that change (#229) */
 "Show hidden icons briefly when they change" = "隱藏的圖像變化時短暫顯示";
+
+/* Menu bar spacers (#159) */
+"Spacers" = "間隔";
+"None" = "無";
+"Spacer width" = "間隔寬度";
+"Narrow" = "窄";
+"Medium" = "中";
+"Wide" = "寬";
+"Hold ⌘ and drag a spacer between icons to group them." = "按住 ⌘ 並將間隔拖到圖像之間,即可將圖像分組。";
+"Spacer" = "間隔";

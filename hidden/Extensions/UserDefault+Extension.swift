@@ -26,6 +26,8 @@ extension UserDefaults {
         static let hoverToExpand = "hoverToExpand"
         static let showActiveAppIcon = "showActiveAppIcon"
         static let revealIconsOnActivity = "revealIconsOnActivity"
+        static let spacerCount = "menuBarSpacerCount"
+        static let spacerWidth = "menuBarSpacerWidth"
         static let clickEmptyMenuBarToToggle = "clickEmptyMenuBarToToggle"
         static let expandWhenExternalDisplayConnected = "expandWhenExternalDisplayConnected"
         static let notchOverflowEnabled = "notchOverflowEnabled"
