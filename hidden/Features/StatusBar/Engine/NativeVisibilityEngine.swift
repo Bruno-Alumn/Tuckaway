@@ -41,10 +41,12 @@ import AppKit
 //   mapped to sections. SystemUIServer's legacy Menu Extras (Time Machine...)
 //   are the exception: none was observed with a system item identifier, so they
 //   are sectioned per bundle instead.
-// - Sections are read only while nothing is hidden, because hidden items report
-//   stale positions. They are re-read on the next collapse from an unrestricted
-//   bar, so an app launched while collapsed stays hidden until then, the same
-//   as a new icon landing in the hidden section under the old mechanism.
+// - Hidden items report stale positions, so only shown ones are read. A collapse
+//   from an unrestricted bar reads everything; with "hide separators" a
+//   restriction is always held, so a collapse re-reads just the apps it shows
+//   and keeps the always-hidden ones' cached section. An app launched while
+//   something is hidden stays hidden until an unrestricted read, the same as a
+//   new icon landing in the hidden section under the old mechanism.
 // - The restriction is assessment mode, which makes macOS ignore the clock, so
 //   Notification Center cannot open from it (#410). A click on the clock lifts
 //   the restriction for a moment and presses it (MenuBarClock); hidden icons
@@ -170,7 +172,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             return completion(.unavailable)
         }
         state = .calibrating
-        withLayout { [weak self] layout in
+        withLayout(refreshingShownApps: true) { [weak self] layout in
             guard let self = self else { return }
             guard let layout = layout else {
                 self.logUnavailableOnce("the arrow's position cannot be read yet")
@@ -441,9 +443,12 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // The sections as the user arranged them. Read fresh only from an
     // unrestricted bar; while a restriction is active the cached ones stand in.
     // Superseded by any later expand or activation, like an activation is.
-    private func withLayout(_ body: @escaping (MenuBarLayout?) -> Void) {
+    private func withLayout(refreshingShownApps: Bool = false, _ body: @escaping (MenuBarLayout?) -> Void) {
         if assertion != nil {
-            return body(effectiveLayout)
+            guard refreshingShownApps, layout != nil, generation == assertionGeneration else {
+                return body(effectiveLayout)
+            }
+            return refreshShownApps(body)
         }
         guard let arrow = items?.toggleItem,
               let boundary = itemFrame(arrow) else { return body(nil) }
@@ -482,6 +487,43 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
                 self.onNewApps?(undecided)
             }
             body(effective)
+        }
+    }
+
+    // With "hide separators" on a restriction is held even while expanded, so
+    // the bar was never read again and icons ⌘-dragged since kept their old
+    // section. The apps the held restriction shows report live frames, so
+    // those are re-read and re-sectioned; the hidden ones (always hidden) keep
+    // their cached section. Apps launched meanwhile are hidden by that
+    // restriction and still wait for an unrestricted read. If the read can't be
+    // resolved, the cached layout stands, as before.
+    private func refreshShownApps(_ body: @escaping (MenuBarLayout?) -> Void) {
+        guard let arrow = items?.toggleItem, let boundary = itemFrame(arrow) else { return body(effectiveLayout) }
+        let shown = Set(assertionBundles)
+        let alwaysHiddenFrame = alwaysHiddenEnabled ? items?.alwaysHiddenItem.flatMap(itemFrame) : nil
+        let isLTR = self.isLTR()
+        generation += 1
+        let generation = self.generation
+        inventory.snapshot(of: shown) { [weak self] items in
+            guard let self = self, generation == self.generation else { return }
+            let live = items.filter { item in item.bundleIdentifier.map(shown.contains) ?? false }
+            if let fresh = MenuBarLayoutResolver.resolve(inventory: live,
+                                                         separatorFrame: boundary,
+                                                         alwaysHiddenSeparatorFrame: alwaysHiddenFrame,
+                                                         displays: self.displays(),
+                                                         isLTR: isLTR,
+                                                         excludingBundle: self.ownBundleIdentifier),
+               var layout = self.layout {
+                for (bundle, section) in fresh.sections {
+                    layout.sections[bundle] = section
+                }
+                self.layout = layout
+                self.inventoryItems = self.inventoryItems.filter { item in
+                    !(item.bundleIdentifier.map(shown.contains) ?? false)
+                } + live
+                self.refreshHiddenItems()
+            }
+            body(self.effectiveLayout)
         }
     }
 
