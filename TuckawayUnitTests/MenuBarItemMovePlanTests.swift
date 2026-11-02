@@ -125,4 +125,11 @@ final class MenuBarItemMovePlanTests: XCTestCase {
             }
         }
     }
+
+    func testAnchorSkipsKeptAppsWhoseIconsSitLeftOfTheArrow() {
+        // Visible lists a kept app first, though its icon is on the hidden side.
+        XCTAssertEqual(MenuBarItemMovePlan.anchor(for: "clock", in: ["clock", "kept", "wifi"], excluding: ["kept"]), .before("wifi"))
+        XCTAssertEqual(MenuBarItemMovePlan.anchor(for: "clock", in: ["kept", "clock"], excluding: ["kept"]), .emptyList)
+        XCTAssertEqual(MenuBarItemMovePlan.anchor(for: "clock", in: ["wifi", "clock"], excluding: []), .after("wifi"))
+    }
 }
