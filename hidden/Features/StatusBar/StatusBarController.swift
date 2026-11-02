@@ -102,6 +102,7 @@ class StatusBarController: MenuBarItemProvider {
     private var hoverRowLeaveTimer: Timer?
     private let newAppPrompt = NewMenuBarAppPromptController()
     private let hiddenIconSearch = HiddenIconSearchController()
+    private let profilesStore = UserDefaultsMenuBarProfilesStore()
     // New apps waiting to be asked about, in order; the first is on screen.
     private var newAppQueue: [String] = []
     private var activeExpandCollapseFrame: CGRect?
@@ -201,6 +202,7 @@ class StatusBarController: MenuBarItemProvider {
         restoreRemovedStatusItems()
         setupAlwayHideStatusBar()
         setupNewAppPrompts()
+        (menuBarEngine as? ProfileApplying)?.setProfile(profilesStore.profiles.activeApps)
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
@@ -748,6 +750,10 @@ class StatusBarController: MenuBarItemProvider {
             let findItem = NSMenuItem(title: "Find Hidden Icon…".localized, action: #selector(showHiddenIconSearch), keyEquivalent: "")
             findItem.target = self
             menu.addItem(findItem)
+        }
+
+        if menuBarEngine is ProfileApplying {
+            menu.addItem(profilesMenuItem())
         }
 
         if Self.supportsPresentationMode {
@@ -1542,6 +1548,83 @@ extension StatusBarController {
     }
 }
 
+//MARK: - Profiles (macOS 27)
+extension StatusBarController {
+    fileprivate func profilesMenuItem() -> NSMenuItem {
+        let profiles = profilesStore.profiles
+        let submenu = NSMenu()
+        let arrow = NSMenuItem(title: "Use the Arrow".localized, action: #selector(selectProfile(_:)), keyEquivalent: "")
+        arrow.target = self
+        arrow.state = profiles.active == nil ? .on : .off
+        submenu.addItem(arrow)
+        for name in profiles.names {
+            let item = NSMenuItem(title: name, action: #selector(selectProfile(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = name
+            item.state = profiles.active == name ? .on : .off
+            submenu.addItem(item)
+        }
+        submenu.addItem(NSMenuItem.separator())
+        let save = NSMenuItem(title: "Save Current Layout as Profile…".localized, action: #selector(saveProfile), keyEquivalent: "")
+        save.target = self
+        submenu.addItem(save)
+        if !profiles.names.isEmpty {
+            let delete = NSMenuItem(title: "Delete Profile".localized, action: nil, keyEquivalent: "")
+            let names = NSMenu()
+            for name in profiles.names {
+                let item = NSMenuItem(title: name, action: #selector(deleteProfile(_:)), keyEquivalent: "")
+                item.target = self
+                item.representedObject = name
+                names.addItem(item)
+            }
+            delete.submenu = names
+            submenu.addItem(delete)
+        }
+        let item = NSMenuItem(title: "Profiles".localized, action: nil, keyEquivalent: "")
+        item.submenu = submenu
+        return item
+    }
+
+    private func applyProfiles(_ profiles: MenuBarProfiles) {
+        profilesStore.profiles = profiles
+        (menuBarEngine as? ProfileApplying)?.setProfile(profiles.activeApps)
+    }
+
+    @objc private func selectProfile(_ sender: NSMenuItem) {
+        var profiles = profilesStore.profiles
+        profiles.active = sender.representedObject as? String
+        applyProfiles(profiles)
+    }
+
+    // Saves what the collapsed bar shows now under a name, and switches to it.
+    @objc private func saveProfile() {
+        guard let engine = menuBarEngine as? ProfileApplying else { return }
+        let alert = NSAlert()
+        alert.messageText = "Name this profile".localized
+        alert.informativeText = "It keeps the apps that are visible right now.".localized
+        let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 240, height: 24))
+        alert.accessoryView = field
+        alert.addButton(withTitle: "Save".localized)
+        alert.addButton(withTitle: "Cancel".localized)
+        alert.window.initialFirstResponder = field
+        NSApp.activate(ignoringOtherApps: true)
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        let name = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { return }
+        var profiles = profilesStore.profiles
+        profiles.save(name, apps: engine.visibleApps)
+        profiles.active = name
+        applyProfiles(profiles)
+    }
+
+    @objc private func deleteProfile(_ sender: NSMenuItem) {
+        guard let name = sender.representedObject as? String else { return }
+        var profiles = profilesStore.profiles
+        profiles.delete(name)
+        applyProfiles(profiles)
+    }
+}
+
 //MARK: - Presentation mode (macOS 27)
 extension StatusBarController {
     // Only the native engine can hide icons on the visible side.
@@ -1673,7 +1756,11 @@ extension StatusBarController {
         newAppPrompt.show(bundleIdentifier: bundle, below: arrowFrame, on: screen) { [weak self] keep in
             guard let self else { return }
             self.newAppQueue.removeAll { $0 == bundle }
-            self.newAppReporter?.resolveNewApp(bundle, keepVisible: keep)
+            if keep {
+                self.keepVisible(bundle)
+            } else {
+                self.newAppReporter?.resolveNewApp(bundle, keepVisible: false)
+            }
             self.showNextNewAppPrompt()
         }
     }
@@ -1691,6 +1778,12 @@ extension StatusBarController {
     func keepVisible(_ bundle: String) {
         dropNewAppQuestion(bundle)
         newAppReporter?.resolveNewApp(bundle, keepVisible: true)
+        // With a profile active, keeping an app visible has to reach the profile.
+        var profiles = profilesStore.profiles
+        if profiles.active != nil {
+            profiles.addToActive(bundle)
+            applyProfiles(profiles)
+        }
     }
 
     // Decided elsewhere (Menu Bar Items, the row's menu), so a question still

@@ -149,3 +149,10 @@
 "Quit and reopen Tuckaway to apply them." = "请退出并重新打开 Tuckaway 以应用这些设置。";
 "Tuckaway will relaunch to apply them." = "Tuckaway 将重新启动以应用这些设置。";
 "Show the icon of the app you're using" = "显示正在使用的 App 的图标";
+"Profiles" = "配置文件";
+"Use the Arrow" = "使用箭头";
+"Save Current Layout as Profile…" = "将当前布局存储为配置文件…";
+"Delete Profile" = "删除配置文件";
+"Name this profile" = "为此配置文件命名";
+"It keeps the apps that are visible right now." = "它会保留当前可见的 App。";
+"Save" = "存储";
