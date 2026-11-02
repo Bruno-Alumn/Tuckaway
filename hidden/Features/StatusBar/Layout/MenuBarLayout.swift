@@ -69,6 +69,8 @@ protocol MenuBarInventoryProviding: AnyObject {
     // while nothing is hidden: once a native visibility assertion is active,
     // hidden items report stale frames.
     func snapshot(completion: @escaping ([MenuBarInventoryItem]) -> Void)
+    // The same, for the given apps only, which is much faster.
+    func snapshot(of bundles: Set<String>, completion: @escaping ([MenuBarInventoryItem]) -> Void)
 }
 
 struct MenuBarLayout: Equatable {
@@ -218,6 +220,18 @@ enum MenuBarStripGeometry {
         let strip = CGRect(x: span.minX, y: display.accessibilityFrame.minY, width: span.width, height: menuBarHeight)
         let clipped = strip.intersection(display.accessibilityFrame)
         return clipped.isEmpty ? nil : clipped
+    }
+
+    // The same icon in a newer read: an app's icons keep their order, so the
+    // n-th of its icons stays the n-th wherever the bar shifted it.
+    static func counterpart(of item: MenuBarInventoryItem, among items: [MenuBarInventoryItem],
+                            in previous: [MenuBarInventoryItem]) -> MenuBarInventoryItem? {
+        func siblings(_ list: [MenuBarInventoryItem]) -> [MenuBarInventoryItem] {
+            list.filter { $0.bundleIdentifier == item.bundleIdentifier }.sorted { $0.frame.minX < $1.frame.minX }
+        }
+        guard let rank = siblings(previous).firstIndex(of: item) else { return nil }
+        let now = siblings(items)
+        return now.indices.contains(rank) ? now[rank] : nil
     }
 
     // The pixels of `frame` in an image of `strip` taken at `scale` pixels per

@@ -70,7 +70,10 @@ mkdir -p "$STAGING" dist
 ditto "$APP" "$STAGING/Tuckaway.app"
 ln -s /Applications "$STAGING/Applications"
 rm -f "$DMG"
-if diskutil image create from --help >/dev/null 2>&1; then
+# macOS 27's diskutil replaces hdiutil, but older diskutil versions that have
+# `image create from` lack --volumeName (CI's macOS 15 did), so check for the
+# option itself rather than the subcommand.
+if diskutil image create from --help 2>&1 | grep -q -- '--volumeName'; then
   diskutil image create from --format UDZO --volumeName "Tuckaway $VERSION" "$STAGING" "$DMG" >/dev/null
 else
   hdiutil create -volname "Tuckaway $VERSION" -srcfolder "$STAGING" -fs HFS+ -format UDZO -ov "$DMG" >/dev/null

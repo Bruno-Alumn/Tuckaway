@@ -6,10 +6,12 @@
 - **Find Hidden Icon** (macOS 27): from the arrow's menu or a shortcut you set in Settings › General, a small search lists your hidden icons by name. Type to filter, use the arrow keys, and press Return to open that icon's menu; it hides again when the menu closes. It needs no Screen Recording.
 
 ### Fixed
+- The separate hidden-items bar used icon positions from the last time Tuckaway read the whole bar. If a visible icon had changed width since (a CPU meter, a timer), the row could show cut-off icons and a click could open the wrong app's menu. It now reads where the hidden icons are at that moment.
 - Presentation Mode stopped hiding icons after an app launched, the Mac woke or a display changed, while still showing as on. It also showed every icon while a camera or microphone was in use, which is most screen shares; now it keeps hiding them (the dot in the screen corner still shows). Turning it on just as the bar collapsed could leave the arrow unresponsive until Tuckaway was restarted.
 - After you answered **Hide** for a new app, its icon was hidden but missing from the separate hidden-items bar until something else made Tuckaway re-read the bar.
 - A new-app question left on screen could undo a choice made meanwhile in Menu Bar Items or the separate bar's menu; it now closes when the app is decided elsewhere. Menu Bar Items lists undecided apps under Visible, since they're showing.
 - If an app launched or the Mac woke while the separate bar was opening, a still picture of the menu bar could stay over the real one.
+- On macOS 27 with a display arranged above your main one, Tuckaway misread where menu bar icons were: the bar could stay expanded, the separate hidden-items bar always fell back to expanding, and "click empty menu bar" missed. Positions are now measured from the main display, as macOS does.
 - On macOS 27, dragging an icon into **Visible** in Menu Bar Items now keeps that app visible, as **Keep Visible** does. Before, Tuckaway tried to ⌘-drag the icon past its own arrow, which macOS 27 doesn't allow, so the icon stayed hidden.
 - In the separate hidden-items bar, macOS's own menu bar extras are named by what they are (for example "Siri"), as in Menu Bar Items, instead of "SystemUIServer".
 

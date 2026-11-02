@@ -45,6 +45,11 @@ private final class FakeInventory: MenuBarInventoryProviding {
         snapshots += 1
         completion(items)
     }
+    var partialSnapshots = 0
+    func snapshot(of bundles: Set<String>, completion: @escaping ([MenuBarInventoryItem]) -> Void) {
+        partialSnapshots += 1
+        completion(items.filter { $0.bundleIdentifier.map(bundles.contains) ?? false })
+    }
 }
 
 private final class FakeAssertion: NativeVisibilityAssertion {
@@ -1209,6 +1214,65 @@ final class NewAppSeparateBarTests: XCTestCase {
         engine.resolveNewApp("com.new", keepVisible: false)
         XCTAssertEqual(engine.hiddenItems.map(\.bundleIdentifier), ["com.new", "com.hidden"])
         XCTAssertEqual(engine.keptVisibleApps, [])
+    }
+}
+
+final class MenuBarDisplayInventoryTests: XCTestCase {
+    // Accessibility measures from the top of the primary display. A monitor
+    // arranged above it must not shift the primary display's frame.
+    func testDisplayAboveThePrimaryOneHasNegativeAccessibilityY() {
+        let displays = MenuBarDisplayInventory.displays([
+            ("laptop", CGRect(x: 0, y: 0, width: 1800, height: 1169)),
+            ("monitor", CGRect(x: -200, y: 1169, width: 2560, height: 1440)),
+        ])
+        XCTAssertEqual(displays[0].accessibilityFrame, CGRect(x: 0, y: 0, width: 1800, height: 1169))
+        XCTAssertEqual(displays[1].accessibilityFrame, CGRect(x: -200, y: -1440, width: 2560, height: 1440))
+    }
+
+    func testDisplayBesideThePrimaryOneSharesItsTop() {
+        let displays = MenuBarDisplayInventory.displays([
+            ("laptop", CGRect(x: 0, y: 0, width: 1800, height: 1169)),
+            ("monitor", CGRect(x: 1800, y: -271, width: 2560, height: 1440)),
+        ])
+        XCTAssertEqual(displays[1].accessibilityFrame.minY, 0)
+    }
+}
+
+final class FreshHiddenFramesTests: XCTestCase {
+    func testPeekingRereadsWhereHiddenIconsAreNow() {
+        let items = FakeItems()
+        let inventory = FakeInventory()
+        inventory.items = [item("com.hidden", x: 1100), item("com.visible", x: 1400)]
+        let visibility = FakeVisibility()
+        let engine = NativeVisibilityEngine(items: items, inventory: inventory, visibility: visibility,
+                                            captureActivity: FakeCaptureActivity(), clock: FakeClock(),
+                                            ownBundleIdentifier: "com.brunoalumn.tuckaway",
+                                            itemFrame: { _ in separator },
+                                            displays: { [mainDisplay] },
+                                            isLTR: { true })
+        engine.collapse { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+
+        var refreshed: [MenuBarInventoryItem] = []
+        engine.refreshHiddenItemFrames { refreshed = $0 }
+        XCTAssertEqual(inventory.partialSnapshots, 0, "only while peeking")
+        XCTAssertEqual(refreshed, [item("com.hidden", x: 1100)])
+
+        engine.peekHiddenSection { _ in }
+        visibility.succeed(visibility.requests.count - 1)
+        inventory.items = [item("com.hidden", x: 1130), item("com.visible", x: 1400)]
+        engine.refreshHiddenItemFrames { refreshed = $0 }
+        XCTAssertEqual(inventory.partialSnapshots, 1)
+        XCTAssertEqual(refreshed, [item("com.hidden", x: 1130)])
+        XCTAssertEqual(engine.hiddenItems, [item("com.hidden", x: 1130)])
+    }
+
+    func testCounterpartFollowsAnAppsIconsInOrder() {
+        let previous = [item("com.a", x: 100), item("com.a", x: 130), item("com.b", x: 160)]
+        let shifted = [item("com.a", x: 120), item("com.a", x: 150), item("com.b", x: 180)]
+        XCTAssertEqual(MenuBarStripGeometry.counterpart(of: previous[1], among: shifted, in: previous), shifted[1])
+        XCTAssertEqual(MenuBarStripGeometry.counterpart(of: previous[2], among: shifted, in: previous), shifted[2])
+        XCTAssertNil(MenuBarStripGeometry.counterpart(of: previous[1], among: [item("com.a", x: 120)], in: previous))
     }
 }
 
