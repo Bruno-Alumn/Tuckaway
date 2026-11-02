@@ -77,11 +77,16 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // they show at the same frames: the bar is anchored on the arrow's side, and
     // only the always-hidden icons, further out, stay hidden.
     private(set) var hiddenItems: [MenuBarInventoryItem] = []
+    // Every item from that read, so hiddenItems can follow a decision about a
+    // new or kept app without reading the bar again.
+    private var inventoryItems: [MenuBarInventoryItem] = []
     private(set) var isPeeking = false
     // Presentation mode: no app's icon shows but Tuckaway's own, whatever the
     // sections say. Collapsing and expanding meanwhile only update `state`,
     // which is applied when presentation mode ends.
     private(set) var isPresenting = false
+    // Asked for while a collapse was being worked out; applied once it is.
+    private var isPresentingPending = false
 
     private var assertion: NativeVisibilityAssertion?
     // What the held assertion allows besides Hidden Bar, and the generation it was
@@ -170,7 +175,8 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             guard let layout = layout else {
                 self.logUnavailableOnce("the arrow's position cannot be read yet")
                 self.state = .expanded
-                return completion(.unavailable)
+                completion(.unavailable)
+                return self.applyPendingPresentation()
             }
             self.activate(allowing: layout.bundles(in: [.visible])) { [weak self] succeeded in
                 guard let self = self else { return }
@@ -179,6 +185,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
                     self.setSeparatorsVisible(false)
                 }
                 completion(succeeded ? .collapsed : .unavailable)
+                self.applyPendingPresentation()
             }
         }
     }
@@ -206,7 +213,17 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         activate(allowing: layout.bundles(in: [.visible])) { _ in }
     }
 
+    // Presentation mode is meant for screen sharing, so unlike the other states it
+    // holds its restriction while a camera or microphone is in use (the dot in
+    // the screen corner still shows).
     func setPresenting(_ presenting: Bool) {
+        // Starting it now would supersede the collapse in flight, whose answer
+        // would then never arrive and leave the engine calibrating.
+        if state == .calibrating && presenting && !isPresenting {
+            isPresentingPending = true
+            return
+        }
+        isPresentingPending = false
         guard presenting != isPresenting else { return }
         isPresenting = presenting
         isPeeking = false
@@ -230,17 +247,29 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         }
     }
 
+    private func applyPendingPresentation() {
+        guard isPresentingPending else { return }
+        isPresentingPending = false
+        setPresenting(true)
+    }
+
+    // Kept apps, and new ones not decided on yet: both show whatever their icon's place.
     var keptVisibleApps: Set<String> {
-        newApps.tracker.kept
+        newApps.tracker.kept.union(newApps.tracker.pending)
+    }
+
+    private func refreshHiddenItems() {
+        guard let effective = effectiveLayout else { return }
+        hiddenItems = inventoryItems.filter { item in
+            item.bundleIdentifier.map { effective.sections[$0] == .hidden } ?? false
+        }
     }
 
     // The user chose for a new app, or moved a kept one in Menu Bar Items.
     // While collapsed the restriction is redone right away.
     func resolveNewApp(_ bundle: String, keepVisible: Bool) {
         newApps.tracker.resolve(bundle, keepVisible: keepVisible)
-        if keepVisible {
-            hiddenItems.removeAll { $0.bundleIdentifier == bundle }
-        }
+        refreshHiddenItems()
         guard state == .collapsed, !isPeeking, !isPresenting, let layout = effectiveLayout else { return }
         activate(allowing: layout.bundles(in: [.visible])) { _ in }
     }
@@ -276,6 +305,12 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // expanded snapshot instead of hiding an icon from the wrong side.
     func invalidateLayout() {
         layout = nil
+        // Presentation mode's allow-list doesn't depend on the layout, so it
+        // keeps hiding; the state is re-read when it ends.
+        if isPresenting {
+            if assertion != nil { state = .expanded }
+            return
+        }
         if assertion != nil {
             releaseAssertion()
             state = .expanded
@@ -338,9 +373,8 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             self.layout = layout
             let found = self.newApps.tracker.observe(layout)
             let effective = self.newApps.tracker.applied(to: layout)
-            self.hiddenItems = inventory.filter { item in
-                item.bundleIdentifier.map { effective.sections[$0] == .hidden } ?? false
-            }
+            self.inventoryItems = inventory
+            self.refreshHiddenItems()
             if !found.isEmpty {
                 NSLog("NativeVisibility: keeping new menu-bar apps visible: \(found)")
             }
@@ -362,7 +396,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     private func activate(allowing bundles: [String], completion: @escaping (Bool) -> Void) {
         generation += 1
         let generation = self.generation
-        guard !captureActivity.isActive else {
+        guard !captureActivity.isActive || isPresenting else {
             dropAssertionForCapture()
             return completion(true)
         }
@@ -383,7 +417,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
                 return
             }
             switch result {
-            case .success(let newAssertion) where self.captureActivity.isActive:
+            case .success(let newAssertion) where self.captureActivity.isActive && !self.isPresenting:
                 // Capture started while this was in flight.
                 newAssertion.invalidate()
                 self.dropAssertionForCapture()
@@ -470,6 +504,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         guard isActive != isCaptureActive else { return }
         isCaptureActive = isActive
         if isActive {
+            if isPresenting { return }
             NSLog("NativeVisibility: a microphone or camera is in use; showing the whole menu bar until it stops")
             dropAssertionForCapture()
         } else {

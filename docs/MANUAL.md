@@ -59,7 +59,9 @@ section is enabled.
 icon, the ones you keep visible too, for screen sharing and recordings. The
 clock, Wi-Fi, battery, Control Center and Tuckaway's arrow stay. Click the arrow
 or choose it again to turn it off; the bar goes back to how it was. It lasts
-until then, or until Tuckaway quits.
+until then, or until Tuckaway quits. Unlike normal hiding, it keeps hiding
+while a camera or microphone is in use, since that's when you share your
+screen; the colored dot in the screen corner still shows.
 
 #### While collapsed (macOS limitation, #437)
 
