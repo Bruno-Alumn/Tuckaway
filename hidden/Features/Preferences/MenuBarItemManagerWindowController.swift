@@ -482,7 +482,12 @@ final class MenuBarItemManagerViewController: NSViewController {
         let movedItem = item.moved(to: toSection)
         let lookup = Dictionary(allItems.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let destination = destinationIDs.compactMap { $0 == item.id ? movedItem : lookup[$0] }
-        let anchor = MenuBarItemMovePlan.anchor(for: item.id, in: destinationIDs)
+        let arrowFrame = layout?.expandCollapseFrame
+        let onHiddenSideOfArrow = Set(destination.filter { other in
+            guard let arrowFrame, other.id != item.id, other.section == .visible else { return false }
+            return Constant.isUsingLTRLanguage ? other.center.x < arrowFrame.minX : other.center.x > arrowFrame.maxX
+        }.map(\.id))
+        let anchor = MenuBarItemMovePlan.anchor(for: item.id, in: destinationIDs, excluding: onHiddenSideOfArrow)
         let anchorElement: AXUIElement? = {
             switch anchor {
             case .before(let id), .after(let id): return lookup[id]?.element
@@ -537,7 +542,10 @@ final class MenuBarItemManagerViewController: NSViewController {
                 if !settled {
                     self.statusLabel.stringValue = String(format: "Couldn’t place %@ exactly; the lists show where it ended up.".localized, item.primaryName)
                 }
-                if self.movesInFlight == 0 {
+                // A refresh puts the bar back into item management (expanded,
+                // no auto-collapse); once the window is closed nothing would
+                // end that again.
+                if self.movesInFlight == 0, self.view.window?.isVisible == true {
                     self.refresh(quiet: true)
                 }
             }

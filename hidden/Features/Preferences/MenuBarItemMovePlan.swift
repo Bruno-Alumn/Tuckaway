@@ -89,6 +89,13 @@ enum MenuBarItemMovePlan {
         return .emptyList
     }
 
+    // The same, ignoring `excluded` neighbours: apps kept visible by name are
+    // listed under Visible while their icons sit on the hidden side, so a drop
+    // next to one would aim at the wrong side of the arrow.
+    static func anchor(for id: String, in ordered: [String], excluding excluded: Set<String>) -> MenuBarDropAnchor {
+        anchor(for: id, in: ordered.filter { $0 == id || !excluded.contains($0) })
+    }
+
     // Where to release the first, quick ⌘-drag: just inside the anchor's near
     // edge. That usually lands the item next to the anchor in one go, however
     // far it travels; `nextStep` fixes the rest.
