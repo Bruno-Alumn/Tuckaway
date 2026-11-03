@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Added
-- **Undo an answer to the new-app question** (macOS 27): after answering **Hide** or **Keep Visible** for a new app, the arrow's menu offers **Undo** for five minutes, in case the answer was a reflex or the app was a helper that had already quit.
+- **Undo an answer to the new-app question** (macOS 27): after answering **Hide** or **Keep Visible** for a new app, the arrow's menu offers **Undo** for five minutes, in case the answer was a reflex. It goes away once the app quits.
 - **Edit profiles in Settings** (macOS 27): the ⋯ button next to each profile under Profiles in Settings › General renames it, replaces its apps with the ones visible now, removes an app, or deletes it. Each profile also lists its apps.
 - **Show hidden icons briefly when they change** (macOS 27, Settings › General, off by default, #229): while collapsed, a hidden icon whose width or text changes shows for 8 seconds. Put an icon in Always Hidden to keep it out of this. A change to an icon's picture alone isn't noticed.
 - Settings explains what **Expand across full menu bar** does (#143).
