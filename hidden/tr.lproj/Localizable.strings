@@ -239,3 +239,8 @@
 /* Undoing the answer to the new-app question */
 "Undo: keep %@ visible" = "Geri al: %@ görünür kalsın";
 "Undo: hide %@" = "Geri al: %@ gizlensin";
+
+/* A rescue panel when the arrow is pushed off screen (macOS 13-26) */
+"Tuckaway can't be reached" = "Tuckaway’a ulaşılamıyor";
+"The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "Menü çubuğu ok için yer bırakmadı, ekranın dışında kaldı. “Menü çubuğunu onar” onu sağ kenara yakın bir yere geri koyar.";
+"Repair Menu Bar" = "Menü çubuğunu onar";

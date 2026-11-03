@@ -100,6 +100,10 @@
 		C77AA0362E20000400B4A001 /* NewAppAnswerUndo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0072E20000400B4A001 /* NewAppAnswerUndo.swift */; };
 		C77AA0372E20000400B4A001 /* NewAppAnswerUndo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0072E20000400B4A001 /* NewAppAnswerUndo.swift */; };
 		C77AA0382E20000400B4A001 /* NewAppAnswerUndoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0082E20000400B4A001 /* NewAppAnswerUndoTests.swift */; };
+		C77AA0162E20000200B4A001 /* MenuBarRescue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0062E20000200B4A001 /* MenuBarRescue.swift */; };
+		C77AA0172E20000200B4A001 /* ArrowLostNoticeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0072E20000200B4A001 /* ArrowLostNoticeController.swift */; };
+		C77AA0182E20000200B4A001 /* MenuBarRescue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0062E20000200B4A001 /* MenuBarRescue.swift */; };
+		C77AA0192E20000200B4A001 /* MenuBarRescueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0082E20000200B4A001 /* MenuBarRescueTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -215,6 +219,9 @@
 		C77AA0082E20000500B4A001 /* CoordinateSpaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinateSpaceTests.swift; sourceTree = "<group>"; };
 		C77AA0072E20000400B4A001 /* NewAppAnswerUndo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAppAnswerUndo.swift; sourceTree = "<group>"; };
 		C77AA0082E20000400B4A001 /* NewAppAnswerUndoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAppAnswerUndoTests.swift; sourceTree = "<group>"; };
+		C77AA0062E20000200B4A001 /* MenuBarRescue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarRescue.swift; sourceTree = "<group>"; };
+		C77AA0072E20000200B4A001 /* ArrowLostNoticeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowLostNoticeController.swift; sourceTree = "<group>"; };
+		C77AA0082E20000200B4A001 /* MenuBarRescueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarRescueTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -291,6 +298,8 @@
 				AABBDD1122334455667788B1 /* NewMenuBarAppPromptController.swift */,
 				C77AA0072E20000500B4A001 /* CoordinateSpace.swift */,
 				C77AA0072E20000400B4A001 /* NewAppAnswerUndo.swift */,
+				C77AA0062E20000200B4A001 /* MenuBarRescue.swift */,
+				C77AA0072E20000200B4A001 /* ArrowLostNoticeController.swift */,
 			);
 			path = StatusBar;
 			sourceTree = "<group>";
@@ -478,6 +487,7 @@
 				A1B2C3D4E5F6071829304A03 /* GitHubReleaseTests.swift */,
 				C77AA0082E20000500B4A001 /* CoordinateSpaceTests.swift */,
 				C77AA0082E20000400B4A001 /* NewAppAnswerUndoTests.swift */,
+				C77AA0082E20000200B4A001 /* MenuBarRescueTests.swift */,
 			);
 			path = TuckawayUnitTests;
 			sourceTree = "<group>";
@@ -684,6 +694,8 @@
 				4D8C4B09D62D4884B34E1A14 /* NotchOverflowController.swift in Sources */,
 				C77AA0462E20000500B4A001 /* CoordinateSpace.swift in Sources */,
 				C77AA0362E20000400B4A001 /* NewAppAnswerUndo.swift in Sources */,
+				C77AA0162E20000200B4A001 /* MenuBarRescue.swift in Sources */,
+				C77AA0172E20000200B4A001 /* ArrowLostNoticeController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,6 +735,8 @@
 				C77AA0482E20000500B4A001 /* CoordinateSpaceTests.swift in Sources */,
 				C77AA0372E20000400B4A001 /* NewAppAnswerUndo.swift in Sources */,
 				C77AA0382E20000400B4A001 /* NewAppAnswerUndoTests.swift in Sources */,
+				C77AA0182E20000200B4A001 /* MenuBarRescue.swift in Sources */,
+				C77AA0192E20000200B4A001 /* MenuBarRescueTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -106,6 +106,10 @@ class StatusBarController: MenuBarItemProvider {
     private let activityReveal = ActivityRevealMonitor()
     private var hoverRowLeaveTimer: Timer?
     private let newAppPrompt = NewMenuBarAppPromptController()
+    private let arrowNotice = ArrowLostNoticeController()
+    // Set by Not Now, so a bar that keeps losing the arrow doesn't re-offer the
+    // panel on every collapse until Tuckaway is relaunched.
+    private var arrowNoticeDeclined = false
     private let hiddenIconSearch = HiddenIconSearchController()
     private let profilesStore = UserDefaultsMenuBarProfilesStore()
     // New apps waiting to be asked about, in order; the first is on screen.
@@ -676,23 +680,55 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     // If collapsing hides the only control that can reopen the bar, undo it,
-    // repair the saved order, and rebuild the two items. Cap retries to avoid a
-    // collapse/rescue loop when macOS refuses the repaired positions.
+    // repair the saved order, and rebuild the two items. The decision is
+    // MenuBarRescue's, so what counts as lost and when to stop repairing are
+    // covered by tests.
     private func rescueArrowIfSwallowed() {
         DispatchQueue.main.async { [weak self] in
-            guard let self = self, self.isCollapsed else { return }
-            guard let arrowFrame = self.btnExpandCollapse.button?.window?.frame,
-                  arrowFrame.origin != .zero else { return }
-            guard !NSScreen.screens.contains(where: { $0.frame.intersects(arrowFrame) }) else { return }
-            guard self.arrowRescueCount < 2 else {
-                self.expandMenubar()
+            guard let self = self else { return }
+            let action = MenuBarRescue.action(arrowFrame: self.btnExpandCollapse.button?.window?.frame,
+                                              screenFrames: NSScreen.screens.map(\.frame),
+                                              isCollapsed: self.isCollapsed,
+                                              repairsSoFar: self.arrowRescueCount)
+            switch action {
+            case .none:
                 return
+            case .giveUp:
+                self.expandMenubar()
+                self.showArrowLostNotice()
+            case .repair:
+                self.arrowRescueCount += 1
+                self.expandMenubar()
+                StatusItemPositions.pullArrowInside()
+                self.rebuildStatusItems()
             }
-            self.arrowRescueCount += 1
-            self.expandMenubar()
-            StatusItemPositions.pullArrowInside()
-            self.rebuildStatusItems()
         }
+    }
+
+    // Tuckaway keeps repairing a lost arrow on every launch, but that can leave
+    // the user with an app they can't reach and no explanation. The panel names
+    // the problem and offers the two ways out.
+    private func showArrowLostNotice() {
+        guard !arrowNotice.isVisible, !arrowNoticeDeclined else { return }
+        // The arrow is off every screen here, so its window has no screen to
+        // offer: show the panel on the main one instead.
+        guard let screen = NSScreen.main ?? NSScreen.screens.first else { return }
+        let arrowFrame = btnExpandCollapse.button?.window?.frame ?? .zero
+        arrowNotice.show(below: arrowFrame, on: screen, actions: ArrowLostNoticeController.Actions(
+            repair: { [weak self] in self?.repairArrowPosition() },
+            openSettings: { PreferencesWindowController.shared.show(tab: .general) },
+            quit: { NSApp.terminate(nil) },
+            notNow: { [weak self] in self?.arrowNoticeDeclined = true }
+        ))
+    }
+
+    // Puts the arrow back near the right side of the bar and rebuilds the
+    // items, starting the repair count over. Shared by the panel above and
+    // anything else that offers a repair.
+    func repairArrowPosition() {
+        arrowRescueCount = 0
+        StatusItemPositions.pullArrowInside()
+        rebuildStatusItems()
     }
 
     private func rebuildStatusItems() {

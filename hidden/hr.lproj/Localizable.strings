@@ -239,3 +239,8 @@
 /* Undoing the answer to the new-app question */
 "Undo: keep %@ visible" = "Poništi: zadrži %@ vidljivim";
 "Undo: hide %@" = "Poništi: skrij %@";
+
+/* A rescue panel when the arrow is pushed off screen (macOS 13-26) */
+"Tuckaway can't be reached" = "Tuckaway nije dostupan";
+"The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "Traka izbornika nije ostavila mjesta za strelicu pa je izvan zaslona. „Popravi traku izbornika“ vraća je uz desni rub.";
+"Repair Menu Bar" = "Popravi traku izbornika";

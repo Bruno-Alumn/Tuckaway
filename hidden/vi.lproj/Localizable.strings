@@ -237,3 +237,8 @@
 /* Undoing the answer to the new-app question */
 "Undo: keep %@ visible" = "Hoàn tác: giữ %@ hiển thị";
 "Undo: hide %@" = "Hoàn tác: ẩn %@";
+
+/* A rescue panel when the arrow is pushed off screen (macOS 13-26) */
+"Tuckaway can't be reached" = "Không thể truy cập Tuckaway";
+"The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "Thanh menu không còn chỗ cho mũi tên nên nó nằm ngoài màn hình. “Sửa thanh menu” đưa nó về gần mép phải.";
+"Repair Menu Bar" = "Sửa thanh menu";
