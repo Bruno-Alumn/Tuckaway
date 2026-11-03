@@ -235,3 +235,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Show how many icons are hidden";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "Undo: keep %@ visible";
+"Undo: hide %@" = "Undo: hide %@";

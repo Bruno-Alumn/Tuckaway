@@ -235,3 +235,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Mostra quante icone sono nascoste";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "Annulla: mantieni %@ visibile";
+"Undo: hide %@" = "Annulla: nascondi %@";

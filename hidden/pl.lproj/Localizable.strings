@@ -235,3 +235,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Pokazuj liczbę ukrytych ikon";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "Cofnij: pozostaw %@ widoczne";
+"Undo: hide %@" = "Cofnij: ukryj %@";
