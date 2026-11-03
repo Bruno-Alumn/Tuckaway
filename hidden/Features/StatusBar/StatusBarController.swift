@@ -1390,28 +1390,19 @@ extension StatusBarController {
 
     // Quartz measures y down from the top of the primary screen (the one with
     // the origin), not from NSScreen.main, which is whichever has key focus.
-    private static var primaryScreenMaxY: CGFloat? {
-        NSScreen.screens.first?.frame.maxY
+    // MenuBarCoordinateSpace does the arithmetic, so it is covered by tests.
+    private static func coordinateSpace(fallbackMaxY: CGFloat) -> MenuBarCoordinateSpace.Conversion {
+        .init(primaryScreenMaxY: NSScreen.screens.first?.frame.maxY, fallbackMaxY: fallbackMaxY)
     }
 
     private func appKitRectFromQuartzRect(_ quartzRect: CGRect, on screen: NSScreen) -> CGRect {
-        let referenceMaxY = Self.primaryScreenMaxY ?? screen.frame.maxY
-        return CGRect(
-            x: quartzRect.minX,
-            y: referenceMaxY - quartzRect.maxY,
-            width: quartzRect.width,
-            height: quartzRect.height
-        )
+        MenuBarCoordinateSpace.appKitRect(fromQuartz: quartzRect,
+                                          in: Self.coordinateSpace(fallbackMaxY: screen.frame.maxY))
     }
 
     private func quartzRectFromAppKitRect(_ appKitRect: CGRect) -> CGRect {
-        let referenceMaxY = Self.primaryScreenMaxY ?? appKitRect.maxY
-        return CGRect(
-            x: appKitRect.minX,
-            y: referenceMaxY - appKitRect.maxY,
-            width: appKitRect.width,
-            height: appKitRect.height
-        )
+        MenuBarCoordinateSpace.quartzRect(fromAppKit: appKitRect,
+                                          in: Self.coordinateSpace(fallbackMaxY: appKitRect.maxY))
     }
 
     private func activateHiddenItem(atSourceX sourceX: CGFloat, from capture: HiddenItemsBarCapture) {
@@ -1434,8 +1425,8 @@ extension StatusBarController {
     }
 
     private func postClick(at appKitPoint: CGPoint) {
-        let referenceMaxY = Self.primaryScreenMaxY ?? appKitPoint.y
-        postClick(atQuartzPoint: CGPoint(x: appKitPoint.x, y: referenceMaxY - appKitPoint.y))
+        let space = Self.coordinateSpace(fallbackMaxY: appKitPoint.y)
+        postClick(atQuartzPoint: MenuBarCoordinateSpace.quartzPoint(fromAppKit: appKitPoint, in: space))
     }
 
     // Quartz and Accessibility share the top-left origin.
