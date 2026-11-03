@@ -54,13 +54,6 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
   unlock: collapsed.
 - **Expand across full menu bar caption:** reads well and doesn't crowd the
   Appearance section.
-- **What's New:** with a build whose version has a `## v…` section in
-  `CHANGELOG.md` (a Release-Direct build after editing the version, or any build
-  with a hand-made `Contents/Resources/WhatsNew.md`), launch it: the window opens
-  once with that release's notes as bullets, **Done** closes it, and relaunching
-  doesn't open it again (`defaults read com.brunoalumn.tuckaway
-  lastSeenWhatsNewVersion` shows the version). A Debug build has no notes file,
-  so nothing opens.
 
 ## macOS 13–26 only
 
