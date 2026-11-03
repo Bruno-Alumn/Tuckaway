@@ -99,3 +99,63 @@ new apps asked about instead of hidden unseen (macOS 27); presentation mode (mac
 the updater retries its relaunch; spacers (#159); activity reveal (#229, width and
 text changes); profiles by time of day; renaming and editing profiles; the clock's dropped date while collapsed (#207)
 explained in Settings, with a button to Clock Options (macOS 13–26; 27 isn't affected).
+
+## New ideas (2026-11-03 round)
+
+From a brainstorm by another agent (#145), updated after review. Anything that
+needs a paid Developer ID, a server, or collecting data was left out.
+
+Built or in review:
+
+- **Undo the new-app answer** for five minutes from the arrow's menu (#155).
+- **A rescue panel when the arrow is lost** (macOS 13–26): after
+  `rescueArrowIfSwallowed`'s two repairs fail, a panel offers Repair, Settings,
+  Quit or Later instead of looping (#156).
+- **Check Your Setup** in Settings › General (#158).
+- **What's New** after an update, from the bundled changelog (#157).
+
+Still open:
+
+1. **Group Menu Bar Items by app on macOS 27.**
+   - *Problem:* hiding on 27 is per app (#427), but Menu Bar Items lists each
+     icon, so an app with two icons (Dropbox, iStat) shows in two places and
+     moving one moves both.
+   - *Use:* one row per app in the three lists, with "2 icons" beside it.
+   - *Size:* M. `MenuBarItemManagerWindowController`, plus a pure grouping
+     type for tests.
+   - *Risks:* only for the native engine; on 13–26 hiding is per icon.
+2. **Open a hidden icon's menu with `AXShowMenu` from the separate bar.**
+   - *Problem:* a click is sent at a position. `clickNativeHiddenItem` already
+     re-reads positions just before clicking, so this is about the few cases
+     where that read itself is stale.
+   - *Size:* M. The native click path and `AccessibilityMenuBarInventory`.
+   - *Risks:* unknown whether MenuBarAgent honours `AXShowMenu` while the
+     restriction is held (it ignores accessibility presses then,
+     `MenuBarClock.swift`), and not every app implements it, so the click
+     fallback stays. Measure before building.
+3. **A hiding engine for macOS 26 and earlier that doesn't rely on the
+   separator's length.** #144 tried this with the private
+   `activate:completion:` call and was closed: it changed the macOS 27 expand
+   path for everyone and never got past a stub. Needs a measured design first.
+
+Dropped, with the reason:
+
+- **A `|` separator on macOS 27** (#151): everything left of the arrow is
+  hidden there, so a mark on that side separates nothing.
+- **Hiding in the App Store build on 27 from a list of apps** (#152): needs a
+  private framework (App Review 2.5.1) and reading other apps' accessibility
+  trees, which the sandbox blocks.
+- **Per-icon hiding within one app** (#427): macOS 27's restriction takes
+  bundle identifiers.
+- **A "shown when inactive" group** (#154): needs a restriction held while
+  expanded, which brings assessment mode's side effects (Now Playing, Live
+  Activities) into the expanded bar.
+- **Noticing screen recording** (#372) and **picture-only icon changes**
+  (#229): no public signal, and hidden icons aren't drawn.
+- **A per-app "hide after N minutes"**: nobody asked, and auto-collapse covers it.
+- **Exporting the layout as a file**: icon positions belong to macOS, so the file
+  would promise more than it can restore.
+- **Hiding macOS's own items** (battery, Wi-Fi): the system items on the
+  allow-list keep the bar usable, and #437 shows what goes wrong when more of
+  them go.
+

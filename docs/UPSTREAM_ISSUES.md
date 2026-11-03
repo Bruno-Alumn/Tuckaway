@@ -69,6 +69,26 @@ styles, #310), and #153 (Settings no longer opens at every launch by default).
 - **#28 (show an app's icon after it updates):** built for macOS 27 (an option
   under Revealing). The separator engine can't show one app on its own.
 
+## What `MenuBarClientCore` exposes (read 2026-11-03, macOS 27.2)
+
+Class and method names read from the private framework, not behaviour that was
+measured. Kept so the next report about #427 doesn't start from nothing.
+
+- `MBAssessmentModeConfiguration` takes `allowedSystemItems` and
+  `allowedBundleIdentifiers` (or an unrestricted init), so a restriction is a
+  list of apps. That is why #427 is blocked.
+- The assertion also has `activate:completion:`. *Guess:* it takes
+  `MBMenuBarItem`s (`itemID`, `content`, `tags`), which would be per status
+  item. Neither the argument type nor what `itemID` means to MenuBarAgent has
+  been confirmed, and nothing uses it.
+- `MBMenuBarItemManager` has `lockMenuPositionWithToken:`,
+  `navigateInDirection:` and `setItems:`, next to methods such as
+  `setFullScreenHidden:forSpaceID:` and `startMenuTrackingForItemID:`. *Guess:*
+  this is the menu bar host's own interface rather than one a client app can
+  drive. Whether it could move another app's icon is unknown.
+- The side effects in #437 were measured on 27.0 (see BACKLOG.md). Nothing new
+  was measured here.
+
 ## External or OS blockers
 
 - **#427 per-icon control within one app:** macOS 27's native visibility
