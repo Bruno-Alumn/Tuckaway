@@ -89,9 +89,10 @@ enum WhatsNew {
                     show: Array(shown.sorted { $0.version > $1.version }.prefix(maxReleases)))
     }
 
-    // Markdown's headings and emphasis read as noise in a native window, so the
-    // notes are shown as changelog text: headings on their own line, list items
-    // with a bullet. With more than one release, each starts with its heading.
+    // Markdown's headings, emphasis and code marks read as noise in a native
+    // window, so the notes are shown as changelog text: headings on their own
+    // line, list items with a bullet. With more than one release, each starts
+    // with its heading.
     static func plainText(_ notes: [ReleaseNotes]) -> String {
         let sections = notes.map { note in
             notes.count > 1 ? note.heading + "\n\n" + note.body : note.body
@@ -114,6 +115,7 @@ enum WhatsNew {
         }
         .joined(separator: "\n")
         .replacingOccurrences(of: "**", with: "")
+        .replacingOccurrences(of: "`", with: "")
         .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
