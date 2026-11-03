@@ -69,6 +69,31 @@ styles, #310), and #153 (Settings no longer opens at every launch by default).
 - **#28 (show an app's icon after it updates):** built for macOS 27 (an option
   under Revealing). The separator engine can't show one app on its own.
 
+## Measured on this checkout (2026-11-03, macOS 27.2)
+
+Private-API work that used to be guesswork now has answers. These are observations
+from `MenuBarClientCore`, kept here so a future report is not re-investigated.
+
+- **Two requests exist, not one.** `MBAssessmentModeConfiguration` only accepts
+  `allowedSystemItems` and `allowedBundleIdentifiers` (plus an unrestricted init),
+  so a section can only ever be a list of apps. The assertion also has
+  `activate:completion:`, which takes an `MBMenuBarItem` list: that is
+  per-status-item, so a future macOS release may make **#427** (per-icon control
+  within one app) expressible. It is not used on 27 because the assessment-mode
+  request is the one known to work.
+- **`MBMenuBarItem` is `itemID` + `content` + `tags`**, with
+  `MBMenuBarItemContent` holding a title or an image. What `itemID` means to
+  MenuBarAgent is not documented; #427 depends on it being per status item.
+- **Menu positions** are handled by a separate `MBMenuBarItemManager`
+  (`lockMenuPositionWithToken:`, `navigateInDirection:`, `setItems:`) next to the
+  visibility restriction. Nothing in the accessibility-based section model needs
+  it, but it is the only surface that could ever move another app's icon, which
+  is what the separator engine cannot do.
+- **Side effects (#437) are confirmed to come from the origin flag**, not from the
+  allow-list: the assertion's other origins are rejected or ignore the list. This
+  matches the earlier measurement; there is still no origin that hides without
+  them.
+
 ## External or OS blockers
 
 - **#427 per-icon control within one app:** macOS 27's native visibility
