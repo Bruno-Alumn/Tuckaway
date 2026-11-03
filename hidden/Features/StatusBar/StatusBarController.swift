@@ -107,6 +107,9 @@ class StatusBarController: MenuBarItemProvider {
     private var hoverRowLeaveTimer: Timer?
     private let newAppPrompt = NewMenuBarAppPromptController()
     private let arrowNotice = ArrowLostNoticeController()
+    // Set by Not Now, so a bar that keeps losing the arrow doesn't re-offer the
+    // panel on every collapse until Tuckaway is relaunched.
+    private var arrowNoticeDeclined = false
     private let hiddenIconSearch = HiddenIconSearchController()
     private let profilesStore = UserDefaultsMenuBarProfilesStore()
     // New apps waiting to be asked about, in order; the first is on screen.
@@ -706,19 +709,26 @@ class StatusBarController: MenuBarItemProvider {
     // the user with an app they can't reach and no explanation. The panel names
     // the problem and offers the two ways out.
     private func showArrowLostNotice() {
-        guard !arrowNotice.isVisible else { return }
-        guard let frame = btnExpandCollapse.button?.window?.frame,
-              let screen = btnExpandCollapse.button?.window?.screen else { return }
-        arrowNotice.show(below: frame, on: screen, actions: ArrowLostNoticeController.Actions(
-            repair: { [weak self] in
-                guard let self else { return }
-                self.arrowRescueCount = 0
-                StatusItemPositions.pullArrowInside()
-                self.rebuildStatusItems()
-            },
+        guard !arrowNotice.isVisible, !arrowNoticeDeclined else { return }
+        // The arrow is off every screen here, so its window has no screen to
+        // offer: show the panel on the main one instead.
+        guard let screen = NSScreen.main ?? NSScreen.screens.first else { return }
+        let arrowFrame = btnExpandCollapse.button?.window?.frame ?? .zero
+        arrowNotice.show(below: arrowFrame, on: screen, actions: ArrowLostNoticeController.Actions(
+            repair: { [weak self] in self?.repairArrowPosition() },
             openSettings: { PreferencesWindowController.shared.show(tab: .general) },
-            quit: { NSApp.terminate(nil) }
+            quit: { NSApp.terminate(nil) },
+            notNow: { [weak self] in self?.arrowNoticeDeclined = true }
         ))
+    }
+
+    // Puts the arrow back near the right side of the bar and rebuilds the
+    // items, starting the repair count over. Shared by the panel above and
+    // anything else that offers a repair.
+    func repairArrowPosition() {
+        arrowRescueCount = 0
+        StatusItemPositions.pullArrowInside()
+        rebuildStatusItems()
     }
 
     private func rebuildStatusItems() {

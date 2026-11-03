@@ -14,6 +14,7 @@ final class ArrowLostNoticeController: NSObject {
         let repair: () -> Void
         let openSettings: () -> Void
         let quit: () -> Void
+        let notNow: () -> Void
     }
 
     private let panel: NSPanel
@@ -53,7 +54,9 @@ final class ArrowLostNoticeController: NSObject {
         let repair = NSButton(title: "Repair Menu Bar".localized, target: self, action: #selector(repairPressed))
         let settings = NSButton(title: "Settings…".localized, target: self, action: #selector(settingsPressed))
         let quit = NSButton(title: "Quit Tuckaway".localized, target: self, action: #selector(quitPressed))
-        for button in [repair, settings, quit] {
+        let notNow = NSButton(title: "Later".localized, target: self, action: #selector(notNowPressed))
+        notNow.keyEquivalent = "\u{1b}"
+        for button in [repair, settings, quit, notNow] {
             button.bezelStyle = .rounded
             button.controlSize = .small
         }
@@ -66,7 +69,7 @@ final class ArrowLostNoticeController: NSObject {
         let top = NSStackView(views: [icon, text])
         top.alignment = .top
         top.spacing = 10
-        let buttons = NSStackView(views: [repair, settings, quit])
+        let buttons = NSStackView(views: [repair, settings, quit, notNow])
         buttons.spacing = 8
         let content = NSStackView(views: [top, buttons])
         content.orientation = .vertical
@@ -123,6 +126,12 @@ final class ArrowLostNoticeController: NSObject {
         let openSettings = actions?.openSettings
         hide()
         openSettings?()
+    }
+
+    @objc private func notNowPressed() {
+        let notNow = actions?.notNow
+        hide()
+        notNow?()
     }
 
     @objc private func quitPressed() {

@@ -63,8 +63,10 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
 - **Arrow rescue notice** (macOS 13–26): ⌘-drag the arrow to the far left of the
   bar, past the separator, collapse, and relaunch — the first repair puts it
   back. To reach the notice itself, repeat it within the same run until the
-  repair limit is hit: the panel appears under the menu bar and **Repair Menu
-  Bar** clears it.
+  repair limit is hit: the panel appears under the menu bar (on the main
+  display, since the arrow has none) and **Repair Menu Bar** clears it. Do it
+  again and press **Later** (or Esc): the panel closes and doesn't come back
+  on the next collapse.
 
 ## macOS 13–26 only
 
