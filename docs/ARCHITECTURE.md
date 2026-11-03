@@ -122,6 +122,10 @@ frontmost app's menus.
   `invalidateLayout`, waits for a collapse in flight, and, unlike the other
   states, keeps hiding while a camera or microphone is in use. It wins over
   profiles and the frontmost app.
+- **Undo.** `NewAppAnswerUndo` keeps the last answer for five minutes, so the
+  arrow's menu can offer the opposite answer to it; the item hides itself once
+  it ages out or the app quits, since a decision about a missing app can't be
+  seen to matter.
 - **New apps.** macOS puts a new app's icon on the hidden side.
   `NewMenuBarAppTracker` (persisted by `UserDefaultsNewMenuBarAppStore`)
   remembers every app seen; the first read only records what is there. A new

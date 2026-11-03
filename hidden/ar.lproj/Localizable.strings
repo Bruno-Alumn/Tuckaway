@@ -235,3 +235,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "إظهار عدد الأيقونات المخفية";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "تراجع: إبقاء %@ ظاهرًا";
+"Undo: hide %@" = "تراجع: إخفاء %@";

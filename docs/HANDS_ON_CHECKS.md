@@ -29,6 +29,11 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
 
 ## Unreleased
 
+- **Undo a new-app answer:** install or relaunch an app that wasn't in the menu
+  bar before, answer **Hide** on its question, then Control-click the arrow
+  within five minutes: **Undo: keep <app> visible** is there and its icon comes
+  back. Answer a second app with **Keep Visible** and the menu offers **Undo:
+  hide <app>**. The item is gone after five minutes.
 - **Profile ⋯ menu:** Rename… (the shortcut still works under the new name;
   a taken name shows the alert), Use Current Layout, Remove App, Delete
   Profile… (asks first). The row lists the apps.

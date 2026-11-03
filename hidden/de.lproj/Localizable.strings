@@ -235,3 +235,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Anzahl ausgeblendeter Symbole zeigen";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "Rückgängig: %@ sichtbar lassen";
+"Undo: hide %@" = "Rückgängig: %@ ausblenden";

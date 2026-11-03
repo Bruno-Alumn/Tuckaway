@@ -233,3 +233,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "显示隐藏的图标数量";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "撤销：保持显示 %@";
+"Undo: hide %@" = "撤销：隐藏 %@";

@@ -235,3 +235,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Показувати кількість прихованих іконок";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "Скасувати: лишити %@ видимим";
+"Undo: hide %@" = "Скасувати: приховати %@";
