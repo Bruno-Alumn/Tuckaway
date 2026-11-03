@@ -2071,6 +2071,31 @@ extension StatusBarController {
         }
     }
 
+    // From Check Your Setup: put the arrow back where it can be clicked.
+    func repairArrowPosition() {
+        arrowRescueCount = 0
+        StatusItemPositions.pullArrowInside()
+        rebuildStatusItems()
+        expandMenubar()
+    }
+
+    // For Check Your Setup: how many icons the collapsed bar would hide, and
+    // whether the engine can read the layout at all right now.
+    var hiddenIconCountForSetupCheck: Int {
+        (menuBarEngine as? HiddenSectionPeeking)?.hiddenItems.count ?? 0
+    }
+
+    var layoutIsReadableForSetupCheck: Bool? {
+        guard let peeker = menuBarEngine as? HiddenSectionPeeking else { return nil }
+        return peeker.isPeeking || !peeker.hiddenItems.isEmpty
+    }
+
+    var isArrowOnScreenForSetupCheck: Bool {
+        let frames = NSScreen.screens.map(\.frame)
+        guard let arrow = btnExpandCollapse.button?.window?.frame else { return true }
+        return frames.contains { $0.insetBy(dx: -8, dy: -8).intersects(arrow) }
+    }
+
     // Apps kept visible by bundle; Menu Bar Items lists them as Visible.
     var keptVisibleApps: Set<String> {
         newAppReporter?.keptVisibleApps ?? []

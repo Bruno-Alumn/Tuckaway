@@ -29,6 +29,11 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
 
 ## Unreleased
 
+- **Check Your Setup:** in Settings › General, press **Check Your Setup**: with
+  permissions granted and icons on the hidden side it says **Everything looks
+  right.**; turn Launch at login off and run it again and it lists that; revoke
+  Accessibility and it lists only that; with the separate bar on and Screen
+  Recording off it lists that. Each button does what it says.
 - **Profile ⋯ menu:** Rename… (the shortcut still works under the new name;
   a taken name shows the alert), Use Current Layout, Remove App, Delete
   Profile… (asks first). The row lists the apps.

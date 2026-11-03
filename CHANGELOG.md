@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- **Check Your Setup** in Settings › General: one button that says why nothing is being hidden — a missing permission, every icon on the visible side, the arrow pushed off screen, the login item off — with the fix for each where Tuckaway can do it itself.
 - **Edit profiles in Settings** (macOS 27): the ⋯ button next to each profile under Profiles in Settings › General renames it, replaces its apps with the ones visible now, removes an app, or deletes it. Each profile also lists its apps.
 - **Show hidden icons briefly when they change** (macOS 27, Settings › General, off by default, #229): while collapsed, a hidden icon whose width or text changes shows for 8 seconds. Put an icon in Always Hidden to keep it out of this. A change to an icon's picture alone isn't noticed.
 - Settings explains what **Expand across full menu bar** does (#143).

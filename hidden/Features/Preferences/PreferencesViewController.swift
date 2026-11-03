@@ -241,6 +241,9 @@ final class GeneralSettingsModel: ObservableObject {
     @Published private(set) var profileAppTriggers: [String: String] = [:]
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
     @Published private(set) var clockDropsDate = GeneralSettingsModel.readClockDropsDate()
+    // "Check Your Setup": what the check found, once the user has run it.
+    @Published private(set) var setupIssues: [SetupCheck.Issue]?
+    @Published private(set) var isCheckingSetup = false
 
     var onRecordShortcut: (ShortcutKind) -> Void = { _ in }
     var onClearShortcut: (ShortcutKind) -> Void = { _ in }
@@ -249,7 +252,49 @@ final class GeneralSettingsModel: ObservableObject {
         isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
         clockDropsDate = Self.readClockDropsDate()
         refreshProfiles()
+        // A permission the user just granted makes an old result misleading.
+        if setupIssues != nil {
+            runSetupCheck()
+        }
         objectWillChange.send()
+    }
+
+    // Runs the checks against what the app can see right now. Kept off the UI
+    // thread for nothing: every input is already in hand or a system query that
+    // doesn't block.
+    func runSetupCheck() {
+        isCheckingSetup = true
+        let controller = statusBarController
+        let inputs = SetupCheck.Inputs(
+            runsNativeHiding: StatusBarController.supportsPresentationMode,
+            isAccessibilityGranted: !Util.isAccessibilityPermissionMissing,
+            usesSeparateBar: Preferences.showHiddenItemsInSeparateBar,
+            isScreenRecordingGranted: CGPreflightScreenCaptureAccess(),
+            hiddenIconCount: controller?.hiddenIconCountForSetupCheck ?? 0,
+            layoutIsReadable: controller?.layoutIsReadableForSetupCheck,
+            isArrowOnScreen: controller?.isArrowOnScreenForSetupCheck ?? true,
+            isLoginItemOn: Preferences.isAutoStart
+        )
+        setupIssues = SetupCheck.issues(inputs)
+        isCheckingSetup = false
+    }
+
+    // Fixes an issue where the app can do it without a detour: the permission
+    // prompts and the login item are its own to ask for.
+    func fix(_ issue: SetupCheck.Issue) {
+        switch issue {
+        case .missingAccessibility:
+            Util.requestAccessibilityPermission()
+        case .missingScreenRecording:
+            if !CGPreflightScreenCaptureAccess() { CGRequestScreenCaptureAccess() }
+        case .nothingToHide:
+            PreferencesWindowController.shared.show(tab: .items)
+        case .arrowOffScreen:
+            statusBarController?.repairArrowPosition()
+        case .loginItemOff:
+            Preferences.isAutoStart = true
+        }
+        runSetupCheck()
     }
 
     private static func readClockDropsDate() -> Bool {
@@ -574,7 +619,7 @@ struct GeneralSettingsView: View {
             if model.isAccessibilityPermissionMissing {
                 Section { accessibilityNotice }
             }
-            Section { tutorial }
+            Section { setupCheck }
             if model.clockDropsDate {
                 Section { clockDateNotice }
             }
@@ -754,6 +799,93 @@ struct GeneralSettingsView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.vertical, 4)
+    }
+
+    // "Check Your Setup": a button that lists what's wrong, each with the fix
+    // that can be done from here.
+    private var setupCheck: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 10) {
+                Image(systemName: "stethoscope")
+                    .foregroundStyle(.secondary)
+                Text(verbatim: "Nothing hides? Check what's missing.".localized)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                Button("Check Your Setup".localized) { model.runSetupCheck() }
+                    .controlSize(.small)
+                    .disabled(model.isCheckingSetup)
+            }
+            if let issues = model.setupIssues {
+                if issues.isEmpty {
+                    Text(verbatim: "Everything looks right.".localized)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                ForEach(issues, id: \.self) { issue in
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.circle")
+                            .foregroundStyle(.orange)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(verbatim: Self.explanation(of: issue))
+                                .font(.caption)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Text(verbatim: Self.hint(of: issue))
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Spacer(minLength: 0)
+                        if let title = Self.fixTitle(of: issue) {
+                            Button(title) { model.fix(issue) }
+                                .controlSize(.small)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // What the check found, in the user's words, and the one thing that fixes it.
+    private static func explanation(of issue: SetupCheck.Issue) -> String {
+        switch issue {
+        case .missingAccessibility:
+            return "Tuckaway can't see your menu bar icons without Device Control and Data Access.".localized
+        case .missingScreenRecording:
+            return "The separate hidden-items bar needs Screen Recording to capture the icons.".localized
+        case .nothingToHide:
+            return "Every icon is on the visible side, so collapsing hides nothing.".localized
+        case .arrowOffScreen:
+            return "The arrow is off screen, so there is no way to open Tuckaway's menu.".localized
+        case .loginItemOff:
+            return "Tuckaway isn't set to open when you log in.".localized
+        }
+    }
+
+    private static func hint(of issue: SetupCheck.Issue) -> String {
+        switch issue {
+        case .missingAccessibility:
+            return "Turn Tuckaway on in System Settings, then come back here.".localized
+        case .missingScreenRecording:
+            return "Allow it in System Settings, or turn the separate bar off.".localized
+        case .nothingToHide:
+            return "Hold ⌘ and drag an icon to the left of the arrow.".localized
+        case .arrowOffScreen:
+            return "Repair puts the arrow back near the right side of the bar.".localized
+        case .loginItemOff:
+            return "Turn on Launch at login below.".localized
+        }
+    }
+
+    // Nil where the fixed control is already on screen, so nothing pretends to be
+    // a button it isn't.
+    private static func fixTitle(of issue: SetupCheck.Issue) -> String? {
+        switch issue {
+        case .missingAccessibility: return "Open Settings…".localized
+        case .missingScreenRecording: return "Open Settings…".localized
+        case .nothingToHide: return "Menu Bar Items…".localized
+        case .arrowOffScreen: return "Repair".localized
+        case .loginItemOff: return nil
+        }
     }
 
     private var accessibilityNotice: some View {

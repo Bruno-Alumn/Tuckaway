@@ -233,3 +233,20 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "隠しているアイコンの数を表示";
+
+/* Check Your Setup in Settings */
+"Nothing hides? Check what's missing." = "何も隠れませんか？不足しているものを確認しましょう。";
+"Check Your Setup" = "設定を診断";
+"Everything looks right." = "問題は見つかりませんでした。";
+"Tuckaway can't see your menu bar icons without Device Control and Data Access." = "「デバイス制御とデータアクセス」がないと、Tuckaway はメニューバーのアイコンを読み取れません。";
+"The separate hidden-items bar needs Screen Recording to capture the icons." = "別表示の非表示アイコンバーには「画面収録」の許可が必要です。";
+"Every icon is on the visible side, so collapsing hides nothing." = "すべてのアイコンが表示側にあるため、折りたたんでも何も隠れません。";
+"The arrow is off screen, so there is no way to open Tuckaway's menu." = "矢印が画面外にあり、Tuckaway のメニューを開けません。";
+"Tuckaway isn't set to open when you log in." = "Tuckaway はログイン時に開くよう設定されていません。";
+"Turn Tuckaway on in System Settings, then come back here." = "システム設定で Tuckaway をオンにしてから、ここに戻ってください。";
+"Allow it in System Settings, or turn the separate bar off." = "システム設定で許可するか、別表示のバーをオフにしてください。";
+"Hold ⌘ and drag an icon to the left of the arrow." = "⌘ を押しながらアイコンを矢印の左へドラッグしてください。";
+"Repair puts the arrow back near the right side of the bar." = "修復すると矢印がバーの右端近くに戻ります。";
+"Turn on Launch at login below." = "下の「ログイン時に起動」をオンにしてください。";
+"Menu Bar Items…" = "メニューバーの項目…";
+"Repair" = "修復";

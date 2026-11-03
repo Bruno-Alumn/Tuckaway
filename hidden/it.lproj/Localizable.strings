@@ -235,3 +235,20 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Mostra quante icone sono nascoste";
+
+/* Check Your Setup in Settings */
+"Nothing hides? Check what's missing." = "Niente si nasconde? Controlla cosa manca.";
+"Check Your Setup" = "Controlla la configurazione";
+"Everything looks right." = "Sembra tutto a posto.";
+"Tuckaway can't see your menu bar icons without Device Control and Data Access." = "Tuckaway non può vedere le icone della barra dei menu senza «Controllo del dispositivo e accesso ai dati».";
+"The separate hidden-items bar needs Screen Recording to capture the icons." = "La barra separata delle icone nascoste richiede «Registrazione schermo».";
+"Every icon is on the visible side, so collapsing hides nothing." = "Tutte le icone sono sul lato visibile: nascondere non nasconde nulla.";
+"The arrow is off screen, so there is no way to open Tuckaway's menu." = "La freccia è fuori dallo schermo: il menu di Tuckaway non si può aprire.";
+"Tuckaway isn't set to open when you log in." = "Tuckaway non è impostato per aprirsi al login.";
+"Turn Tuckaway on in System Settings, then come back here." = "Attiva Tuckaway in Impostazioni di Sistema e torna qui.";
+"Allow it in System Settings, or turn the separate bar off." = "Consentilo in Impostazioni di Sistema oppure disattiva la barra separata.";
+"Hold ⌘ and drag an icon to the left of the arrow." = "Tieni premuto ⌘ e trascina un'icona a sinistra della freccia.";
+"Repair puts the arrow back near the right side of the bar." = "Ripara rimette la freccia vicino al bordo destro della barra.";
+"Turn on Launch at login below." = "Attiva «Apri al login» qui sotto.";
+"Menu Bar Items…" = "Barra dei menu…";
+"Repair" = "Ripara";

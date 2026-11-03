@@ -235,3 +235,20 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "إظهار عدد الأيقونات المخفية";
+
+/* Check Your Setup in Settings */
+"Nothing hides? Check what's missing." = "لا يختفي شيء؟ تحقّق مما ينقص.";
+"Check Your Setup" = "تحقّق من الإعداد";
+"Everything looks right." = "يبدو أن كل شيء سليم.";
+"Tuckaway can't see your menu bar icons without Device Control and Data Access." = "لا يستطيع Tuckaway رؤية أيقونات شريط القوائم دون «التحكم بالأجهزة والوصول إلى البيانات».";
+"The separate hidden-items bar needs Screen Recording to capture the icons." = "يحتاج شريط العناصر المخفية المنفصل إلى «تسجيل الشاشة» لالتقاط الأيقونات.";
+"Every icon is on the visible side, so collapsing hides nothing." = "كل الأيقونات في الجهة الظاهرة، لذا لا يخفي الطي شيئًا.";
+"The arrow is off screen, so there is no way to open Tuckaway's menu." = "السهم خارج الشاشة، لذا لا توجد طريقة لفتح قائمة Tuckaway.";
+"Tuckaway isn't set to open when you log in." = "Tuckaway غير مهيّأ للفتح عند تسجيل الدخول.";
+"Turn Tuckaway on in System Settings, then come back here." = "شغّل Tuckaway في إعدادات النظام ثم عُد إلى هنا.";
+"Allow it in System Settings, or turn the separate bar off." = "اسمح به في إعدادات النظام، أو أوقف الشريط المنفصل.";
+"Hold ⌘ and drag an icon to the left of the arrow." = "اضغط ⌘ واسحب أيقونة إلى يسار السهم.";
+"Repair puts the arrow back near the right side of the bar." = "الإصلاح يعيد السهم قريبًا من الطرف الأيمن لشريط القوائم.";
+"Turn on Launch at login below." = "شغّل «الفتح عند تسجيل الدخول» أدناه.";
+"Menu Bar Items…" = "عناصر شريط القوائم…";
+"Repair" = "إصلاح";

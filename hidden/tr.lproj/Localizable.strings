@@ -235,3 +235,20 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Kaç simgenin gizli olduğunu göster";
+
+/* Check Your Setup in Settings */
+"Nothing hides? Check what's missing." = "Hiçbir şey gizlenmiyor mu? Eksik olanı kontrol edin.";
+"Check Your Setup" = "Kurulumu denetle";
+"Everything looks right." = "Her şey doğru görünüyor.";
+"Tuckaway can't see your menu bar icons without Device Control and Data Access." = "Tuckaway, “Cihaz Kontrolü ve Veri Erişimi” olmadan menü çubuğu simgelerinizi göremez.";
+"The separate hidden-items bar needs Screen Recording to capture the icons." = "Ayrı gizli simge çubuğu simgeleri yakalamak için “Ekran Kaydı” ister.";
+"Every icon is on the visible side, so collapsing hides nothing." = "Tüm simgeler görünür tarafta olduğu için daraltma hiçbir şeyi gizlemez.";
+"The arrow is off screen, so there is no way to open Tuckaway's menu." = "Ok ekran dışında, Tuckaway menüsü açılamıyor.";
+"Tuckaway isn't set to open when you log in." = "Tuckaway giriş yaptığınızda açılacak şekilde ayarlı değil.";
+"Turn Tuckaway on in System Settings, then come back here." = "Sistem Ayarları’nda Tuckaway’i açın ve buraya dönün.";
+"Allow it in System Settings, or turn the separate bar off." = "Sistem Ayarları’nda izin verin veya ayrı çubuğu kapatın.";
+"Hold ⌘ and drag an icon to the left of the arrow." = "⌘ tuşunu basılı tutup bir simgeyi okun soluna sürükleyin.";
+"Repair puts the arrow back near the right side of the bar." = "Onar, oku çubuğun sağ kenarına yakın bir yere geri koyar.";
+"Turn on Launch at login below." = "Aşağıdaki “Girişte aç” seçeneğini açın.";
+"Menu Bar Items…" = "Menü çubuğu öğeleri…";
+"Repair" = "Onar";

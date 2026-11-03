@@ -182,7 +182,10 @@ flowchart TD
   - `PreferencesWindowController` is an `NSTabViewController` with native
     toolbar tabs.
   - **General** is a SwiftUI grouped `Form` (`GeneralSettingsView`) bound
-    straight to `Preferences`.
+    straight to `Preferences`. **Check Your Setup** feeds `SetupCheck` the
+    values the app already holds (permissions, whether the separate bar is on,
+    how many icons are hidden, the login item) and shows the returned issues;
+    `SetupCheck` decides nothing else, so the reasons are unit-tested.
   - **Menu Bar Items** (`MenuBarItemManagerViewController`) lists items through
     Accessibility. It moves them by posting a synthetic ⌘-drag in the real menu
     bar.
