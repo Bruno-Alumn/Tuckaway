@@ -237,3 +237,8 @@
 /* Undoing the answer to the new-app question */
 "Undo: keep %@ visible" = "還原：保持顯示 %@";
 "Undo: hide %@" = "還原：隱藏 %@";
+
+/* A rescue panel when the arrow is pushed off screen (macOS 13-26) */
+"Tuckaway can't be reached" = "無法開啟 Tuckaway";
+"The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "選單列沒有空間容納箭頭，它跑到了螢幕外。「修復選單列」會把它放回靠右側的位置。";
+"Repair Menu Bar" = "修復選單列";

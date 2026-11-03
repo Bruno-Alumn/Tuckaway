@@ -239,3 +239,8 @@
 /* Undoing the answer to the new-app question */
 "Undo: keep %@ visible" = "تراجع: إبقاء %@ ظاهرًا";
 "Undo: hide %@" = "تراجع: إخفاء %@";
+
+/* A rescue panel when the arrow is pushed off screen (macOS 13-26) */
+"Tuckaway can't be reached" = "تعذّر الوصول إلى Tuckaway";
+"The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "لم يترك شريط القوائم مساحة للسهم، لذلك هو خارج الشاشة. «إصلاح شريط القوائم» يعيده قرب الطرف الأيمن.";
+"Repair Menu Bar" = "إصلاح شريط القوائم";

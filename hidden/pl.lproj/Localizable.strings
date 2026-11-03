@@ -239,3 +239,8 @@
 /* Undoing the answer to the new-app question */
 "Undo: keep %@ visible" = "Cofnij: pozostaw %@ widoczne";
 "Undo: hide %@" = "Cofnij: ukryj %@";
+
+/* A rescue panel when the arrow is pushed off screen (macOS 13-26) */
+"Tuckaway can't be reached" = "Nie można otworzyć Tuckaway";
+"The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "Pasek menu nie zostawił miejsca na strzałkę, więc jest poza ekranem. „Napraw pasek menu” przywraca ją przy prawej krawędzi.";
+"Repair Menu Bar" = "Napraw pasek menu";
