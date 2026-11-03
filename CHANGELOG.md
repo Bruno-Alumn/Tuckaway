@@ -2,20 +2,22 @@
 
 ## Unreleased
 
+## v1.9.0 (2026-11-03)
+
 ### Added
-- **Undo an answer to the new-app question** (macOS 27): after answering **Hide** or **Keep Visible** for a new app, the arrow's menu offers **Undo** for five minutes, in case the answer was a reflex. It goes away once the app quits.
-- **A way back in when the menu bar leaves no room for the arrow** (macOS 13–26): if the arrow ends up off screen after several repairs in a row, a small panel under the menu bar offers **Repair Menu Bar**, **Settings…**, **Quit Tuckaway** and **Later** instead of leaving Tuckaway running with no way to reach it.
+- **Spacers** in Settings › General › Appearance (#159): up to five blank items, in three widths, to ⌘-drag between menu bar icons and group them.
+- **Profiles by time of day** (macOS 27): **Schedule…** in a profile's ⋯ menu in Settings switches to it between two times, overnight too, and back to the profile you were using when the time ends. A profile you pick in between stays.
+- **Profiles while an app is open** (macOS 27): **Use While an App Is Open…** in a profile's ⋯ menu switches to it while that app runs (say, a Presenting profile while Zoom is open) and back when it quits.
+- **Edit profiles in Settings** (macOS 27): the ⋯ button next to each profile under Profiles in Settings › General renames it, replaces its apps with the ones visible now, removes an app, or deletes it. Each profile also lists its apps.
+- **Collapse when the Mac locks or sleeps** (Settings › General › Hiding, off by default): an expanded bar collapses when the screen locks or the displays sleep, so the hidden icons aren't left showing.
+- **Show how many icons are hidden** (macOS 27, Settings › General › Appearance, off by default): a number next to the arrow while collapsed.
+- **Show hidden icons briefly when they change** (macOS 27, Settings › General, off by default, #229): while collapsed, a hidden icon whose width or text changes shows for 8 seconds. Put an icon in Always Hidden to keep it out of this. A change to an icon's picture alone isn't noticed.
+- **Show an app's hidden icon for a moment after it updates** (macOS 27, Settings › General, off by default, #28): when a hidden app launches with a new version, its icon shows for 30 seconds.
 - **Check Your Setup** in Settings › General: one button that says why nothing is being hidden — a missing permission, every icon on the visible side, the arrow pushed off screen (macOS 13–26), or the App Store version on macOS 27 — with the fix for each where Tuckaway can do it itself.
 - **What's New after an update**: the first launch after an update shows a window with the release notes, once. Updating past several releases shows each one's notes, newest first (up to five). The notes are built into the app, so nothing is downloaded, and nothing is shown on a fresh install.
-- **Edit profiles in Settings** (macOS 27): the ⋯ button next to each profile under Profiles in Settings › General renames it, replaces its apps with the ones visible now, removes an app, or deletes it. Each profile also lists its apps.
-- **Show hidden icons briefly when they change** (macOS 27, Settings › General, off by default, #229): while collapsed, a hidden icon whose width or text changes shows for 8 seconds. Put an icon in Always Hidden to keep it out of this. A change to an icon's picture alone isn't noticed.
+- **Undo an answer to the new-app question** (macOS 27): after answering **Hide** or **Keep Visible** for a new app, the arrow's menu offers **Undo** for five minutes, in case the answer was a reflex. It goes away once the app quits.
+- **A way back in when the menu bar leaves no room for the arrow** (macOS 13–26): if the arrow ends up off screen after several repairs in a row, a small panel under the menu bar offers **Repair Menu Bar**, **Settings…**, **Quit Tuckaway** and **Later** instead of leaving Tuckaway running with no way to reach it.
 - Settings explains what **Expand across full menu bar** does (#143).
-- **Spacers** in Settings › General › Appearance (#159): up to five blank items, in three widths, to ⌘-drag between menu bar icons and group them.
-- **Show how many icons are hidden** (macOS 27, Settings › General › Appearance, off by default): a number next to the arrow while collapsed.
-- **Collapse when the Mac locks or sleeps** (Settings › General › Hiding, off by default): an expanded bar collapses when the screen locks or the displays sleep, so the hidden icons aren't left showing.
-- **Show an app's hidden icon for a moment after it updates** (macOS 27, Settings › General, off by default, #28): when a hidden app launches with a new version, its icon shows for 30 seconds.
-- **Profiles while an app is open** (macOS 27): **Use While an App Is Open…** in a profile's ⋯ menu switches to it while that app runs (say, a Presenting profile while Zoom is open) and back when it quits.
-- **Profiles by time of day** (macOS 27): **Schedule…** in a profile's ⋯ menu in Settings switches to it between two times, overnight too, and back to the profile you were using when the time ends. A profile you pick in between stays.
 
 ### Fixed
 - On macOS 13–26, the clock dropped its date while icons were hidden (#207), because the collapsed separator makes macOS think the menu bar is full. When the clock shows the date only "When Space Allows", Settings › General now explains this and opens Clock Options, where **Show Date: Always** keeps it. macOS 27 isn't affected.
