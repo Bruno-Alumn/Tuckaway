@@ -233,3 +233,6 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Hiện số biểu tượng đang ẩn";
+
+/* The decorative separator on macOS 27 */
+"Separator" = "Dấu phân cách";

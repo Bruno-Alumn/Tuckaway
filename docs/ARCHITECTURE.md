@@ -113,6 +113,10 @@ frontmost app's menus.
   flight is re-applied when it lands. Profiles can follow a display connection
   (`MenuBarProfiles.displaysChanged`, using `CGDisplayIsBuiltin`, so a closed
   MacBook at a desk counts).
+- **The cosmetic separator.** On 27 the engine keeps the real separator out of
+  the bar, so `VisualSeparator` decides whether an ordinary item stands in for it
+  left of the arrow (`updateVisualSeparator`). It hides nothing and its place
+  belongs to macOS like any other item's; `Hide separators` removes it.
 - **Find Hidden Icon.** `HiddenIconSearchController` lists `hiddenItems` by name in
   a key-capable non-activating panel; opening one reuses the separate bar's
   peek-and-click (`clickNativeHiddenItem`). Filtering is `HiddenIconSearch`.

@@ -235,3 +235,6 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Mostra quante icone sono nascoste";
+
+/* The decorative separator on macOS 27 */
+"Separator" = "Separatore";

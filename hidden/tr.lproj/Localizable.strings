@@ -235,3 +235,6 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Kaç simgenin gizli olduğunu göster";
+
+/* The decorative separator on macOS 27 */
+"Separator" = "Ayırıcı";

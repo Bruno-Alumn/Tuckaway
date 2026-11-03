@@ -26,7 +26,8 @@ Everything Tuckaway can do, including the parts with no UI.
 ### macOS 27, direct download build
 
 The direct (non-App Store) build hides icons natively on macOS 27, and the
-**arrow itself is the boundary**: there is no `|` separator. ⌘-drag icons to
+**arrow itself is the boundary**: the `|` here hides nothing, it only marks where
+the hidden section ends (`Hide separators`, ⌘S, takes it away). ⌘-drag icons to
 the arrow's left to hide them when collapsed, to its right to keep them
 visible. The always-hidden separator still appears (while expanded) when that
 section is enabled.

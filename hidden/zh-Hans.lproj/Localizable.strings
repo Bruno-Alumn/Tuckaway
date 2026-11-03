@@ -233,3 +233,6 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "显示隐藏的图标数量";
+
+/* The decorative separator on macOS 27 */
+"Separator" = "分隔符";

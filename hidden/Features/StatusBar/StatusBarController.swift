@@ -103,6 +103,9 @@ class StatusBarController: MenuBarItemProvider {
     private var profileScheduleTimer: Timer?
     private var activityRevealTimer: Timer?
     private var spacerItems: [NSStatusItem] = []
+    // The decorative `|` on macOS 27, where hiding needs no separator (see
+    // VisualSeparator).
+    private var visualSeparatorItem: NSStatusItem?
     private let activityReveal = ActivityRevealMonitor()
     private var hoverRowLeaveTimer: Timer?
     private let newAppPrompt = NewMenuBarAppPromptController()
@@ -214,6 +217,7 @@ class StatusBarController: MenuBarItemProvider {
         updateActiveAppIcon()
         updateActivityReveal()
         updateSpacers()
+        updateVisualSeparator()
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
@@ -894,6 +898,34 @@ class StatusBarController: MenuBarItemProvider {
         }
     }
 
+    // On macOS 27 the arrow is the boundary and macOS ejects a wide separator, so
+    // the engine takes it out of the bar. What people miss about it is the mark
+    // itself, so an ordinary item stands in for it left of the arrow while it
+    // would make sense to show one.
+    @objc private func updateVisualSeparator() {
+        let appearance = VisualSeparator.appearance(
+            usesNativeHiding: MenuBarEngineFactory.usesNativeVisibility,
+            isEnabled: !Preferences.areSeparatorsHidden,
+            isArrowOnScreen: btnExpandCollapse.button?.window?.frame.origin ?? .zero != .zero
+        )
+        guard appearance.isShown else {
+            if let item = visualSeparatorItem {
+                NSStatusBar.system.removeStatusItem(item)
+                visualSeparatorItem = nil
+            }
+            return
+        }
+        if visualSeparatorItem == nil {
+            let item = NSStatusBar.system.statusItem(withLength: appearance.length)
+            item.button?.image = self.imgIconLine
+            item.button?.appearsDisabled = true
+            item.button?.setAccessibilityLabel("Separator".localized)
+            // Its own place, so macOS doesn't reuse the separator's old position.
+            item.autosaveName = "hiddenbar_visual_separator"
+            visualSeparatorItem = item
+        }
+    }
+
     // Every launch records the app's version; one that changed since the last
     // launch shows for a moment if that option is on (#28). Apps running when
     // Tuckaway starts are recorded too, so their next update is noticed.
@@ -932,6 +964,7 @@ class StatusBarController: MenuBarItemProvider {
 
     @objc func updateAutoHide() {
         updateActiveAppIcon()
+        updateVisualSeparator()
         updateActivityReveal()
         updateSpacers()
         updateHiddenCount()

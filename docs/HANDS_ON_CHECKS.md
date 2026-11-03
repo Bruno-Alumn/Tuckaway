@@ -55,6 +55,12 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
 - **Expand across full menu bar caption:** reads well and doesn't crowd the
   Appearance section.
 
+- **Separator on macOS 27:** with the native engine on, a `|` sits just left of
+  the arrow while expanded and is gone while collapsed; ⌘-dragging an icon across
+  it puts the icon in the hidden section as before. **Hide separators** (⌘S)
+  removes it and **Show separators** brings it back, and the choice survives a
+  relaunch.
+
 ## macOS 13–26 only
 
 Needs a Mac on 26 or earlier.

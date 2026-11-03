@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- **The separator is back on macOS 27**, as a plain mark left of the arrow that **Hide separators** (⌘S) removes. It hides nothing — the arrow does that — but it's the `|` you used to drag icons across, and it's where Menu Bar Items says the hidden section starts.
 - **Edit profiles in Settings** (macOS 27): the ⋯ button next to each profile under Profiles in Settings › General renames it, replaces its apps with the ones visible now, removes an app, or deletes it. Each profile also lists its apps.
 - **Show hidden icons briefly when they change** (macOS 27, Settings › General, off by default, #229): while collapsed, a hidden icon whose width or text changes shows for 8 seconds. Put an icon in Always Hidden to keep it out of this. A change to an icon's picture alone isn't noticed.
 - Settings explains what **Expand across full menu bar** does (#143).
