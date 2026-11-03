@@ -1005,7 +1005,7 @@ class StatusBarController: MenuBarItemProvider {
         hoverDwellTimer?.invalidate()
     }
 
-    @objc private func openMacOS27Notice() {
+    @objc func openMacOS27Notice() {
         guard let url = URL(string: "https://github.com/Bruno-Alumn/Tuckaway/releases/latest") else { return }
         NSWorkspace.shared.open(url)
     }
@@ -2121,6 +2121,24 @@ extension StatusBarController {
         } else {
             stopKeepingVisible(undo.bundle)
         }
+    }
+
+    // For Check Your Setup: how many icons the collapsed bar would hide, and
+    // whether the engine can read the layout at all right now.
+    var hiddenIconCountForSetupCheck: Int {
+        (menuBarEngine as? HiddenSectionPeeking)?.hiddenItems.count ?? 0
+    }
+
+    // Nil before the engine's first full read: no layout yet says nothing
+    // about where the icons are.
+    var layoutIsReadableForSetupCheck: Bool? {
+        guard let engine = menuBarEngine as? NativeVisibilityEngine else { return nil }
+        return engine.layout != nil
+    }
+
+    var isArrowOnScreenForSetupCheck: Bool {
+        MenuBarRescue.isReachable(arrowFrame: btnExpandCollapse.button?.window?.frame,
+                                  screenFrames: NSScreen.screens.map(\.frame))
     }
 
     // Apps kept visible by bundle; Menu Bar Items lists them as Visible.

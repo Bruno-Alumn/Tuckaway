@@ -34,6 +34,14 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
   within five minutes: **Undo: keep <app> visible** is there and its icon comes
   back. Answer a second app with **Keep Visible** and the menu offers **Undo:
   hide <app>**. The item is gone after five minutes.
+- **Check Your Setup:** in Settings › General, press **Check Your Setup**: with
+  permissions granted and icons on the hidden side it says **Everything looks
+  right.**; ⌘-drag every icon to the visible side and it says collapsing hides
+  nothing; revoke Accessibility and it lists only that (no button: the banner
+  above has one); with the separate bar on and Screen Recording off it lists
+  that. The menu bar picture and ⌘-drag caption are still above it. Each
+  button does what it says. In the App Store build on 27 it lists only that
+  this version can't hide.
 - **Profile ⋯ menu:** Rename… (the shortcut still works under the new name;
   a taken name shows the alert), Use Current Layout, Remove App, Delete
   Profile… (asks first). The row lists the apps.

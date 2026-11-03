@@ -104,6 +104,9 @@
 		C77AA0172E20000200B4A001 /* ArrowLostNoticeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0072E20000200B4A001 /* ArrowLostNoticeController.swift */; };
 		C77AA0182E20000200B4A001 /* MenuBarRescue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0062E20000200B4A001 /* MenuBarRescue.swift */; };
 		C77AA0192E20000200B4A001 /* MenuBarRescueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0082E20000200B4A001 /* MenuBarRescueTests.swift */; };
+		C77AA0262E20000300B4A001 /* SetupCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0072E20000300B4A001 /* SetupCheck.swift */; };
+		C77AA0272E20000300B4A001 /* SetupCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0072E20000300B4A001 /* SetupCheck.swift */; };
+		C77AA0282E20000300B4A001 /* SetupCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0082E20000300B4A001 /* SetupCheckTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -222,6 +225,8 @@
 		C77AA0062E20000200B4A001 /* MenuBarRescue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarRescue.swift; sourceTree = "<group>"; };
 		C77AA0072E20000200B4A001 /* ArrowLostNoticeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowLostNoticeController.swift; sourceTree = "<group>"; };
 		C77AA0082E20000200B4A001 /* MenuBarRescueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarRescueTests.swift; sourceTree = "<group>"; };
+		C77AA0072E20000300B4A001 /* SetupCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupCheck.swift; sourceTree = "<group>"; };
+		C77AA0082E20000300B4A001 /* SetupCheckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupCheckTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -325,6 +330,7 @@
 				08A5F85923AA007A00981CA5 /* PreferencesViewController.swift */,
 				7A4D10002E10000100B4A001 /* MenuBarItemManagerWindowController.swift */,
 				3CF14C81221FA49D0083D42B /* PreferencesWindowController.swift */,
+				C77AA0072E20000300B4A001 /* SetupCheck.swift */,
 			);
 			path = Preferences;
 			sourceTree = "<group>";
@@ -488,6 +494,7 @@
 				C77AA0082E20000500B4A001 /* CoordinateSpaceTests.swift */,
 				C77AA0082E20000400B4A001 /* NewAppAnswerUndoTests.swift */,
 				C77AA0082E20000200B4A001 /* MenuBarRescueTests.swift */,
+				C77AA0082E20000300B4A001 /* SetupCheckTests.swift */,
 			);
 			path = TuckawayUnitTests;
 			sourceTree = "<group>";
@@ -696,6 +703,7 @@
 				C77AA0362E20000400B4A001 /* NewAppAnswerUndo.swift in Sources */,
 				C77AA0162E20000200B4A001 /* MenuBarRescue.swift in Sources */,
 				C77AA0172E20000200B4A001 /* ArrowLostNoticeController.swift in Sources */,
+				C77AA0262E20000300B4A001 /* SetupCheck.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -737,6 +745,8 @@
 				C77AA0382E20000400B4A001 /* NewAppAnswerUndoTests.swift in Sources */,
 				C77AA0182E20000200B4A001 /* MenuBarRescue.swift in Sources */,
 				C77AA0192E20000200B4A001 /* MenuBarRescueTests.swift in Sources */,
+				C77AA0272E20000300B4A001 /* SetupCheck.swift in Sources */,
+				C77AA0282E20000300B4A001 /* SetupCheckTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
