@@ -258,3 +258,7 @@
 "Repair puts the arrow back near the right side of the bar." = "الإصلاح يعيد السهم قريبًا من الطرف الأيمن لشريط القوائم.";
 "Menu Bar Items…" = "عناصر شريط القوائم…";
 "Repair" = "إصلاح";
+
+/* What's New after an update */
+"What's New in Tuckaway %@" = "تحديثات Tuckaway %@";
+"Done" = "تم";

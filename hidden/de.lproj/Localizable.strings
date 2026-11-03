@@ -258,3 +258,7 @@
 "Repair puts the arrow back near the right side of the bar." = "Reparieren setzt den Pfeil zurück an den rechten Rand der Leiste.";
 "Menu Bar Items…" = "Menüleistenobjekte …";
 "Repair" = "Reparieren";
+
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Neu in Tuckaway %@";
+"Done" = "Fertig";

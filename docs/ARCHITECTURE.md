@@ -263,6 +263,19 @@ flowchart TD
 Translocated or read-only copies get a **Download** button that opens the
 release page instead.
 
+**What's New** works in both builds and needs no network.
+`scripts/embed-release-notes.sh` copies `CHANGELOG.md`'s released sections
+(`## v…` and below) into `Contents/Resources/WhatsNew.md`, from a build phase
+in Release configurations and again in `package-dmg.sh`, which refuses a version
+without its own section. Parsing stops where the versions stop going down, because below
+Tuckaway's v1.0.0 the changelog keeps Hidden Bar's history (v1.11.1 and older).
+At launch `WhatsNew.plan` picks the sections newer
+than `lastSeenWhatsNewVersion` and no newer than the running version, and
+records the running version (never an older one). A fresh install
+(`hasLaunchedBefore` unset) records without showing. Someone updating from a
+version before What's New has no recorded version and sees only the current
+release.
+
 ## Autostart
 
 macOS 13+ `SMAppService.mainApp`: the app registers itself, and the login item

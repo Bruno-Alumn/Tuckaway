@@ -258,3 +258,7 @@
 "Repair puts the arrow back near the right side of the bar." = "Popravak vraća strelicu uz desni rub trake.";
 "Menu Bar Items…" = "Stavke trake izbornika…";
 "Repair" = "Popravi";
+
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Novosti u Tuckawayju %@";
+"Done" = "Gotovo";

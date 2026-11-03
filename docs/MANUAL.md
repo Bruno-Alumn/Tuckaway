@@ -238,6 +238,10 @@ The direct-download build updates itself from
   Tuckaway's permissions (and firewalls such as LuLu keep their rules) across
   updates. Updating from 1.1.0 or earlier is the exception: those releases
   weren't signed this way, so macOS asks once more.
+- **What's New:** the first launch after an update shows the notes for the
+  releases since the version you last ran (up to five, newest first), once.
+  Nothing appears on a fresh install. The notes are part of the app, so the
+  App Store build shows them too.
 
 The App Store build has no network access and no updater.
 

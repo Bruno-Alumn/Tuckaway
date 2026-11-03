@@ -94,7 +94,10 @@ reads.
    packaging and verifying the DMG only runs on pushes to main, so a PR can be
    green while main is red. It was red from #61 to #100 without anyone noticing.
 2. Bump `MARKETING_VERSION` (all four Tuckaway configurations) and
-   `CURRENT_PROJECT_VERSION` in the project file.
+   `CURRENT_PROJECT_VERSION` in the project file. In the same PR, rename
+   `## Unreleased` in `CHANGELOG.md` to `## v<version> (<date>)` and start a
+   new empty `## Unreleased` above it: "What's New" is built from that section,
+   and `package-dmg.sh` refuses to package a version without one.
 3. Build the GitHub release with `EXPECTED_VERSION=v<version> scripts/package-dmg.sh`.
    The expected tag is rejected if it differs from the app's
    `CFBundleShortVersionString`. The script builds

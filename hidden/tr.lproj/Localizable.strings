@@ -258,3 +258,7 @@
 "Repair puts the arrow back near the right side of the bar." = "Onar, oku çubuğun sağ kenarına yakın bir yere geri koyar.";
 "Menu Bar Items…" = "Menü çubuğu öğeleri…";
 "Repair" = "Onar";
+
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Tuckaway %@'ta Yenilikler";
+"Done" = "Bitti";
