@@ -753,6 +753,16 @@ class StatusBarController: MenuBarItemProvider {
         }
     }
     
+    // A menu item whose action is this controller's: the four lines every entry
+    // below needs, once.
+    private func menuItem(_ title: String, action: Selector, key: String = "",
+                          isOn: Bool? = nil) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+        item.target = self
+        if let isOn { item.state = isOn ? .on : .off }
+        return item
+    }
+
     // Built fresh on every call (see showContextMenu(from:)), so every field
     // below reflects state as of THIS presentation - no separate "patch the
     // title after the fact" step is needed for the auto-collapse item.
@@ -761,23 +771,18 @@ class StatusBarController: MenuBarItemProvider {
 
         // Notch overflow menu item (only on notch Macs, and only when enabled)
         if NotchOverflowController.hasNotch && Preferences.notchOverflowEnabled {
-            let overflowItem = NSMenuItem(title: "Show Notch Items".localized, action: #selector(showNotchOverflow), keyEquivalent: "")
-            overflowItem.target = self
-            menu.addItem(overflowItem)
+            menu.addItem(menuItem("Show Notch Items".localized, action: #selector(showNotchOverflow)))
             menu.addItem(NSMenuItem.separator())
         }
 
         if Preferences.didShowMacOS27HideUnavailableNotice && !MenuBarEngineFactory.usesNativeVisibility {
-            let noticeItem = NSMenuItem(title: "Hiding unavailable on macOS 27 - Learn more".localized, action: #selector(openMacOS27Notice), keyEquivalent: "")
-            noticeItem.target = self
-            menu.addItem(noticeItem)
+            menu.addItem(menuItem("Hiding unavailable on macOS 27 - Learn more".localized,
+                                  action: #selector(openMacOS27Notice)))
             menu.addItem(NSMenuItem.separator())
         }
 
         if Self.supportsHiddenIconSearch {
-            let findItem = NSMenuItem(title: "Find Hidden Icon…".localized, action: #selector(showHiddenIconSearch), keyEquivalent: "")
-            findItem.target = self
-            menu.addItem(findItem)
+            menu.addItem(menuItem("Find Hidden Icon…".localized, action: #selector(showHiddenIconSearch)))
         }
 
         if menuBarEngine is ProfileApplying {
@@ -785,38 +790,28 @@ class StatusBarController: MenuBarItemProvider {
         }
 
         if Self.supportsPresentationMode {
-            let presentationItem = NSMenuItem(title: "Presentation Mode".localized, action: #selector(togglePresentationMode), keyEquivalent: "")
-            presentationItem.state = isPresenting ? .on : .off
-            presentationItem.target = self
-            menu.addItem(presentationItem)
+            menu.addItem(menuItem("Presentation Mode".localized, action: #selector(togglePresentationMode),
+                                  isOn: isPresenting))
         }
 
-        let toggleAutoHideItem = NSMenuItem(title: "Auto-collapse".localized, action: #selector(toggleAutoHide), keyEquivalent: "t")
-        toggleAutoHideItem.state = Preferences.isAutoHide ? .on : .off
-        toggleAutoHideItem.target = self
-        menu.addItem(toggleAutoHideItem)
-
-        let separatorTitle = Preferences.areSeparatorsHidden ? "Show separators" : "Hide separators"
-        let separatorItem = NSMenuItem(title: separatorTitle.localized, action: #selector(showHideSeparatorsAndAlwayHideArea), keyEquivalent: "s")
-        separatorItem.target = self
-        menu.addItem(separatorItem)
+        menu.addItem(menuItem("Auto-collapse".localized, action: #selector(toggleAutoHide), key: "t",
+                              isOn: Preferences.isAutoHide))
+        // The title asks for the opposite of what is on, so the menu says what a
+        // click will do.
+        menu.addItem(menuItem(Preferences.areSeparatorsHidden ? "Show separators".localized : "Hide separators".localized,
+                              action: #selector(showHideSeparatorsAndAlwayHideArea), key: "s"))
 
         menu.addItem(NSMenuItem.separator())
-
-        let itemsItem = NSMenuItem(title: "Manage Menu Bar Items…".localized, action: #selector(openMenuBarItemManager), keyEquivalent: "")
-        itemsItem.target = self
-        menu.addItem(itemsItem)
+        menu.addItem(menuItem("Manage Menu Bar Items…".localized, action: #selector(openMenuBarItemManager)))
 
         if Updater.isSupported {
+            // Not this controller's action: the updater's.
             let updateItem = NSMenuItem(title: "Check for Updates…".localized, action: #selector(Updater.checkForUpdates), keyEquivalent: "")
             updateItem.target = Updater.shared
             menu.addItem(updateItem)
         }
 
-        let prefItem = NSMenuItem(title: "Settings…".localized, action: #selector(openPreferenceViewControllerIfNeeded), keyEquivalent: ",")
-        prefItem.target = self
-        menu.addItem(prefItem)
-
+        menu.addItem(menuItem("Settings…".localized, action: #selector(openPreferenceViewControllerIfNeeded), key: ","))
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit Tuckaway".localized, action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
 
