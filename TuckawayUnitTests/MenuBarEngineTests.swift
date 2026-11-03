@@ -33,6 +33,9 @@ private final class FakeItems: MenuBarItemProvider {
 
 private final class FakeInventory: MenuBarInventoryProviding {
     var isAuthorized = true
+    // Set for the sandboxed-build tests, where the sections come from a list of
+    // apps instead of the bar's geometry.
+    var isDynamicInventory = false
     var items: [MenuBarInventoryItem] = []
     var authorizationRequests = 0
     var snapshots = 0

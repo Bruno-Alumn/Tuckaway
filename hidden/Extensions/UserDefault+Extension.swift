@@ -41,5 +41,8 @@ extension UserDefaults {
         static let lastUpdateCheck = "lastUpdateCheck"
         static let skippedUpdateVersion = "skippedUpdateVersion"
         static let hasLaunchedBefore = "hasLaunchedBefore"
+        // App Store build on macOS 27: hide from the apps the user names, since
+        // the sandbox can't read where the icons are.
+        static let usesChosenVisibleApps = "usesChosenVisibleApps"
     }
 }

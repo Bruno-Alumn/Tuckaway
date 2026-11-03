@@ -470,6 +470,7 @@
 				B2C3D4E5F60718293A4B5C03 /* MenuBarItemMovePlanTests.swift */,
 				B2C3D4E5F60718293A4B5C13 /* LocalizationTests.swift */,
 				A1B2C3D4E5F6071829304A03 /* GitHubReleaseTests.swift */,
+				C77AA0072E20000700B4A001 /* ChosenAppsLayoutTests.swift */,
 				C77AA0082E20000300B4A001 /* SetupCheckTests.swift */,
 			);
 			path = TuckawayUnitTests;
@@ -711,6 +712,7 @@
 				B2C3D4E5F60718293A4B5C17 /* LocalizationTests.swift in Sources */,
 				A1B2C3D4E5F6071829304A06 /* GitHubRelease.swift in Sources */,
 				A1B2C3D4E5F6071829304A07 /* GitHubReleaseTests.swift in Sources */,
+				C77AA0662E20000700B4A001 /* ChosenAppsLayoutTests.swift in Sources */,
 				C77AA0272E20000300B4A001 /* SetupCheck.swift in Sources */,
 				C77AA0282E20000300B4A001 /* SetupCheckTests.swift in Sources */,
 			);

@@ -64,6 +64,10 @@ struct MenuBarDisplay: Equatable {
 
 protocol MenuBarInventoryProviding: AnyObject {
     var isAuthorized: Bool { get }
+    // Whether this inventory reads every app's own extras menu bar instead of
+    // using system-wide lookups, which the App Sandbox denies. Only then can the
+    // sections be decided from a list of apps rather than from the bar.
+    var isDynamicInventory: Bool { get }
     func requestAuthorization()
     // Every other app's status items, delivered on the main queue. Only meaningful
     // while nothing is hidden: once a native visibility assertion is active,
@@ -156,6 +160,21 @@ enum MenuBarLayoutResolver {
 
     private static func midpoint(of frame: CGRect) -> CGPoint {
         return CGPoint(x: frame.midX, y: frame.midY)
+    }
+
+    // The layout when the user, not the bar, decides the sections: every app in
+    // `visible` is on the visible side and every other app in the bar is hidden.
+    // Used where the bar can't be read but the icons can still be listed (the
+    // sandboxed build), so a section is a name rather than a position.
+    static func fromChosenApps(_ inventory: [MenuBarInventoryItem], visible: Set<String>,
+                               excludingBundle ownBundle: String?) -> MenuBarLayout {
+        var sections: [String: MenuBarSection] = [:]
+        for item in inventory {
+            guard let bundle = item.bundleIdentifier, bundle != ownBundle,
+                  !systemItemOwners.contains(bundle) else { continue }
+            sections[bundle] = visible.contains(bundle) ? .visible : .hidden
+        }
+        return MenuBarLayout(sections: sections)
     }
 
     static func section(of frame: CGRect,

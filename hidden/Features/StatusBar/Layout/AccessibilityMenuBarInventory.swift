@@ -35,11 +35,32 @@ enum MenuBarDisplayInventory {
     }
 }
 
+// Where the sections come from. The direct build reads where the icons are; the
+// sandboxed build can't, so it asks the user which apps to keep, and the layout
+// comes from names instead of positions.
+enum MenuBarInventoryChoice {
+    case barGeometry
+    case chosenApps
+
+    // The direct build always reads the bar. The sandboxed one can't, so it turns
+    // this on when the user has asked to name the apps to keep.
+    static var current: MenuBarInventoryChoice {
+        #if HIDDENBAR_NATIVE_VISIBILITY
+        return .barGeometry
+        #else
+        return UserDefaults.standard.bool(forKey: UserDefaults.Key.usesChosenVisibleApps) ? .chosenApps : .barGeometry
+        #endif
+    }
+}
+
 // Lists other apps' status items through public Accessibility API: every running
 // app's AXExtrasMenuBar children, with the owning bundle from the process.
-// Needs the Accessibility permission, and does not work inside the App Sandbox
-// (the sandbox denies the mach-lookup to com.apple.axserver even when the
-// permission is granted), so only the non-sandboxed direct build uses it.
+// Reads that hit every app's extras menu bar need the Accessibility permission,
+// and the system-wide lookups (the click hit test, the sections' boundaries) do
+// not work inside the App Sandbox, which denies the mach-lookup to
+// com.apple.axserver. Per-app reads are the exception: asking one app about its
+// own extras menu bar answers without that lookup, which is what the App Store
+// build uses when the user names the apps to keep (see isDynamicInventory).
 final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
     private static let messagingTimeout: Float = 0.1
     private static let retryMessagingTimeout: Float = 1.0
@@ -48,6 +69,22 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
 
     var isAuthorized: Bool {
         return AXIsProcessTrusted()
+    }
+
+    // The sandboxed App Store build can't look up other apps' status items, so a
+    // list the user picked by name is the only way to section the bar there. This
+    // asks every app that has a menu-bar extra whether it has one: each app's
+    // AXExtrasMenuBar answers for its own items, without the system-wide lookup
+    // the sandbox denies.
+    //
+    // Unverified: the sandbox has not been tested against the private restriction
+    // yet, so this is only used behind the opt-in preference in
+    // NativeVisibilityEngine.
+    var isDynamicInventory: Bool {
+        switch MenuBarInventoryChoice.current {
+        case .chosenApps: return true
+        case .barGeometry: return false
+        }
     }
 
     // Shows the system prompt once per launch; asking on every collapse would

@@ -60,6 +60,12 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
 - **Expand across full menu bar caption:** reads well and doesn't crowd the
   Appearance section.
 
+- **App Store build naming apps (macOS 27):** in the sandboxed build, set
+  `usesChosenVisibleApps` and relaunch. Accessibility granted, collapse: every
+  icon whose app isn't kept visible disappears, and **Keep Visible** brings an
+  app back. Nothing is verified yet; if the restriction refuses the request the
+  bar stays expanded and the log says so.
+
 ## macOS 13–26 only
 
 Needs a Mac on 26 or earlier.

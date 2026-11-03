@@ -290,8 +290,12 @@ never garbage-collects those; see Apple TN3111). The helper app itself is gone.
   and assessment mode. Apps hide as a whole (#427), the side effects in #437
   remain for Now Playing, Live Activities and screen recording, and a future
   macOS could change or remove the API.
-- **App Store build on macOS 27** cannot hide: the sandbox denies the
-  Accessibility lookups that locate the sections.
+- **App Store build on macOS 27** cannot hide from the bar's geometry: the
+  sandbox denies the system-wide Accessibility lookups that locate the sections.
+  `usesChosenVisibleApps` (off by default, unverified) makes the sections a list
+  of app names instead: `MenuBarLayoutResolver.fromChosenApps` builds the layout
+  from each app's own extras menu bar, which the sandbox does allow, and the
+  private restriction then hides everything not named.
 - **The notch (legacy engine):** hidden icons can sit under the notch. Notch
   overflow lists them in a menu rather than moving them.
 - **Other apps' open menus:** interaction awareness is based on pointer

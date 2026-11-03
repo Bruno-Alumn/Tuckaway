@@ -441,6 +441,27 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         applyPendingPresentation()
     }
 
+    // The sandboxed build can list icons per app but cannot read the bar's
+    // geometry, so the sections come from the apps the user named.
+    private var usesChosenApps: Bool {
+        inventory.isDynamicInventory
+    }
+
+    private func readChosenApps(_ body: @escaping (MenuBarLayout?) -> Void) {
+        let visible = newApps.tracker.kept
+        generation += 1
+        let generation = self.generation
+        inventory.snapshot { [weak self] inventory in
+            guard let self, generation == self.generation else { return }
+            let layout = MenuBarLayoutResolver.fromChosenApps(inventory, visible: visible,
+                                                             excludingBundle: self.ownBundleIdentifier)
+            self.layout = layout
+            self.inventoryItems = inventory
+            self.refreshHiddenItems()
+            body(self.effectiveLayout)
+        }
+    }
+
     // Expanded shows the hidden section; the always-hidden section stays hidden
     // while "hide separators" is on, otherwise everything is revealed by dropping
     // the restriction altogether. Its separator goes and comes back with it, only
@@ -469,6 +490,11 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // unrestricted bar; while a restriction is active the cached ones stand in.
     // Superseded by any later expand or activation, like an activation is.
     private func withLayout(refreshingShownApps: Bool = false, _ body: @escaping (MenuBarLayout?) -> Void) {
+        // Where the bar's sections can't be read (the sandboxed build), the user's
+        // list of apps decides instead of a boundary: layoutFromChosenApps.
+        if usesChosenApps {
+            return readChosenApps(body)
+        }
         if assertion != nil {
             guard refreshingShownApps, layout != nil, generation == assertionGeneration else {
                 return body(effectiveLayout)
