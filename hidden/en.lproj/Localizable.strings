@@ -235,3 +235,8 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Show how many icons are hidden";
+
+/* A rescue panel when the arrow is pushed off screen (macOS 13-26) */
+"Tuckaway can't be reached" = "Tuckaway can't be reached";
+"The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar.";
+"Repair Menu Bar" = "Repair Menu Bar";

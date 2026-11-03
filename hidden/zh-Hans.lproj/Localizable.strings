@@ -233,3 +233,8 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "显示隐藏的图标数量";
+
+/* A rescue panel when the arrow is pushed off screen (macOS 13-26) */
+"Tuckaway can't be reached" = "无法打开 Tuckaway";
+"The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "菜单栏没有空间容纳箭头，它跑到了屏幕外。“修复菜单栏”会把它放回靠近右侧的位置。";
+"Repair Menu Bar" = "修复菜单栏";

@@ -233,3 +233,8 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "隠しているアイコンの数を表示";
+
+/* A rescue panel when the arrow is pushed off screen (macOS 13-26) */
+"Tuckaway can't be reached" = "Tuckaway にアクセスできません";
+"The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "メニューバーに矢印の場所がなく、画面外にあります。「メニューバーを修復」で右端付近に戻します。";
+"Repair Menu Bar" = "メニューバーを修復";

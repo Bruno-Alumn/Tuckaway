@@ -170,6 +170,11 @@ flowchart TD
 - **`AppDelegate`**: registers default preferences, enforces a single running
   copy, migrates Hidden Bar preferences once, sets up the hotkey and login
   item, and starts the updater.
+- **`MenuBarRescue`**: the pure decision behind "the arrow is off screen". It
+  reports `.repair` while the arrow is outside every screen's frame (plus 8pt of
+  slack for a bar mid-reflow) and repairs are under the limit, `.giveUp` after
+  it, and `.none` whenever there is nothing to judge. `StatusBarController` acts
+  on it and a capped-out bar shows `ArrowLostNoticeController`'s panel.
 - **`StatusBarController`** (`Features/StatusBar`, the core of the product):
   - owns the status items and builds a fresh menu on every Control-click;
   - decides when to collapse and expand: auto-collapse timer, collapse on app

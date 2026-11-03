@@ -235,3 +235,8 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Afficher le nombre d’icônes masquées";
+
+/* A rescue panel when the arrow is pushed off screen (macOS 13-26) */
+"Tuckaway can't be reached" = "Tuckaway est injoignable";
+"The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "La barre des menus n'a pas laissé de place à la flèche, elle est hors écran. « Réparer la barre des menus » la remet près du bord droit.";
+"Repair Menu Bar" = "Réparer la barre des menus";

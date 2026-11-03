@@ -106,6 +106,7 @@ class StatusBarController: MenuBarItemProvider {
     private let activityReveal = ActivityRevealMonitor()
     private var hoverRowLeaveTimer: Timer?
     private let newAppPrompt = NewMenuBarAppPromptController()
+    private let arrowNotice = ArrowLostNoticeController()
     private let hiddenIconSearch = HiddenIconSearchController()
     private let profilesStore = UserDefaultsMenuBarProfilesStore()
     // New apps waiting to be asked about, in order; the first is on screen.
@@ -673,23 +674,48 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     // If collapsing hides the only control that can reopen the bar, undo it,
-    // repair the saved order, and rebuild the two items. Cap retries to avoid a
-    // collapse/rescue loop when macOS refuses the repaired positions.
+    // repair the saved order, and rebuild the two items. The decision is
+    // MenuBarRescue's, so what counts as lost and when to stop repairing are
+    // covered by tests.
     private func rescueArrowIfSwallowed() {
         DispatchQueue.main.async { [weak self] in
-            guard let self = self, self.isCollapsed else { return }
-            guard let arrowFrame = self.btnExpandCollapse.button?.window?.frame,
-                  arrowFrame.origin != .zero else { return }
-            guard !NSScreen.screens.contains(where: { $0.frame.intersects(arrowFrame) }) else { return }
-            guard self.arrowRescueCount < 2 else {
-                self.expandMenubar()
+            guard let self = self else { return }
+            let action = MenuBarRescue.action(arrowFrame: self.btnExpandCollapse.button?.window?.frame,
+                                              screenFrames: NSScreen.screens.map(\.frame),
+                                              isCollapsed: self.isCollapsed,
+                                              repairsSoFar: self.arrowRescueCount)
+            switch action {
+            case .none:
                 return
+            case .giveUp:
+                self.expandMenubar()
+                self.showArrowLostNotice()
+            case .repair:
+                self.arrowRescueCount += 1
+                self.expandMenubar()
+                StatusItemPositions.pullArrowInside()
+                self.rebuildStatusItems()
             }
-            self.arrowRescueCount += 1
-            self.expandMenubar()
-            StatusItemPositions.pullArrowInside()
-            self.rebuildStatusItems()
         }
+    }
+
+    // Tuckaway keeps repairing a lost arrow on every launch, but that can leave
+    // the user with an app they can't reach and no explanation. The panel names
+    // the problem and offers the two ways out.
+    private func showArrowLostNotice() {
+        guard !arrowNotice.isVisible else { return }
+        guard let frame = btnExpandCollapse.button?.window?.frame,
+              let screen = btnExpandCollapse.button?.window?.screen else { return }
+        arrowNotice.show(below: frame, on: screen, actions: ArrowLostNoticeController.Actions(
+            repair: { [weak self] in
+                guard let self else { return }
+                self.arrowRescueCount = 0
+                StatusItemPositions.pullArrowInside()
+                self.rebuildStatusItems()
+            },
+            openSettings: { PreferencesWindowController.shared.show(tab: .general) },
+            quit: { NSApp.terminate(nil) }
+        ))
     }
 
     private func rebuildStatusItems() {

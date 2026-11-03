@@ -235,7 +235,10 @@ The App Store build has no network access and no updater.
 - **It won't collapse mid-use**: while your pointer is anywhere in the menu bar,
   the auto-collapse countdown defers and restarts; it resumes when you leave.
 - **Self-repair**: if the arrow or separator was ⌘-dragged off the bar (which
-  used to make the app unreachable forever), they come back on next launch.
+  used to make the app unreachable forever), they come back on next launch. If
+  it happens again straight away, a small panel under the menu bar offers
+  **Repair Menu Bar**, **Settings…** and **Quit Tuckaway**, so the app is never
+  running with no way back to it.
 - **Display changes**: plugging in or removing monitors re-sizes the hidden zone
   for the widest attached screen automatically (macOS 26 and earlier). On macOS
   27, Tuckaway re-reads the layout and hides again about two seconds later.
