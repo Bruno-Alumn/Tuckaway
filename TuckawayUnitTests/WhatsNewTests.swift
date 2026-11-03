@@ -104,6 +104,11 @@ final class WhatsNewTests: XCTestCase {
         XCTAssertEqual(text, "Added\n• Profiles while an app is open.")
     }
 
+    func testCodeMarksAreDropped() {
+        XCTAssertEqual(WhatsNew.plainText("- Install with `brew install --cask tuckaway`."),
+                       "• Install with brew install --cask tuckaway.")
+    }
+
     func testSeveralReleasesEachStartWithTheirHeading() {
         let text = WhatsNew.plainText(Array(notes.prefix(2)))
         XCTAssertTrue(text.hasPrefix("v1.9.0 (2026-12-01)\n\nAdded"))

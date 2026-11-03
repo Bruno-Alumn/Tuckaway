@@ -8,16 +8,31 @@ and tick or fix each one. Remove an entry once it's been checked.
 
 Follow "When testing on a machine that runs Tuckaway daily" in
 [RUNBOOK.md](RUNBOOK.md): quit the installed Tuckaway, export its settings by
-file path, and run a `Debug-Direct` build:
+file path, and run a `Release-Direct` build signed with the release identity,
+so the installed app's Accessibility grant applies (a Debug build's separate
+debug dylib won't load once re-signed):
 
 ```sh
-xcodebuild -project Tuckaway.xcodeproj -scheme Tuckaway -configuration Debug-Direct \
+xcodebuild -project Tuckaway.xcodeproj -scheme Tuckaway -configuration Release-Direct \
   -derivedDataPath build/DerivedData CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= build
-open build/DerivedData/Build/Products/Debug-Direct/Tuckaway.app
+codesign --force --deep --options runtime --entitlements hidden/Hidden-Direct.entitlements \
+  --sign "Tuckaway Release Signing" build/DerivedData/Build/Products/Release-Direct/Tuckaway.app
+open build/DerivedData/Build/Products/Release-Direct/Tuckaway.app
 ```
 
-The ad-hoc build needs Accessibility granted again. Afterwards quit it, restore
-the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
+Afterwards quit it, restore the settings, reopen `/Applications/Tuckaway.app`,
+and put any moved icons back. Things learned on 2026-11-03 (macOS 27.2):
+
+- Run from the build folder, the arrow isn't drawn while collapsed (macOS
+  only honours the allow-list for an app in /Applications). Read its state
+  and title through Accessibility instead, or expand first.
+- Synthesized ⌘-drags in the menu bar don't register from a script; use
+  Menu Bar Items. Moving an icon to **Visible** there marks the app kept
+  visible rather than moving the icon, so note the bar's order before
+  testing and check `keptVisibleMenuBarApps` when restoring.
+- Restoring settings doesn't restore icon positions: macOS keeps those. Adding
+  a spacer shifted the installed app's arrow one place to the right
+  afterwards.
 
 ## From 1.8.0
 
@@ -29,25 +44,20 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
 
 ## Unreleased
 
-- **Undo a new-app answer:** install or relaunch an app that wasn't in the menu
-  bar before, answer **Hide** on its question, then Control-click the arrow
+- **Undo a new-app answer** (the question itself was checked 2026-11-03 by
+  removing an app from `knownMenuBarApps`): install or relaunch an app that
+  wasn't in the menu bar before, answer **Hide** on its question, then Control-click the arrow
   within five minutes: **Undo: keep <app> visible** is there and its icon comes
   back. Answer a second app with **Keep Visible** and the menu offers **Undo:
   hide <app>**. The item is gone after five minutes.
-- **Check Your Setup:** in Settings › General, press **Check Your Setup**: with
-  permissions granted and icons on the hidden side it says **Everything looks
-  right.**; ⌘-drag every icon to the visible side and it says collapsing hides
-  nothing; revoke Accessibility and it lists only that (no button: the banner
-  above has one); with the separate bar on and Screen Recording off it lists
-  that. The menu bar picture and ⌘-drag caption are still above it. Each
-  button does what it says. In the App Store build on 27 it lists only that
-  this version can't hide.
-- **What's New:** build `Release-Direct`, set
-  `lastSeenWhatsNewVersion` to `1.7.0` in Tuckaway's defaults (in a
-  verification round you restore afterwards), and launch: the window shows
-  1.8.0's notes (and any later release's) with their headings, and **Done**
-  closes it. Launch again: nothing. Delete the key and `hasLaunchedBefore`
-  and launch: Settings opens, What's New doesn't.
+- **Check Your Setup** (checked 2026-11-03: "collapsing hides nothing" with
+  no hidden icons, "Everything looks right." with one, the picture and caption
+  still above it). Still to check: revoke Accessibility and it lists only that
+  (no button); separate bar on with Screen Recording off; **Menu Bar Items…**
+  and the App Store build on 27.
+- **What's New** (checked 2026-11-03: 1.8.0's notes shown once, version
+  recorded, **Done** closes it). Still to check: a fresh install
+  (`hasLaunchedBefore` deleted) opens Settings and not What's New.
 - **Profile ⋯ menu:** Rename… (the shortcut still works under the new name;
   a taken name shows the alert), Use Current Layout, Remove App, Delete
   Profile… (asks first). The row lists the apps.
@@ -63,29 +73,28 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
 - **Show an app's hidden icon after it updates:** hard to trigger on demand;
   editing `knownAppVersions` in Tuckaway's defaults to an old version for a
   hidden app, then relaunching that app, simulates it. It shows for 30 seconds.
-- **Spacers:** add two, ⌘-drag one between visible icons and one left of the
-  arrow. Collapse: the left one shrinks to nothing; expand: it's back. Change
-  the width; relaunch and confirm they stay where they were put.
-- **Show how many icons are hidden:** collapse; the number next to the arrow
-  matches the hidden icons and the arrow still clicks and right-clicks
-  normally. Expand: the number goes away.
+- **Spacers** (checked 2026-11-03: one left of the arrow is 2 pt collapsed and
+  18 pt expanded). Still to check: one ⌘-dragged between visible icons keeps
+  its width; a width change; positions survive a relaunch.
+- **Show how many icons are hidden** (checked 2026-11-03: **1** with one hidden
+  icon, gone when expanded). Still to check, from /Applications: the arrow
+  still clicks and right-clicks normally with the number showing.
 - **Collapse when the Mac locks or sleeps:** expand, lock the screen (⌃⌘Q),
   unlock: collapsed.
 - **Expand across full menu bar caption:** reads well and doesn't crowd the
   Appearance section.
 
-- **Arrow rescue notice** (macOS 13–26): ⌘-drag the arrow to the far left of the
+## macOS 13–26 only
+
+Needs a Mac on 26 or earlier.
+
+- **Arrow rescue notice**: ⌘-drag the arrow to the far left of the
   bar, past the separator, collapse, and relaunch — the first repair puts it
   back. To reach the notice itself, repeat it within the same run until the
   repair limit is hit: the panel appears under the menu bar (on the main
   display, since the arrow has none) and **Repair Menu Bar** clears it. Do it
   again and press **Later** (or Esc): the panel closes and doesn't come back
   on the next collapse.
-
-## macOS 13–26 only
-
-Needs a Mac on 26 or earlier.
-
 - **Clock date note (#207):** with the clock's Show Date on "When Space
   Allows", Settings › General shows the note; **Clock Options…** opens System
   Settings on the Control Center pane.
