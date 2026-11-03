@@ -113,18 +113,11 @@ Built or in review:
   Quit or Later instead of looping (#156).
 - **Check Your Setup** in Settings › General (#158).
 - **What's New** after an update, from the bundled changelog (#157).
+- **Menu Bar Items groups an app's icons** into one row on macOS 27.
 
 Still open:
 
-1. **Group Menu Bar Items by app on macOS 27.**
-   - *Problem:* hiding on 27 is per app (#427), but Menu Bar Items lists each
-     icon, so an app with two icons (Dropbox, iStat) shows in two places and
-     moving one moves both.
-   - *Use:* one row per app in the three lists, with "2 icons" beside it.
-   - *Size:* M. `MenuBarItemManagerWindowController`, plus a pure grouping
-     type for tests.
-   - *Risks:* only for the native engine; on 13–26 hiding is per icon.
-2. **Open a hidden icon's menu with `AXShowMenu` from the separate bar.**
+1. **Open a hidden icon's menu with `AXShowMenu` from the separate bar.**
    - *Problem:* a click is sent at a position. `clickNativeHiddenItem` already
      re-reads positions just before clicking, so this is about the few cases
      where that read itself is stale.
@@ -133,7 +126,7 @@ Still open:
      restriction is held (it ignores accessibility presses then,
      `MenuBarClock.swift`), and not every app implements it, so the click
      fallback stays. Measure before building.
-3. **A hiding engine for macOS 26 and earlier that doesn't rely on the
+2. **A hiding engine for macOS 26 and earlier that doesn't rely on the
    separator's length.** #144 tried this with the private
    `activate:completion:` call and was closed: it changed the macOS 27 expand
    path for everyone and never got past a stub. Needs a measured design first.

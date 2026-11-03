@@ -122,3 +122,33 @@ enum MenuBarItemMovePlan {
         return tooFarLeft ? (order[itemIndex + 1], .right) : (order[itemIndex - 1], .left)
     }
 }
+
+// macOS 27 hides whole apps (#427), so Menu Bar Items lists one row per app
+// there: an app with two icons would otherwise show twice, and moving one
+// would move both. Items without a key (macOS's own, which are kept visible
+// one by one) stay a row each.
+enum MenuBarItemGrouping {
+    struct Group<Item> {
+        let section: MenuBarSection
+        // Left to right, as given.
+        let items: [Item]
+    }
+
+    // `items` in menu-bar order; each group sits where its leftmost item is.
+    // An app is as visible as its most visible icon, as MenuBarLayout.resolve
+    // decides, so that's the list it shows in.
+    static func grouped<Item>(_ items: [Item], key: (Item) -> String?,
+                              section: (Item) -> MenuBarSection) -> [Group<Item>] {
+        var order: [String] = []
+        var members: [String: [Item]] = [:]
+        for (index, item) in items.enumerated() {
+            let groupKey = key(item).map { "app:" + $0 } ?? "item:\(index)"
+            if members[groupKey] == nil { order.append(groupKey) }
+            members[groupKey, default: []].append(item)
+        }
+        return order.map { groupKey in
+            let items = members[groupKey]!
+            return Group(section: items.map(section).min()!, items: items)
+        }
+    }
+}

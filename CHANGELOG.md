@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- **Menu Bar Items lists each app once** (macOS 27): macOS 27 hides whole apps, so an app with several icons now has one row, marked “2 icons”, and moving it moves all of them.
+
 ## v1.9.0 (2026-11-03)
 
 ### Added

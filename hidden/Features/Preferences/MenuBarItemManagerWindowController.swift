@@ -6,18 +6,24 @@ struct ManagedMenuBarItem {
 
     let id: String
     let element: AXUIElement
+    let bundleIdentifier: String?
     let appName: String
     let title: String
     let icon: NSImage?
     let position: CGPoint
     let size: CGSize
     let section: Section
+    // The app's other icons when one row stands for all of them (macOS 27,
+    // see MenuBarItemGrouping), left to right. They move with `element`.
+    var siblings: [AXUIElement] = []
+
+    var elements: [AXUIElement] { [element] + siblings }
 
     private var cleanedTitle: String? {
         MenuBarItemNaming.cleanedTitle(title)
     }
 
-    private var isSystemMenuExtra: Bool {
+    var isSystemMenuExtra: Bool {
         appName == "Control Center" || appName == "SystemUIServer" || appName == "控制中心"
     }
 
@@ -27,6 +33,7 @@ struct ManagedMenuBarItem {
     }
 
     var secondaryName: String? {
+        if !siblings.isEmpty { return String(format: "%d icons".localized, elements.count) }
         guard let cleanedTitle = cleanedTitle,
               cleanedTitle.caseInsensitiveCompare(primaryName) != .orderedSame
         else { return nil }
@@ -38,8 +45,9 @@ struct ManagedMenuBarItem {
     }
 
     func moved(to section: Section) -> ManagedMenuBarItem {
-        ManagedMenuBarItem(id: id, element: element, appName: appName, title: title, icon: icon,
-                           position: position, size: size, section: section)
+        ManagedMenuBarItem(id: id, element: element, bundleIdentifier: bundleIdentifier, appName: appName,
+                           title: title, icon: icon, position: position, size: size, section: section,
+                           siblings: siblings)
     }
 }
 
@@ -387,6 +395,7 @@ final class MenuBarItemManagerViewController: NSViewController {
             found.append(ManagedMenuBarItem(
                 id: "\(app.pid)-\(index)",
                 element: element,
+                bundleIdentifier: app.bundleIdentifier,
                 appName: app.name,
                 title: title,
                 icon: app.icon,
@@ -399,9 +408,11 @@ final class MenuBarItemManagerViewController: NSViewController {
     }
 
     private func apply(found: [ManagedMenuBarItem], accessibilityTrusted: Bool, onlyIfChanged: Bool = false) {
+        let ordered = found.sorted { $0.position.x < $1.position.x }
+        let rows = MenuBarEngineFactory.usesNativeVisibility ? Self.groupedByApp(ordered) : ordered
         var newItems: [MenuBarSection: [ManagedMenuBarItem]] = [:]
         for section in MenuBarSection.leftToRight {
-            newItems[section] = found.filter { $0.section == section }.sorted { $0.position.x < $1.position.x }
+            newItems[section] = rows.filter { $0.section == section }
         }
         let changed = MenuBarSection.leftToRight.contains { section in
             newItems[section, default: []].map(\.id) != itemsBySection[section, default: []].map(\.id)
@@ -426,6 +437,22 @@ final class MenuBarItemManagerViewController: NSViewController {
         }
         isScanning = false
         refreshButton.isEnabled = true
+    }
+
+    // One row per app, standing for its leftmost icon. macOS's own items are
+    // kept visible one by one, so they aren't grouped.
+    private static func groupedByApp(_ items: [ManagedMenuBarItem]) -> [ManagedMenuBarItem] {
+        let groups = MenuBarItemGrouping.grouped(items, key: { item in
+            guard let bundle = item.bundleIdentifier,
+                  !item.isSystemMenuExtra,
+                  !MenuBarLayoutResolver.systemItemOwners.contains(bundle) else { return nil }
+            return bundle
+        }, section: { $0.section })
+        return groups.map { group in
+            var row = group.items[0].moved(to: group.section)
+            row.siblings = group.items.dropFirst().map(\.element)
+            return row
+        }
     }
 
     private static func pointAttribute(_ attribute: CFString, of element: AXUIElement) -> CGPoint? {
@@ -505,7 +532,9 @@ final class MenuBarItemManagerViewController: NSViewController {
         let anchor = MenuBarItemMovePlan.anchor(for: item.id, in: destinationIDs, excluding: onHiddenSideOfArrow)
         let anchorElement: AXUIElement? = {
             switch anchor {
-            case .before(let id), .after(let id): return lookup[id]?.element
+            case .before(let id): return lookup[id]?.element
+            // A grouped row ends at its app's rightmost icon.
+            case .after(let id): return lookup[id]?.elements.last
             case .emptyList: return nil
             }
         }()
@@ -534,7 +563,6 @@ final class MenuBarItemManagerViewController: NSViewController {
         }
 
         movesInFlight += 1
-        let element = item.element
         // An empty list has no neighbour; aim at Tuckaway's own boundary item
         // instead: the always-hidden separator for Always Hidden, the separator
         // (or, on macOS 27, the arrow) for Hidden, the arrow for Visible.
@@ -544,12 +572,18 @@ final class MenuBarItemManagerViewController: NSViewController {
         case .after: side = .after
         case .emptyList: side = toSection.emptyListSide
         }
+        // Each icon lands next to the anchor in turn; after it, the last one
+        // placed has to go first to keep the app's icons in order.
+        let elements = side == .after ? item.elements.reversed() : item.elements
         moveQueue.async { [weak self] in
-            let settled = MenuBarItemDragger.move(element, side, of: anchorElement) {
-                DispatchQueue.main.sync {
-                    let layout = (NSApp.delegate as? AppDelegate)?.statusBarController.currentManagementLayout()
-                    return layout?.boundaryFrame(of: toSection)
-                }
+            var settled = true
+            for element in elements {
+                settled = MenuBarItemDragger.move(element, side, of: anchorElement) {
+                    DispatchQueue.main.sync {
+                        let layout = (NSApp.delegate as? AppDelegate)?.statusBarController.currentManagementLayout()
+                        return layout?.boundaryFrame(of: toSection)
+                    }
+                } && settled
             }
             DispatchQueue.main.async {
                 guard let self else { return }
