@@ -377,7 +377,10 @@ final class GeneralSettingsModel: ObservableObject {
         return FileManager.default.displayName(atPath: url.path).replacingOccurrences(of: ".app", with: "")
     }
 
-    func binding(_ get: @escaping () -> Bool, _ set: @escaping (Bool) -> Void) -> Binding<Bool> {
+    // A two-way binding to a preference. Every setter ends by telling SwiftUI the
+    // model changed, because the value SwiftUI just wrote may have been adjusted
+    // (a login item that failed to register reverts) or rounded (a delay).
+    func binding<Value>(_ get: @escaping () -> Value, _ set: @escaping (Value) -> Void) -> Binding<Value> {
         return Binding(get: get, set: { [weak self] value in
             set(value)
             self?.objectWillChange.send()
@@ -419,13 +422,11 @@ final class GeneralSettingsModel: ObservableObject {
     }
 
     var autoHideDelay: Binding<Int> {
-        return Binding(get: { SelectedSecond.secondToPossition(seconds: Preferences.numberOfSecondForAutoHide) },
-                       set: { [weak self] index in
-                           if let seconds = SelectedSecond(rawValue: index)?.toSeconds() {
-                               Preferences.numberOfSecondForAutoHide = seconds
-                           }
-                           self?.objectWillChange.send()
-                       })
+        return binding({ SelectedSecond.secondToPossition(seconds: Preferences.numberOfSecondForAutoHide) }) { index in
+            if let seconds = SelectedSecond(rawValue: index)?.toSeconds() {
+                Preferences.numberOfSecondForAutoHide = seconds
+            }
+        }
     }
 
     var showActiveAppIcon: Binding<Bool> {
@@ -457,18 +458,12 @@ final class GeneralSettingsModel: ObservableObject {
     }
 
     var expandIconStyle: Binding<ExpandIconStyle> {
-        return Binding(get: { Preferences.expandIconStyle }, set: { [weak self] value in
-            Preferences.expandIconStyle = value
-            self?.objectWillChange.send()
-        })
+        return binding({ Preferences.expandIconStyle }) { Preferences.expandIconStyle = $0 }
     }
 
     // Read from the system each time, so a change made in Terminal shows up.
     var iconSpacing: Binding<MenuBarItemSpacing> {
-        return Binding(get: { MenuBarItemSpacing.current() }, set: { [weak self] level in
-            MenuBarItemSpacing.apply(level)
-            self?.objectWillChange.send()
-        })
+        return binding({ MenuBarItemSpacing.current() }) { MenuBarItemSpacing.apply($0) }
     }
 
     var revealUpdatedApps: Binding<Bool> {
@@ -480,13 +475,11 @@ final class GeneralSettingsModel: ObservableObject {
     }
 
     var spacerCount: Binding<Int> {
-        return Binding(get: { Preferences.spacerCount },
-                       set: { [weak self] in Preferences.spacerCount = $0; self?.objectWillChange.send() })
+        return binding({ Preferences.spacerCount }) { Preferences.spacerCount = $0 }
     }
 
     var spacerWidth: Binding<MenuBarSpacers.Width> {
-        return Binding(get: { Preferences.spacerWidth },
-                       set: { [weak self] in Preferences.spacerWidth = $0; self?.objectWillChange.send() })
+        return binding({ Preferences.spacerWidth }) { Preferences.spacerWidth = $0 }
     }
 
     var iconSpacingChoices: [MenuBarItemSpacing] {
