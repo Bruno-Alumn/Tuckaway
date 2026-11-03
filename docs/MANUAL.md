@@ -170,6 +170,15 @@ Open it with **Settings…** (⌘,) from the arrow's menu. It has three tabs.
 | Startup | Open settings on launch | Show this window every time Tuckaway starts, including at login and after updates. Off by default; the window always opens on the very first launch. |
 | Updates | Check for updates automatically | Direct-download build only. See [Updates](#updates). |
 
+Under the menu bar picture at the top of General, **Check Your Setup** runs the
+checks that explain a bar that hides nothing. On macOS 27: the App Store version
+(which can't hide there), a missing Device Control and Data Access grant, Screen
+Recording off while the separate hidden-items bar is on, and every icon on the
+visible side. On macOS 13–26, where hiding needs no permission: the arrow off
+screen. Each finding says what to do, and where Tuckaway can do it itself
+(**Get Direct Download**, **Open Settings…**, **Repair**, **Menu Bar Items…**)
+there is a button for it.
+
 If Accessibility is missing on macOS 27, a banner at the top of General
 explains why nothing hides and links to System Settings.
 

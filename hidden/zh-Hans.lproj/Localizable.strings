@@ -242,3 +242,17 @@
 "Tuckaway can't be reached" = "无法打开 Tuckaway";
 "The menu bar left no room for the arrow, so it is off screen. Repair Menu Bar puts it back near the right side of the bar." = "菜单栏没有空间容纳箭头，它跑到了屏幕外。“修复菜单栏”会把它放回靠近右侧的位置。";
 "Repair Menu Bar" = "修复菜单栏";
+/* Check Your Setup in Settings */
+"Nothing hides? Check what's missing." = "什么都没隐藏？检查缺少了什么。";
+"Check Your Setup" = "检查设置";
+"Everything looks right." = "一切看起来都正常。";
+"Tuckaway can't see your menu bar icons without Device Control and Data Access." = "没有“设备控制与数据访问”，Tuckaway 无法读取菜单栏图标。";
+"The separate hidden-items bar needs Screen Recording to capture the icons." = "独立隐藏图标条需要“屏幕录制”才能截取图标。";
+"Every icon is on the visible side, so collapsing hides nothing." = "所有图标都在可见一侧，收起时不会隐藏任何东西。";
+"The arrow is off screen, so there is no way to open Tuckaway's menu." = "箭头在屏幕外，无法打开 Tuckaway 的菜单。";
+"Turn Tuckaway on in System Settings, then come back here." = "在系统设置中开启 Tuckaway，然后回到这里。";
+"Allow it in System Settings, or turn the separate bar off." = "在系统设置中允许，或关闭独立图标条。";
+"Hold ⌘ and drag an icon to the left of the arrow." = "按住 ⌘ 把图标拖到箭头左侧。";
+"Repair puts the arrow back near the right side of the bar." = "修复会把箭头放回菜单栏靠右的位置。";
+"Menu Bar Items…" = "菜单栏项目…";
+"Repair" = "修复";

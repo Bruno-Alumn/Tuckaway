@@ -36,14 +36,17 @@ enum MenuBarRescue {
     // dragged through them forever.
     static let maxRepairs = 2
 
+    // Whether the arrow is on a screen, give or take the tolerance. With nothing
+    // measured yet (no frame, or WindowServer's zero origin) it counts as
+    // reachable: there is nothing to repair on a guess.
+    static func isReachable(arrowFrame: CGRect?, screenFrames: [CGRect]) -> Bool {
+        guard let arrowFrame, arrowFrame.origin != .zero, !screenFrames.isEmpty else { return true }
+        return screenFrames.contains { $0.insetBy(dx: -tolerance, dy: -tolerance).intersects(arrowFrame) }
+    }
+
     static func action(arrowFrame: CGRect?, screenFrames: [CGRect], isCollapsed: Bool,
                        repairsSoFar: Int) -> Action {
-        // Nothing measured yet (no WindowServer answer): leave it alone.
-        guard let arrowFrame, arrowFrame.origin != .zero, !screenFrames.isEmpty else { return .none }
-        if screenFrames.contains(where: { $0.insetBy(dx: -tolerance, dy: -tolerance).intersects(arrowFrame) }) {
-            return .none
-        }
-        guard isCollapsed else { return .none }
+        guard !isReachable(arrowFrame: arrowFrame, screenFrames: screenFrames), isCollapsed else { return .none }
         // Off every screen while collapsed: the separator's length (bounded to
         // the widest display) can't reach that, so the saved position is wrong.
         guard repairsSoFar < maxRepairs else { return .giveUp }
