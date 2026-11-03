@@ -85,6 +85,117 @@ before merging.
   and add a way to recover a stuck off-screen item. Reproduce #242 (permanent icon
   loss) with a throwaway defaults profile first.
 
+## New ideas
+
+Suggested next, best first. Each says who has the problem, how it would work,
+how big it is, and what could go wrong. Anything that needed a paid Developer ID,
+a server, or collecting data was dropped.
+
+1. **A rescue item for a menu bar that swallowed its own arrow.**
+   - *Problem:* the arrow is Tuckaway's only UI. On macOS 13–26 it sits on the
+     hidden side of a separator that is up to 10,000pt wide, and a narrow or
+     over-full bar can put it off screen — the user's app is then invisible and
+     unreachable, and the only cure is Terminal.
+   - *Who:* crowded menu bars, large text, or a second display smaller than the
+     main one. Same family as the self-repair that already exists
+     (`StatusItemPositions`), but that only fixes saved positions.
+   - *Use:* at launch and after each collapse, check the arrow's frame is on
+     screen; if not, expand, repair, and show a small panel with **Repair Menu
+     Bar**, **Open Settings** and **Quit Tuckaway** so the app can always be
+     reached. Reset the separator's length if it can't be made to fit.
+   - *Size:* S. The rescue path around `rescueArrowIfSwallowed` in
+     `StatusBarController`, a panel modelled on `HiddenItemsBarPanelController`,
+     `Assets` and the localization tables.
+   - *Risks:* none for macOS 27 (no wide separator); a rescue panel is another
+     always-on-top window, so it must be dismissed on any other interaction.
+     Overlaps the existing `arrowRescueCount` path — it should extend it, not
+     duplicate it.
+
+2. **"Check Your Setup" in Settings.**
+   - *Problem:* most support traffic is a missing permission or a bar that's
+     arranged in a way Tuckaway can't hide with. Users can't tell which.
+   - *Who:* anyone who grants Accessibility once and then revokes it, or who
+     ⌘-drags icons into an order the engine can't use.
+   - *Use:* a button under the Accessibility banner that runs the same checks
+     Tuckaway runs at launch (permission, arrangement, screen-capture grant when
+     the separate bar is on, login item) and lists what's wrong with a fix
+     button for each.
+   - *Size:* M. `PreferencesViewController` (new rows), a new pure
+     `SetupDiagnosis` struct, `Util`/`MenuBarEngineFactory` for the inputs.
+   - *Risks:* every check must be a public API call; no System Settings
+     automation. Sandboxed build can run the permission and login-item checks
+     only.
+
+3. **Separators and spacers on macOS 27.**
+   - *Problem:* macOS 27 has no separator, so the most-requested cosmetic
+     (#299, #168) and the grouping spacers (#159) are half a feature there:
+     spacers exist, but the `|` boundary people are used to doesn't.
+   - *Who:* anyone coming from Hidden Bar, and anyone who grouped icons.
+   - *Use:* on 27, draw the separator as a *spacer-like* item placed just left of
+     the arrow while expanded (zero width while collapsed, like the spacers) so
+     the bar looks the way it did before, and "Hide separators" hides it.
+   - *Size:* M. `StatusBarController` (create/show loop it already does for
+     spacers), `MenuBarSpacers` for the width maths, engine untouched.
+   - *Risks:* the item has to stay out of the way while collapsed, which is the
+     same rule spacers already follow; a purely visual item still costs a slot
+     in a crowded bar.
+
+4. **An "undo" for the new-app question.**
+   - *Problem:* answering **Hide** for a new app once is permanent: the icon
+     vanishes and the only way back is Menu Bar Items.
+   - *Who:* someone who clicked Hide by reflex (Zoom, a helper app).
+   - *Use:* after an answer, keep a small note in the separate bar's menu or the
+     arrow's menu: **Undo: keep <App> hidden** for a few minutes.
+   - *Size:* S. `StatusBarController` (`showNextNewAppPrompt` answer path,
+     a menu item), `NewMenuBarAppTracker` needs nothing.
+   - *Risks:* none beyond a little menu noise; it must disappear after a while
+     rather than accumulate.
+
+5. **Group always-hidden apps in Menu Bar Items by app, not by icon.**
+   - *Problem:* on 27 hiding is per app (#427), but Menu Bar Items still lists
+     each icon, so one app can appear in two lists and dragging one of them is
+     misleading.
+   - *Who:* apps with two icons (Dropbox, iStat) — the most common "it moved the
+     wrong one" report.
+   - *Use:* list one row per app in the Always Hidden/Hidden/Visible lists and say
+     "2 icons" next to it.
+   - *Size:* M. `MenuBarItemManagerWindowController` (scan and apply), pure
+     grouping in a new `MenuBarItemGrouping` for tests.
+   - *Risks:* 13–26 hiding is per icon (the separator pushes the whole area), so
+     the grouping must only apply where the engine hides per app — otherwise the
+     UI would claim something the old engine can't do.
+
+6. **Show a hidden icon on click-through in the separate bar, instead of a
+   synthetic click.**
+   - *Problem:* the separate bar forwards a real click at captured coordinates;
+     if the bar shifted since the capture, it can land on the wrong icon.
+   - *Who:* anyone whose visible icons change width (timers, network meters).
+   - *Use:* on 27, ask the owning app to open its menu through Accessibility
+     (`AXShowMenu`) instead of clicking a position.
+   - *Size:* M. `StatusBarController`'s native click path, `AccessibilityMenuBarInventory`.
+   - *Risks:* not every app implements `AXShowMenu`; a fallback to the click is
+     needed, which is more code than it replaces.
+
+Dropped, with the reason:
+
+- Reading which Focus mode is on (a profile per Focus): needs the Communication
+  Notifications entitlement, i.e. a paid Developer ID — out of scope here.
+- Per-icon hiding within one app (#427): macOS 27's restriction takes bundle
+  identifiers; the OS blocks it.
+- A "shown when inactive" group (#154): needs a restriction held while expanded,
+  which drags assessment mode's side effects (Now Playing, Live Activities) into
+  the expanded bar — worse than the problem.
+- Noticing screen recording (#372) and picture-only icon changes (#229): no public
+  signal, and hidden icons aren't drawn.
+- A per-app "hide after N minutes" quieter mode: no one asked for it, and
+  Tuckaway's own auto-collapse already covers the intent.
+- A menu-bar layout export as a file (sharing profiles with coworkers): icon
+  positions belong to macOS, so the file would promise more than it can restore.
+- Widget/SwiftUI settings rewrite: cosmetic, large, and no user-visible gain.
+- An option to hide macOS's own items (battery, Wi-Fi): the allow-list's system
+  items are what keep the bar usable, and #437 already shows what happens when
+  more of them go.
+
 ## Done since the Hidden Bar fork
 
 Kept here so they aren't re-filed: hover-to-expand checkbox; login-item failures
