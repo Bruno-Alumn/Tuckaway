@@ -129,4 +129,8 @@ protocol MenuBarItemProvider: AnyObject {
     var toggleItem: NSStatusItem { get }
     var separatorItem: NSStatusItem { get }
     var alwaysHiddenItem: NSStatusItem? { get }
+    // Where the arrow goes when it is hidden: right of everything the user keeps,
+    // so ⌘-dragging moves icons to a hidden side that the arrow itself marks. Only
+    // the native engine's takeover uses it, and only outside macOS 27.
+    var cmdItem: NSStatusItem? { get }
 }

@@ -17,6 +17,14 @@ struct Assets {
         image(expanded: false)
     }
 
+    // The far-right end of the expanded bar on macOS 26 and earlier: a small ⌘
+    // says "this is where the menu bar's own menus start", which is what a
+    // ⌘-drag needs to see.
+    static var cmdImage: NSImage? {
+        let image = NSImage(systemSymbolName: "command", accessibilityDescription: "Menu bar area".localized)
+        return image
+    }
+
     // `expanded` names the arrow that expands the bar, shown while it is
     // collapsed. VoiceOver reads the image's description as the button's label,
     // so it says what a click will do.

@@ -235,3 +235,10 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Kaç simgenin gizli olduğunu göster";
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Tuckaway %@'ta Yenilikler";
+"Done" = "Bitti";
+
+/* macOS 26 and earlier: the far-right end of the expanded menu bar */
+"Menu bar area" = "Menü çubuğu alanı";
+"Everything to the left of here is hidden." = "Bunun solundaki her şey gizlenir.";

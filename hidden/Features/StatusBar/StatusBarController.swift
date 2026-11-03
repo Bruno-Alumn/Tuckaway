@@ -88,6 +88,12 @@ class StatusBarController: MenuBarItemProvider {
     private var btnExpandCollapse: NSStatusItem
     private var btnSeparate: NSStatusItem
     private var btnAlwaysHidden:NSStatusItem? = nil
+    // Only for the native engine's takeover on macOS 26 and earlier: the far end
+    // of the expanded bar, past everything the user keeps visible.
+    private var btnCmd: NSStatusItem?
+    // The arrow's width while the takeover arranges the bar; nil for the arrow's
+    // usual variable width.
+    private var takeoverArrowWidth: CGFloat?
 
     //MARK: - Notch Overflow
     private var notchOverflowController = NotchOverflowController()
@@ -123,6 +129,7 @@ class StatusBarController: MenuBarItemProvider {
     var toggleItem: NSStatusItem { btnExpandCollapse }
     var separatorItem: NSStatusItem { btnSeparate }
     var alwaysHiddenItem: NSStatusItem? { btnAlwaysHidden }
+    var cmdItem: NSStatusItem? { btnCmd }
     
     // How hiding is achieved (separator lengths) lives in the engine; this class
     // owns the items, the UI, and when to collapse or expand.
@@ -205,6 +212,7 @@ class StatusBarController: MenuBarItemProvider {
         btnSeparate = NSStatusBar.system.statusItem(withLength: 1)
         setupUI()
         restoreRemovedStatusItems()
+        setupTakeoverItems()
         setupAlwayHideStatusBar()
         setupNewAppPrompts()
         (menuBarEngine as? ProfileApplying)?.setProfile(profilesStore.profiles.activeApps)
@@ -441,6 +449,23 @@ class StatusBarController: MenuBarItemProvider {
         collapseMenuBar()
     }
 
+    // The takeover pair on macOS 26 and earlier: the arrow stays (it is the way
+    // back) and the far-right ⌘ item marks the end of the expanded bar, so the
+    // icons between them are the section macOS hides when asked. The arrow's
+    // width is remembered, not measured later, because the engine only ever has
+    // the arrangement to fill.
+    private func setupTakeoverItems() {
+        guard menuBarEngine is NativeVisibilityEngine, MenuBarEngineFactory.usesNativeVisibilityTakeover else { return }
+        btnSeparate.isVisible = false
+        takeoverArrowWidth = btnSeparate.length
+        let cmd = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        cmd.button?.image = Assets.cmdImage
+        cmd.button?.toolTip = "Everything to the left of here is hidden.".localized
+        cmd.autosaveName = "hiddenbar_cmd"
+        cmd.isVisible = true
+        btnCmd = cmd
+    }
+
     private func restoreRemovedStatusItems() {
         // Cmd-dragging a status item off the bar is persisted by macOS via
         // autosaveName, leaving the app running but unreachable. These items are
@@ -527,8 +552,12 @@ class StatusBarController: MenuBarItemProvider {
     }
     
     @objc func showHideSeparatorsAndAlwayHideArea() {
+        // The takeover has no separator to show: the arrow is the boundary, so
+        // there is nothing to toggle. The menu item says so by being disabled,
+        // but a stale shortcut could still land here.
+        guard btnCmd == nil else { return }
         Preferences.areSeparatorsHidden ? self.showSeparators() : self.hideSeparators()
-        
+
         if self.isCollapsed {self.expandMenubar()}
     }
     
@@ -616,6 +645,16 @@ class StatusBarController: MenuBarItemProvider {
                                        alwaysHiddenFrame: alwaysHiddenFrame)
     }
     
+    // The takeover (macOS 26 and earlier) moves the arrow itself, so its width is
+    // remembered from the collapsed separator the engine still uses, which is
+    // whatever this Mac's menu bar can hold.
+    private func rememberArrowWidth(separatorLength length: CGFloat) {
+        guard btnCmd != nil, length > 0 else { return }
+        let width = min(length, 60)
+        takeoverArrowWidth = width
+        btnExpandCollapse.length = width
+    }
+
     private func collapseMenuBar() {
         recollapseWorkItem?.cancel()
         hiddenItemsCaptureShieldController.hide()
@@ -799,6 +838,10 @@ class StatusBarController: MenuBarItemProvider {
         let separatorTitle = Preferences.areSeparatorsHidden ? "Show separators" : "Hide separators"
         let separatorItem = NSMenuItem(title: separatorTitle.localized, action: #selector(showHideSeparatorsAndAlwayHideArea), keyEquivalent: "s")
         separatorItem.target = self
+        // macOS 26's takeover hides by the arrow, so there are no separators.
+        separatorItem.isEnabled = btnCmd == nil
+        // A disabled item that still lists ⌘S looks like it should work.
+        if btnCmd != nil { separatorItem.keyEquivalent = "" }
         menu.addItem(separatorItem)
 
         menu.addItem(NSMenuItem.separator())
@@ -881,6 +924,7 @@ class StatusBarController: MenuBarItemProvider {
     }
 
     @objc private func fitSpacersToState() {
+        if btnCmd != nil { rememberArrowWidth(separatorLength: btnSeparate.length) }
         guard !spacerItems.isEmpty else { return }
         let arrowMinX = btnExpandCollapse.button?.window?.frame.minX ?? 0
         let lengths = MenuBarSpacers.lengths(

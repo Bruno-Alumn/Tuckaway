@@ -235,3 +235,10 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Prikaži koliko je ikona skriveno";
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Novosti u Tuckawayju %@";
+"Done" = "Gotovo";
+
+/* macOS 26 and earlier: the far-right end of the expanded menu bar */
+"Menu bar area" = "Područje trake izbornika";
+"Everything to the left of here is hidden." = "Sve lijevo od ovoga je skriveno.";

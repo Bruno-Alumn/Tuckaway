@@ -94,6 +94,13 @@
 		83E0D6A1FA184019932AECA5 /* AutoStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A329E615845473D946DA3C2 /* AutoStart.swift */; };
 		160B7980C8A44829A864BBA6 /* AutoStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A329E615845473D946DA3C2 /* AutoStart.swift */; };
 		9B1765C0B5634CFABD06A916 /* AutoStartTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013C3E5499B4EA7B816F7A8 /* AutoStartTests.swift */; };
+		C77AA0112E20000100B4A001 /* LayoutSettlePlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0012E20000100B4A001 /* LayoutSettlePlan.swift */; };
+		C77AA0122E20000100B4A001 /* WhatsNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0022E20000100B4A001 /* WhatsNew.swift */; };
+		C77AA0132E20000100B4A001 /* WhatsNewWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0032E20000100B4A001 /* WhatsNewWindowController.swift */; };
+		C77AA0142E20000100B4A001 /* WhatsNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0022E20000100B4A001 /* WhatsNew.swift */; };
+		C77AA0152E20000100B4A001 /* LayoutSettlePlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0012E20000100B4A001 /* LayoutSettlePlan.swift */; };
+		C77AA0162E20000100B4A001 /* LayoutSettlePlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0042E20000100B4A001 /* LayoutSettlePlanTests.swift */; };
+		C77AA0172E20000100B4A001 /* WhatsNewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0052E20000100B4A001 /* WhatsNewTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -205,6 +212,11 @@
 		B2C3D4E5F60718293A4B5C13 /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		9A329E615845473D946DA3C2 /* AutoStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoStart.swift; sourceTree = "<group>"; };
 		F013C3E5499B4EA7B816F7A8 /* AutoStartTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoStartTests.swift; sourceTree = "<group>"; };
+		C77AA0012E20000100B4A001 /* LayoutSettlePlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutSettlePlan.swift; sourceTree = "<group>"; };
+		C77AA0022E20000100B4A001 /* WhatsNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNew.swift; sourceTree = "<group>"; };
+		C77AA0032E20000100B4A001 /* WhatsNewWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewWindowController.swift; sourceTree = "<group>"; };
+		C77AA0042E20000100B4A001 /* LayoutSettlePlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutSettlePlanTests.swift; sourceTree = "<group>"; };
+		C77AA0052E20000100B4A001 /* WhatsNewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,8 +265,18 @@
 				0842CDFE23A9FF7C00D14BD4 /* Preferences */,
 				0842CDFD23A9FF7500D14BD4 /* StatusBar */,
 				A1B2C3D4E5F6071829304A08 /* Update */,
+				C77AA0062E20000100B4A001 /* WhatsNew */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		C77AA0062E20000100B4A001 /* WhatsNew */ = {
+			isa = PBXGroup;
+			children = (
+				C77AA0022E20000100B4A001 /* WhatsNew.swift */,
+				C77AA0032E20000100B4A001 /* WhatsNewWindowController.swift */,
+			);
+			path = WhatsNew;
 			sourceTree = "<group>";
 		};
 		A1B2C3D4E5F6071829304A08 /* Update */ = {
@@ -291,6 +313,7 @@
 				47BB7E409FBDF2230E9FB31C /* LegacyLengthEngine.swift */,
 				8DDBB306F3907BFB2D9E6DCF /* MenuBarEngine.swift */,
 				56DFDDDEF0042F0DBA1F3307 /* MenuBarEngineFactory.swift */,
+				C77AA0012E20000100B4A001 /* LayoutSettlePlan.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -464,6 +487,8 @@
 				B2C3D4E5F60718293A4B5C03 /* MenuBarItemMovePlanTests.swift */,
 				B2C3D4E5F60718293A4B5C13 /* LocalizationTests.swift */,
 				A1B2C3D4E5F6071829304A03 /* GitHubReleaseTests.swift */,
+				C77AA0042E20000100B4A001 /* LayoutSettlePlanTests.swift */,
+				C77AA0052E20000100B4A001 /* WhatsNewTests.swift */,
 			);
 			path = TuckawayUnitTests;
 			sourceTree = "<group>";
@@ -478,6 +503,7 @@
 				929113ED21F9D04100173149 /* Sources */,
 				929113EE21F9D04100173149 /* Frameworks */,
 				929113EF21F9D04100173149 /* Resources */,
+				C77AA0202E20000100B4A001 /* Embed release notes */,
 			);
 			buildRules = (
 			);
@@ -584,6 +610,25 @@
 		};
 /* End PBXProject section */
 
+		C77AA0202E20000100B4A001 /* Embed release notes */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Embed release notes";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# What's New reads the release's notes from the bundle. Only Release builds\n# get them: a Debug build carries an unreleased version, and showing the\n# newest release's notes there would be misleading.\nif [ \"${CONFIGURATION%%-*}\" != Release ]; then exit 0; fi\n\"${SRCROOT}/scripts/embed-release-notes.sh\" \"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\"\n";
+		};
 /* Begin PBXResourcesBuildPhase section */
 		454F8F758E7459D3B795E5E0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
@@ -668,6 +713,9 @@
 				00137CDF24A63DB1004AC855 /* Notification.Name+Extension.swift in Sources */,
 				08A5F86423AA09F300981CA5 /* UserDefault+Extension.swift in Sources */,
 				4D8C4B09D62D4884B34E1A14 /* NotchOverflowController.swift in Sources */,
+				C77AA0112E20000100B4A001 /* LayoutSettlePlan.swift in Sources */,
+				C77AA0122E20000100B4A001 /* WhatsNew.swift in Sources */,
+				C77AA0132E20000100B4A001 /* WhatsNewWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +751,10 @@
 				B2C3D4E5F60718293A4B5C17 /* LocalizationTests.swift in Sources */,
 				A1B2C3D4E5F6071829304A06 /* GitHubRelease.swift in Sources */,
 				A1B2C3D4E5F6071829304A07 /* GitHubReleaseTests.swift in Sources */,
+				C77AA0152E20000100B4A001 /* LayoutSettlePlan.swift in Sources */,
+				C77AA0142E20000100B4A001 /* WhatsNew.swift in Sources */,
+				C77AA0162E20000100B4A001 /* LayoutSettlePlanTests.swift in Sources */,
+				C77AA0172E20000100B4A001 /* WhatsNewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

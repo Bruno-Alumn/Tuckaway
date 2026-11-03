@@ -54,10 +54,26 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
   unlock: collapsed.
 - **Expand across full menu bar caption:** reads well and doesn't crowd the
   Appearance section.
+- **What's New:** with a build whose version has a `## v…` section in
+  `CHANGELOG.md` (a Release-Direct build after editing the version, or any build
+  with a hand-made `Contents/Resources/WhatsNew.md`), launch it: the window opens
+  once with that release's notes as bullets, **Done** closes it, and relaunching
+  doesn't open it again (`defaults read com.brunoalumn.tuckaway
+  lastSeenWhatsNewVersion` shows the version). A Debug build has no notes file,
+  so nothing opens.
 
 ## macOS 13–26 only
 
 Needs a Mac on 26 or earlier.
+
+- **Takeover hiding** (needs 26 or earlier; nothing to test on 27):
+  `defaults write com.brunoalumn.tuckaway useNativeVisibilityTakeover -bool true`,
+  relaunch, and grant Accessibility. Expand: the `|` separator is gone, the arrow
+  moves to just right of your hidden icons, and a `⌘` item sits at the far right;
+  collapsing hides exactly the icons left of the arrow; expanding puts every icon
+  back where it was and the arrow with them. **Show/Hide separators** in the menu
+  is greyed out. Then `defaults delete … useNativeVisibilityTakeover` and
+  relaunch: the separator is back.
 
 - **Clock date note (#207):** with the clock's Show Date on "When Space
   Allows", Settings › General shows the note; **Clock Options…** opens System

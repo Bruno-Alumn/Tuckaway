@@ -235,3 +235,10 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Pokazuj liczbę ukrytych ikon";
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Co nowego w Tuckaway %@";
+"Done" = "Gotowe";
+
+/* macOS 26 and earlier: the far-right end of the expanded menu bar */
+"Menu bar area" = "Obszar paska menu";
+"Everything to the left of here is hidden." = "Wszystko na lewo od tego miejsca jest ukryte.";

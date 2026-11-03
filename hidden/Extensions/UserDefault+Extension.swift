@@ -41,5 +41,8 @@ extension UserDefaults {
         static let lastUpdateCheck = "lastUpdateCheck"
         static let skippedUpdateVersion = "skippedUpdateVersion"
         static let hasLaunchedBefore = "hasLaunchedBefore"
+        // Opt-in: the native engine takes over the expanded bar on macOS 26 and
+        // earlier too (docs/ARCHITECTURE.md).
+        static let useNativeVisibilityTakeover = "useNativeVisibilityTakeover"
     }
 }

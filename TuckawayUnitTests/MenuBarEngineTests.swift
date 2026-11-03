@@ -19,6 +19,7 @@ private final class FakeItems: MenuBarItemProvider {
     let toggleItem: NSStatusItem
     let separatorItem: NSStatusItem
     var alwaysHiddenItem: NSStatusItem?
+    var cmdItem: NSStatusItem?
 
     init() {
         // This test bundle has no host app. Bootstrap AppKit before creating
@@ -72,6 +73,8 @@ private final class FakeVisibility: NativeVisibilityProviding {
     struct Request {
         let systemItems: [Int]
         let bundles: [String]
+        // Positions asked for instead of apps, on macOS 26's path.
+        let positions: [CGFloat]?
         let completion: (Result<NativeVisibilityAssertion, Error>) -> Void
     }
 
@@ -81,7 +84,13 @@ private final class FakeVisibility: NativeVisibilityProviding {
     func activate(allowedSystemItems: [Int],
                   allowedBundleIdentifiers: [String],
                   completion: @escaping (Result<NativeVisibilityAssertion, Error>) -> Void) {
-        requests.append(Request(systemItems: allowedSystemItems, bundles: allowedBundleIdentifiers, completion: completion))
+        requests.append(Request(systemItems: allowedSystemItems, bundles: allowedBundleIdentifiers,
+                                positions: nil, completion: completion))
+    }
+
+    func activateKeepingPositions(_ itemCenters: [CGFloat],
+                                  completion: @escaping (Result<NativeVisibilityAssertion, Error>) -> Void) {
+        requests.append(Request(systemItems: [], bundles: [], positions: itemCenters, completion: completion))
     }
 
     @discardableResult
@@ -265,7 +274,8 @@ final class NativeVisibilityEngineTests: XCTestCase {
                                       ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                       itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
                                       displays: { [mainDisplay] },
-                                      isLTR: { true })
+                                      isLTR: { true },
+                                      takesOverLayout: false)
     }
 
     func testCollapseKeepsOnlyVisibleAppsAndSystemItems() {
@@ -400,6 +410,7 @@ final class NativeVisibilityEngineTests: XCTestCase {
                                       itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
                                       displays: { [mainDisplay] },
                                       isLTR: { true },
+                                      takesOverLayout: false,
                                       afterActivationTimeout: timeouts)
     }
 
@@ -803,7 +814,8 @@ final class HiddenSectionPeekTests: XCTestCase {
                                             ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                             itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
                                             displays: { [mainDisplay] },
-                                            isLTR: { true })
+                                            isLTR: { true },
+                                            takesOverLayout: false)
         engine.updateAlwaysHiddenSection(enabled: true, separatorHidden: false)
         engine.collapse { _ in }
         visibility.succeed(visibility.requests.count - 1)
@@ -968,7 +980,8 @@ final class NativeVisibilityEngineNewAppTests: XCTestCase {
                                       ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                       itemFrame: { _ in separator },
                                       displays: { [mainDisplay] },
-                                      isLTR: { true })
+                                      isLTR: { true },
+                                      takesOverLayout: false)
     }
 
     func testNewAppIsKeptVisibleAndReported() {
@@ -1040,7 +1053,8 @@ final class PresentationModeTests: XCTestCase {
                                       ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                       itemFrame: { _ in separator },
                                       displays: { [mainDisplay] },
-                                      isLTR: { true })
+                                      isLTR: { true },
+                                      takesOverLayout: false)
     }
 
     private func collapsed() -> NativeVisibilityEngine {
@@ -1135,7 +1149,8 @@ final class PresentationModeRobustnessTests: XCTestCase {
                                       ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                       itemFrame: { _ in separator },
                                       displays: { [mainDisplay] },
-                                      isLTR: { true })
+                                      isLTR: { true },
+                                      takesOverLayout: false)
     }
 
     // An app launch, a wake or a display change used to drop presentation
@@ -1201,7 +1216,8 @@ final class NewAppSeparateBarTests: XCTestCase {
                                             ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                             itemFrame: { _ in separator },
                                             displays: { [mainDisplay] },
-                                            isLTR: { true })
+                                            isLTR: { true },
+                                            takesOverLayout: false)
         engine.collapse { _ in }
         visibility.succeed(visibility.requests.count - 1)
         return engine
@@ -1250,7 +1266,8 @@ final class FreshHiddenFramesTests: XCTestCase {
                                             ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                             itemFrame: { _ in separator },
                                             displays: { [mainDisplay] },
-                                            isLTR: { true })
+                                            isLTR: { true },
+                                            takesOverLayout: false)
         engine.collapse { _ in }
         visibility.succeed(visibility.requests.count - 1)
 
@@ -1312,7 +1329,8 @@ final class ActiveAppIconTests: XCTestCase {
                                         ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                         itemFrame: { _ in separator },
                                         displays: { [mainDisplay] },
-                                        isLTR: { true })
+                                        isLTR: { true },
+                                        takesOverLayout: false)
         engine.collapse { _ in }
         visibility.succeed(visibility.requests.count - 1)
     }
@@ -1533,7 +1551,8 @@ final class MenuBarProfilesTests: XCTestCase {
                                             ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                             itemFrame: { _ in separator },
                                             displays: { [mainDisplay] },
-                                            isLTR: { true })
+                                            isLTR: { true },
+                                            takesOverLayout: false)
         engine.collapse { _ in }
         visibility.succeed(visibility.requests.count - 1)
 
@@ -1566,7 +1585,8 @@ final class FreshReadKeepsChoicesTests: XCTestCase {
                                         ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                         itemFrame: { _ in separator },
                                         displays: { [mainDisplay] },
-                                        isLTR: { true })
+                                        isLTR: { true },
+                                        takesOverLayout: false)
     }
 
     // A collapse re-reads the bar; it used to build its list without the
@@ -1611,7 +1631,8 @@ final class SavingProfilesTests: XCTestCase {
                                         ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                         itemFrame: { _ in separator },
                                         displays: { [mainDisplay] },
-                                        isLTR: { true })
+                                        isLTR: { true },
+                                        takesOverLayout: false)
     }
 
     // Before any read there used to be nothing to save, which made a profile
@@ -1740,6 +1761,7 @@ final class EngineInteractionTests: XCTestCase {
                                       itemFrame: { _ in separator },
                                       displays: { [mainDisplay] },
                                       isLTR: { true },
+                                      takesOverLayout: false,
                                       afterActivationTimeout: { [weak self] in self?.timeouts.append($0) })
     }
 
@@ -1830,7 +1852,8 @@ final class HiddenSeparatorsRereadTests: XCTestCase {
                                         ownBundleIdentifier: "com.brunoalumn.tuckaway",
                                         itemFrame: { $0 === items.toggleItem ? separator : alwaysHiddenSeparator },
                                         displays: { [mainDisplay] },
-                                        isLTR: { true })
+                                        isLTR: { true },
+                                        takesOverLayout: false)
         // Expanded with "hide separators": a restriction is held from the start.
         engine.updateAlwaysHiddenSection(enabled: true, separatorHidden: true)
         visibility.succeed(visibility.requests.count - 1)

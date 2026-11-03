@@ -203,6 +203,14 @@ included, nor is this Mac's update and launch bookkeeping.
 > the always-hidden zone until the rework lands, since a stuck off-screen item has
 > to be recovered by ⌘-dragging it back (macOS persists its position per app).
 
+## What's New
+
+After an update, Tuckaway opens a **What's New** window with the notes for the
+version it just started, once. It reads them from the app itself, so it needs no
+network and works in the App Store build too. Nothing opens on a first launch,
+and closing the window is all there is to do. The notes are taken from
+`CHANGELOG.md` when a release is packaged, so they always match what shipped.
+
 ## Updates
 
 The direct-download build updates itself from
@@ -241,6 +249,35 @@ The App Store build has no network access and no updater.
   27, Tuckaway re-reads the layout and hides again about two seconds later.
 - **One copy at a time**: opening Tuckaway again brings the running copy
   forward instead of starting a second one.
+
+## Hiding by the arrow (macOS 26 and earlier, experimental)
+
+On macOS 26 and earlier, Tuckaway normally hides icons by making its separator
+very wide, which pushes the icons left of it off the screen. That only works
+while the menu bar has room to spare: with a crowded bar, macOS gives the
+separator less than it asks for and it can end up covering your own icons.
+
+The direct-download build has a second way of hiding that works like macOS 27's:
+it reads where your icons are, asks macOS to keep only the ones on the visible
+side, and moves its arrow next to the hidden ones, so the arrow is the boundary
+(no `|` separator). Expanding restores the icons to exactly where you left them.
+It is **off by default** and still experimental, so it is a Terminal setting:
+
+```sh
+defaults write com.brunoalumn.tuckaway useNativeVisibilityTakeover -bool true
+```
+
+Quit and relaunch Tuckaway afterwards, and grant **Accessibility** (Device
+Control and Data Access): without it nothing is hidden, as on macOS 27. To go
+back to the separator:
+
+```sh
+defaults delete com.brunoalumn.tuckaway useNativeVisibilityTakeover
+```
+
+While it is on, **Show/Hide separators** does nothing (there is no separator to
+show) and the separate hidden-items bar keeps using the capture of the menu bar
+it always used.
 
 ## Hidden settings (Terminal)
 

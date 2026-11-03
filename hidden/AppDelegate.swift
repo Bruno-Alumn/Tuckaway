@@ -71,6 +71,9 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         setupAutoStartApp()
         setupHotKey()
         openPreferencesIfNeeded()
+        // After the first-launch window: someone starting fresh has the settings
+        // to read, not a list of what changed since a version they never ran.
+        WhatsNewWindowController.showIfNeeded()
         detectLTRLang()
         Updater.shared.start()
     }

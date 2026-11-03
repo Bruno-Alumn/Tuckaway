@@ -54,6 +54,15 @@ if codesign -d --entitlements - "$APP" 2>/dev/null | grep -q app-sandbox; then
   echo "error: $APP is the sandboxed App Store build" >&2; exit 1
 fi
 
+# "What's New" after an update reads the notes from the bundle. The build phase
+# runs this too; doing it before signing as well means a release can never ship
+# without notes, whatever the build folder held.
+scripts/embed-release-notes.sh "$APP"
+if [ ! -f "$APP/Contents/Resources/WhatsNew.md" ]; then
+  echo "error: $APP has no WhatsNew.md; add a '## v<version>' section to CHANGELOG.md" >&2
+  exit 1
+fi
+
 # Xcode signs the build ad-hoc; re-sign it with the release identity and the
 # direct build's own entitlements (which also drops the debug-only
 # get-task-allow Xcode adds).

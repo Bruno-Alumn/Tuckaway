@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+- **What's New after an update**: Tuckaway shows the release notes for the version it just installed, once, read from the app itself (no network). Its notes come from `CHANGELOG.md` when the release is packaged (`scripts/embed-release-notes.sh`), so a release with no changelog section fails the packaging script instead of shipping empty.
+- **Hiding by the arrow on macOS 26 and earlier** (direct-download build, off by default): a new hiding engine that reads where your icons are, asks macOS to show only the ones on the visible side, and moves the arrow beside the hidden ones, so a crowded menu bar can't push icons past a separator that's too wide. Enable it with `defaults write com.brunoalumn.tuckaway useNativeVisibilityTakeover -bool true`; it is still experimental and stays off unless you ask for it.
 - **Edit profiles in Settings** (macOS 27): the ⋯ button next to each profile under Profiles in Settings › General renames it, replaces its apps with the ones visible now, removes an app, or deletes it. Each profile also lists its apps.
 - **Show hidden icons briefly when they change** (macOS 27, Settings › General, off by default, #229): while collapsed, a hidden icon whose width or text changes shows for 8 seconds. Put an icon in Always Hidden to keep it out of this. A change to an icon's picture alone isn't noticed.
 - Settings explains what **Expand across full menu bar** does (#143).

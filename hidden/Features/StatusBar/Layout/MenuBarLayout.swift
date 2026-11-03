@@ -76,6 +76,15 @@ protocol MenuBarInventoryProviding: AnyObject {
 struct MenuBarLayout: Equatable {
     // One section per owning bundle, because hiding is per bundle.
     var sections: [String: MenuBarSection]
+    // The middle x of every item in the hidden section, in accessibility
+    // coordinates. An arrangement by position needs the icons rather than the
+    // bundles: the section is whatever sits left of the arrow.
+    var hiddenCenters: [CGFloat] = []
+
+    init(sections: [String: MenuBarSection], hiddenCenters: [CGFloat] = []) {
+        self.sections = sections
+        self.hiddenCenters = hiddenCenters
+    }
 
     func bundles(in wanted: Set<MenuBarSection>) -> [String] {
         return sections.filter { wanted.contains($0.value) }.map(\.key).sorted()
@@ -104,6 +113,7 @@ enum MenuBarLayoutResolver {
         }
 
         var sections: [String: MenuBarSection] = [:]
+        var hiddenCenters: [CGFloat] = []
         for item in inventory {
             guard let bundle = item.bundleIdentifier,
                   bundle != ownBundle,
@@ -124,12 +134,13 @@ enum MenuBarLayoutResolver {
                                            projected($0, from: boundaryDisplay, to: itemDisplay, isLTR: isLTR)
                                        },
                                        isLTR: isLTR)
+            if section == .hidden { hiddenCenters.append(item.frame.midX) }
             // One app can own several items, but hiding applies to the whole
             // bundle. The most visible item wins so an icon the user kept visible
             // is never hidden because a sibling sits in the hidden section.
             sections[bundle] = min(sections[bundle] ?? section, section)
         }
-        return MenuBarLayout(sections: sections)
+        return MenuBarLayout(sections: sections, hiddenCenters: hiddenCenters.sorted())
     }
 
     // Menu-bar extras are anchored to the arrow edge of each screen.  Translate
@@ -156,6 +167,15 @@ enum MenuBarLayoutResolver {
 
     private static func midpoint(of frame: CGRect) -> CGPoint {
         return CGPoint(x: frame.midX, y: frame.midY)
+    }
+
+    // Where a status item has to sit to be right of the hidden icons (in a
+    // left-to-right bar) and clear of the ones being kept: just past the
+    // outermost hidden icon. Nil when nothing is hidden, where any position is
+    // as good as the one the user chose.
+    static func arrowPosition(hiddenCenters: [CGFloat], isLTR: Bool) -> CGFloat? {
+        guard let furthest = isLTR ? hiddenCenters.min() : hiddenCenters.max() else { return nil }
+        return furthest
     }
 
     static func section(of frame: CGRect,

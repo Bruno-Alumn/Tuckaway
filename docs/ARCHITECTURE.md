@@ -37,6 +37,27 @@ usesNativeVisibility  // HIDDENBAR_NATIVE_VISIBILITY && macOS >= 27
     : LegacyLengthEngine(items:)
 ```
 
+### The takeover (macOS 26 and earlier, direct build, opt-in)
+
+`MenuBarEngineFactory.usesNativeVisibilityTakeover` (the `useNativeVisibilityTakeover`
+default) gives `NativeVisibilityEngine` a second duty on macOS 26 and earlier: it
+arranges the expanded bar itself instead of leaving it to the separator.
+
+When the bar expands, the engine reads every icon's position
+(`MenuBarLayout.hiddenCenters`), asks MenuBarAgent to keep only the visible side
+with `activateKeepingPositions` (an `MBMenuBarItem` per kept position — the
+`activate:completion:` request, not the assessment-mode one), and moves the arrow
+just within the last hidden icon. Left of the arrow is then the hidden section
+by position, which is what the separator made, except macOS restores the icons
+instead of pushing app windows off screen. The arrow's own position is part of
+the kept list, so the way back never goes. Expanding drops the restriction, waits
+out a busy bar (`LayoutSettlePlan`), reads once more and moves the arrow back to
+the visible side, restoring the user's arrangement.
+
+The engine's `activate(allowing:)` path is still what hides once collapsed; the
+takeover only decides *which* apps are left of the arrow. Unverified on hardware
+(see [HANDS_ON_CHECKS.md](HANDS_ON_CHECKS.md)), which is why it ships off.
+
 ### LegacyLengthEngine (macOS 13–26)
 
 macOS offers no API to hide other apps' icons before macOS 27, so this engine
@@ -214,6 +235,17 @@ flowchart TD
 | Empty-menu-bar click | Global click monitor; an Accessibility hit test confirms the click hit the bare `AXMenuBar` | Monitor not installed |
 | Self-restore | `isVisible = true` forced on Tuckaway's items at launch; ⌘-dragging them off would otherwise leave no UI | None |
 | Always-hidden section | A second separator item, gated by `alwaysHiddenSectionEnabled` | Item not created |
+
+## What's New
+
+`WhatsNewWindowController.showIfNeeded()` runs at launch after the first-launch
+settings window. `WhatsNew` decides whether to show: the notes cover a range of
+versions (`versions: 1.8.0-1.9.0`) and are shown when the running version is in
+it and newer than `lastSeenWhatsNewVersion`, so a user who skipped releases sees
+everything they skipped. The notes are `Resources/WhatsNew.md`, written at build
+time by `scripts/embed-release-notes.sh` from `CHANGELOG.md`; the same script
+runs from `package-dmg.sh`, which refuses to package without the file. Nothing
+is fetched, so this works in both builds and stays offline.
 
 ## Updates
 

@@ -31,6 +31,21 @@ static NSString *const HBAssertionClassName = @"MBAssessmentModeAssertion";
 static SEL HBConfigurationInit(void) { return @selector(initWithAllowedSystemItems:allowedBundleIdentifiers:); }
 static SEL HBActivate(void) { return @selector(activateWithConfiguration:completionHandler:); }
 static SEL HBInvalidate(void) { return @selector(invalidate); }
+// MenuBarAgent's own request, which names the items to keep by position. See
+// HBNativeVisibilityActivateKeepingPositions in the header.
+static NSString *const HBItemClassName = @"MBMenuBarItem";
+static NSString *const HBItemContentClassName = @"MBMenuBarItemContent";
+static SEL HBItemInit(void) { return @selector(initWithID:content:); }
+static SEL HBItemContentInit(void) { return @selector(initWithTitle:); }
+
+static BOOL HBPositionsAreAvailable(void) {
+    Class item = NSClassFromString(HBItemClassName);
+    Class content = NSClassFromString(HBItemContentClassName);
+    NSObject *assertion = NSClassFromString(HBAssertionClassName) ? [[NSClassFromString(HBAssertionClassName) alloc] init] : nil;
+    return item && content && assertion && [item instancesRespondToSelector:HBItemInit()]
+        && [content instancesRespondToSelector:HBItemContentInit()]
+        && [assertion respondsToSelector:@selector(activate:completion:)];
+}
 
 BOOL HBNativeVisibilityIsAvailable(void) {
     static dispatch_once_t onceToken;
@@ -80,6 +95,44 @@ void HBNativeVisibilityActivate(NSArray<NSNumber *> *allowedSystemItems,
     }
 }
 
+void HBNativeVisibilityActivateKeepingPositions(NSArray<NSNumber *> *itemCenters,
+                                                void (^completion)(id _Nullable assertion, NSError * _Nullable error)) {
+    void (^finish)(id, NSError *) = ^(id assertion, NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{ completion(assertion, error); });
+    };
+    if (!HBNativeVisibilityIsAvailable()) {
+        finish(nil, HBNativeVisibilityError(@"MenuBarClientCore is unavailable on this macOS"));
+        return;
+    }
+    if (!HBPositionsAreAvailable()) {
+        finish(nil, HBNativeVisibilityError(@"This macOS cannot keep menu-bar items by position"));
+        return;
+    }
+    @try {
+        id configuration = ((id (*)(id, SEL))objc_msgSend)([NSClassFromString(HBConfigurationClassName) alloc], @selector(initWithUnrestrictedMenuBarItems));
+        id assertion = [[NSClassFromString(HBAssertionClassName) alloc] init];
+        if (!configuration || !assertion) {
+            finish(nil, HBNativeVisibilityError(@"Could not create the visibility configuration"));
+            return;
+        }
+        NSMutableArray *items = [NSMutableArray array];
+        for (NSNumber *center in itemCenters) {
+            NSString *itemID = [NSString stringWithFormat:@"%.0f", center.doubleValue / HBNativeVisibilityPositionTolerance];
+            id content = ((id (*)(id, SEL, NSString *))objc_msgSend)([NSClassFromString(HBItemContentClassName) alloc],
+                                                                    HBItemContentInit(), itemID);
+            id item = ((id (*)(id, SEL, NSString *, id))objc_msgSend)([NSClassFromString(HBItemClassName) alloc],
+                                                                     HBItemInit(), itemID, content);
+            if (item) { [items addObject:item]; }
+        }
+        ((void (*)(id, SEL, id, void (^)(NSError *)))objc_msgSend)(
+            assertion, @selector(activate:completion:), configuration, ^(NSError *error) {
+                finish(error ? nil : assertion, error);
+            });
+    } @catch (NSException *exception) {
+        finish(nil, HBNativeVisibilityError([NSString stringWithFormat:@"%@: %@", exception.name, exception.reason]));
+    }
+}
+
 void HBNativeVisibilityInvalidate(id assertion) {
     @try {
         if ([assertion respondsToSelector:HBInvalidate()]) {
@@ -99,6 +152,13 @@ BOOL HBNativeVisibilityIsAvailable(void) {
 void HBNativeVisibilityActivate(NSArray<NSNumber *> *allowedSystemItems,
                                 NSArray<NSString *> *allowedBundleIdentifiers,
                                 void (^completion)(id _Nullable assertion, NSError * _Nullable error)) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        completion(nil, HBNativeVisibilityError(@"Native visibility is not part of this build"));
+    });
+}
+
+void HBNativeVisibilityActivateKeepingPositions(NSArray<NSNumber *> *itemCenters,
+                                                void (^completion)(id _Nullable assertion, NSError * _Nullable error)) {
     dispatch_async(dispatch_get_main_queue(), ^{
         completion(nil, HBNativeVisibilityError(@"Native visibility is not part of this build"));
     });

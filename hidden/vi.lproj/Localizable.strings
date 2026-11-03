@@ -233,3 +233,10 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Hiện số biểu tượng đang ẩn";
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Có gì mới trong Tuckaway %@";
+"Done" = "Xong";
+
+/* macOS 26 and earlier: the far-right end of the expanded menu bar */
+"Menu bar area" = "Vùng thanh menu";
+"Everything to the left of here is hidden." = "Mọi thứ bên trái chỗ này đều bị ẩn.";

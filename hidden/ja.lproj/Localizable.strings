@@ -233,3 +233,10 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "隠しているアイコンの数を表示";
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Tuckaway %@ の新機能";
+"Done" = "完了";
+
+/* macOS 26 and earlier: the far-right end of the expanded menu bar */
+"Menu bar area" = "メニューバーの領域";
+"Everything to the left of here is hidden." = "ここより左はすべて非表示になります。";

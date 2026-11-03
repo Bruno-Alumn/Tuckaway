@@ -5,6 +5,7 @@
 //  Copyright © 2026 Dwarves Foundation. All rights reserved.
 //
 
+import CoreGraphics
 import Foundation
 
 // A held native visibility restriction. Hiding lasts until invalidate() or until
@@ -21,6 +22,12 @@ protocol NativeVisibilityProviding: AnyObject {
     func activate(allowedSystemItems: [Int],
                   allowedBundleIdentifiers: [String],
                   completion: @escaping (Result<NativeVisibilityAssertion, Error>) -> Void)
+
+    // Keeps only the status items whose middle x is at one of these positions,
+    // whatever apps own them. The completion runs on the main queue; systems
+    // without the position API report an error.
+    func activateKeepingPositions(_ itemCenters: [CGFloat],
+                                  completion: @escaping (Result<NativeVisibilityAssertion, Error>) -> Void)
 }
 
 final class NativeVisibilityBridge: NativeVisibilityProviding {
@@ -33,6 +40,17 @@ final class NativeVisibilityBridge: NativeVisibilityProviding {
                   completion: @escaping (Result<NativeVisibilityAssertion, Error>) -> Void) {
         HBNativeVisibilityActivate(allowedSystemItems.map { NSNumber(value: $0) },
                                    allowedBundleIdentifiers) { handle, error in
+            if let handle = handle {
+                completion(.success(Handle(raw: handle)))
+            } else {
+                completion(.failure(error ?? NSError(domain: "HBNativeVisibility", code: 2)))
+            }
+        }
+    }
+
+    func activateKeepingPositions(_ itemCenters: [CGFloat],
+                                  completion: @escaping (Result<NativeVisibilityAssertion, Error>) -> Void) {
+        HBNativeVisibilityActivateKeepingPositions(itemCenters.map { NSNumber(value: Double($0)) }) { handle, error in
             if let handle = handle {
                 completion(.success(Handle(raw: handle)))
             } else {

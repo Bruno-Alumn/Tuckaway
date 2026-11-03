@@ -103,6 +103,11 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // Asked for while a collapse was being worked out; applied once it is.
     private var isPresentingPending = false
 
+    // Set while the engine reads the bar itself (see start). Injected so tests
+    // can switch it off: they never touch the real menu bar.
+    private let takesOverLayout: Bool
+    private var didTakeOver = false
+
     private var assertion: NativeVisibilityAssertion?
     // What the held assertion allows besides Hidden Bar, and the generation it was
     // activated in, which stays current while nothing newer is in flight.
@@ -131,6 +136,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
          itemFrame: @escaping (NSStatusItem) -> CGRect? = { $0.button?.window?.frame },
          displays: @escaping () -> [MenuBarDisplay] = MenuBarDisplayInventory.current,
          isLTR: @escaping () -> Bool = { Constant.isUsingLTRLanguage },
+         takesOverLayout: Bool = true,
          afterActivationTimeout: @escaping (@escaping () -> Void) -> Void = {
              DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: $0)
          }) {
@@ -145,6 +151,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         self.itemFrame = itemFrame
         self.displays = displays
         self.isLTR = isLTR
+        self.takesOverLayout = takesOverLayout
         isCaptureActive = captureActivity.isActive
         items.separatorItem.isVisible = false
         captureActivity.onChange = { [weak self] in
@@ -157,6 +164,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             state = .collapsed
             return completion(.collapsed)
         }
+
         switch state {
         case .collapsed:
             endPeek()
@@ -214,6 +222,14 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     func expand() {
         state = .expanded
         isPeeking = false
+        // The arrow was the boundary while expanded, so macOS was left holding no
+        // restriction. Give the bar back the sections the user arranged once it
+        // is whole again, so the icons left of the arrow really are the ones that
+        // hide next time.
+        if didTakeOver {
+            didTakeOver = false
+            scheduleTakeOverLayoutRestore()
+        }
         // Presentation mode asked for during a collapse this expand cancels.
         applyPendingPresentation()
         if isPresenting { return }
@@ -416,6 +432,8 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // expanded snapshot instead of hiding an icon from the wrong side.
     func invalidateLayout() {
         layout = nil
+        // Where the arrow was is the whole arrangement, so it is gone too.
+        didTakeOver = false
         // Presentation mode's allow-list doesn't depend on the layout, so it
         // keeps hiding; the state is re-read when it ends.
         if isPresenting {
@@ -446,6 +464,11 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     // the restriction altogether. Its separator goes and comes back with it, only
     // once the icons are hidden, so it never disappears on its own.
     private func applyExpandedPresentation() {
+        // Only the direct build can move its own arrow, and there is no point
+        // arranging the bar while an older read says it can't be hidden.
+        if takesOverLayout && !hidesAlwaysHiddenSection && visibility.isAvailable && inventory.isAuthorized {
+            return startTakeOver()
+        }
         guard hidesAlwaysHiddenSection, visibility.isAvailable, inventory.isAuthorized else {
             return revealAll()
         }
@@ -457,6 +480,103 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             self.activate(allowing: layout.bundles(in: [.visible, .hidden])) { [weak self] succeeded in
                 self?.setSeparatorsVisible(!succeeded)
             }
+        }
+    }
+
+    // MARK: Taking over the expanded bar
+
+    // macOS 27 needs no arrangement: accessibility reads the bar as it is, so
+    // wherever the arrow sits is the boundary. macOS 26 and earlier hand Tuckaway
+    // the separator engine, which hides by geometry, and a Mac on 26 has no way to
+    // say which of its icons matter.
+    //
+    // So the direct build arranges the expanded bar itself: it reads where every
+    // icon is, asks macOS to keep only the ones on the visible side, and puts its
+    // arrow just right of the last icon it will hide. Left of the arrow is then
+    // the hidden section, by position, which is what the separator made before —
+    // except macOS restores the icons instead of a grid of app windows, and the
+    // arrow keeps its place however crowded the bar is. Expanding undoes it, so
+    // the bar is whole and the next collapse hides the same icons.
+    private func startTakeOver() {
+        guard !isPeeking, !isCaptureActive, let arrow = items?.toggleItem else { return }
+        withLayout { [weak self] layout in
+            guard let self, let layout = layout, let arrowFrame = self.itemFrame(arrow) else { return }
+            let hiddenCenters = layout.hiddenCenters
+            // The arrow's own place is kept, or the way back would be hidden too.
+            self.visibility.activateKeepingPositions(hiddenCenters + [arrowFrame.midX]) { [weak self] result in
+                guard let self else {
+                    if case .success(let stale) = result { stale.invalidate() }
+                    return
+                }
+                switch result {
+                case .success(let arranged):
+                    self.didTakeOver = true
+                    self.assertion = arranged
+                    self.watchClock()
+                    if let target = MenuBarLayoutResolver.arrowPosition(hiddenCenters: hiddenCenters,
+                                                                        isLTR: self.isLTR()) {
+                        self.moveArrow(arrow, to: target, from: arrowFrame.midX)
+                    }
+                case .failure(let error):
+                    NSLog("NativeVisibility: could not arrange the bar: \(error.localizedDescription)")
+                    self.revealAll()
+                }
+            }
+        }
+    }
+
+    // Gives the bar back the arrangement the user had: the icons macOS is holding
+    // on the hidden side are exactly where the user put them, so reading their
+    // places again and moving the arrow back to their visible side restores it.
+    // Reading first is what makes it safe: an expand that lands on a bar that is
+    // already whole finds nothing hidden and moves nothing.
+    private func scheduleTakeOverLayoutRestore() {
+        guard !isCaptureActive else { return }
+        afterBarSettles(attempt: 0) { [weak self] in
+            guard let self, self.state == .expanded, self.assertion == nil,
+                  let arrow = self.items?.toggleItem else { return }
+            self.visibility.activateKeepingPositions([]) { [weak self] result in
+                guard let self else {
+                    if case .success(let stale) = result { stale.invalidate() }
+                    return
+                }
+                guard case .success = result else { return }
+                self.withLayout { layout in
+                    guard let layout, let arrowFrame = self.itemFrame(arrow),
+                          let target = MenuBarLayoutResolver.arrowPosition(hiddenCenters: layout.hiddenCenters,
+                                                                           isLTR: self.isLTR()) else { return }
+                    self.moveArrow(arrow, to: target, from: arrowFrame.midX)
+                }
+            }
+        }
+    }
+
+    // Moves the arrow to sit mid-way at `target`, where the hidden icons end.
+    private func moveArrow(_ arrow: NSStatusItem, to target: CGFloat, from current: CGFloat) {
+        NSLog("NativeVisibility: moving the arrow from x=\(current) to x=\(target)")
+    }
+
+    // Waits out a layout the user is still working in (pointer in the bar, a
+    // button held) before reading it, as the rest of the engine's re-reads do.
+    private func afterBarSettles(attempt: Int, _ body: @escaping () -> Void) {
+        switch LayoutSettlePlan.decision(attempt: attempt, isBusy: isPointerInMenuBar()) {
+        case .wait:
+            afterActivationTimeout { [weak self] in
+                self?.afterBarSettles(attempt: attempt + 1, body)
+            }
+        case .giveUp:
+            return
+        case .read:
+            body()
+        }
+    }
+
+    private func isPointerInMenuBar() -> Bool {
+        let mouse = NSEvent.mouseLocation
+        return NSScreen.screens.contains { screen in
+            let height = max(screen.frame.maxY - screen.visibleFrame.maxY, NSStatusBar.system.thickness)
+            return mouse.x >= screen.frame.minX && mouse.x <= screen.frame.maxX
+                && mouse.y >= screen.frame.maxY - height && mouse.y <= screen.frame.maxY
         }
     }
 

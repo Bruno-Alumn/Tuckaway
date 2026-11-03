@@ -233,3 +233,10 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "顯示隱藏的圖像數量";
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Tuckaway %@ 新功能";
+"Done" = "完成";
+
+/* macOS 26 and earlier: the far-right end of the expanded menu bar */
+"Menu bar area" = "選單列區域";
+"Everything to the left of here is hidden." = "此處左側的所有圖示都會被隱藏。";

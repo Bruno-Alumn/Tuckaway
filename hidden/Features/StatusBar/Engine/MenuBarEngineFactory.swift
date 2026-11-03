@@ -28,4 +28,21 @@ enum MenuBarEngineFactory {
         return false
         #endif
     }
+
+    // macOS 26 and earlier, direct build only: the native engine takes over the
+    // expanded bar so sections are chosen by the arrow and restored by macOS,
+    // instead of by an inflated separator that a crowded bar can overflow.
+    // Experimental until it has run on those systems, so it is opt-in:
+    //
+    //     defaults write com.brunoalumn.tuckaway useNativeVisibilityTakeover -bool true
+    //
+    // The App Store build never uses it: no Accessibility, so no sections.
+    static var usesNativeVisibilityTakeover: Bool {
+        #if HIDDENBAR_NATIVE_VISIBILITY
+        return ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 27
+            && UserDefaults.standard.bool(forKey: UserDefaults.Key.useNativeVisibilityTakeover)
+        #else
+        return false
+        #endif
+    }
 }
