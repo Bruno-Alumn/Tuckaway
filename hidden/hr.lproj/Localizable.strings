@@ -235,3 +235,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Prikaži koliko je ikona skriveno";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "Poništi: zadrži %@ vidljivim";
+"Undo: hide %@" = "Poništi: skrij %@";

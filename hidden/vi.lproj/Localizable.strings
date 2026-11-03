@@ -233,3 +233,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Hiện số biểu tượng đang ẩn";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "Hoàn tác: giữ %@ hiển thị";
+"Undo: hide %@" = "Hoàn tác: ẩn %@";

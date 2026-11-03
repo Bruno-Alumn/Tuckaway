@@ -110,6 +110,9 @@ class StatusBarController: MenuBarItemProvider {
     private let profilesStore = UserDefaultsMenuBarProfilesStore()
     // New apps waiting to be asked about, in order; the first is on screen.
     private var newAppQueue: [String] = []
+    // The last answer to the new-app question, so it can be undone for a few
+    // minutes (NewAppAnswerUndo).
+    private var newAppAnswer: NewAppAnswerUndo?
     private var activeExpandCollapseFrame: CGRect?
     private var activeStatusItemScreen: NSScreen?
     private var didExpandForExternalDisplay = false
@@ -787,6 +790,15 @@ class StatusBarController: MenuBarItemProvider {
 
         if menuBarEngine is ProfileApplying {
             menu.addItem(profilesMenuItem())
+        }
+
+        if let undo = activeNewAppUndo {
+            let app = NSRunningApplication.runningApplications(withBundleIdentifier: undo.bundle).first
+            let name = app?.localizedName ?? undo.bundle
+            let title = String(format: undo.undoesToKeepVisible ? "Undo: keep %@ visible" : "Undo: hide %@", name)
+            let undoItem = NSMenuItem(title: title.localized, action: #selector(undoNewAppAnswer), keyEquivalent: "")
+            undoItem.target = self
+            menu.addItem(undoItem)
         }
 
         if Self.supportsPresentationMode {
@@ -2047,6 +2059,8 @@ extension StatusBarController {
         newAppPrompt.show(bundleIdentifier: bundle, below: arrowFrame, on: screen) { [weak self] keep in
             guard let self else { return }
             self.newAppQueue.removeAll { $0 == bundle }
+            // Only where the app can be decided again: the arrow's menu offers it.
+            self.newAppAnswer = NewAppAnswerUndo(bundle: bundle, wasKeptVisible: keep, answeredAt: Date())
             if keep {
                 self.keepVisible(bundle)
             } else {
@@ -2054,6 +2068,25 @@ extension StatusBarController {
                 self.removeFromActiveProfile(bundle)
             }
             self.showNextNewAppPrompt()
+        }
+    }
+
+    // The undo to offer right now: still fresh, and the app still running, since
+    // a decision about an app that quit can't be shown to make a difference.
+    private var activeNewAppUndo: NewAppAnswerUndo? {
+        guard let undo = NewAppAnswerUndo.offered(newAppAnswer, bundle: newAppAnswer?.bundle ?? "", now: Date()),
+              !NSRunningApplication.runningApplications(withBundleIdentifier: undo.bundle).isEmpty else { return nil }
+        return undo
+    }
+
+    @objc private func undoNewAppAnswer() {
+        guard let undo = activeNewAppUndo else { return }
+        newAppAnswer = nil
+        if undo.undoesToKeepVisible {
+            keepVisible(undo.bundle)
+        } else {
+            newAppReporter?.resolveNewApp(undo.bundle, keepVisible: false)
+            removeFromActiveProfile(undo.bundle)
         }
     }
 

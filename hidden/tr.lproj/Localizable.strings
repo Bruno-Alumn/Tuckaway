@@ -235,3 +235,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "Kaç simgenin gizli olduğunu göster";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "Geri al: %@ görünür kalsın";
+"Undo: hide %@" = "Geri al: %@ gizlensin";

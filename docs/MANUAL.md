@@ -40,7 +40,9 @@ section is enabled.
   visible. **Keep Visible** keeps that app showing wherever its icon sits (Menu
   Bar Items lists it under Visible; drag it to Hidden there to undo).
   **Hide** hides it like the rest. A helper that shows an icon and quits takes
-  its question with it.
+  its question with it. For five minutes after answering, the arrow's menu
+  offers **Undo: keep <app> visible** or **Undo: hide <app>**, so a reflex
+  answer can be taken back without opening Menu Bar Items.
 - These macOS items always stay visible: clock, Control Center, Wi-Fi,
   Bluetooth, Sound, Battery, Display, Keyboard and Screen Mirroring.
 - With more than one display, an app stays visible if it is on the arrow's

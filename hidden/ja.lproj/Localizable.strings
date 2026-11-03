@@ -233,3 +233,7 @@
 
 /* The hidden icon count next to the arrow */
 "Show how many icons are hidden" = "隠しているアイコンの数を表示";
+
+/* Undoing the answer to the new-app question */
+"Undo: keep %@ visible" = "取り消し：%@ を表示したままにする";
+"Undo: hide %@" = "取り消し：%@ を非表示にする";
