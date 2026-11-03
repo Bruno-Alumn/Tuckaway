@@ -258,3 +258,7 @@
 "Repair puts the arrow back near the right side of the bar." = "Naprawa przenosi strzałkę z powrotem przy prawą krawędź paska.";
 "Menu Bar Items…" = "Elementy paska menu…";
 "Repair" = "Napraw";
+
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Co nowego w Tuckaway %@";
+"Done" = "Gotowe";

@@ -107,6 +107,10 @@
 		C77AA0262E20000300B4A001 /* SetupCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0072E20000300B4A001 /* SetupCheck.swift */; };
 		C77AA0272E20000300B4A001 /* SetupCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0072E20000300B4A001 /* SetupCheck.swift */; };
 		C77AA0282E20000300B4A001 /* SetupCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0082E20000300B4A001 /* SetupCheckTests.swift */; };
+		C77AA0112E20000600B4A001 /* WhatsNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0012E20000600B4A001 /* WhatsNew.swift */; };
+		C77AA0122E20000600B4A001 /* WhatsNewWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0022E20000600B4A001 /* WhatsNewWindowController.swift */; };
+		C77AA0132E20000600B4A001 /* WhatsNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0012E20000600B4A001 /* WhatsNew.swift */; };
+		C77AA0142E20000600B4A001 /* WhatsNewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0032E20000600B4A001 /* WhatsNewTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -227,6 +231,9 @@
 		C77AA0082E20000200B4A001 /* MenuBarRescueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarRescueTests.swift; sourceTree = "<group>"; };
 		C77AA0072E20000300B4A001 /* SetupCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupCheck.swift; sourceTree = "<group>"; };
 		C77AA0082E20000300B4A001 /* SetupCheckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupCheckTests.swift; sourceTree = "<group>"; };
+		C77AA0012E20000600B4A001 /* WhatsNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNew.swift; sourceTree = "<group>"; };
+		C77AA0022E20000600B4A001 /* WhatsNewWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewWindowController.swift; sourceTree = "<group>"; };
+		C77AA0032E20000600B4A001 /* WhatsNewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -275,8 +282,18 @@
 				0842CDFE23A9FF7C00D14BD4 /* Preferences */,
 				0842CDFD23A9FF7500D14BD4 /* StatusBar */,
 				A1B2C3D4E5F6071829304A08 /* Update */,
+				C77AA0042E20000600B4A001 /* WhatsNew */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		C77AA0042E20000600B4A001 /* WhatsNew */ = {
+			isa = PBXGroup;
+			children = (
+				C77AA0012E20000600B4A001 /* WhatsNew.swift */,
+				C77AA0022E20000600B4A001 /* WhatsNewWindowController.swift */,
+			);
+			path = WhatsNew;
 			sourceTree = "<group>";
 		};
 		A1B2C3D4E5F6071829304A08 /* Update */ = {
@@ -491,6 +508,7 @@
 				B2C3D4E5F60718293A4B5C03 /* MenuBarItemMovePlanTests.swift */,
 				B2C3D4E5F60718293A4B5C13 /* LocalizationTests.swift */,
 				A1B2C3D4E5F6071829304A03 /* GitHubReleaseTests.swift */,
+				C77AA0032E20000600B4A001 /* WhatsNewTests.swift */,
 				C77AA0082E20000500B4A001 /* CoordinateSpaceTests.swift */,
 				C77AA0082E20000400B4A001 /* NewAppAnswerUndoTests.swift */,
 				C77AA0082E20000200B4A001 /* MenuBarRescueTests.swift */,
@@ -509,6 +527,7 @@
 				929113ED21F9D04100173149 /* Sources */,
 				929113EE21F9D04100173149 /* Frameworks */,
 				929113EF21F9D04100173149 /* Resources */,
+				C77AA0202E20000600B4A001 /* Embed release notes */,
 			);
 			buildRules = (
 			);
@@ -635,6 +654,30 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		C77AA0202E20000600B4A001 /* Embed release notes */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/CHANGELOG.md",
+				"$(SRCROOT)/scripts/embed-release-notes.sh",
+			);
+			name = "Embed release notes";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/WhatsNew.md",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# What's New reads the release notes from the bundle. Only Release builds\n# get them: a Debug build carries an unreleased version.\nif [ \"${CONFIGURATION%%-*}\" != Release ]; then exit 0; fi\n\"${SRCROOT}/scripts/embed-release-notes.sh\" \"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		637C6E21964C904F331A1E4E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -699,6 +742,8 @@
 				00137CDF24A63DB1004AC855 /* Notification.Name+Extension.swift in Sources */,
 				08A5F86423AA09F300981CA5 /* UserDefault+Extension.swift in Sources */,
 				4D8C4B09D62D4884B34E1A14 /* NotchOverflowController.swift in Sources */,
+				C77AA0112E20000600B4A001 /* WhatsNew.swift in Sources */,
+				C77AA0122E20000600B4A001 /* WhatsNewWindowController.swift in Sources */,
 				C77AA0462E20000500B4A001 /* CoordinateSpace.swift in Sources */,
 				C77AA0362E20000400B4A001 /* NewAppAnswerUndo.swift in Sources */,
 				C77AA0162E20000200B4A001 /* MenuBarRescue.swift in Sources */,
@@ -739,6 +784,8 @@
 				B2C3D4E5F60718293A4B5C17 /* LocalizationTests.swift in Sources */,
 				A1B2C3D4E5F6071829304A06 /* GitHubRelease.swift in Sources */,
 				A1B2C3D4E5F6071829304A07 /* GitHubReleaseTests.swift in Sources */,
+				C77AA0132E20000600B4A001 /* WhatsNew.swift in Sources */,
+				C77AA0142E20000600B4A001 /* WhatsNewTests.swift in Sources */,
 				C77AA0472E20000500B4A001 /* CoordinateSpace.swift in Sources */,
 				C77AA0482E20000500B4A001 /* CoordinateSpaceTests.swift in Sources */,
 				C77AA0372E20000400B4A001 /* NewAppAnswerUndo.swift in Sources */,

@@ -256,3 +256,7 @@
 "Repair puts the arrow back near the right side of the bar." = "修复会把箭头放回菜单栏靠右的位置。";
 "Menu Bar Items…" = "菜单栏项目…";
 "Repair" = "修复";
+
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Tuckaway %@ 新功能";
+"Done" = "完成";

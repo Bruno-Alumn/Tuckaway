@@ -258,3 +258,7 @@
 "Repair puts the arrow back near the right side of the bar." = "Ripara rimette la freccia vicino al bordo destro della barra.";
 "Menu Bar Items…" = "Barra dei menu…";
 "Repair" = "Ripara";
+
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Novità di Tuckaway %@";
+"Done" = "Fine";

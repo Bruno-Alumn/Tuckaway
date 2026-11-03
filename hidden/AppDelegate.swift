@@ -70,7 +70,10 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         statusBarController = StatusBarController()
         setupAutoStartApp()
         setupHotKey()
+        // Read before openPreferencesIfNeeded records the launch.
+        let isFirstLaunch = !UserDefaults.standard.bool(forKey: UserDefaults.Key.hasLaunchedBefore)
         openPreferencesIfNeeded()
+        WhatsNewWindowController.showIfNeeded(isFirstLaunch: isFirstLaunch)
         detectLTRLang()
         Updater.shared.start()
     }

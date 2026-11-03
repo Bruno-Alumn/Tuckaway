@@ -42,6 +42,12 @@ the settings, reopen `/Applications/Tuckaway.app`, and put any moved icons back.
   that. The menu bar picture and ⌘-drag caption are still above it. Each
   button does what it says. In the App Store build on 27 it lists only that
   this version can't hide.
+- **What's New:** build `Release-Direct`, set
+  `lastSeenWhatsNewVersion` to `1.7.0` in Tuckaway's defaults (in a
+  verification round you restore afterwards), and launch: the window shows
+  1.8.0's notes (and any later release's) with their headings, and **Done**
+  closes it. Launch again: nothing. Delete the key and `hasLaunchedBefore`
+  and launch: Settings opens, What's New doesn't.
 - **Profile ⋯ menu:** Rename… (the shortcut still works under the new name;
   a taken name shows the alert), Use Current Layout, Remove App, Delete
   Profile… (asks first). The row lists the apps.

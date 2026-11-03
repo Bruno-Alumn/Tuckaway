@@ -258,3 +258,7 @@
 "Repair puts the arrow back near the right side of the bar." = "Відновлення повертає стрілку до правого краю рядка.";
 "Menu Bar Items…" = "Елементи рядка меню…";
 "Repair" = "Відновити";
+
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Що нового в Tuckaway %@";
+"Done" = "Готово";

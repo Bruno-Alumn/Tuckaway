@@ -258,3 +258,7 @@
 "Repair puts the arrow back near the right side of the bar." = "Repair puts the arrow back near the right side of the bar.";
 "Menu Bar Items…" = "Menu Bar Items…";
 "Repair" = "Repair";
+
+/* What's New after an update */
+"What's New in Tuckaway %@" = "What's New in Tuckaway %@";
+"Done" = "Done";

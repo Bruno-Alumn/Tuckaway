@@ -256,3 +256,7 @@
 "Repair puts the arrow back near the right side of the bar." = "修復すると矢印がバーの右端近くに戻ります。";
 "Menu Bar Items…" = "メニューバーの項目…";
 "Repair" = "修復";
+
+/* What's New after an update */
+"What's New in Tuckaway %@" = "Tuckaway %@ の新機能";
+"Done" = "完了";
