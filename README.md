@@ -39,6 +39,9 @@ through 26.
 - Collapse after 5 seconds to a minute, or immediately when you switch apps.
 - Reveal with a hover, a click on empty menu-bar space, or a global shortcut.
 - Expand automatically when an external display is connected.
+- Collapse when the Mac locks or sleeps, so hidden icons aren't left showing.
+- Show a hidden icon for a few seconds when it changes, or for a moment after
+  its app updates (macOS 27, optional).
 
 **Room for everything**
 
@@ -47,20 +50,26 @@ through 26.
 - Show hidden icons in a floating bar under the menu bar: hover to open it,
   point at an icon for its app's name, right-click for more.
 - On macOS 27, a newly installed app's icon isn't hidden before you've seen
-  it: Tuckaway asks whether to keep it visible.
+  it: Tuckaway asks whether to keep it visible, and lets you undo the answer
+  for five minutes.
 - Presentation mode (macOS 27) hides every app's icon at once for screen
   sharing and recordings.
 - Find a hidden icon by typing its name (macOS 27).
 - Profiles (macOS 27) save which icons stay visible and switch between them,
-  automatically when a display is connected if you like.
+  automatically when a display is connected, at set times of day, or while an
+  app is open.
 - Show a hidden app's icon while that app is in front (macOS 27, optional).
 
 **A tool you can make your own**
 
-- Choose a standard arrow, a transparent one, or an ellipsis.
+- Choose a standard arrow, a transparent one, or an ellipsis, and show how
+  many icons are hidden next to it (macOS 27).
+- Group icons with blank spacers, and tighten the spacing between all menu bar
+  icons to fit more of them.
 - Reorder icons directly or through the Menu Bar Items manager.
 - Launch quietly at login, with or without opening Settings.
 - Export your settings to a file and import them on another Mac.
+- **Check Your Setup** says why nothing is being hidden and fixes what it can.
 
 ## Install
 
