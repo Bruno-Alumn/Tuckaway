@@ -263,3 +263,10 @@
 "What's New in Tuckaway %@" = "Novità di Tuckaway %@";
 "Done" = "Fine";
 "%d icons" = "%d icone";
+
+/* Menu Bar Items: arranging the menu bar directly (macOS 27) */
+"Allow Moving Icons…" = "Consenti spostamento…";
+"Lets Tuckaway reorder the menu bar directly, so moves land every time and can cross the arrow." = "Permette a Tuckaway di riordinare direttamente la barra dei menu, così ogni spostamento va a segno e può superare la freccia.";
+"Tuckaway can now arrange your menu bar." = "Ora Tuckaway può sistemare la barra dei menu.";
+"Choose the “com.apple.MenuBar” folder to let Tuckaway arrange your menu bar." = "Scegli la cartella “com.apple.MenuBar” per permettere a Tuckaway di sistemare la barra dei menu.";
+"Allow" = "Consenti";

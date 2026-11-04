@@ -263,3 +263,10 @@
 "What's New in Tuckaway %@" = "Tuckaway %@'ta Yenilikler";
 "Done" = "Bitti";
 "%d icons" = "%d simge";
+
+/* Menu Bar Items: arranging the menu bar directly (macOS 27) */
+"Allow Moving Icons…" = "Simge Taşımaya İzin Ver…";
+"Lets Tuckaway reorder the menu bar directly, so moves land every time and can cross the arrow." = "Tuckaway’in menü çubuğunu doğrudan yeniden sıralamasını sağlar; böylece her taşıma yerine oturur ve oku geçebilir.";
+"Tuckaway can now arrange your menu bar." = "Tuckaway artık menü çubuğunuzu düzenleyebilir.";
+"Choose the “com.apple.MenuBar” folder to let Tuckaway arrange your menu bar." = "Tuckaway’in menü çubuğunuzu düzenleyebilmesi için “com.apple.MenuBar” klasörünü seçin.";
+"Allow" = "İzin Ver";

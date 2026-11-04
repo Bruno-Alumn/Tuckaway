@@ -123,6 +123,62 @@ enum MenuBarItemMovePlan {
     }
 }
 
+// New weights for MenuBarLayoutStore's table (larger is further left) that put
+// `moving` on `side` of `anchor`, keeping the moving keys' own order. The
+// moving keys go evenly between the anchor and its neighbour; if they're too
+// close to fit, every key is renumbered in its current order instead. Nil if
+// the anchor has no weight.
+enum MenuBarPositionPlan {
+    static let spacing = 16.0
+
+    // The keys an app owns in the table, given its names: MenuBarAgent keys an
+    // item by its app's bundle identifier or its executable name.
+    static func keys(in table: [String: Double], forAppsNamed names: [String]) -> [String] {
+        let prefixes = Set(names).map { "status:\($0)::" }
+        return table.keys.filter { key in prefixes.contains { key.hasPrefix($0) } }.sorted()
+    }
+
+    static func weights(moving: [String], _ side: MenuBarDropSide, of anchor: [String],
+                        in table: [String: Double]) -> [String: Double]? {
+        let anchorWeights = anchor.compactMap { table[$0] }
+        guard !moving.isEmpty, !anchorWeights.isEmpty else { return nil }
+        let movingSet = Set(moving)
+        let others = table.filter { !movingSet.contains($0.key) }
+        // Left to right.
+        let movingOrder = moving.sorted { (table[$0] ?? 0) > (table[$1] ?? 0) }
+
+        var right: Double?
+        var left: Double?
+        switch side {
+        case .before:
+            right = anchorWeights.max()!
+            left = others.values.filter { $0 > right! }.min()
+        case .after:
+            left = anchorWeights.min()!
+            right = others.values.filter { $0 < left! }.max()
+        }
+        let low = right ?? left! - spacing * Double(moving.count + 1)
+        let high = left ?? right! + spacing * Double(moving.count + 1)
+        let step = (high - low) / Double(moving.count + 1)
+        if step >= 0.5 {
+            return Dictionary(uniqueKeysWithValues: movingOrder.enumerated().map { index, key in
+                (key, high - step * Double(index + 1))
+            })
+        }
+
+        // No room: lay everything out again, right to left.
+        let anchorKeys = Set(anchor)
+        var order = others.sorted { $0.value < $1.value || ($0.value == $1.value && $0.key < $1.key) }.map(\.key)
+        let insertAt: Int
+        switch side {
+        case .before: insertAt = (order.lastIndex { anchorKeys.contains($0) } ?? order.count - 1) + 1
+        case .after: insertAt = order.firstIndex { anchorKeys.contains($0) } ?? 0
+        }
+        order.insert(contentsOf: movingOrder.reversed(), at: insertAt)
+        return Dictionary(uniqueKeysWithValues: order.enumerated().map { ($1, Double($0) * spacing) })
+    }
+}
+
 // macOS 27 hides whole apps (#427), so Menu Bar Items lists one row per app
 // there: an app with two icons would otherwise show twice, and moving one
 // would move both. Items without a key (macOS's own, which are kept visible

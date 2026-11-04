@@ -263,3 +263,10 @@
 "What's New in Tuckaway %@" = "Novosti u Tuckawayju %@";
 "Done" = "Gotovo";
 "%d icons" = "Ikona: %d";
+
+/* Menu Bar Items: arranging the menu bar directly (macOS 27) */
+"Allow Moving Icons…" = "Dopusti premještanje…";
+"Lets Tuckaway reorder the menu bar directly, so moves land every time and can cross the arrow." = "Omogućuje Tuckawayu da izravno preuredi traku izbornika, pa svako premještanje uspije i može prijeći strelicu.";
+"Tuckaway can now arrange your menu bar." = "Tuckaway sada može uređivati vašu traku izbornika.";
+"Choose the “com.apple.MenuBar” folder to let Tuckaway arrange your menu bar." = "Odaberite mapu „com.apple.MenuBar” kako bi Tuckaway mogao uređivati vašu traku izbornika.";
+"Allow" = "Dopusti";
