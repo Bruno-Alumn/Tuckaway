@@ -32,6 +32,7 @@
 		3CF14C82221FA49D0083D42B /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF14C81221FA49D0083D42B /* PreferencesWindowController.swift */; };
 		4D8C4B09D62D4884B34E1A14 /* NotchOverflowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE73DB4E0664488997EEB6DE /* NotchOverflowController.swift */; };
 		70F996B8AD634F42175AE89C /* NotchOverflowPreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06495EE4F823D325A44A357C /* NotchOverflowPreferencesTests.swift */; };
+		5EAD0FA112E2000000000003 /* TestDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAD0FA112E2000000000001 /* TestDefaults.swift */; };
 		C3D4E5F6071829304A5B6C07 /* LaunchPreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6071829304A5B6C03 /* LaunchPreferencesTests.swift */; };
 		73B9E6554B24487EA995C7C3 /* MenuBarLayoutResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE30458A6074188B93CD466 /* MenuBarLayoutResolverTests.swift */; };
 		8557996B406181A91CBF5917 /* MenuBarExtraClassifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6D80CB37CBB7622AC8455D /* MenuBarExtraClassifierTests.swift */; };
@@ -114,6 +115,7 @@
 		C77AA0122E20000600B4A001 /* WhatsNewWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0022E20000600B4A001 /* WhatsNewWindowController.swift */; };
 		C77AA0132E20000600B4A001 /* WhatsNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0012E20000600B4A001 /* WhatsNew.swift */; };
 		C77AA0142E20000600B4A001 /* WhatsNewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0032E20000600B4A001 /* WhatsNewTests.swift */; };
+		5EAD0FA112E2000000000002 /* TestDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAD0FA112E2000000000001 /* TestDefaults.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -240,6 +242,7 @@
 		C77AA0012E20000600B4A001 /* WhatsNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNew.swift; sourceTree = "<group>"; };
 		C77AA0022E20000600B4A001 /* WhatsNewWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewWindowController.swift; sourceTree = "<group>"; };
 		C77AA0032E20000600B4A001 /* WhatsNewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewTests.swift; sourceTree = "<group>"; };
+		5EAD0FA112E2000000000001 /* TestDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDefaults.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -518,6 +521,7 @@
 				B2C3D4E5F60718293A4B5C13 /* LocalizationTests.swift */,
 				A1B2C3D4E5F6071829304A03 /* GitHubReleaseTests.swift */,
 				C77AA0032E20000600B4A001 /* WhatsNewTests.swift */,
+				5EAD0FA112E2000000000001 /* TestDefaults.swift */,
 				C77AA0082E20000500B4A001 /* CoordinateSpaceTests.swift */,
 				C77AA0082E20000400B4A001 /* NewAppAnswerUndoTests.swift */,
 				C77AA0082E20000200B4A001 /* MenuBarRescueTests.swift */,
@@ -697,6 +701,7 @@
 				73B9E6554B24487EA995C7C3 /* MenuBarLayoutResolverTests.swift in Sources */,
 				0C57EC38D13980EBF7C9BBDA /* NotchOverflowMenuBuilderTests.swift in Sources */,
 				70F996B8AD634F42175AE89C /* NotchOverflowPreferencesTests.swift in Sources */,
+				5EAD0FA112E2000000000003 /* TestDefaults.swift in Sources */,
 				C3D4E5F6071829304A5B6C07 /* LaunchPreferencesTests.swift in Sources */,
                 AABBDD112233445566778801 /* GlobalShortcutTests.swift in Sources */,
                 AABBDD1122334455667788A1 /* UpdaterToolTests.swift in Sources */,
@@ -798,6 +803,7 @@
 				A1B2C3D4E5F6071829304A07 /* GitHubReleaseTests.swift in Sources */,
 				C77AA0132E20000600B4A001 /* WhatsNew.swift in Sources */,
 				C77AA0142E20000600B4A001 /* WhatsNewTests.swift in Sources */,
+				5EAD0FA112E2000000000002 /* TestDefaults.swift in Sources */,
 				C77AA0472E20000500B4A001 /* CoordinateSpace.swift in Sources */,
 				C77AA0482E20000500B4A001 /* CoordinateSpaceTests.swift in Sources */,
 				C77AA0372E20000400B4A001 /* NewAppAnswerUndo.swift in Sources */,

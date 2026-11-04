@@ -98,17 +98,16 @@ private final class TransitioningLoginItem: LoginItemServing {
 }
 
 final class LegacyLoginItemMigrationTests: XCTestCase {
-    private var defaults: UserDefaults!
-    private var suiteName: String!
+    private var suite: TestDefaults!
+    private var defaults: UserDefaults { suite.defaults }
 
     override func setUp() {
         super.setUp()
-        suiteName = "LegacyLoginItemMigrationTests.\(UUID().uuidString)"
-        defaults = UserDefaults(suiteName: suiteName)
+        suite = TestDefaults("LegacyLoginItemMigrationTests")
     }
 
     override func tearDown() {
-        defaults.removePersistentDomain(forName: suiteName)
+        suite.remove()
         super.tearDown()
     }
 

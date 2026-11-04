@@ -180,17 +180,16 @@ final class GitHubReleaseTests: XCTestCase {
 }
 
 final class SettingsBackupTests: XCTestCase {
-    private var suite: String!
-    private var defaults: UserDefaults!
+    private var suite: TestDefaults!
+    private var defaults: UserDefaults { suite.defaults }
 
     override func setUp() {
         super.setUp()
-        suite = "SettingsBackupTests-\(UUID().uuidString)"
-        defaults = UserDefaults(suiteName: suite)
+        suite = TestDefaults("SettingsBackupTests")
     }
 
     override func tearDown() {
-        defaults.removePersistentDomain(forName: suite)
+        suite.remove()
         super.tearDown()
     }
 
