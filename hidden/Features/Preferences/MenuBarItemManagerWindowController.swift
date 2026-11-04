@@ -188,7 +188,9 @@ final class MenuBarItemManagerViewController: NSViewController {
         updateLayoutAccessButton()
         statusLabel.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
         statusLabel.textColor = .secondaryLabelColor
-        statusLabel.maximumNumberOfLines = 2
+        // With the permission buttons showing, the label is narrow; let it
+        // wrap rather than cut a message short.
+        statusLabel.maximumNumberOfLines = 0
         let footer = NSStackView(views: [statusLabel, permissionButton, layoutAccessButton, refreshButton])
         footer.orientation = .horizontal
         footer.alignment = .centerY
