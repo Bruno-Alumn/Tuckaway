@@ -14,139 +14,89 @@ Hide the icons you don’t need, without quitting the apps behind them.
 <img src="https://img.shields.io/badge/macOS-13%2B-1f2937?style=flat-square&logo=apple&logoColor=white" alt="macOS 13 or later">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2774c8?style=flat-square" alt="MIT license"></a>
 
-[Features](#features) · [Install](#install) · [Using Tuckaway](#using-tuckaway) · [Privacy](#privacy) · [Contribute](#contribute)
+[Features](#features) · [Install](#install) · [Usage](#using-tuckaway) · [Privacy](#privacy) · [Contribute](#contribute)
 
 </div>
 
 ---
 
-Tuckaway puts a small arrow in your menu bar. Icons on its left are tucked out of
-sight. Icons on its right stay exactly where they are. One click brings them all
-back, so you can keep your workspace calm without losing the tools you rely on.
-
-It’s an independent fork of [Hidden Bar](https://github.com/dwarvesf/hidden),
-built to work with macOS 27’s new menu bar while retaining support for macOS 13
-through 26.
+Tuckaway adds a small arrow to your menu bar. Icons to its left tuck out of sight;
+one click brings them back. An independent fork of
+[Hidden Bar](https://github.com/dwarvesf/hidden), rebuilt for macOS 27’s new menu
+bar and still supporting macOS 13 through 26.
 
 <div align="center">
-  <img src="img/tuckaway-menubar.gif" width="900" alt="Tuckaway’s arrow hiding and revealing menu-bar icons">
+  <img src="img/tuckaway-menu-bar.gif" width="900" alt="Tuckaway’s arrow hiding and revealing menu bar icons, asking “Keep Screenshot visible?” when a new app’s icon lands on the hidden side, and its menu: Profiles, Undo, Presentation Mode, Auto-collapse and Hide separators">
 </div>
 
 ## Features
 
-**Automation that stays out of your way**
-
-- Collapse after 5 seconds to a minute, or immediately when you switch apps.
-- Reveal with a hover, a click on empty menu-bar space, or a global shortcut.
-- Expand automatically when an external display is connected.
-
-**Room for everything**
-
-- Keep rarely used icons in a separate, always-hidden section.
-- Find icons hidden behind a camera notch.
-- Show hidden icons in a floating bar under the menu bar: hover to open it,
-  point at an icon for its app's name, right-click for more.
-- On macOS 27, a newly installed app's icon isn't hidden before you've seen
-  it: Tuckaway asks whether to keep it visible.
-- Presentation mode (macOS 27) hides every app's icon at once for screen
-  sharing and recordings.
-- Find a hidden icon by typing its name (macOS 27).
-- Profiles (macOS 27) save which icons stay visible and switch between them,
-  automatically when a display is connected if you like.
-- Show a hidden app's icon while that app is in front (macOS 27, optional).
-
-**A tool you can make your own**
-
-- Choose a standard arrow, a transparent one, or an ellipsis.
-- Reorder icons directly or through the Menu Bar Items manager.
-- Launch quietly at login, with or without opening Settings.
-- Export your settings to a file and import them on another Mac.
+| Feature | What it does |
+|:--|:--|
+| **Auto-collapse** | Hides icons again after a delay, when you switch apps, or when the Mac locks. |
+| **Quick reveal** | Hover, click empty menu bar space, or press a global shortcut. |
+| **Always-hidden section** | A second section for icons you almost never need. |
+| **Notch-aware** | Finds icons stuck behind the camera notch, or shows them in a floating bar. |
+| **New-app check** | Asks before hiding a newly installed app’s icon, with an undo. <sub>macOS 27</sub> |
+| **Profiles** | Saved layouts that switch by display, time of day, or open app. <sub>macOS 27</sub> |
+| **Presentation Mode** | Hides every app’s icon for screen sharing. <sub>macOS 27</sub> |
+| **Find Hidden Icon** | Type an app’s name to reach its hidden icon. <sub>macOS 27</sub> |
+| **Smart reveals** | Briefly shows an icon that changes or updates, or the one for the app in front. <sub>macOS 27</sub> |
+| **Spacers and spacing** | Group icons with blank spacers, or tighten spacing to fit more. |
+| **Check Your Setup** | Explains why nothing is hiding, and fixes what it can. |
+| **Portable settings** | Export to a file and import on another Mac. |
 
 ## Install
 
-1. Download **Tuckaway.dmg** from the
-   [latest release](https://github.com/Bruno-Alumn/Tuckaway/releases/latest).
-2. Open the disk image and drag **Tuckaway.app** into **Applications**.
-3. Launch it and grant the [permissions](#permissions) it requests.
-
-With Homebrew:
+Download **Tuckaway.dmg** from the
+[latest release](https://github.com/Bruno-Alumn/Tuckaway/releases/latest), drag it
+into **Applications**, and grant the [permissions](#privacy) it asks for. Or use
+Homebrew:
 
 ```sh
 brew install --cask bruno-alumn/tuckaway/tuckaway
 ```
 
-Tuckaway runs on Apple Silicon and Intel Macs with macOS 13 or later. It checks
-GitHub for updates once a day and can install new versions for you.
+Runs on Apple Silicon and Intel with macOS 13 or later, and checks for updates daily.
 
-> **A note about signing:** releases aren’t notarized yet. macOS may show a
-> warning on first launch. Review the release, then choose **Open Anyway** in
-> System Settings › Privacy & Security if you’re comfortable installing it.
-> Releases use the same certificate every time, so your permissions survive
-> subsequent updates. Updating from 1.1.0 or earlier asks once more.
-
-Switching from Hidden Bar? Quit it first so the two apps don’t compete for the
-menu bar. Tuckaway copies your Hidden Bar settings on its first run. Settings from the
-App Store version of Hidden Bar may not carry over.
+> [!NOTE]
+> Releases aren’t notarized yet, so macOS may warn on first launch. Choose
+> **Open Anyway** in System Settings › Privacy & Security. Coming from Hidden
+> Bar? Quit it first; Tuckaway imports its settings (the App Store version’s may
+> not carry over).
 
 ## Using Tuckaway
 
-Arrange your icons once, then let Tuckaway do the tidying:
+Hold <kbd>⌘</kbd> and drag icons to the left of the arrow to hide them, or move
+them in **Settings › Menu Bar Items**. Then click the arrow to collapse or expand.
 
-1. Hold <kbd>⌘</kbd> and drag icons to the left of the arrow to hide them.
-   You can also move items between the Hidden and Visible lists in
-   **Settings › Menu Bar Items**.
-2. Click the arrow to collapse or expand.
-3. Adjust how and when Tuckaway reveals icons in **Settings**.
-
-| Action | What it does |
+| Action | Result |
 |:--|:--|
-| Click or right-click the arrow | Hide or show your icons |
-| <kbd>⌘</kbd>-drag an icon | Move it between sections |
+| Click the arrow | Hide or show icons |
 | <kbd>⌥</kbd>-click the arrow | Hide or show the always-hidden section |
-| <kbd>Control</kbd>-click the arrow | Open the menu: Profiles, Presentation Mode, Settings and more |
-| Your global shortcuts | Hide or show, toggle Presentation Mode, or find a hidden icon from anywhere |
-
-Settings has three tabs: **General**, **Menu Bar Items**, and **About**. You can
-open it from the arrow’s menu or with <kbd>⌘</kbd><kbd>,</kbd>.
+| <kbd>Control</kbd>-click the arrow | Open the menu |
+| <kbd>⌘</kbd><kbd>,</kbd> | Open Settings |
 
 <div align="center">
-  <img src="img/tuckaway-settings.gif" width="440" alt="Tuckaway’s General settings, item manager, and About screen">
+  <img src="img/tuckaway-settings-window.gif" width="440" alt="Tuckaway’s Settings: the General tab with Check Your Setup and its Hiding, Revealing, Appearance, Extra Sections, Startup and Updates options; dragging an app in the Menu Bar Items lists; and the About tab checking for updates and exporting settings">
 </div>
 
 ## Privacy
 
-Tuckaway has no accounts, analytics, or ads. It only talks to GitHub, to check
-for updates once a day (you can turn that off in Settings) and to download an
-update you choose to install. Everything else stays on your Mac.
+No accounts, analytics, or ads. Tuckaway only contacts GitHub to check for and
+download updates. See the [Privacy Policy](PRIVACY_POLICY.md).
 
-### Permissions
-
-| Permission | Why it’s needed |
+| Permission | Used for |
 |:--|:--|
-| **Accessibility** — called **Device Control and Data Access** on macOS 27 | Finds menu-bar icons, detects clicks on empty space, and forwards clicks to hidden items. |
-| **Screen Recording** | Used only by the separate floating bar, to show your hidden icons in it. Captured icons never leave your Mac. |
-
-Read the full [Privacy Policy](PRIVACY_POLICY.md).
+| **Accessibility** <sub>(Device Control and Data Access on macOS 27)</sub> | Finding, hiding, and clicking menu bar icons |
+| **Screen Recording** | Drawing hidden icons in the floating bar, on your Mac only |
 
 ## Contribute
 
-Tuckaway welcomes thoughtful fixes, small improvements, and new ideas. You don’t
-need to ask before working on a small patch.
-
-- **Found something broken?** [Open an issue](https://github.com/Bruno-Alumn/Tuckaway/issues/new)
-  with rough notes or a screenshot.
-- **Want to help?** Fork the repository and open a pull request against `main`.
-- **Not sure where to begin?** [ARCHITECTURE.md](docs/ARCHITECTURE.md) explains
-  the hiding engines, and [BACKLOG.md](docs/BACKLOG.md) lists open work.
-
-Much of Tuckaway was built with AI coding agents, then compiled, tested and
-exercised on real hardware before merging. AI-assisted contributions are
-welcome on the same terms as any other: say what you changed and be honest
-about what you tested.
-
-Before opening a pull request, make sure it builds, the tests pass, and you’ve
-tried it on a real menu bar. The [contributing guide](CONTRIBUTING.md) has the
-commands.
+Fixes and ideas are welcome, no need to ask first.
+[Open an issue](https://github.com/Bruno-Alumn/Tuckaway/issues/new) or send a pull
+request against `main`; the [contributing guide](CONTRIBUTING.md) has the details.
+AI-assisted work is welcome too: just say what you tested.
 
 <details>
 <summary><strong>Build from source</strong></summary>
