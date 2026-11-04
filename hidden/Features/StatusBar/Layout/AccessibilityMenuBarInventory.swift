@@ -109,12 +109,15 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
         AXUIElementSetMessagingTimeout(element, timeout)
         var barValue: CFTypeRef?
         let barError = AXUIElementCopyAttributeValue(element, "AXExtrasMenuBar" as CFString, &barValue)
-        if barError == .noValue { return [] }
+        // Unsupported is an answer too: the Dock and WindowManager give it on
+        // 27.2. Counting it as unreadable kept them "visible" and put them in
+        // every saved profile.
+        if barError == .noValue || barError == .attributeUnsupported { return [] }
         guard barError == .success, let bar = barValue,
               CFGetTypeID(bar) == AXUIElementGetTypeID() else { return nil }
         var childrenValue: CFTypeRef?
         let childrenError = AXUIElementCopyAttributeValue(bar as! AXUIElement, kAXChildrenAttribute as CFString, &childrenValue)
-        if childrenError == .noValue { return [] }
+        if childrenError == .noValue || childrenError == .attributeUnsupported { return [] }
         guard childrenError == .success, let children = childrenValue as? [AXUIElement] else { return nil }
         var items: [MenuBarInventoryItem] = []
         let readsTitles = app.bundleIdentifier == MenuBarItemNaming.systemExtraOwner
