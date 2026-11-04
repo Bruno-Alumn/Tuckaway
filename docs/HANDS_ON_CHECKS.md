@@ -69,9 +69,10 @@ Things learned on 2026-11-05 in a macOS 27.2 VM (terminal-mac):
   that pass found Dock and WindowManager listed, fixed in #170). Still to
   check: the shortcut still works under the new name, and a taken name shows
   the alert.
-- **Schedule…:** set a window that starts in two minutes and ends two minutes
-  later; the profile switches on, then back. Pick another profile inside the
-  window and confirm it stays. Check the row shows the times.
+- **Schedule…** (checked 2026-11-05 in the VM: a 00:52–00:54 window switched
+  the profile on within 3 s of 00:52 and back to the arrow within 4 s of
+  00:54; the row shows "00:52 – 00:54"). Still to check: pick another
+  profile inside the window and confirm it stays.
 - **Show hidden icons briefly when they change:** with a hidden app whose icon
   shows text or changes width (a timer, a download count), wait for a change:
   it shows for about 8 seconds, then hides. An Always Hidden app never shows.
