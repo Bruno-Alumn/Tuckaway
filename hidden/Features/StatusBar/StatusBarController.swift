@@ -123,6 +123,7 @@ class StatusBarController: MenuBarItemProvider {
     private var hasCollapsedSinceLaunch = false
     private var appliedExpandWhenExternalDisplay = Preferences.expandWhenExternalDisplayConnected
     private var configurationDragMonitor: Any?
+    private var commandKeyMonitor: Any?
     private var isTemporarilyExpandedForConfigurationDrag = false
     private var configurationDragCollapseWorkItem: DispatchWorkItem?
     private var recollapseWorkItem: DispatchWorkItem?
@@ -266,6 +267,9 @@ class StatusBarController: MenuBarItemProvider {
 
     deinit {
         NotificationCenter.default.removeObserver(self)
+        if let commandKeyMonitor {
+            NSEvent.removeMonitor(commandKeyMonitor)
+        }
         if let configurationDragMonitor = configurationDragMonitor {
             NSEvent.removeMonitor(configurationDragMonitor)
         }
@@ -1035,6 +1039,7 @@ extension StatusBarController {
     // On macOS 27 a ⌘-drag works the same with or without that bar.
     // Global monitors already run on the main thread.
     private func updateConfigurationDragMonitor() {
+        updateCommandKeyMonitor()
         if usesSeparateHiddenItemsBar && !MenuBarEngineFactory.usesNativeVisibility {
             guard configurationDragMonitor == nil else { return }
             configurationDragMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDragged, .leftMouseUp]) { [weak self] event in
@@ -1044,6 +1049,22 @@ extension StatusBarController {
             NSEvent.removeMonitor(configurationDragMonitor)
             self.configurationDragMonitor = nil
             isTemporarilyExpandedForConfigurationDrag = false
+        }
+    }
+
+    // On macOS 27 the restriction that hides icons while collapsed also stops
+    // the visible ones from being ⌘-dragged, and expanding once the drag has
+    // begun is too late for it. So holding ⌘ with the pointer over the menu bar
+    // expands first, whether ⌘ goes down over the bar or the pointer arrives
+    // with it held; auto-collapse puts it back afterwards.
+    private func updateCommandKeyMonitor() {
+        guard MenuBarEngineFactory.usesNativeVisibility, commandKeyMonitor == nil else { return }
+        commandKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.flagsChanged, .mouseMoved]) { [weak self] event in
+            guard let self,
+                  event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+                  self.isCollapsed, self.isMouseInMenuBar, !self.isMouseButtonDown, !self.isPresenting
+            else { return }
+            self.expandMenubar()
         }
     }
 

@@ -261,3 +261,10 @@
 "What's New in Tuckaway %@" = "Tuckaway %@ 新功能";
 "Done" = "完成";
 "%d icons" = "%d 個圖示";
+
+/* Menu Bar Items: arranging the menu bar directly (macOS 27) */
+"Allow Moving Icons…" = "允許移動圖像…";
+"Lets Tuckaway reorder the menu bar directly, so moves land every time and can cross the arrow." = "讓 Tuckaway 直接重新排列選單列，每次移動都會生效，也能越過箭頭。";
+"Tuckaway can now arrange your menu bar." = "Tuckaway 現在可以排列你的選單列了。";
+"Choose the “com.apple.MenuBar” folder to let Tuckaway arrange your menu bar." = "選擇「com.apple.MenuBar」檔案夾，以允許 Tuckaway 排列你的選單列。";
+"Allow" = "允許";

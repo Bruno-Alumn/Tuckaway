@@ -82,6 +82,7 @@
 		A1B2C3D4E5F6071829304A07 /* GitHubReleaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071829304A03 /* GitHubReleaseTests.swift */; };
 		B2C3D4E5F60718293A4B5C04 /* MenuBarItemMovePlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C01 /* MenuBarItemMovePlan.swift */; };
 		B2C3D4E5F60718293A4B5C05 /* MenuBarItemDragger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C02 /* MenuBarItemDragger.swift */; };
+		C77AA0F22E20000700B4A001 /* MenuBarLayoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0F12E20000700B4A001 /* MenuBarLayoutStore.swift */; };
 		B2C3D4E5F60718293A4B5C06 /* MenuBarItemMovePlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C01 /* MenuBarItemMovePlan.swift */; };
 		AABBDD1122334455667788F2 /* MenuBarAppRestarter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD1122334455667788F1 /* MenuBarAppRestarter.swift */; };
 		AABBDD1122334455667788F3 /* MenuBarAppRestarter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD1122334455667788F1 /* MenuBarAppRestarter.swift */; };
@@ -91,6 +92,7 @@
 		AABBDD11223344556677882C /* MenuBarSpacers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABBDD11223344556677882A /* MenuBarSpacers.swift */; };
 		B2C3D4E5F60718293A4B5C07 /* MenuBarItemMovePlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C03 /* MenuBarItemMovePlanTests.swift */; };
 		C77AA0E22E20000700B4A001 /* MenuBarItemGroupingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0E12E20000700B4A001 /* MenuBarItemGroupingTests.swift */; };
+		C77AA0F42E20000700B4A001 /* MenuBarPositionPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77AA0F32E20000700B4A001 /* MenuBarPositionPlanTests.swift */; };
 		B2C3D4E5F60718293A4B5C17 /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F60718293A4B5C13 /* LocalizationTests.swift */; };
 		83E0D6A1FA184019932AECA5 /* AutoStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A329E615845473D946DA3C2 /* AutoStart.swift */; };
 		160B7980C8A44829A864BBA6 /* AutoStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A329E615845473D946DA3C2 /* AutoStart.swift */; };
@@ -219,8 +221,10 @@
 		AABBDD11223344556677881A /* ActivityReveal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityReveal.swift; sourceTree = "<group>"; };
 		AABBDD11223344556677882A /* MenuBarSpacers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarSpacers.swift; sourceTree = "<group>"; };
 		B2C3D4E5F60718293A4B5C02 /* MenuBarItemDragger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItemDragger.swift; sourceTree = "<group>"; };
+		C77AA0F12E20000700B4A001 /* MenuBarLayoutStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarLayoutStore.swift; sourceTree = "<group>"; };
 		B2C3D4E5F60718293A4B5C03 /* MenuBarItemMovePlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItemMovePlanTests.swift; sourceTree = "<group>"; };
 		C77AA0E12E20000700B4A001 /* MenuBarItemGroupingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItemGroupingTests.swift; sourceTree = "<group>"; };
+		C77AA0F32E20000700B4A001 /* MenuBarPositionPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPositionPlanTests.swift; sourceTree = "<group>"; };
 		B2C3D4E5F60718293A4B5C13 /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		9A329E615845473D946DA3C2 /* AutoStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoStart.swift; sourceTree = "<group>"; };
 		F013C3E5499B4EA7B816F7A8 /* AutoStartTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoStartTests.swift; sourceTree = "<group>"; };
@@ -346,6 +350,7 @@
 				B2C3D4E5F60718293A4B5C01 /* MenuBarItemMovePlan.swift */,
 				AABBDD1122334455667788F1 /* MenuBarAppRestarter.swift */,
 				B2C3D4E5F60718293A4B5C02 /* MenuBarItemDragger.swift */,
+				C77AA0F12E20000700B4A001 /* MenuBarLayoutStore.swift */,
 				08A5F85923AA007A00981CA5 /* PreferencesViewController.swift */,
 				7A4D10002E10000100B4A001 /* MenuBarItemManagerWindowController.swift */,
 				3CF14C81221FA49D0083D42B /* PreferencesWindowController.swift */,
@@ -509,6 +514,7 @@
 				F013C3E5499B4EA7B816F7A8 /* AutoStartTests.swift */,
 				B2C3D4E5F60718293A4B5C03 /* MenuBarItemMovePlanTests.swift */,
 				C77AA0E12E20000700B4A001 /* MenuBarItemGroupingTests.swift */,
+				C77AA0F32E20000700B4A001 /* MenuBarPositionPlanTests.swift */,
 				B2C3D4E5F60718293A4B5C13 /* LocalizationTests.swift */,
 				A1B2C3D4E5F6071829304A03 /* GitHubReleaseTests.swift */,
 				C77AA0032E20000600B4A001 /* WhatsNewTests.swift */,
@@ -733,6 +739,7 @@
 				AABBDD11223344556677881B /* ActivityReveal.swift in Sources */,
 				AABBDD11223344556677882B /* MenuBarSpacers.swift in Sources */,
 				B2C3D4E5F60718293A4B5C05 /* MenuBarItemDragger.swift in Sources */,
+				C77AA0F22E20000700B4A001 /* MenuBarLayoutStore.swift in Sources */,
 				A1B2C3D4E5F6071829304A04 /* GitHubRelease.swift in Sources */,
 				A1B2C3D4E5F6071829304A05 /* Updater.swift in Sources */,
 				967F4B2524169BC800F18D3C /* String+Extension.swift in Sources */,
@@ -785,6 +792,7 @@
 				AABBDD11223344556677882C /* MenuBarSpacers.swift in Sources */,
 				B2C3D4E5F60718293A4B5C07 /* MenuBarItemMovePlanTests.swift in Sources */,
 				C77AA0E22E20000700B4A001 /* MenuBarItemGroupingTests.swift in Sources */,
+				C77AA0F42E20000700B4A001 /* MenuBarPositionPlanTests.swift in Sources */,
 				B2C3D4E5F60718293A4B5C17 /* LocalizationTests.swift in Sources */,
 				A1B2C3D4E5F6071829304A06 /* GitHubRelease.swift in Sources */,
 				A1B2C3D4E5F6071829304A07 /* GitHubReleaseTests.swift in Sources */,

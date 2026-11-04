@@ -87,6 +87,7 @@ final class MenuBarItemManagerViewController: NSViewController {
     private let statusLabel = NSTextField(wrappingLabelWithString: "")
     private let permissionButton = NSButton(title: "Grant Access".localized, target: nil, action: nil)
     private let refreshButton = NSButton(title: "", target: nil, action: nil)
+    private let layoutAccessButton = NSButton(title: "Allow Moving Icons…".localized, target: nil, action: nil)
     private var itemsBySection: [MenuBarSection: [ManagedMenuBarItem]] = [:]
     private var layout: MenuBarManagementLayout?
     private var isScanning = false
@@ -179,16 +180,23 @@ final class MenuBarItemManagerViewController: NSViewController {
         permissionButton.target = self
         permissionButton.action = #selector(permissionPressed)
         permissionButton.isHidden = true
+        layoutAccessButton.controlSize = .small
+        layoutAccessButton.bezelStyle = .rounded
+        layoutAccessButton.target = self
+        layoutAccessButton.action = #selector(layoutAccessPressed)
+        layoutAccessButton.toolTip = "Lets Tuckaway reorder the menu bar directly, so moves land every time and can cross the arrow.".localized
+        updateLayoutAccessButton()
         statusLabel.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
         statusLabel.textColor = .secondaryLabelColor
         statusLabel.maximumNumberOfLines = 2
-        let footer = NSStackView(views: [statusLabel, permissionButton, refreshButton])
+        let footer = NSStackView(views: [statusLabel, permissionButton, layoutAccessButton, refreshButton])
         footer.orientation = .horizontal
         footer.alignment = .centerY
         footer.spacing = 8
         statusLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         statusLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         permissionButton.setContentHuggingPriority(.required, for: .horizontal)
+        layoutAccessButton.setContentHuggingPriority(.required, for: .horizontal)
         refreshButton.setContentHuggingPriority(.required, for: .horizontal)
 
         let root = NSStackView(views: [help, columns, footer])
@@ -306,6 +314,23 @@ final class MenuBarItemManagerViewController: NSViewController {
         let prompt = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
         AXIsProcessTrustedWithOptions(prompt)
         statusLabel.stringValue = "Enable Tuckaway in System Settings, then return and refresh.".localized
+    }
+
+    // On macOS 27, moves rewrite MenuBarAgent's order once the user lets
+    // Tuckaway into it; until then they fall back to synthesized drags.
+    private func updateLayoutAccessButton() {
+        let store = MenuBarLayoutStore.shared
+        layoutAccessButton.isHidden = !store.isSupported || store.hasAccess
+    }
+
+    @objc private func layoutAccessPressed() {
+        MenuBarLayoutStore.shared.requestAccess(for: view.window) { [weak self] granted in
+            guard let self else { return }
+            self.updateLayoutAccessButton()
+            self.statusLabel.stringValue = granted
+                ? "Tuckaway can now arrange your menu bar.".localized
+                : "Choose the “com.apple.MenuBar” folder to let Tuckaway arrange your menu bar.".localized
+        }
     }
 
     // `quiet` re-checks the real menu bar after a move without the scanning
@@ -515,7 +540,8 @@ final class MenuBarItemManagerViewController: NSViewController {
         let bundle = NSRunningApplication(processIdentifier: pid)?.bundleIdentifier
         let action = MenuBarItemMovePlan.action(from: item.section, to: toSection,
                                                 isKept: bundle.map { controller?.keptVisibleApps.contains($0) == true } ?? false,
-                                                marksVisibleApps: MenuBarEngineFactory.usesNativeVisibility && bundle != nil)
+                                                marksVisibleApps: MenuBarEngineFactory.usesNativeVisibility && bundle != nil
+                                                    && !MenuBarLayoutStore.shared.hasAccess)
         let destinationIDs = MenuBarItemMovePlan.inserting(item.id, into: items(for: table).map(\.id), aboveRow: row)
         guard let newIndex = destinationIDs.firstIndex(of: item.id) else { return }
         let oldIndex = items(for: fromTable).firstIndex { $0.id == item.id }
@@ -575,7 +601,23 @@ final class MenuBarItemManagerViewController: NSViewController {
         // Each icon lands next to the anchor in turn; after it, the last one
         // placed has to go first to keep the app's icons in order.
         let elements = side == .after ? item.elements.reversed() : item.elements
+        let anchorNames: [String]
+        let anchorAutosaveName: String?
+        switch anchor {
+        case .before(let id), .after(let id):
+            anchorNames = lookup[id].map { Self.appNames(of: $0.element) } ?? []
+            anchorAutosaveName = nil
+        case .emptyList:
+            anchorNames = Self.appNames(of: nil)
+            anchorAutosaveName = toSection == .alwaysHidden ? "hiddenbar_terminate" : "hiddenbar_expandcollapse"
+        }
+        let movingNames = Self.appNames(of: item.element)
         moveQueue.async { [weak self] in
+            // Rewriting MenuBarAgent's order places the whole app at once; the
+            // drags below then only check it, or take over if it didn't land.
+            if Self.writePosition(of: movingNames, side, of: anchorNames, autosaveName: anchorAutosaveName) {
+                Self.waitForMove(of: item.element, from: item.position)
+            }
             var settled = true
             for element in elements {
                 settled = MenuBarItemDragger.move(element, side, of: anchorElement) {
@@ -598,6 +640,38 @@ final class MenuBarItemManagerViewController: NSViewController {
                     self.refresh(quiet: true)
                 }
             }
+        }
+    }
+
+    // The names MenuBarAgent may key an app's items by: its bundle identifier
+    // and executable name. Nil is Tuckaway itself.
+    private static func appNames(of element: AXUIElement?) -> [String] {
+        var pid = ProcessInfo.processInfo.processIdentifier
+        if let element { AXUIElementGetPid(element, &pid) }
+        guard let app = NSRunningApplication(processIdentifier: pid) else { return [] }
+        return [app.bundleIdentifier, app.executableURL?.lastPathComponent].compactMap { $0 }
+    }
+
+    private static func writePosition(of movingNames: [String], _ side: MenuBarDropSide, of anchorNames: [String],
+                                      autosaveName: String?) -> Bool {
+        let store = MenuBarLayoutStore.shared
+        guard store.hasAccess, let table = store.table() else { return false }
+        let moving = MenuBarPositionPlan.keys(in: table, forAppsNamed: movingNames)
+        var anchor = MenuBarPositionPlan.keys(in: table, forAppsNamed: anchorNames)
+        if let autosaveName { anchor = anchor.filter { $0.hasSuffix("::" + autosaveName) } }
+        guard !moving.isEmpty, Set(moving).isDisjoint(with: anchor),
+              let weights = MenuBarPositionPlan.weights(moving: moving, side, of: anchor, in: table)
+        else { return false }
+        return store.write(weights)
+    }
+
+    // MenuBarAgent slides the icons over; the drags' own check must not read
+    // the bar before that starts.
+    private static func waitForMove(of element: AXUIElement, from origin: CGPoint) {
+        let deadline = Date().addingTimeInterval(1)
+        while Date() < deadline {
+            if let frame = MenuBarItemDragger.frame(of: element), abs(frame.minX - origin.x) > 1 { return }
+            usleep(30_000)
         }
     }
 

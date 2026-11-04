@@ -134,6 +134,10 @@ frontmost app's menus.
   arrow. Keep Visible marks the app (kept) rather than ⌘-dragging its icon:
   synthesized drags didn't pass Tuckaway's own arrow on 27.2. Menu Bar Items
   lists kept apps as Visible and clears the mark when one is moved out.
+- **⌘-dragging while collapsed.** A held restriction freezes the bar's order,
+  so a ⌘-drag does nothing, and expanding after the press is too late.
+  `StatusBarController.updateCommandKeyMonitor` expands as soon as ⌘ is held
+  with the pointer over the menu bar.
 - **Assessment-mode side effects (#437).** While collapsed, macOS also hides
   Now Playing, Live Activities and the recording-indicator capsule, and ignores
   clicks on the clock. Two monitors soften this:
@@ -198,7 +202,19 @@ flowchart TD
     `SetupCheck` decides nothing else, so the reasons are unit-tested.
   - **Menu Bar Items** (`MenuBarItemManagerViewController`) lists items through
     Accessibility. It moves them by posting a synthetic ⌘-drag in the real menu
-    bar.
+    bar. On macOS 27 it first rewrites the order instead (`MenuBarLayoutStore`):
+    MenuBarAgent keeps a weight per item in
+    `~/Library/Group Containers/com.apple.MenuBar/…/com.apple.MenuBar.plist`
+    (`TrailingItemPreferredPositions`; larger is further left, keys are
+    `status:<bundle ID or executable name>::<autosave name>`). A write through
+    cfprefsd into that container (`_CFPreferencesSetValueWithContainer`) reflows
+    the bar at once; a write to the file alone is ignored until MenuBarAgent
+    restarts. The container is protected, so the user chooses it once in an
+    open panel (**Allow Moving Icons…**) and the grant is kept as a
+    security-scoped bookmark. `MenuBarPositionPlan` picks the weights. The
+    drags then only verify the result, or take over without the grant. Writes
+    don't apply while a visibility restriction is held, which item management
+    lifts by expanding.
   - **About** is SwiftUI.
   - Global-shortcut recording goes through a local event monitor while the
     General tab is listening.

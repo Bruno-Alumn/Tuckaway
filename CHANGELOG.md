@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+- **Moving icons in Settings › Menu Bar Items works on macOS 27**: the synthesized ⌘-drags it used were often ignored and couldn't cross the arrow. Click **Allow Moving Icons…** once and choose the folder it points to; Tuckaway then rewrites the menu bar's order the way macOS stores it, so a move lands at once, in any list.
+- **⌘-dragging icons in the menu bar works while collapsed** (macOS 27): the restriction that hides icons also froze the visible ones. Holding ⌘ with the pointer over the menu bar now expands it first, so the drag goes through, and auto-collapse hides the icons again afterwards.
+
 ### Changed
 - **Menu Bar Items lists each app once** (macOS 27): macOS 27 hides whole apps, so an app with several icons now has one row, marked “2 icons”, and moving it moves all of them.
 
