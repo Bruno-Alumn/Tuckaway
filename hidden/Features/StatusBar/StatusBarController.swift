@@ -124,6 +124,8 @@ class StatusBarController: MenuBarItemProvider {
     private var appliedExpandWhenExternalDisplay = Preferences.expandWhenExternalDisplayConnected
     private var configurationDragMonitor: Any?
     private var commandKeyMonitor: Any?
+    // The bar was expanded by holding ⌘ over it, not by the user's choice.
+    private var isExpandedForCommand = false
     private var isTemporarilyExpandedForConfigurationDrag = false
     private var configurationDragCollapseWorkItem: DispatchWorkItem?
     private var recollapseWorkItem: DispatchWorkItem?
@@ -629,6 +631,7 @@ class StatusBarController: MenuBarItemProvider {
     
     private func collapseMenuBar() {
         recollapseWorkItem?.cancel()
+        isExpandedForCommand = false
         hiddenItemsCaptureShieldController.hide()
         hiddenItemsBarController.hide()
         hiddenItemsSeparatorOverlayController.hide()
@@ -1056,14 +1059,26 @@ extension StatusBarController {
     // the visible ones from being ⌘-dragged, and expanding once the drag has
     // begun is too late for it. So holding ⌘ with the pointer over the menu bar
     // expands first, whether ⌘ goes down over the bar or the pointer arrives
-    // with it held; auto-collapse puts it back afterwards.
+    // with it held. Once ⌘ and the mouse are both released it collapses again,
+    // as soon as the pointer leaves the bar, even with auto-collapse off: the
+    // user never asked for it to stay open.
     private func updateCommandKeyMonitor() {
         guard MenuBarEngineFactory.usesNativeVisibility, commandKeyMonitor == nil else { return }
-        commandKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.flagsChanged, .mouseMoved]) { [weak self] event in
-            guard let self,
-                  event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+        commandKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.flagsChanged, .mouseMoved, .leftMouseUp]) { [weak self] event in
+            guard let self else { return }
+            let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            if self.isExpandedForCommand {
+                guard event.type != .mouseMoved, !flags.contains(.command),
+                      event.type == .leftMouseUp || !self.isMouseButtonDown
+                else { return }
+                self.isExpandedForCommand = false
+                if !self.isCollapsed && !self.isManagingItems { self.scheduleRecollapse(after: 1) }
+                return
+            }
+            guard event.type != .leftMouseUp, flags == .command,
                   self.isCollapsed, self.isMouseInMenuBar, !self.isMouseButtonDown, !self.isPresenting
             else { return }
+            self.isExpandedForCommand = true
             self.expandMenubar()
         }
     }
