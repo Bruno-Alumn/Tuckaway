@@ -59,9 +59,11 @@ before merging.
   positions are distances from the left edge, which needs an RTL system
   language to confirm. Each needs hardware or a fixture to confirm.
 
-- **⌘-dragging past the arrow on macOS 27.** Synthesized drags never passed Tuckaway's
-  own arrow rightward (27.2), so moves into Visible now mark the app instead (#93).
-  Leftward (Visible → Hidden) was never seen failing but wasn't tested either.
+- **Moving icons on macOS 27 (#165).** With **Allow Moving Icons…** granted, Menu Bar
+  Items rewrites MenuBarAgent's order instead of dragging; verified in a 27.2 VM
+  (both directions across the arrow, the grant surviving a relaunch). Not yet run on
+  hardware, and not checked after an app update or a reboot. Without the grant, moves
+  into Visible still mark the app (#93).
 - **Separate bar with several displays and on notched Macs** (captures by the
   Accessibility frames of the arrow's display only).
 - **Presentation-mode shortcut and the shortcut recorder's second row**: key presses
@@ -114,6 +116,8 @@ Built or in review:
 - **Check Your Setup** in Settings › General (#158).
 - **What's New** after an update, from the bundled changelog (#157).
 - **Menu Bar Items groups an app's icons** into one row on macOS 27.
+- **Moving icons by rewriting MenuBarAgent's order** on macOS 27, and expanding
+  while ⌘ is held over the bar so ⌘-drags work while collapsed (#165, #168).
 
 Still open:
 
@@ -126,7 +130,16 @@ Still open:
      restriction is held (it ignores accessibility presses then,
      `MenuBarClock.swift`), and not every app implements it, so the click
      fallback stays. Measure before building.
-2. **A hiding engine for macOS 26 and earlier that doesn't rely on the
+2. **Restore icon order, not just visibility, with a profile.**
+   - *Problem:* a profile decides which apps show, but not where their icons sit.
+   - *Now possible:* #165 reads and writes MenuBarAgent's order table, so the
+     reason this was dropped ("icon positions belong to macOS") no longer holds
+     on 27 once the user has granted it.
+   - *Size:* M. `MenuBarLayoutStore`, `MenuBarProfiles`.
+   - *Risks:* the table also holds apps that aren't running; writing a stale
+     order for them could reshuffle the bar when they relaunch, so only apps on
+     the bar should be written.
+3. **A hiding engine for macOS 26 and earlier that doesn't rely on the
    separator's length.** #144 tried this with the private
    `activate:completion:` call and was closed: it changed the macOS 27 expand
    path for everyone and never got past a stub. Needs a measured design first.
@@ -147,7 +160,8 @@ Dropped, with the reason:
   (#229): no public signal, and hidden icons aren't drawn.
 - **A per-app "hide after N minutes"**: nobody asked, and auto-collapse covers it.
 - **Exporting the layout as a file**: icon positions belong to macOS, so the file
-  would promise more than it can restore.
+  would promise more than it can restore. On 27 with the layout grant this is
+  partly possible now; see open idea 2.
 - **Hiding macOS's own items** (battery, Wi-Fi): the system items on the
   allow-list keep the bar usable, and #437 shows what goes wrong when more of
   them go.
