@@ -413,6 +413,13 @@ final class GeneralSettingsModel: ObservableObject {
     }
 
     // An app's name as Finder shows it, or its bundle ID if it isn't installed.
+    // A profile stores bundle IDs; people look for an app by its name.
+    func appsByName(inProfile name: String) -> [String] {
+        (profileApps[name] ?? []).sorted {
+            Self.appName($0).localizedStandardCompare(Self.appName($1)) == .orderedAscending
+        }
+    }
+
     static func appName(_ bundle: String) -> String {
         guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle) else { return bundle }
         return FileManager.default.displayName(atPath: url.path).replacingOccurrences(of: ".app", with: "")
@@ -922,7 +929,7 @@ struct GeneralSettingsView: View {
                 }
             }
             Menu("Remove App".localized) {
-                ForEach(model.profileApps[name] ?? [], id: \.self) { bundle in
+                ForEach(model.appsByName(inProfile: name), id: \.self) { bundle in
                     Button(GeneralSettingsModel.appName(bundle)) { model.removeApp(bundle, fromProfile: name) }
                 }
             }
@@ -941,8 +948,7 @@ struct GeneralSettingsView: View {
 
     // "Slack, Calendar and 2 more", or "No apps", after the schedule if any.
     private func profileAppsSummary(_ name: String) -> String {
-        let names = (model.profileApps[name] ?? []).map(GeneralSettingsModel.appName)
-            .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        let names = model.appsByName(inProfile: name).map(GeneralSettingsModel.appName)
         let apps: String
         if names.isEmpty {
             apps = "No apps".localized
