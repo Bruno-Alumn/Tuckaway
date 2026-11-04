@@ -52,27 +52,21 @@ final class NotchOverflowPreferencesTests: XCTestCase {
 }
 
 final class HiddenBarPreferenceMigrationTests: XCTestCase {
-    private var defaults: UserDefaults!
-    private var suiteName: String!
-    private var legacyDomain: String!
+    private var suite: TestDefaults!
+    private var legacy: TestDefaults!
+    private var defaults: UserDefaults { suite.defaults }
+    private var suiteName: String { suite.suiteName }
+    private var legacyDomain: String { legacy.suiteName }
 
     override func setUp() {
         super.setUp()
-        suiteName = "TuckawayMigrationTests.\(UUID().uuidString)"
-        legacyDomain = "\(suiteName!).legacy"
-        defaults = UserDefaults(suiteName: suiteName)
+        suite = TestDefaults("TuckawayMigrationTests")
+        legacy = TestDefaults("TuckawayMigrationTests.legacy")
     }
 
-    // Emptying a domain leaves its plist behind, so each run would add two
-    // files to ~/Library/Preferences; delete them too.
     override func tearDown() {
-        defaults.removePersistentDomain(forName: suiteName)
-        defaults.removePersistentDomain(forName: legacyDomain)
-        let preferences = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("Preferences")
-        for name in [suiteName!, legacyDomain!] {
-            try? FileManager.default.removeItem(at: preferences.appendingPathComponent("\(name).plist"))
-        }
+        suite.remove()
+        legacy.remove()
         super.tearDown()
     }
 

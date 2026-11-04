@@ -932,9 +932,9 @@ final class NewMenuBarAppTrackerTests: XCTestCase {
     }
 
     func testStoreRoundTripsThroughUserDefaults() {
-        let suite = "NewMenuBarAppTrackerTests-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suite)!
-        defer { defaults.removePersistentDomain(forName: suite) }
+        let suite = TestDefaults("NewMenuBarAppTrackerTests")
+        defer { suite.remove() }
+        let defaults = suite.defaults
         let store = UserDefaultsNewMenuBarAppStore(defaults: defaults)
         XCTAssertNil(store.tracker.known)
 
@@ -1447,9 +1447,9 @@ final class MenuBarProfilesTests: XCTestCase {
     }
 
     func testStoreRoundTripsSchedules() {
-        let suite = "MenuBarProfilesTests-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suite)!
-        defer { defaults.removePersistentDomain(forName: suite) }
+        let suite = TestDefaults("MenuBarProfilesTests")
+        defer { suite.remove() }
+        let defaults = suite.defaults
         let store = UserDefaultsMenuBarProfilesStore(defaults: defaults)
         let profiles = MenuBarProfiles(profiles: ["Work": ["com.a"]], active: "Work",
                                        schedules: ["Work": ProfileSchedule(start: 1320, end: 420)],
@@ -1495,9 +1495,9 @@ final class MenuBarProfilesTests: XCTestCase {
     }
 
     func testStoreRoundTripsAppTriggers() {
-        let suite = "MenuBarProfilesTests-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suite)!
-        defer { defaults.removePersistentDomain(forName: suite) }
+        let suite = TestDefaults("MenuBarProfilesTests")
+        defer { suite.remove() }
+        let defaults = suite.defaults
         let store = UserDefaultsMenuBarProfilesStore(defaults: defaults)
         let profiles = MenuBarProfiles(profiles: ["Meetings": ["us.zoom"]], active: "Meetings",
                                        appTriggers: ["Meetings": "us.zoom.xos"], appSwitched: "Meetings",
@@ -1514,9 +1514,9 @@ final class MenuBarProfilesTests: XCTestCase {
     }
 
     func testStoreRoundTrips() {
-        let suite = "MenuBarProfilesTests-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suite)!
-        defer { defaults.removePersistentDomain(forName: suite) }
+        let suite = TestDefaults("MenuBarProfilesTests")
+        defer { suite.remove() }
+        let defaults = suite.defaults
         let store = UserDefaultsMenuBarProfilesStore(defaults: defaults)
         store.profiles = MenuBarProfiles(profiles: ["Quiet": ["com.a"]], active: "Quiet")
         XCTAssertEqual(UserDefaultsMenuBarProfilesStore(defaults: defaults).profiles,
@@ -1697,9 +1697,9 @@ final class DisplayProfileTests: XCTestCase {
     }
 
     func testSwitchSurvivesARelaunch() {
-        let suite = "DisplayProfileTests-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suite)!
-        defer { defaults.removePersistentDomain(forName: suite) }
+        let suite = TestDefaults("DisplayProfileTests")
+        defer { suite.remove() }
+        let defaults = suite.defaults
         let store = UserDefaultsMenuBarProfilesStore(defaults: defaults)
         var p = profiles(active: nil)
         p.displaysChanged(external: true)
