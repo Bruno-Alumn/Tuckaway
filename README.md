@@ -29,7 +29,7 @@ built to work with macOS 27’s new menu bar while retaining support for macOS 1
 through 26.
 
 <div align="center">
-  <img src="img/tuckaway-menubar.gif" width="900" alt="Tuckaway’s arrow hiding and revealing menu-bar icons">
+  <img src="img/tuckaway-menu-bar.gif" width="900" alt="Tuckaway’s arrow hiding and revealing menu-bar icons, asking whether a new app’s icon should stay visible, and its menu with Profiles">
 </div>
 
 ## Features
@@ -110,7 +110,7 @@ Settings has three tabs: **General**, **Menu Bar Items**, and **About**. You can
 open it from the arrow’s menu or with <kbd>⌘</kbd><kbd>,</kbd>.
 
 <div align="center">
-  <img src="img/tuckaway-settings.gif" width="440" alt="Tuckaway’s General settings, item manager, and About screen">
+  <img src="img/tuckaway-settings-window.gif" width="440" alt="Tuckaway’s General settings with Check Your Setup, the Menu Bar Items lists, and the About tab with settings export">
 </div>
 
 ## Privacy
