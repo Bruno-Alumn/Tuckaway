@@ -26,10 +26,16 @@ and put any moved icons back. Things learned on 2026-11-03 (macOS 27.2):
 - Run from the build folder, the arrow isn't drawn while collapsed (macOS
   only honours the allow-list for an app in /Applications). Read its state
   and title through Accessibility instead, or expand first.
-- Synthesized ⌘-drags in the menu bar don't register from a script; use
-  Menu Bar Items. Moving an icon to **Visible** there marks the app kept
-  visible rather than moving the icon, so note the bar's order before
-  testing and check `keptVisibleMenuBarApps` when restoring.
+- Moving an icon to **Visible** in Menu Bar Items marks the app kept visible
+  unless **Allow Moving Icons…** has been granted (#165), so note the bar's
+  order before testing and check `keptVisibleMenuBarApps` when restoring.
+
+Things learned on 2026-11-05 in a macOS 27.2 VM (terminal-mac):
+- Install the build in the VM's /Applications so the arrow is drawn while
+  collapsed, and start it from a Terminal that has Accessibility, so a new
+  build needs no new grant.
+- ⌘-drags posted as HID events from a tool run in that Terminal do register;
+  a Control-click (to open the arrow's menu) can be posted the same way.
 - Restoring settings doesn't restore icon positions: macOS keeps those. Adding
   a spacer shifted the installed app's arrow one place to the right
   afterwards.
@@ -56,16 +62,16 @@ and put any moved icons back. Things learned on 2026-11-03 (macOS 27.2):
   (no button); separate bar on with Screen Recording off; **Menu Bar Items…**
   and the App Store build on 27.
 - **What's New** (checked 2026-11-03: 1.8.0's notes shown once, version
-  recorded, **Done** closes it). Still to check: a fresh install
-  (`hasLaunchedBefore` deleted) opens Settings and not What's New.
-- **Profile ⋯ menu:** Rename… (the shortcut still works under the new name;
-  a taken name shows the alert), Use Current Layout, Remove App, Delete
-  Profile… (asks first). The row lists the apps.
+  recorded, **Done** closes it; 2026-11-05 in the VM: with `hasLaunchedBefore`
+  deleted, Settings opens and What's New doesn't).
+- **Profile ⋯ menu** (checked 2026-11-05 in the VM: Rename…, Use Current
+  Layout, Remove App, Delete Profile… asks first, the row lists the apps;
+  that pass found Dock and WindowManager listed, fixed in #170). Still to
+  check: the shortcut still works under the new name, and a taken name shows
+  the alert.
 - **Schedule…:** set a window that starts in two minutes and ends two minutes
   later; the profile switches on, then back. Pick another profile inside the
   window and confirm it stays. Check the row shows the times.
-- **Use While an App Is Open…:** choose an app, open it (switches), quit it
-  (switches back). **Stop Following** removes it.
 - **Show hidden icons briefly when they change:** with a hidden app whose icon
   shows text or changes width (a timer, a download count), wait for a change:
   it shows for about 8 seconds, then hides. An Always Hidden app never shows.
