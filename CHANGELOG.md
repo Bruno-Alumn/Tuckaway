@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- **A new menu bar app is noticed when it opens** (macOS 27): macOS doesn't announce launches of apps that live only in the menu bar, so the question about a new app's icon, the reveal after an app updates and **Use While an App Is Open** waited until the next expand. Tuckaway now watches every app that starts and quits.
 - **Moving icons in Settings › Menu Bar Items works on macOS 27**: the synthesized ⌘-drags it used were often ignored and couldn't cross the arrow. Click **Allow Moving Icons…** once and choose the folder it points to; Tuckaway then rewrites the menu bar's order the way macOS stores it, so a move lands at once, in any list.
 - **⌘-dragging icons in the menu bar works while collapsed** (macOS 27): the restriction that hides icons also froze the visible ones. Holding ⌘ with the pointer over the menu bar now expands it first, so the drag goes through, and auto-collapse hides the icons again afterwards.
 

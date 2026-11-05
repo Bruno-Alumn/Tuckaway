@@ -124,6 +124,7 @@ class StatusBarController: MenuBarItemProvider {
     private var appliedExpandWhenExternalDisplay = Preferences.expandWhenExternalDisplayConnected
     private var configurationDragMonitor: Any?
     private var commandKeyMonitor: Any?
+    private var runningAppsObservation: NSKeyValueObservation?
     // The bar was expanded by holding ⌘ over it, not by the user's choice.
     private var isExpandedForCommand = false
     private var isTemporarilyExpandedForConfigurationDrag = false
@@ -228,19 +229,16 @@ class StatusBarController: MenuBarItemProvider {
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
         NotificationCenter.default.addObserver(self, selector: #selector(handleScreenParametersChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
-        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceMenuBarChange), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceMenuBarChange), name: NSWorkspace.didWakeNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleApplicationActivated), name: NSWorkspace.didActivateApplicationNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateAutoHide), name: .prefsChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(fitSpacersToState), name: NativeVisibilityEngine.stateDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateHiddenCount), name: NativeVisibilityEngine.stateDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateHiddenCount), name: NativeVisibilityEngine.hiddenItemsDidChange, object: nil)
-        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(applyAppTriggeredProfile), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
-        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(recordLaunchedVersion(_:)), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleLockOrSleep), name: NSWorkspace.screensDidSleepNotification, object: nil)
         DistributedNotificationCenter.default().addObserver(self, selector: #selector(handleLockOrSleep), name: NSNotification.Name("com.apple.screenIsLocked"), object: nil)
         recordVersions(of: NSWorkspace.shared.runningApplications, reveal: false)
-        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(applyAppTriggeredProfile), name: NSWorkspace.didTerminateApplicationNotification, object: nil)
+        observeRunningApplications()
         NotificationCenter.default.addObserver(self, selector: #selector(updateExpandIcon), name: .transparentExpandIconToggle, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleLegacyHideUnavailable), name: .legacyHideUnavailable, object: nil)
         if MenuBarEngineFactory.usesNativeVisibility {
@@ -946,9 +944,24 @@ class StatusBarController: MenuBarItemProvider {
     // Every launch records the app's version; one that changed since the last
     // launch shows for a moment if that option is on (#28). Apps running when
     // Tuckaway starts are recorded too, so their next update is noticed.
-    @objc private func recordLaunchedVersion(_ notification: Notification) {
-        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else { return }
-        recordVersions(of: [app], reveal: true)
+    // NSWorkspace doesn't post didLaunch or didTerminate for apps with
+    // LSUIElement, which is nearly every menu-bar app (seen on 27.2: a new
+    // app's icon went unnoticed until the next expand). Its running
+    // applications change for every app, so watch those instead.
+    private func observeRunningApplications() {
+        runningAppsObservation = NSWorkspace.shared.observe(\.runningApplications, options: [.new]) { [weak self] _, change in
+            let launched = change.kind == .insertion ? change.newValue ?? [] : []
+            DispatchQueue.main.async { self?.runningApplicationsChanged(launched: launched) }
+        }
+    }
+
+    private func runningApplicationsChanged(launched: [NSRunningApplication]) {
+        applyAppTriggeredProfile()
+        // Background-only apps can't own a status item, and there are many of them.
+        let launched = launched.filter { $0.activationPolicy != .prohibited }
+        guard !launched.isEmpty else { return }
+        recordVersions(of: launched, reveal: true)
+        handleWorkspaceMenuBarChange()
     }
 
     private func recordVersions(of apps: [NSRunningApplication], reveal: Bool) {
