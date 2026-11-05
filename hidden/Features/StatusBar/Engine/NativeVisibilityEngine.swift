@@ -334,6 +334,9 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
     }
 
     private var activeApp: String?
+    // The last layout read from a bar that was showing; `layout` is dropped
+    // whenever the bar may have changed.
+    private var lastShownLayout: MenuBarLayout?
     private var revealedApps: Set<String> = []
     private var visibleAppsChangedDuringCollapse = false
     private var activationsInFlight = 0
@@ -483,6 +486,15 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
         let generation = self.generation
         inventory.snapshot { [weak self] inventory in
             guard let self = self, generation == self.generation else { return }
+            // Read while the bar wasn't showing, every app looks iconless and
+            // would be hidden. The last real read is the better guess; a new
+            // app is found on the next one.
+            if self.inventory.lastSnapshotMissedMenuBar {
+                NSLog("NativeVisibility: the menu bar isn't showing; keeping the last layout")
+                guard let last = self.lastShownLayout else { return body(nil) }
+                self.layout = last
+                return body(self.effectiveLayout ?? last)
+            }
             let displaySnapshot = self.displays()
             let layout = MenuBarLayoutResolver.resolve(inventory: inventory,
                                                        separatorFrame: boundary,
@@ -496,6 +508,7 @@ final class NativeVisibilityEngine: MenuBarEngine, HiddenSectionPeeking, NewMenu
             }
             NSLog("NativeVisibility: arrow at x=\(boundary.midX); visible \(layout.bundles(in: [.visible])), hidden \(layout.bundles(in: [.hidden])), always hidden \(layout.bundles(in: [.alwaysHidden]))")
             self.layout = layout
+            self.lastShownLayout = layout
             let found = self.newApps.tracker.observe(layout)
             // The same layout every other path uses: kept and new apps, the
             // active profile and the frontmost app.

@@ -36,6 +36,7 @@ private final class FakeInventory: MenuBarInventoryProviding {
     var items: [MenuBarInventoryItem] = []
     var authorizationRequests = 0
     var snapshots = 0
+    var lastSnapshotMissedMenuBar = false
 
     func requestAuthorization() {
         authorizationRequests += 1
@@ -284,6 +285,32 @@ final class NativeVisibilityEngineTests: XCTestCase {
 
         engine.expand()
         XCTAssertFalse(items.separatorItem.isVisible)
+    }
+
+    // In a full-screen Space every app reports no status items; hiding all of
+    // them would empty the bar once the Space is left.
+    func testAReadWhileTheMenuBarIsntShowingKeepsTheLastLayout() {
+        let engine = makeEngine()
+        engine.collapse { _ in }
+        visibility.succeed(0)
+        engine.invalidateLayout()
+
+        inventory.items = []
+        inventory.lastSnapshotMissedMenuBar = true
+        engine.collapse { _ in }
+
+        XCTAssertEqual(visibility.requests.last?.bundles, ["com.brunoalumn.tuckaway", "com.visible"])
+    }
+
+    func testAReadWhileTheMenuBarIsntShowingWithNoEarlierLayoutHidesNothing() {
+        let engine = makeEngine()
+        inventory.items = []
+        inventory.lastSnapshotMissedMenuBar = true
+        var results: [CollapseResult] = []
+        engine.collapse { results.append($0) }
+
+        XCTAssertEqual(results, [.unavailable])
+        XCTAssertTrue(visibility.requests.isEmpty)
     }
 
     func testAlwaysHiddenSeparatorFollowsTheSectionSetting() {
