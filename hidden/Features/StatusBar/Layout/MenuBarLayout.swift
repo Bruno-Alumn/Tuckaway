@@ -71,6 +71,13 @@ protocol MenuBarInventoryProviding: AnyObject {
     func snapshot(completion: @escaping ([MenuBarInventoryItem]) -> Void)
     // The same, for the given apps only, which is much faster.
     func snapshot(of bundles: Set<String>, completion: @escaping ([MenuBarInventoryItem]) -> Void)
+    // Whether the last full snapshot was taken while the menu bar wasn't
+    // showing (a full-screen app in front), when apps report no status items.
+    var lastSnapshotMissedMenuBar: Bool { get }
+}
+
+extension MenuBarInventoryProviding {
+    var lastSnapshotMissedMenuBar: Bool { false }
 }
 
 struct MenuBarLayout: Equatable {

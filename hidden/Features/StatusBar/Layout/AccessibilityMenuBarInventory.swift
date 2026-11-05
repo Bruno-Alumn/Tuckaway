@@ -45,6 +45,7 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
     private static let retryMessagingTimeout: Float = 1.0
 
     private var hasRequestedAuthorization = false
+    private(set) var lastSnapshotMissedMenuBar = false
 
     var isAuthorized: Bool {
         return AXIsProcessTrusted()
@@ -61,8 +62,20 @@ final class AccessibilityMenuBarInventory: MenuBarInventoryProviding {
 
     // Accessibility round-trips to every app take about a second in total, so the
     // walk runs off the main thread.
+    // Tuckaway's own item is always in the bar, so a read that can't find it
+    // was taken while the bar wasn't showing: in a full-screen Space every app
+    // reports no status items (measured on 27.2).
     func snapshot(completion: @escaping ([MenuBarInventoryItem]) -> Void) {
-        snapshot(matching: { _ in true }, completion: completion)
+        let own = (pid: ProcessInfo.processInfo.processIdentifier, bundleIdentifier: Bundle.main.bundleIdentifier)
+        snapshot(matching: { _ in true }) { [weak self] items in
+            DispatchQueue.global(qos: .userInitiated).async {
+                let ownItems = Self.statusItems(of: own, timeout: Self.retryMessagingTimeout) ?? []
+                DispatchQueue.main.async {
+                    self?.lastSnapshotMissedMenuBar = ownItems.isEmpty
+                    completion(items)
+                }
+            }
+        }
     }
 
     func snapshot(of bundles: Set<String>, completion: @escaping ([MenuBarInventoryItem]) -> Void) {
