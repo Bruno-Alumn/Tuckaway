@@ -18,6 +18,7 @@ extension UserDefaults {
         static let isAutoStart = "isAutoStart"
         static let isAutoHide = "isAutoHide"
         static let autoCollapseOnFocusChange = "autoCollapseOnFocusChange"
+        static let collapseOnWindowClick = "collapseOnWindowClick"
         static let isShowPreference = "isShowPreferences"
         static let areSeparatorsHidden = "areSeparatorsHidden"
         static let alwaysHiddenSectionEnabled = "alwaysHiddenSectionEnabled"

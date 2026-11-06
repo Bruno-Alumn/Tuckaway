@@ -140,6 +140,7 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         UserDefaults.Key.isShowPreference: false,
         UserDefaults.Key.isAutoHide: true,
         UserDefaults.Key.autoCollapseOnFocusChange: false,
+        UserDefaults.Key.collapseOnWindowClick: false,
         UserDefaults.Key.numberOfSecondForAutoHide: 10.0,
         UserDefaults.Key.areSeparatorsHidden: false,
         UserDefaults.Key.alwaysHiddenSectionEnabled: false,

@@ -172,13 +172,13 @@ class StatusBarController: MenuBarItemProvider {
 
     private var hoverMonitor: Any?
     private var hoverDwellTimer: Timer?
-    private var emptyMenuBarMonitor: Any?
-    // Global monitors don't see clicks sent to Tuckaway itself, which is active
-    // with "use the full menu bar" or while Settings is open.
-    private var emptyMenuBarLocalMonitor: Any?
+    private var emptyMenuBarObserver: ClickObserver?
+    private var emptyMenuBarObserverLacksTap = false
     private var scrollMonitor: Any?
     private var scrollLocalMonitor: Any?
     private var scrollGesture = MenuBarScrollGesture()
+    private var windowClickObserver: ClickObserver?
+    private var windowClickObserverLacksTap = false
 
     // True while the pointer sits in any screen's menubar band: the strip above
     // visibleFrame. With "Automatically hide and show the menu bar" that strip
@@ -232,6 +232,7 @@ class StatusBarController: MenuBarItemProvider {
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
         updateScrollMonitor()
+        updateWindowClickMonitor()
         NotificationCenter.default.addObserver(self, selector: #selector(handleScreenParametersChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceMenuBarChange), name: NSWorkspace.didWakeNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleApplicationActivated), name: NSWorkspace.didActivateApplicationNotification, object: nil)
@@ -282,18 +283,14 @@ class StatusBarController: MenuBarItemProvider {
         if let monitor = hoverMonitor {
             NSEvent.removeMonitor(monitor)
         }
-        if let emptyMenuBarMonitor {
-            NSEvent.removeMonitor(emptyMenuBarMonitor)
-        }
-        if let emptyMenuBarLocalMonitor {
-            NSEvent.removeMonitor(emptyMenuBarLocalMonitor)
-        }
+        emptyMenuBarObserver?.stop()
         if let scrollMonitor {
             NSEvent.removeMonitor(scrollMonitor)
         }
         if let scrollLocalMonitor {
             NSEvent.removeMonitor(scrollLocalMonitor)
         }
+        windowClickObserver?.stop()
     }
 
     private func updateHoverMonitor() {
@@ -331,26 +328,20 @@ class StatusBarController: MenuBarItemProvider {
         }
     }
 
+    // Accessibility can arrive after launch, and only then can the event tap
+    // be made, so a fallback observer is replaced once it's granted.
     private func updateEmptyMenuBarMonitor() {
         if Preferences.clickEmptyMenuBarToToggle {
-            guard emptyMenuBarMonitor == nil else { return }
-            emptyMenuBarMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseUp) { [weak self] _ in
+            guard emptyMenuBarObserver == nil || (emptyMenuBarObserverLacksTap && AXIsProcessTrusted()) else { return }
+            emptyMenuBarObserver?.stop()
+            emptyMenuBarObserverLacksTap = !AXIsProcessTrusted()
+            emptyMenuBarObserver = ClickObserver(.leftMouseUp) { [weak self] in
                 guard let self, self.isEmptyMenuBarClick() else { return }
                 self.expandCollapseIfNeeded()
             }
-            emptyMenuBarLocalMonitor = NSEvent.addLocalMonitorForEvents(matching: .leftMouseUp) { [weak self] event in
-                if let self, self.isEmptyMenuBarClick() {
-                    self.expandCollapseIfNeeded()
-                }
-                return event
-            }
-        } else if let emptyMenuBarMonitor {
-            NSEvent.removeMonitor(emptyMenuBarMonitor)
-            self.emptyMenuBarMonitor = nil
-            if let emptyMenuBarLocalMonitor {
-                NSEvent.removeMonitor(emptyMenuBarLocalMonitor)
-                self.emptyMenuBarLocalMonitor = nil
-            }
+        } else {
+            emptyMenuBarObserver?.stop()
+            emptyMenuBarObserver = nil
         }
     }
 
@@ -372,6 +363,53 @@ class StatusBarController: MenuBarItemProvider {
                 self.scrollLocalMonitor = nil
             }
         }
+    }
+
+    // Clicks in Tuckaway's own windows (Settings) never count: the decision
+    // below skips windows Tuckaway owns.
+    private func updateWindowClickMonitor() {
+        if Preferences.collapseOnWindowClick {
+            guard windowClickObserver == nil || (windowClickObserverLacksTap && AXIsProcessTrusted()) else { return }
+            windowClickObserver?.stop()
+            windowClickObserverLacksTap = !AXIsProcessTrusted()
+            windowClickObserver = ClickObserver(.leftMouseDown) { [weak self] in
+                self?.handleWindowClick()
+            }
+        } else {
+            windowClickObserver?.stop()
+            windowClickObserver = nil
+        }
+    }
+
+    private func handleWindowClick() {
+        guard !isCollapsed, !isMouseInMenuBar, !isManagingItems, !isPresenting,
+              !didExpandForExternalDisplay else { return }
+        // Give the clicked window a moment to come forward first.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            guard let self, !self.isCollapsed, !self.isMouseInMenuBar, !self.isManagingItems else { return }
+            let frontmost = NSWorkspace.shared.frontmostApplication
+            guard ExpandCollapseActionResolver.shouldCollapseAfterWindowClick(
+                clickedApp: self.appUnderPointer(),
+                frontmostApp: frontmost?.processIdentifier,
+                frontmostIsRegular: frontmost?.activationPolicy == .regular,
+                ownPid: ProcessInfo.processInfo.processIdentifier) else { return }
+            self.collapseMenuBar()
+        }
+    }
+
+    // The app owning whatever is under the pointer, as Accessibility hit-tests
+    // it (so click-through overlays don't count).
+    private func appUnderPointer() -> pid_t? {
+        guard let primaryScreenTop = NSScreen.screens.first?.frame.maxY,
+              !Util.isAccessibilityPermissionMissing else { return nil }
+        let point = ExpandCollapseActionResolver.accessibilityPoint(forAppKitPoint: NSEvent.mouseLocation,
+                                                                    primaryScreenTop: primaryScreenTop)
+        var element: AXUIElement?
+        guard AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), Float(point.x), Float(point.y), &element) == .success,
+              let element else { return nil }
+        var pid: pid_t = 0
+        guard AXUIElementGetPid(element, &pid) == .success else { return nil }
+        return pid
     }
 
     // Only on empty space: some apps use scrolling over their own icon (a
@@ -494,6 +532,8 @@ class StatusBarController: MenuBarItemProvider {
     // Collapsing failed while the permission was missing; once it is granted,
     // hide straight away instead of waiting for the next click or relaunch.
     @objc private func handleAccessibilityPermissionChanged() {
+        updateEmptyMenuBarMonitor()
+        updateWindowClickMonitor()
         guard accessibilityPermission.permissionWasRestored(
             isTrusted: !Util.isAccessibilityPermissionMissing
         ) else { return }
@@ -1049,6 +1089,7 @@ class StatusBarController: MenuBarItemProvider {
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
         updateScrollMonitor()
+        updateWindowClickMonitor()
         if !usesSeparateHiddenItemsBar {
             hiddenItemsCaptureShieldController.hide()
             hiddenItemsBarController.hide()

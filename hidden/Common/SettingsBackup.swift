@@ -15,7 +15,7 @@ enum SettingsBackup {
 
     static let keys = [
         "globalKey", "presentationModeKey", "findHiddenIconKey",
-        "numberOfSecondForAutoHide", "isAutoHide", "autoCollapseOnFocusChange",
+        "numberOfSecondForAutoHide", "isAutoHide", "autoCollapseOnFocusChange", "collapseOnWindowClick",
         "isShowPreferences", "areSeparatorsHidden", "alwaysHiddenSectionEnabled",
         "useFullStatusBarOnExpandEnabled", "showHiddenItemsInSeparateBar",
         "hoverToExpand", "clickEmptyMenuBarToToggle", "scrollMenuBarToToggle", "expandWhenExternalDisplayConnected",

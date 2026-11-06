@@ -143,3 +143,29 @@ final class MenuBarScrollGestureTests: XCTestCase {
         XCTAssertNil(gesture.handle(deltaY: 5, at: 0.02))
     }
 }
+
+final class WindowClickCollapseTests: XCTestCase {
+    private func decide(clicked: pid_t? = 10, frontmost: pid_t? = 10,
+                        regular: Bool = true, own: pid_t = 99) -> Bool {
+        ExpandCollapseActionResolver.shouldCollapseAfterWindowClick(
+            clickedApp: clicked, frontmostApp: frontmost,
+            frontmostIsRegular: regular, ownPid: own)
+    }
+
+    func testClickingIntoTheAppInFrontCollapses() {
+        XCTAssertTrue(decide())
+    }
+
+    func testClickingInsideAMenuBarAppsPopoverDoesNot() {
+        XCTAssertFalse(decide(clicked: 20, frontmost: 10), "the popover's app isn't the one in front")
+        XCTAssertFalse(decide(clicked: 20, frontmost: 20, regular: false), "or it came forward as an accessory app")
+    }
+
+    func testTuckawaysOwnWindowsDoNot() {
+        XCTAssertFalse(decide(clicked: 99, frontmost: 99, own: 99))
+    }
+
+    func testNothingUnderThePointerDoesNot() {
+        XCTAssertFalse(decide(clicked: nil))
+    }
+}
