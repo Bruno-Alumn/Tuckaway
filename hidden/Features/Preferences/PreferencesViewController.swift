@@ -485,6 +485,10 @@ final class GeneralSettingsModel: ObservableObject {
         return binding({ Preferences.hoverToExpand }) { Preferences.hoverToExpand = $0 }
     }
 
+    var scrollMenuBarToToggle: Binding<Bool> {
+        return binding({ Preferences.scrollMenuBarToToggle }) { Preferences.scrollMenuBarToToggle = $0 }
+    }
+
     var clickEmptyMenuBarToToggle: Binding<Bool> {
         return binding({ Preferences.clickEmptyMenuBarToToggle }) { Preferences.clickEmptyMenuBarToToggle = $0 }
     }
@@ -639,6 +643,7 @@ struct GeneralSettingsView: View {
             Section(Self.label("Revealing")) {
                 settingsToggle("Expand by hovering over the menu bar", isOn: model.hoverToExpand)
                 settingsToggle("Click empty menu bar to show or hide icons", isOn: model.clickEmptyMenuBarToToggle)
+                settingsToggle("Scroll on empty menu bar to show or hide icons", isOn: model.scrollMenuBarToToggle)
                 settingsToggle("Expand when an external display is connected", isOn: model.expandWhenExternalDisplayConnected)
                 if StatusBarController.supportsPresentationMode {
                     settingsToggle("Show the icon of the app you're using", isOn: model.showActiveAppIcon)

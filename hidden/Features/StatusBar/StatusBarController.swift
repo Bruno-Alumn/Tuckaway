@@ -176,6 +176,9 @@ class StatusBarController: MenuBarItemProvider {
     // Global monitors don't see clicks sent to Tuckaway itself, which is active
     // with "use the full menu bar" or while Settings is open.
     private var emptyMenuBarLocalMonitor: Any?
+    private var scrollMonitor: Any?
+    private var scrollLocalMonitor: Any?
+    private var scrollGesture = MenuBarScrollGesture()
 
     // True while the pointer sits in any screen's menubar band: the strip above
     // visibleFrame. With "Automatically hide and show the menu bar" that strip
@@ -228,6 +231,7 @@ class StatusBarController: MenuBarItemProvider {
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
+        updateScrollMonitor()
         NotificationCenter.default.addObserver(self, selector: #selector(handleScreenParametersChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceMenuBarChange), name: NSWorkspace.didWakeNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleApplicationActivated), name: NSWorkspace.didActivateApplicationNotification, object: nil)
@@ -283,6 +287,12 @@ class StatusBarController: MenuBarItemProvider {
         }
         if let emptyMenuBarLocalMonitor {
             NSEvent.removeMonitor(emptyMenuBarLocalMonitor)
+        }
+        if let scrollMonitor {
+            NSEvent.removeMonitor(scrollMonitor)
+        }
+        if let scrollLocalMonitor {
+            NSEvent.removeMonitor(scrollLocalMonitor)
         }
     }
 
@@ -341,6 +351,44 @@ class StatusBarController: MenuBarItemProvider {
                 NSEvent.removeMonitor(emptyMenuBarLocalMonitor)
                 self.emptyMenuBarLocalMonitor = nil
             }
+        }
+    }
+
+    private func updateScrollMonitor() {
+        if Preferences.scrollMenuBarToToggle {
+            guard scrollMonitor == nil else { return }
+            scrollMonitor = NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+                self?.handleMenuBarScroll(event)
+            }
+            scrollLocalMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+                self?.handleMenuBarScroll(event)
+                return event
+            }
+        } else if let scrollMonitor {
+            NSEvent.removeMonitor(scrollMonitor)
+            self.scrollMonitor = nil
+            if let scrollLocalMonitor {
+                NSEvent.removeMonitor(scrollLocalMonitor)
+                self.scrollLocalMonitor = nil
+            }
+        }
+    }
+
+    // Only on empty space: some apps use scrolling over their own icon (a
+    // volume or brightness slider), and that has to keep working.
+    private func handleMenuBarScroll(_ event: NSEvent) {
+        guard isMouseInMenuBar, !isMouseButtonDown, !isPresenting, !isManagingItems else { return }
+        let direction = scrollGesture.handle(deltaY: event.scrollingDeltaY, deltaX: event.scrollingDeltaX,
+                                             began: event.phase.contains(.began), at: event.timestamp)
+        guard let direction, isEmptyMenuBarClick() else { return }
+        let isShowing = !isCollapsed || isSeparateHiddenItemsBarVisible || hiddenSectionPeeker?.isPeeking == true
+        switch direction {
+        case .show where !isShowing:
+            expandCollapseIfNeeded()
+        case .hide where isShowing:
+            expandCollapseIfNeeded()
+        default:
+            break
         }
     }
 
@@ -1000,6 +1048,7 @@ class StatusBarController: MenuBarItemProvider {
         updateConfigurationDragMonitor()
         updateHoverMonitor()
         updateEmptyMenuBarMonitor()
+        updateScrollMonitor()
         if !usesSeparateHiddenItemsBar {
             hiddenItemsCaptureShieldController.hide()
             hiddenItemsBarController.hide()

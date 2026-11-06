@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- **Scroll on empty menu bar to show or hide icons** (Settings › General › Revealing, off by default): scroll up on empty menu bar space to show the hidden icons, down to hide them. One swipe makes one change, and scrolling over an icon is left to its app (a volume slider, say).
+
 ### Fixed
 - **Icons no longer vanish after using a full-screen app** (macOS 27): if the bar was re-read while a full-screen window was in front (say, an app opened then), macOS reported no menu bar icons at all, and Tuckaway hid every visible one until the next re-read. Such a read is now ignored in favour of the last real one.
 - **A new menu bar app is noticed when it opens** (macOS 27): macOS doesn't announce launches of apps that live only in the menu bar, so the question about a new app's icon, the reveal after an app updates and **Use While an App Is Open** waited until the next expand. Tuckaway now watches every app that starts and quits.

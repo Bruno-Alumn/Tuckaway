@@ -15,6 +15,48 @@ enum ExpandCollapseAction {
     case toggleSeparators
 }
 
+// Scrolling on empty menu bar space shows the hidden icons (scroll up) or
+// hides them (scroll down). A trackpad sends dozens of small events per swipe,
+// so the deltas add up until they pass a threshold, and then the rest of that
+// swipe, including its momentum, is ignored: one swipe, one change.
+struct MenuBarScrollGesture {
+    enum Direction: Equatable {
+        case show
+        case hide
+    }
+
+    static let threshold: CGFloat = 12
+    // A pause this long ends a swipe, for wheels and devices without phases.
+    static let quietGap: TimeInterval = 0.35
+
+    private var total: CGFloat = 0
+    private var didAct = false
+    private var lastEvent: TimeInterval?
+
+    // `deltaY` is AppKit's scrollingDeltaY, positive when the content would
+    // move down (scrolling up). `began` is true for a new trackpad touch.
+    mutating func handle(deltaY: CGFloat, deltaX: CGFloat = 0, began: Bool = false, at time: TimeInterval) -> Direction? {
+        if began || lastEvent.map({ time - $0 > Self.quietGap }) ?? true {
+            total = 0
+            didAct = false
+        }
+        lastEvent = time
+        guard !didAct else { return nil }
+        // Sideways swipes are for something else (Spaces, pages).
+        guard abs(deltaY) >= abs(deltaX) else { return nil }
+        total += deltaY
+        if total >= Self.threshold {
+            didAct = true
+            return .show
+        }
+        if total <= -Self.threshold {
+            didAct = true
+            return .hide
+        }
+        return nil
+    }
+}
+
 enum ExpandCollapseActionResolver {
     // On macOS 27 the mouse-up event a status bar button hands to its action
     // carries empty modifier flags even while Option is held (#434), so the live

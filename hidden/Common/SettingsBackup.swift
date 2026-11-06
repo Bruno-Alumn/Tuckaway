@@ -18,7 +18,7 @@ enum SettingsBackup {
         "numberOfSecondForAutoHide", "isAutoHide", "autoCollapseOnFocusChange",
         "isShowPreferences", "areSeparatorsHidden", "alwaysHiddenSectionEnabled",
         "useFullStatusBarOnExpandEnabled", "showHiddenItemsInSeparateBar",
-        "hoverToExpand", "clickEmptyMenuBarToToggle", "expandWhenExternalDisplayConnected",
+        "hoverToExpand", "clickEmptyMenuBarToToggle", "scrollMenuBarToToggle", "expandWhenExternalDisplayConnected",
         "notchOverflowEnabled", "useTransparentExpandIconEnabled", "expandIconStyle",
         "automaticallyChecksForUpdates", "isAutoStart", "keptVisibleMenuBarApps",
         "showActiveAppIcon", "revealIconsOnActivity", "revealUpdatedApps", "collapseWhenLocked", "showHiddenIconCount", "menuBarSpacerCount", "menuBarSpacerWidth", "menuBarProfiles", "activeMenuBarProfile",

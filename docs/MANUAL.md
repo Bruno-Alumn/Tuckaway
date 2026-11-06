@@ -149,6 +149,7 @@ Open it with **Settings…** (⌘,) from the arrow's menu. It has three tabs.
 | Hiding | Collapse after | The delay: 5, 10, 15 or 30 seconds, or 1 minute. Shown only while auto-collapse is on. |
 | Hiding | Collapse on app switch | Hide again as soon as another app becomes active. |
 | Hiding | Collapse when the Mac locks or sleeps | Off by default. An expanded bar collapses when the screen locks or the displays sleep. |
+| Revealing | Scroll on empty menu bar to show or hide icons | Scroll up on empty menu bar space to show the hidden icons, down to hide them. Scrolling over an icon is left to its app. With the separate bar on, scrolling up opens that bar. |
 | Revealing | Hover to expand | Expand after hovering over the menu bar for about half a second. With the separate bar on, this opens that bar instead. |
 | Revealing | Show hidden icons briefly when they change | macOS 27 only, off by default. While collapsed, a hidden icon whose width or text changes (a timer, a count, a status in its tooltip) shows for 8 seconds. A change to the picture alone isn't noticed. Icons in Always Hidden never show. |
 | Revealing | Show an app's hidden icon for a moment after it updates | macOS 27 only, off by default. Tuckaway notes each app's version when it launches; when a hidden app launches with a different one, its icon shows for 30 seconds. Apps already running when Tuckaway starts are noted too. |

@@ -146,6 +146,7 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         UserDefaults.Key.notchOverflowEnabled: true,
         UserDefaults.Key.useTransparentExpandIconEnabled: false,
         UserDefaults.Key.clickEmptyMenuBarToToggle: false,
+        UserDefaults.Key.scrollMenuBarToToggle: false,
         UserDefaults.Key.expandWhenExternalDisplayConnected: false,
         UserDefaults.Key.showHiddenItemsInSeparateBar: false,
         UserDefaults.Key.automaticallyChecksForUpdates: true

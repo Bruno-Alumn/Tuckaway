@@ -97,3 +97,49 @@ final class ExpandCollapseActionTests: XCTestCase {
             isMouseInMenuBar: false, isMouseButtonDown: false, isPreferencesVisible: false, usesFullMenuBar: false))
     }
 }
+
+final class MenuBarScrollGestureTests: XCTestCase {
+    func testScrollingUpPastTheThresholdShows() {
+        var gesture = MenuBarScrollGesture()
+        XCTAssertNil(gesture.handle(deltaY: 5, began: true, at: 0))
+        XCTAssertNil(gesture.handle(deltaY: 5, at: 0.01))
+        XCTAssertEqual(gesture.handle(deltaY: 5, at: 0.02), .show)
+    }
+
+    func testScrollingDownPastTheThresholdHides() {
+        var gesture = MenuBarScrollGesture()
+        XCTAssertEqual(gesture.handle(deltaY: -20, at: 0), .hide)
+    }
+
+    func testOneSwipeActsOnceEvenWithMomentum() {
+        var gesture = MenuBarScrollGesture()
+        XCTAssertEqual(gesture.handle(deltaY: 20, began: true, at: 0), .show)
+        XCTAssertNil(gesture.handle(deltaY: 20, at: 0.05))
+        XCTAssertNil(gesture.handle(deltaY: -40, at: 0.1), "reversing within the same swipe does nothing")
+    }
+
+    func testANewSwipeActsAgain() {
+        var gesture = MenuBarScrollGesture()
+        XCTAssertEqual(gesture.handle(deltaY: 20, began: true, at: 0), .show)
+        XCTAssertEqual(gesture.handle(deltaY: -20, began: true, at: 0.1), .hide)
+    }
+
+    func testAPauseEndsAWheelSwipe() {
+        var gesture = MenuBarScrollGesture()
+        XCTAssertEqual(gesture.handle(deltaY: -20, at: 0), .hide)
+        XCTAssertNil(gesture.handle(deltaY: 20, at: 0.2))
+        XCTAssertEqual(gesture.handle(deltaY: 20, at: 1), .show)
+    }
+
+    func testSidewaysSwipesAreIgnored() {
+        var gesture = MenuBarScrollGesture()
+        XCTAssertNil(gesture.handle(deltaY: 15, deltaX: 40, at: 0))
+    }
+
+    func testSmallJitterDoesNothing() {
+        var gesture = MenuBarScrollGesture()
+        XCTAssertNil(gesture.handle(deltaY: 4, at: 0))
+        XCTAssertNil(gesture.handle(deltaY: -3, at: 0.01))
+        XCTAssertNil(gesture.handle(deltaY: 5, at: 0.02))
+    }
+}

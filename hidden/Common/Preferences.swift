@@ -232,6 +232,17 @@ enum Preferences {
         }
     }
 
+    static var scrollMenuBarToToggle: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: UserDefaults.Key.scrollMenuBarToToggle)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.scrollMenuBarToToggle)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     static var clickEmptyMenuBarToToggle: Bool {
         get {
             UserDefaults.standard.bool(forKey: UserDefaults.Key.clickEmptyMenuBarToToggle)
