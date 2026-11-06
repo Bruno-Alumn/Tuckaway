@@ -32,6 +32,7 @@ extension UserDefaults {
         static let spacerCount = "menuBarSpacerCount"
         static let spacerWidth = "menuBarSpacerWidth"
         static let clickEmptyMenuBarToToggle = "clickEmptyMenuBarToToggle"
+        static let scrollMenuBarToToggle = "scrollMenuBarToToggle"
         static let expandWhenExternalDisplayConnected = "expandWhenExternalDisplayConnected"
         static let notchOverflowEnabled = "notchOverflowEnabled"
         static let useTransparentExpandIconEnabled = "useTransparentExpandIconEnabled"
