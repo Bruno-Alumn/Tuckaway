@@ -3,9 +3,11 @@
 ## Unreleased
 
 ### Added
+- **Collapse when you click into a window** (Settings › General › Hiding, off by default): once you click back into an ordinary window, even one of the app you were already using, the icons hide again. Clicking inside a menu bar app's popover or menu doesn't count.
 - **Scroll on empty menu bar to show or hide icons** (Settings › General › Revealing, off by default): scroll up on empty menu bar space to show the hidden icons, down to hide them. One swipe makes one change, and scrolling over an icon is left to its app (a volume slider, say).
 
 ### Fixed
+- **Click empty menu bar to show or hide icons works on macOS 27**: in testing on macOS 27 the clicks never reached Tuckaway, so the option did nothing. Clicks are now watched through the Accessibility permission Tuckaway already has.
 - **Icons no longer vanish after using a full-screen app** (macOS 27): if the bar was re-read while a full-screen window was in front (say, an app opened then), macOS reported no menu bar icons at all, and Tuckaway hid every visible one until the next re-read. Such a read is now ignored in favour of the last real one.
 - **A new menu bar app is noticed when it opens** (macOS 27): macOS doesn't announce launches of apps that live only in the menu bar, so the question about a new app's icon, the reveal after an app updates and **Use While an App Is Open** waited until the next expand. Tuckaway now watches every app that starts and quits.
 - **Moving icons in Settings › Menu Bar Items works on macOS 27**: the synthesized ⌘-drags it used were often ignored and couldn't cross the arrow. Click **Allow Moving Icons…** once and choose the folder it points to; Tuckaway then rewrites the menu bar's order the way macOS stores it, so a move lands at once, in any list.

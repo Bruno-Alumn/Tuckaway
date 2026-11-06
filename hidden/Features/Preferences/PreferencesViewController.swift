@@ -465,6 +465,10 @@ final class GeneralSettingsModel: ObservableObject {
         return binding({ Preferences.collapseWhenLocked }) { Preferences.collapseWhenLocked = $0 }
     }
 
+    var collapseOnWindowClick: Binding<Bool> {
+        return binding({ Preferences.collapseOnWindowClick }) { Preferences.collapseOnWindowClick = $0 }
+    }
+
     var autoCollapseOnFocusChange: Binding<Bool> {
         return binding({ Preferences.autoCollapseOnFocusChange }) { Preferences.autoCollapseOnFocusChange = $0 }
     }
@@ -637,6 +641,7 @@ struct GeneralSettingsView: View {
                     }
                 }
                 settingsToggle("Collapse when another app becomes active", isOn: model.autoCollapseOnFocusChange)
+                settingsToggle("Collapse when you click into a window", isOn: model.collapseOnWindowClick)
                 settingsToggle("Collapse when the Mac locks or sleeps", isOn: model.collapseWhenLocked)
             }
 

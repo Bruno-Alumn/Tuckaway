@@ -98,6 +98,17 @@ enum Preferences {
         }
     }
 
+    static var collapseOnWindowClick: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: UserDefaults.Key.collapseOnWindowClick)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: UserDefaults.Key.collapseOnWindowClick)
+            NotificationCenter.default.post(Notification(name: .prefsChanged))
+        }
+    }
+
     static var autoCollapseOnFocusChange: Bool {
         get {
             UserDefaults.standard.bool(forKey: UserDefaults.Key.autoCollapseOnFocusChange)
