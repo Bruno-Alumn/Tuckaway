@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.10.0 (2026-11-07)
+
 ### Added
 - **Collapse when you click into a window** (Settings › General › Hiding, off by default): once you click back into an ordinary window, even one of the app you were already using, the icons hide again. Clicking inside a menu bar app's popover or menu doesn't count.
 - **Scroll on empty menu bar to show or hide icons** (Settings › General › Revealing, off by default): scroll up on empty menu bar space to show the hidden icons, down to hide them. One swipe makes one change, and scrolling over an icon is left to its app (a volume slider, say).
@@ -14,6 +16,7 @@
 - **⌘-dragging icons in the menu bar works while collapsed** (macOS 27): the restriction that hides icons also froze the visible ones. Holding ⌘ with the pointer over the menu bar now expands it first, so the drag goes through, and auto-collapse hides the icons again afterwards.
 
 ### Changed
+- **Ready for notarized releases**: the next release is signed with a Developer ID and notarized by Apple, so it opens without the "Open Anyway" step. Update to this release first; it lets the next one install through the updater and keep Tuckaway's permissions.
 - **Menu Bar Items lists each app once** (macOS 27): macOS 27 hides whole apps, so an app with several icons now has one row, marked “2 icons”, and moving it moves all of them.
 
 ## v1.9.0 (2026-11-03)
