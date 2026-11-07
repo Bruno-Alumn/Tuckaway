@@ -102,10 +102,11 @@ reads.
    The expected tag is rejected if it differs from the app's
    `CFBundleShortVersionString`. The script builds
    `Release-Direct` (universal), refuses Debug or sandboxed builds, signs the
-   app with the **Tuckaway Release Signing** certificate (see
-   [Release signing](#release-signing)), and writes `dist/Tuckaway.dmg`. It
-   refuses to run without that certificate. With a Developer ID later, set
-   `SIGN_IDENTITY`, then notarize and staple the DMG. Publish a GitHub release tagged `v<version>`
+   app with the **Tuckaway Release Signing** certificate, or the Developer ID
+   when `SIGN_IDENTITY` names it (see [Release signing](#release-signing)), and
+   writes `dist/Tuckaway.dmg`. It refuses to run without the certificate. A
+   Developer ID build is also notarized (`notarytool` profile
+   `tuckaway-notary`) and stapled. Publish a GitHub release tagged `v<version>`
    with **`Tuckaway.dmg`** as the asset (no zip) and notes listing closed
    issues. Verify the published asset with `scripts/verify-release-digest.sh v<version>`.
    The update alert shows the first ~700 characters of the notes as
@@ -146,22 +147,42 @@ reads.
 
 ## Release signing
 
-Every release from 1.2 on is signed with one self-signed certificate,
-**Tuckaway Release Signing**, kept in the maintainer's login keychain. macOS
-then identifies Tuckaway as `identifier "com.brunoalumn.tuckaway" and
-certificate root = H"0105a9f1aad750cf7de24f2c5fbe2ed2483780e8"` instead of a
-per-build hash. That identity stays the same across releases, so:
+Every release is signed with the same designated requirement,
+`Updater.releaseRequirement`: bundle ID `com.brunoalumn.tuckaway`, signed
+either by the self-signed **Tuckaway Release Signing** certificate (releases
+from 1.2 on) or by the maintainer's **Developer ID Application: Bruno Cassina
+(22R95V8NA5)**. `package-dmg.sh` reads it from `Updater.swift` and signs with
+it explicitly, so:
 
-- Accessibility and Screen Recording grants, and firewall rules, survive updates;
+- Accessibility and Screen Recording grants, and firewall rules, survive
+  updates, including the switch from one certificate to the other;
 - the updater only installs an update that satisfies the running app's
   designated requirement, so a tampered or differently signed download is refused.
 
-Releases up to 1.1.0 were ad-hoc signed. Updating from one of them to the first
-certificate-signed release still asks for permissions once; after that, never.
+Releases up to 1.1.0 were ad-hoc signed; updating from one of them to a
+certificate-signed release asks for permissions once.
 
-The certificate's hash is also in `Updater.releaseRequirement`, which ad-hoc
-builds hold updates to. A new certificate (Developer ID, or a lost key) has to
-change it in the same release.
+### Moving to Developer ID
+
+Releases up to the one that adds the combined requirement have a requirement
+naming only the release certificate, so their updater refuses a Developer ID
+build. So the move takes two releases:
+
+1. **Bridge release:** signed with Tuckaway Release Signing as usual
+   (`scripts/package-dmg.sh`), now carrying the combined requirement. Users get
+   it through the updater.
+2. **Every release after:** `SIGN_IDENTITY="Developer ID Application: Bruno Cassina (22R95V8NA5)" scripts/package-dmg.sh`.
+   It's notarized and stapled, so the first-launch "Open Anyway" step goes away.
+   Users on the bridge release update in place and keep their permissions.
+   Anyone still on an older release has to download it by hand and grant
+   permissions once.
+
+Developer ID setup on a new Mac: install the certificate (and Apple's
+**Developer ID - G2** intermediate if `codesign` reports "unable to build
+chain"), then save the notarization login once with
+`xcrun notarytool store-credentials tuckaway-notary --apple-id <Apple ID> --team-id 22R95V8NA5`
+and an app-specific password from account.apple.com. Back up the Developer ID
+certificate as a `.p12` too.
 
 **Back up the key now.** If it is lost, the next release has to use a new
 certificate. Every user then gets asked for permissions again, and the updaters
@@ -178,9 +199,9 @@ To sign on another Mac, double-click the `.p12` there and enter the password.
 "CSSMERR_TP_NOT_TRUSTED" is expected for a self-signed certificate and doesn't
 stop signing.
 
-The certificate is valid until October 2046. A Developer ID (#219) would also
-remove the first-launch "Open Anyway" step. Switching to one later changes the
-identity once, with the same one-time re-grant.
+The release certificate is valid until October 2046. Keep it even after the
+move to Developer ID: the requirement still names it, and losing it doesn't
+matter once every user is past the bridge release.
 
 ## Stacked-PR hygiene
 

@@ -2,13 +2,17 @@
 # Builds the direct-download release and packages it as dist/Tuckaway.dmg,
 # the asset the in-app updater installs from.
 #
-# Releases are signed with the "Tuckaway Release Signing" certificate from the
-# login keychain. Signing every release with the same certificate is what lets
-# macOS keep Tuckaway's permissions (and firewall rules) across updates, and
-# the updater refuses updates signed with anything else. See docs/RUNBOOK.md.
+# Releases are signed with the "Tuckaway Release Signing" certificate or the
+# maintainer's Developer ID, always with the same designated requirement
+# (Updater.releaseRequirement), which accepts either. That requirement is what
+# lets macOS keep Tuckaway's permissions (and firewall rules) across updates,
+# and the updater refuses updates that don't meet it. A Developer ID build is
+# also notarized and stapled. See docs/RUNBOOK.md.
 #
 #   scripts/package-dmg.sh
-#   SIGN_IDENTITY="Developer ID Application: …" scripts/package-dmg.sh
+#   SIGN_IDENTITY="Developer ID Application: Bruno Cassina (22R95V8NA5)" scripts/package-dmg.sh
+#   NOTARY_PROFILE=name                     # notarytool keychain profile (default tuckaway-notary)
+#   SKIP_NOTARIZE=1                         # Developer ID test builds that won't be published
 #   ALLOW_ADHOC=1 scripts/package-dmg.sh    # test builds only: resets users' permissions
 #   EXPECTED_VERSION=vX.Y.Z scripts/package-dmg.sh  # fail if the app version differs
 set -eu
@@ -30,6 +34,22 @@ if ! security find-identity -p codesigning | grep -qF "\"$IDENTITY\""; then
     echo "       Set ALLOW_ADHOC=1 for a throwaway test build." >&2
     exit 1
   fi
+fi
+
+# The designated requirement, from the one place the updater reads it too.
+REQUIREMENT=$(sed -n 's/^ *static let releaseRequirement = #"\(.*\)"#$/\1/p' hidden/Features/Update/Updater.swift)
+if [ -z "$REQUIREMENT" ] || ! csreq -r="$REQUIREMENT" -t >/dev/null; then
+  echo "error: couldn't read Updater.releaseRequirement" >&2; exit 1
+fi
+case "$IDENTITY" in
+  "Developer ID Application:"*) DEVELOPER_ID=1 ;;
+  *) DEVELOPER_ID= ;;
+esac
+NOTARY_PROFILE="${NOTARY_PROFILE:-tuckaway-notary}"
+if [ -n "$DEVELOPER_ID" ] && [ "${SKIP_NOTARIZE:-}" != 1 ] \
+   && ! xcrun notarytool history --keychain-profile "$NOTARY_PROFILE" >/dev/null 2>&1; then
+  echo "error: notarytool profile \"$NOTARY_PROFILE\" missing or rejected (see docs/RUNBOOK.md)." >&2
+  exit 1
 fi
 
 if [ -n "${EXPECTED_VERSION:-}" ]; then
@@ -66,11 +86,18 @@ fi
 # Xcode signs the build ad-hoc; re-sign it with the release identity and the
 # direct build's own entitlements (which also drops the debug-only
 # get-task-allow Xcode adds).
-codesign --force --deep --options runtime --entitlements hidden/Hidden-Direct.entitlements \
-  -s "$IDENTITY" "$APP" 2>&1 | grep -v "replacing existing signature" || true
+# Notarization needs a secure timestamp.
+if [ "$IDENTITY" = "-" ]; then
+  codesign --force --deep --options runtime --entitlements hidden/Hidden-Direct.entitlements \
+    -s - "$APP" 2>&1 | grep -v "replacing existing signature" || true
+else
+  codesign --force --deep --options runtime --entitlements hidden/Hidden-Direct.entitlements \
+    ${DEVELOPER_ID:+--timestamp} -r="designated => $REQUIREMENT" \
+    -s "$IDENTITY" "$APP" 2>&1 | grep -v "replacing existing signature" || true
+fi
 codesign --verify --deep --strict "$APP"
-if [ "$IDENTITY" != "-" ] && ! codesign -dr - "$APP" 2>&1 | grep -q "certificate"; then
-  echo "error: $APP is not certificate-signed" >&2; exit 1
+if [ "$IDENTITY" != "-" ] && ! codesign --verify -R="$REQUIREMENT" "$APP"; then
+  echo "error: $APP doesn't meet Updater.releaseRequirement" >&2; exit 1
 fi
 
 VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$APP/Contents/Info.plist")
@@ -88,5 +115,16 @@ else
   hdiutil create -volname "Tuckaway $VERSION" -srcfolder "$STAGING" -fs HFS+ -format UDZO -ov "$DMG" >/dev/null
 fi
 rm -rf "$STAGING"
+
+if [ -n "$DEVELOPER_ID" ]; then
+  codesign --force --timestamp -s "$IDENTITY" "$DMG"
+  if [ "${SKIP_NOTARIZE:-}" = 1 ]; then
+    echo "warning: not notarized (SKIP_NOTARIZE=1); don't publish this DMG." >&2
+  else
+    xcrun notarytool submit "$DMG" --keychain-profile "$NOTARY_PROFILE" --wait
+    xcrun stapler staple "$DMG"
+    spctl --assess --type open --context context:primary-signature -v "$DMG"
+  fi
+fi
 
 echo "Built $DMG (Tuckaway $VERSION, signed by \"$IDENTITY\"). Publish it as the release asset, tagged v$VERSION."

@@ -312,9 +312,13 @@ final class Updater {
         return app
     }
 
-    // The identity of every release since 1.2: the Tuckaway Release Signing
-    // certificate (docs/RUNBOOK.md). Change it together with that certificate.
-    static let releaseRequirement = #"identifier "com.brunoalumn.tuckaway" and certificate root = H"0105a9f1aad750cf7de24f2c5fbe2ed2483780e8""#
+    // The identity of every release: the Tuckaway Release Signing certificate
+    // (1.2 on) or the maintainer's Developer ID (team 22R95V8NA5). Releases are
+    // signed with this as their designated requirement (scripts/package-dmg.sh
+    // reads it from here), so an installed release accepts an update signed
+    // either way, and macOS keeps its permissions across the switch to
+    // Developer ID. See docs/RUNBOOK.md, Release signing.
+    static let releaseRequirement = #"identifier "com.brunoalumn.tuckaway" and (certificate root = H"0105a9f1aad750cf7de24f2c5fbe2ed2483780e8" or (anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13] and certificate leaf[subject.OU] = "22R95V8NA5"))"#
 
     // Whether `app` satisfies the running app's designated requirement: same
     // bundle ID, signed by the same certificate. That keeps a tampered or
