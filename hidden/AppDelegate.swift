@@ -67,6 +67,7 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         guard ensureSingleInstance() else { return }
         Preferences.migrateFromHiddenBar()
         registerDefaultValues()
+        Updater.resetStaleGrantsAfterSigningChange()
         statusBarController = StatusBarController()
         setupAutoStartApp()
         setupHotKey()
