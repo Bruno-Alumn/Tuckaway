@@ -43,5 +43,6 @@ extension UserDefaults {
         static let lastUpdateCheck = "lastUpdateCheck"
         static let skippedUpdateVersion = "skippedUpdateVersion"
         static let hasLaunchedBefore = "hasLaunchedBefore"
+        static let lastSigningCertificate = "lastSigningCertificate"
     }
 }

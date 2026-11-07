@@ -155,7 +155,9 @@ from 1.2 on) or by the maintainer's **Developer ID Application: Bruno Cassina
 it explicitly, so:
 
 - Accessibility and Screen Recording grants, and firewall rules, survive
-  updates, including the switch from one certificate to the other;
+  updates signed by the same certificate, and grants made under a release that
+  carries the combined requirement (1.10.0 on) survive the switch from one
+  certificate to the other (see below for older grants);
 - the updater only installs an update that satisfies the running app's
   designated requirement, so a tampered or differently signed download is refused.
 
@@ -173,9 +175,23 @@ build. So the move takes two releases:
    it through the updater.
 2. **Every release after:** `SIGN_IDENTITY="Developer ID Application: Bruno Cassina (22R95V8NA5)" scripts/package-dmg.sh`.
    It's notarized and stapled, so the first-launch "Open Anyway" step goes away.
-   Users on the bridge release update in place and keep their permissions.
-   Anyone still on an older release has to download it by hand and grant
-   permissions once.
+   Users on the bridge release update in place. Anyone still on an older
+   release has to download it by hand.
+
+**One re-grant is unavoidable for older permissions.** macOS stores the
+requirement in force *when a permission was granted*, and running a newer build
+doesn't update it. A grant made under 1.9.0 or earlier names only the release
+certificate, so the first Developer ID build loses it, though its switch stays
+on in System Settings. A grant made under 1.10.0 or later carries over. (Tested
+in a VM for ThockBox, which made the same move: Accessibility granted before
+its bridge release was lost, a grant made under the bridge build was kept.)
+
+Tuckaway handles this at launch (`Updater.resetStaleGrantsAfterSigningChange`):
+it records the SHA-256 of its leaf signing certificate, and on the first launch
+with a different one (or, with none on record, on a Developer ID build) it runs
+`tccutil reset` for Accessibility and Screen Recording if they don't work, then
+asks for Accessibility again. The first Developer ID release must include this
+code, since 1.10.0 doesn't.
 
 Developer ID setup on a new Mac: install the certificate (and Apple's
 **Developer ID - G2** intermediate if `codesign` reports "unable to build
