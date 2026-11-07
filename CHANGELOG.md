@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- **Permissions after the move to notarized releases**: macOS doesn't carry over an Accessibility or Screen Recording permission granted to 1.9.0 or earlier to a build signed with a Developer ID, and its switch stays on in System Settings without working. On the first launch signed differently, Tuckaway now clears its own permission entries that don't work and asks again, so you grant it once instead of seeing a switch that does nothing.
+
 ## v1.10.0 (2026-11-07)
 
 ### Added
@@ -16,7 +19,7 @@
 - **⌘-dragging icons in the menu bar works while collapsed** (macOS 27): the restriction that hides icons also froze the visible ones. Holding ⌘ with the pointer over the menu bar now expands it first, so the drag goes through, and auto-collapse hides the icons again afterwards.
 
 ### Changed
-- **Ready for notarized releases**: the next release is signed with a Developer ID and notarized by Apple, so it opens without the "Open Anyway" step. Update to this release first; it lets the next one install through the updater and keep Tuckaway's permissions.
+- **Ready for notarized releases**: the next release is signed with a Developer ID and notarized by Apple, so it opens without the "Open Anyway" step. Update to this release first; it lets the next one install through the updater. Permissions granted to 1.9.0 or earlier have to be granted once more after that update; ones granted to this release carry over.
 - **Menu Bar Items lists each app once** (macOS 27): macOS 27 hides whole apps, so an app with several icons now has one row, marked “2 icons”, and moving it moves all of them.
 
 ## v1.9.0 (2026-11-03)

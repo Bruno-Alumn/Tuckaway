@@ -4,6 +4,7 @@
 //
 
 import AppKit
+import CryptoKit
 import Security
 
 // Checks GitHub releases for a newer Tuckaway and installs it in place.
@@ -316,8 +317,9 @@ final class Updater {
     // (1.2 on) or the maintainer's Developer ID (team 22R95V8NA5). Releases are
     // signed with this as their designated requirement (scripts/package-dmg.sh
     // reads it from here), so an installed release accepts an update signed
-    // either way, and macOS keeps its permissions across the switch to
-    // Developer ID. See docs/RUNBOOK.md, Release signing.
+    // either way. Permissions granted under 1.9.0 or earlier still don't carry
+    // over to a Developer ID build (see resetStaleGrantsAfterSigningChange).
+    // See docs/RUNBOOK.md, Release signing.
     static let releaseRequirement = #"identifier "com.brunoalumn.tuckaway" and (certificate root = H"0105a9f1aad750cf7de24f2c5fbe2ed2483780e8" or (anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13] and certificate leaf[subject.OU] = "22R95V8NA5"))"#
 
     // Whether `app` satisfies the running app's designated requirement: same
@@ -350,6 +352,61 @@ final class Updater {
               let updateCode
         else { return false }
         return SecStaticCodeCheckValidity(updateCode, SecCSFlags(rawValue: kSecCSCheckAllArchitectures), requirement) == errSecSuccess
+    }
+
+    // MARK: - Signing changes
+
+    // Called at launch, before anything asks for Accessibility. When this build
+    // is signed with a different certificate than the last one that ran (the
+    // move to Developer ID), clears Tuckaway's own Accessibility and Screen
+    // Recording entries if they no longer work, so macOS asks again instead of
+    // showing a switch that's on but does nothing. tccutil needs no admin rights
+    // to reset the app's own entries. See StaleGrantReset.
+    static func resetStaleGrantsAfterSigningChange() {
+        guard isSupported, let bundleID = Bundle.main.bundleIdentifier else { return }
+        let defaults = UserDefaults.standard
+        let certificate = signingCertificate()
+        let recorded = defaults.string(forKey: UserDefaults.Key.lastSigningCertificate)
+        let developerID = isDeveloperIDSigned()
+        var resetAccessibility = false
+        for (service, isGranted) in [("Accessibility", AXIsProcessTrusted()),
+                                     ("ScreenCapture", CGPreflightScreenCaptureAccess())]
+        where StaleGrantReset.shouldReset(isGranted: isGranted, certificate: certificate,
+                                          recordedCertificate: recorded, isDeveloperID: developerID) {
+            let reset = run("/usr/bin/tccutil", ["reset", service, bundleID])
+            NSLog("Updater: signing certificate changed, reset %@: %@", service, reset ? "yes" : "failed")
+            if service == "Accessibility" && reset { resetAccessibility = true }
+        }
+        if let certificate { defaults.set(certificate, forKey: UserDefaults.Key.lastSigningCertificate) }
+        if resetAccessibility && MenuBarEngineFactory.usesNativeVisibility {
+            Util.requestAccessibilityPermission()
+        }
+    }
+
+    // SHA-256 of the running app's leaf signing certificate, or nil for an
+    // ad-hoc build, which has none.
+    private static func signingCertificate() -> String? {
+        var code: SecCode?
+        var staticCode: SecStaticCode?
+        var information: CFDictionary?
+        guard SecCodeCopySelf([], &code) == errSecSuccess, let code,
+              SecCodeCopyStaticCode(code, [], &staticCode) == errSecSuccess, let staticCode,
+              SecCodeCopySigningInformation(staticCode, SecCSFlags(rawValue: kSecCSSigningInformation), &information) == errSecSuccess,
+              let certificates = (information as? [String: Any])?[kSecCodeInfoCertificates as String] as? [SecCertificate],
+              let leaf = certificates.first
+        else { return nil }
+        let data = SecCertificateCopyData(leaf) as Data
+        return SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    }
+
+    private static func isDeveloperIDSigned() -> Bool {
+        var code: SecCode?
+        var requirement: SecRequirement?
+        guard SecCodeCopySelf([], &code) == errSecSuccess, let code,
+              SecRequirementCreateWithString("anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.13]" as CFString, [], &requirement) == errSecSuccess,
+              let requirement
+        else { return false }
+        return SecCodeCheckValidity(code, [], requirement) == errSecSuccess
     }
 
     @discardableResult
