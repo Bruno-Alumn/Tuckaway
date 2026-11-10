@@ -240,6 +240,9 @@ final class GeneralSettingsModel: ObservableObject {
     @Published private(set) var profileSchedules: [String: ProfileSchedule] = [:]
     @Published private(set) var profileAppTriggers: [String: String] = [:]
     @Published private(set) var profilePlaces: [String: ProfilePlace] = [:]
+    @Published private(set) var activeProfile: String?
+    // Why Tuckaway switched to the active profile; nil if it was picked.
+    @Published private(set) var activeProfileReason: String?
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
     @Published private(set) var clockDropsDate = GeneralSettingsModel.readClockDropsDate()
     // "Check Your Setup": what the check found, once the user has run it.
@@ -308,6 +311,8 @@ final class GeneralSettingsModel: ObservableObject {
         profileSchedules = profiles.schedules
         profileAppTriggers = profiles.appTriggers
         profilePlaces = profiles.places
+        activeProfile = profiles.active
+        activeProfileReason = profiles.active.flatMap(profiles.switchReason(for:)).map(StatusBarController.describe)
         profileShortcutTitles = Preferences.profileShortcuts.mapValues(\.description)
     }
 
@@ -759,7 +764,17 @@ struct GeneralSettingsView: View {
                                 profileMenu(name)
                             }
                         } label: {
-                            Text(verbatim: name)
+                            HStack(spacing: 4) {
+                                Text(verbatim: name)
+                                if model.activeProfile == name {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(.tint)
+                                        .accessibilityHidden(true)
+                                    Text(verbatim: model.activeProfileReason ?? "In use".localized)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
                             Text(verbatim: profileAppsSummary(name))
                         }
                     }
