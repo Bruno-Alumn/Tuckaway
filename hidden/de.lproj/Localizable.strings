@@ -287,3 +287,7 @@
 "Switched while %@ is open" = "Gewechselt, solange %@ geöffnet ist";
 "Switched by its schedule" = "Nach Zeitplan gewechselt";
 "Switched for the connected display" = "Für den angeschlossenen Bildschirm gewechselt";
+"Name" = "Name";
+"Home, Work…" = "Zuhause, Arbeit …";
+"At %@ (within %@)" = "%@ (im Umkreis von %@)";
+"Switched at %@" = "Gewechselt bei %@";

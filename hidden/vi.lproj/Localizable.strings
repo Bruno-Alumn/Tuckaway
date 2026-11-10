@@ -285,3 +285,7 @@
 "Switched while %@ is open" = "Đã chuyển khi %@ đang mở";
 "Switched by its schedule" = "Đã chuyển theo lịch";
 "Switched for the connected display" = "Đã chuyển cho màn hình được kết nối";
+"Name" = "Tên";
+"Home, Work…" = "Nhà, Cơ quan…";
+"At %@ (within %@)" = "Tại %@ (trong phạm vi %@)";
+"Switched at %@" = "Đã chuyển tại %@";

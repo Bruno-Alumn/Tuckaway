@@ -287,3 +287,7 @@
 "Switched while %@ is open" = "Uključeno dok je %@ otvoren";
 "Switched by its schedule" = "Uključeno prema rasporedu";
 "Switched for the connected display" = "Uključeno za spojeni zaslon";
+"Name" = "Naziv";
+"Home, Work…" = "Dom, Posao…";
+"At %@ (within %@)" = "Na mjestu %@ (unutar %@)";
+"Switched at %@" = "Uključeno na mjestu %@";

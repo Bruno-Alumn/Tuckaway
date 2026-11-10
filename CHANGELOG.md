@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Added
-- **Profiles by place** (macOS 27): **Use at This Place…** in a profile's ⋯ menu in Settings saves where your Mac is now, say at work, and switches to that profile while the Mac is within the distance you choose (100 m to 1 km), and back to the profile you were using when it leaves. A profile you pick in between stays. Tuckaway asks for Location access the first time; it reads your location only while a profile has a place, and it never leaves your Mac.
+- **Profiles by place** (macOS 27): **Use at This Place…** in a profile's ⋯ menu in Settings saves where your Mac is now, say at work, and switches to that profile while the Mac is within the distance you choose (100 m to 1 km), and back to the profile you were using when it leaves. Name the place (Home, Work) and the profile's row says so. A profile you pick in between stays. Tuckaway asks for Location access the first time; it reads your location only while a profile has a place, and it never leaves your Mac.
 - **Check Your Setup notices when Location is off**: if a profile has a place but Tuckaway isn't allowed to use your location, the check says so and opens Location Services.
 - **The Profiles menu says why a profile switched** (macOS 27): under the arrow's Profiles menu, a profile Tuckaway switched to shows why — at this place, by its schedule, while an app is open, or for the connected display.
 

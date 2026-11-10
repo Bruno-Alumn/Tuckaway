@@ -287,3 +287,7 @@
 "Switched while %@ is open" = "Activé tant que %@ est ouvert";
 "Switched by its schedule" = "Activé selon son horaire";
 "Switched for the connected display" = "Activé pour l’écran connecté";
+"Name" = "Nom";
+"Home, Work…" = "Maison, Travail…";
+"At %@ (within %@)" = "À %@ (dans un rayon de %@)";
+"Switched at %@" = "Activé à %@";

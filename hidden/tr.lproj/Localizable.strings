@@ -287,3 +287,7 @@
 "Switched while %@ is open" = "%@ açıkken geçildi";
 "Switched by its schedule" = "Zamanlamasına göre geçildi";
 "Switched for the connected display" = "Bağlı ekran için geçildi";
+"Name" = "Ad";
+"Home, Work…" = "Ev, İş…";
+"At %@ (within %@)" = "%@ konumunda (%@ içinde)";
+"Switched at %@" = "%@ konumunda geçildi";

@@ -287,3 +287,7 @@
 "Switched while %@ is open" = "Switched while %@ is open";
 "Switched by its schedule" = "Switched by its schedule";
 "Switched for the connected display" = "Switched for the connected display";
+"Name" = "Name";
+"Home, Work…" = "Home, Work…";
+"At %@ (within %@)" = "At %@ (within %@)";
+"Switched at %@" = "Switched at %@";

@@ -287,3 +287,7 @@
 "Switched while %@ is open" = "تم التبديل ما دام %@ مفتوحًا";
 "Switched by its schedule" = "تم التبديل حسب الجدول";
 "Switched for the connected display" = "تم التبديل للشاشة المتصلة";
+"Name" = "الاسم";
+"Home, Work…" = "المنزل، العمل…";
+"At %@ (within %@)" = "في %@ (ضمن %@)";
+"Switched at %@" = "تم التبديل في %@";
