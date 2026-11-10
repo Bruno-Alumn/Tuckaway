@@ -281,3 +281,7 @@
 "Within %@ of a place" = "距离地点 %@ 以内";
 "Profiles set to a place can't switch without Location access." = "没有位置访问权限，设为地点的描述文件无法切换。";
 "Turn Tuckaway on in Location Services, or stop using the profile at a place." = "在定位服务中打开 Tuckaway，或停止在地点使用该描述文件。";
+"Switched at this place" = "已在此地点切换";
+"Switched while %@ is open" = "已在 %@ 打开时切换";
+"Switched by its schedule" = "已按日程切换";
+"Switched for the connected display" = "已因连接显示器切换";

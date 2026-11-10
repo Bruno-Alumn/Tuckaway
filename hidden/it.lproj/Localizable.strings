@@ -283,3 +283,7 @@
 "Within %@ of a place" = "Entro %@ da un luogo";
 "Profiles set to a place can't switch without Location access." = "I profili legati a un luogo non possono cambiare senza accesso alla posizione.";
 "Turn Tuckaway on in Location Services, or stop using the profile at a place." = "Attiva Tuckaway in Localizzazione, oppure smetti di usare il profilo in un luogo.";
+"Switched at this place" = "Attivato in questo luogo";
+"Switched while %@ is open" = "Attivato mentre %@ è aperta";
+"Switched by its schedule" = "Attivato dalla sua pianificazione";
+"Switched for the connected display" = "Attivato per il monitor collegato";

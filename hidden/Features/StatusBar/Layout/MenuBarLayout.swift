@@ -492,6 +492,24 @@ struct MenuBarProfiles: Equatable {
         }
     }
 
+    enum SwitchReason: Equatable {
+        case place
+        case app(String)
+        case schedule
+        case display
+    }
+
+    // Why the active profile is in use, if Tuckaway switched to it rather than
+    // the user picking it. Nil for any other profile.
+    func switchReason(for name: String) -> SwitchReason? {
+        guard active == name else { return nil }
+        if placeSwitched == name, beforePlace != nil { return .place }
+        if appSwitched == name, beforeApp != nil, let bundle = appTriggers[name] { return .app(bundle) }
+        if scheduled == name, beforeSchedule != nil { return .schedule }
+        if displayProfile == name, beforeDisplay != nil { return .display }
+        return nil
+    }
+
     var activeApps: Set<String>? {
         active.flatMap { profiles[$0] }.map(Set.init)
     }

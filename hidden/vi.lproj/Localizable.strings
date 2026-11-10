@@ -281,3 +281,7 @@
 "Within %@ of a place" = "Trong phạm vi %@ quanh một nơi";
 "Profiles set to a place can't switch without Location access." = "Hồ sơ gắn với một nơi không thể chuyển nếu không có quyền truy cập vị trí.";
 "Turn Tuckaway on in Location Services, or stop using the profile at a place." = "Bật Tuckaway trong Dịch vụ định vị, hoặc ngừng dùng hồ sơ tại một nơi.";
+"Switched at this place" = "Đã chuyển tại nơi này";
+"Switched while %@ is open" = "Đã chuyển khi %@ đang mở";
+"Switched by its schedule" = "Đã chuyển theo lịch";
+"Switched for the connected display" = "Đã chuyển cho màn hình được kết nối";

@@ -283,3 +283,7 @@
 "Within %@ of a place" = "У межах %@ від місця";
 "Profiles set to a place can't switch without Location access." = "Профілі, прив’язані до місця, не можуть перемикатися без доступу до розташування.";
 "Turn Tuckaway on in Location Services, or stop using the profile at a place." = "Увімкніть Tuckaway у Службах локації або припиніть використовувати профіль у місці.";
+"Switched at this place" = "Увімкнено в цьому місці";
+"Switched while %@ is open" = "Увімкнено, поки відкрито %@";
+"Switched by its schedule" = "Увімкнено за розкладом";
+"Switched for the connected display" = "Увімкнено для під’єднаного дисплея";

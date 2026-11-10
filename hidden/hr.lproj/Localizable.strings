@@ -283,3 +283,7 @@
 "Within %@ of a place" = "Unutar %@ od mjesta";
 "Profiles set to a place can't switch without Location access." = "Profili vezani uz mjesto ne mogu se mijenjati bez pristupa lokaciji.";
 "Turn Tuckaway on in Location Services, or stop using the profile at a place." = "Uključite Tuckaway u Lokacijskim uslugama ili prestanite koristiti profil na mjestu.";
+"Switched at this place" = "Uključeno na ovom mjestu";
+"Switched while %@ is open" = "Uključeno dok je %@ otvoren";
+"Switched by its schedule" = "Uključeno prema rasporedu";
+"Switched for the connected display" = "Uključeno za spojeni zaslon";
