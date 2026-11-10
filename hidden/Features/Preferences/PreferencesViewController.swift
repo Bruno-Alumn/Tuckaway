@@ -239,6 +239,7 @@ final class GeneralSettingsModel: ObservableObject {
     @Published private(set) var profileApps: [String: [String]] = [:]
     @Published private(set) var profileSchedules: [String: ProfileSchedule] = [:]
     @Published private(set) var profileAppTriggers: [String: String] = [:]
+    @Published private(set) var profilePlaces: [String: ProfilePlace] = [:]
     @Published private(set) var isAccessibilityPermissionMissing = Util.isAccessibilityPermissionMissing
     @Published private(set) var clockDropsDate = GeneralSettingsModel.readClockDropsDate()
     // "Check Your Setup": what the check found, once the user has run it.
@@ -303,6 +304,7 @@ final class GeneralSettingsModel: ObservableObject {
         profileApps = profiles.profiles
         profileSchedules = profiles.schedules
         profileAppTriggers = profiles.appTriggers
+        profilePlaces = profiles.places
         profileShortcutTitles = Preferences.profileShortcuts.mapValues(\.description)
     }
 
@@ -373,6 +375,71 @@ final class GeneralSettingsModel: ObservableObject {
 
     func clearTriggerApp(_ name: String) {
         statusBarController?.setAppTrigger(nil, forProfile: name)
+    }
+
+    static let placeRadii: [Double] = [100, 250, 500, 1000]
+
+    // Saves where the Mac is now as the profile's place, with a distance that
+    // still counts as being there.
+    func chooseProfilePlace(_ name: String) {
+        guard let statusBarController else { return }
+        statusBarController.currentLocation { [weak self] location in
+            guard let self else { return }
+            guard let location else { return self.explainMissingLocation(denied: statusBarController.locationAccessDenied) }
+            let alert = NSAlert()
+            alert.messageText = String(format: "Use “%@” at this place".localized, name)
+            alert.informativeText = "Tuckaway switches to this profile while your Mac is near where it is now, and back to the one you were using when it leaves. A profile you pick in between stays.".localized
+            let radius = NSPopUpButton()
+            for meters in Self.placeRadii {
+                radius.addItem(withTitle: Self.describe(radius: meters))
+            }
+            let current = self.profilePlaces[name]?.radius ?? 250
+            radius.selectItem(at: Self.placeRadii.firstIndex(of: current) ?? 1)
+            let row = NSStackView(views: [NSTextField(labelWithString: "Within".localized), radius])
+            row.spacing = 6
+            row.frame = NSRect(x: 0, y: 0, width: 280, height: 26)
+            alert.accessoryView = row
+            alert.addButton(withTitle: "Save".localized)
+            alert.addButton(withTitle: "Cancel".localized)
+            NSApp.activate(ignoringOtherApps: true)
+            guard alert.runModal() == .alertFirstButtonReturn else { return }
+            let place = ProfilePlace(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude,
+                                     radius: Self.placeRadii[max(0, radius.indexOfSelectedItem)])
+            statusBarController.setPlace(place, forProfile: name)
+        }
+    }
+
+    func clearProfilePlace(_ name: String) {
+        statusBarController?.setPlace(nil, forProfile: name)
+    }
+
+    private func explainMissingLocation(denied: Bool) {
+        let alert = NSAlert()
+        if denied {
+            alert.messageText = "Tuckaway can't use your location".localized
+            alert.informativeText = "Allow Tuckaway in System Settings › Privacy & Security › Location Services, then try again.".localized
+            alert.addButton(withTitle: "Open Settings…".localized)
+            alert.addButton(withTitle: "Cancel".localized)
+            NSApp.activate(ignoringOtherApps: true)
+            if alert.runModal() == .alertFirstButtonReturn,
+               let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices") {
+                NSWorkspace.shared.open(url)
+            }
+        } else {
+            alert.messageText = "Your Mac's location couldn't be found".localized
+            alert.informativeText = "Check that Location Services is on and Wi-Fi is turned on, then try again.".localized
+            alert.addButton(withTitle: "OK".localized)
+            NSApp.activate(ignoringOtherApps: true)
+            alert.runModal()
+        }
+    }
+
+    // "250 m", or "820 ft" where that's the custom.
+    static func describe(radius meters: Double) -> String {
+        let formatter = MeasurementFormatter()
+        formatter.unitOptions = .naturalScale
+        formatter.numberFormatter.maximumFractionDigits = 1
+        return formatter.string(from: Measurement(value: meters, unit: UnitLength.meters))
     }
 
     private static func timePicker(minute: Int) -> NSDatePicker {
@@ -938,6 +1005,12 @@ struct GeneralSettingsView: View {
                     model.clearTriggerApp(name)
                 }
             }
+            Button(model.profilePlaces[name] == nil ? "Use at This Place…".localized : "Move Place Here…".localized) {
+                model.chooseProfilePlace(name)
+            }
+            if model.profilePlaces[name] != nil {
+                Button("Stop Using at a Place".localized) { model.clearProfilePlace(name) }
+            }
             Menu("Remove App".localized) {
                 ForEach(model.appsByName(inProfile: name), id: \.self) { bundle in
                     Button(GeneralSettingsModel.appName(bundle)) { model.removeApp(bundle, fromProfile: name) }
@@ -973,6 +1046,9 @@ struct GeneralSettingsView: View {
         }
         if let schedule = model.profileSchedules[name] {
             parts.append(GeneralSettingsModel.describe(schedule))
+        }
+        if let place = model.profilePlaces[name] {
+            parts.append(String(format: "Within %@ of a place".localized, GeneralSettingsModel.describe(radius: place.radius)))
         }
         return (parts + [apps]).joined(separator: " · ")
     }

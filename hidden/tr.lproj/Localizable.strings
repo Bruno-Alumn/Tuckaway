@@ -270,3 +270,14 @@
 "Tuckaway can now arrange your menu bar." = "Tuckaway artık menü çubuğunuzu düzenleyebilir.";
 "Choose the “com.apple.MenuBar” folder to let Tuckaway arrange your menu bar." = "Tuckaway’in menü çubuğunuzu düzenleyebilmesi için “com.apple.MenuBar” klasörünü seçin.";
 "Allow" = "İzin Ver";
+"Use “%@” at this place" = "“%@” profilini bu konumda kullan";
+"Tuckaway switches to this profile while your Mac is near where it is now, and back to the one you were using when it leaves. A profile you pick in between stays." = "Tuckaway, Mac’iniz şu an bulunduğu yere yakınken bu profile geçer, oradan ayrıldığında kullandığınız profile döner. Arada seçtiğiniz profil kalır.";
+"Within" = "Uzaklık";
+"Tuckaway can't use your location" = "Tuckaway konumunuzu kullanamıyor";
+"Allow Tuckaway in System Settings › Privacy & Security › Location Services, then try again." = "Sistem Ayarları › Gizlilik ve Güvenlik › Konum Servisleri’nde Tuckaway’e izin verin, sonra yeniden deneyin.";
+"Your Mac's location couldn't be found" = "Mac’inizin konumu bulunamadı";
+"Check that Location Services is on and Wi-Fi is turned on, then try again." = "Konum Servisleri’nin ve Wi-Fi’ın açık olduğunu kontrol edin, sonra yeniden deneyin.";
+"Use at This Place…" = "Bu Konumda Kullan…";
+"Move Place Here…" = "Konumu Buraya Taşı…";
+"Stop Using at a Place" = "Bir Konumda Kullanmayı Durdur";
+"Within %@ of a place" = "Bir konuma %@ mesafede";

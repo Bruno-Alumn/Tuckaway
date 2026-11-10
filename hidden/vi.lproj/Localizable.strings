@@ -268,3 +268,14 @@
 "Tuckaway can now arrange your menu bar." = "Giờ Tuckaway có thể sắp xếp thanh menu của bạn.";
 "Choose the “com.apple.MenuBar” folder to let Tuckaway arrange your menu bar." = "Chọn thư mục “com.apple.MenuBar” để cho phép Tuckaway sắp xếp thanh menu của bạn.";
 "Allow" = "Cho phép";
+"Use “%@” at this place" = "Dùng “%@” tại nơi này";
+"Tuckaway switches to this profile while your Mac is near where it is now, and back to the one you were using when it leaves. A profile you pick in between stays." = "Tuckaway chuyển sang hồ sơ này khi máy Mac ở gần vị trí hiện tại, và quay lại hồ sơ bạn đang dùng khi máy rời đi. Hồ sơ bạn chọn trong lúc đó sẽ được giữ.";
+"Within" = "Trong phạm vi";
+"Tuckaway can't use your location" = "Tuckaway không thể dùng vị trí của bạn";
+"Allow Tuckaway in System Settings › Privacy & Security › Location Services, then try again." = "Cho phép Tuckaway trong Cài đặt hệ thống › Quyền riêng tư & Bảo mật › Dịch vụ định vị, rồi thử lại.";
+"Your Mac's location couldn't be found" = "Không tìm thấy vị trí của máy Mac";
+"Check that Location Services is on and Wi-Fi is turned on, then try again." = "Hãy kiểm tra Dịch vụ định vị và Wi-Fi đã bật, rồi thử lại.";
+"Use at This Place…" = "Dùng tại nơi này…";
+"Move Place Here…" = "Dời nơi về đây…";
+"Stop Using at a Place" = "Ngừng dùng tại một nơi";
+"Within %@ of a place" = "Trong phạm vi %@ quanh một nơi";

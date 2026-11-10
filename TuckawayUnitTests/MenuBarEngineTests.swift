@@ -1533,6 +1533,62 @@ final class MenuBarProfilesTests: XCTestCase {
         XCTAssertEqual(UserDefaultsMenuBarProfilesStore(defaults: defaults).profiles, profiles)
     }
 
+    // Office in Madrid; 250 m north is about 0.00225 degrees of latitude.
+    private let office = ProfilePlace(latitude: 40.4168, longitude: -3.7038, radius: 250)
+
+    func testAPlaceHoldsPointsWithinItsRadius() {
+        XCTAssertTrue(office.contains(latitude: 40.4168, longitude: -3.7038))
+        XCTAssertTrue(office.contains(latitude: 40.4168 + 0.0020, longitude: -3.7038))
+        XCTAssertFalse(office.contains(latitude: 40.4168 + 0.0025, longitude: -3.7038))
+    }
+
+    func testArrivingAtAPlaceSwitchesAndLeavingSwitchesBack() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"], "Home": ["com.b"]], active: "Home",
+                                       places: ["Work": office])
+        profiles.locationChanged(latitude: 41.0, longitude: 2.0)
+        XCTAssertEqual(profiles.active, "Home")
+        profiles.locationChanged(latitude: 40.4169, longitude: -3.7039)
+        XCTAssertEqual(profiles.active, "Work")
+        XCTAssertEqual(profiles.placeSwitched, "Work")
+        // Moving around inside the place changes nothing.
+        profiles.locationChanged(latitude: 40.4170, longitude: -3.7037)
+        XCTAssertEqual(profiles.active, "Work")
+        profiles.locationChanged(latitude: 41.0, longitude: 2.0)
+        XCTAssertEqual(profiles.active, "Home")
+        XCTAssertNil(profiles.placeSwitched)
+    }
+
+    func testAChoiceMadeAtThePlaceStays() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"], "Home": ["com.b"]], places: ["Work": office])
+        profiles.locationChanged(latitude: 40.4168, longitude: -3.7038)
+        profiles.active = "Home"
+        profiles.locationChanged(latitude: 41.0, longitude: 2.0)
+        XCTAssertEqual(profiles.active, "Home")
+    }
+
+    func testRenamingAndDeletingCarryThePlace() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"]], places: ["Work": office])
+        profiles.locationChanged(latitude: 40.4168, longitude: -3.7038)
+        XCTAssertTrue(profiles.rename("Work", to: "Office"))
+        XCTAssertEqual(profiles.places, ["Office": office])
+        XCTAssertEqual(profiles.placeSwitched, "Office")
+        profiles.delete("Office")
+        XCTAssertTrue(profiles.places.isEmpty)
+        XCTAssertNil(profiles.placeSwitched)
+        XCTAssertNil(profiles.active)
+    }
+
+    func testStoreRoundTripsPlaces() {
+        let suite = TestDefaults("MenuBarProfilesTests")
+        defer { suite.remove() }
+        let defaults = suite.defaults
+        let store = UserDefaultsMenuBarProfilesStore(defaults: defaults)
+        let profiles = MenuBarProfiles(profiles: ["Work": ["com.a"]], active: "Work",
+                                       places: ["Work": office], placeSwitched: "Work", beforePlace: .from(nil))
+        store.profiles = profiles
+        XCTAssertEqual(UserDefaultsMenuBarProfilesStore(defaults: defaults).profiles, profiles)
+    }
+
     func testAProfileDecidesWhatShowsButKeepsAlwaysHidden() {
         let layout = MenuBarLayout(sections: ["com.a": .visible, "com.b": .hidden, "com.c": .alwaysHidden, "com.new": .hidden])
         // com.c is in the profile, but moving it to Always Hidden wins.

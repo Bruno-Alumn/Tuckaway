@@ -347,6 +347,25 @@ struct ProfileSchedule: Equatable {
     }
 }
 
+// A place a profile is used at: a point and how far from it still counts, in
+// meters.
+struct ProfilePlace: Equatable {
+    var latitude: Double
+    var longitude: Double
+    var radius: Double
+
+    // Great-circle distance; plenty accurate at these scales.
+    func contains(latitude: Double, longitude: Double) -> Bool {
+        let toRadians = Double.pi / 180
+        let dLat = (latitude - self.latitude) * toRadians
+        let dLon = (longitude - self.longitude) * toRadians
+        let a = sin(dLat / 2) * sin(dLat / 2)
+            + cos(self.latitude * toRadians) * cos(latitude * toRadians) * sin(dLon / 2) * sin(dLon / 2)
+        let distance = 2 * 6_371_000 * atan2(sqrt(a), sqrt(1 - a))
+        return distance <= radius
+    }
+}
+
 struct MenuBarProfiles: Equatable {
     var profiles: [String: [String]] = [:]
     var active: String?
@@ -365,6 +384,11 @@ struct MenuBarProfiles: Equatable {
     // The profile switched to for an open app, and what to go back to.
     var appSwitched: String?
     var beforeApp: Switched?
+    // A profile used while the Mac is at a place.
+    var places: [String: ProfilePlace] = [:]
+    // The profile switched to for the current place, and what to go back to.
+    var placeSwitched: String?
+    var beforePlace: Switched?
 
     enum Switched: Equatable {
         case from(String?)
@@ -408,6 +432,28 @@ struct MenuBarProfiles: Equatable {
     mutating func appsChanged(running: Set<String>) {
         Self.follow(appTriggeredProfile(running: running), current: &appSwitched, before: &beforeApp,
                     active: &active, profiles: profiles)
+    }
+
+    // The first profile, in menu order, whose place holds this location.
+    func placeProfile(latitude: Double, longitude: Double) -> String? {
+        names.first { places[$0]?.contains(latitude: latitude, longitude: longitude) == true }
+    }
+
+    // Called with each new location. Same rules as the schedule. An unknown
+    // location (no permission, no fix) changes nothing, so the caller simply
+    // doesn't call.
+    mutating func locationChanged(latitude: Double, longitude: Double) {
+        Self.follow(placeProfile(latitude: latitude, longitude: longitude), current: &placeSwitched,
+                    before: &beforePlace, active: &active, profiles: profiles)
+    }
+
+    mutating func setPlace(_ place: ProfilePlace?, for name: String) {
+        guard profiles[name] != nil else { return }
+        places[name] = place
+        if placeSwitched == name {
+            placeSwitched = nil
+            beforePlace = nil
+        }
     }
 
     mutating func setAppTrigger(_ bundle: String?, for name: String) {
@@ -479,6 +525,9 @@ struct MenuBarProfiles: Equatable {
         appTriggers[newName] = appTriggers.removeValue(forKey: name)
         if appSwitched == name { appSwitched = newName }
         if beforeApp == .from(name) { beforeApp = .from(newName) }
+        places[newName] = places.removeValue(forKey: name)
+        if placeSwitched == name { placeSwitched = newName }
+        if beforePlace == .from(name) { beforePlace = .from(newName) }
         return true
     }
 
@@ -493,6 +542,8 @@ struct MenuBarProfiles: Equatable {
         if beforeSchedule == .from(name) { beforeSchedule = .from(nil) }
         setAppTrigger(nil, for: name)
         if beforeApp == .from(name) { beforeApp = .from(nil) }
+        setPlace(nil, for: name)
+        if beforePlace == .from(name) { beforePlace = .from(nil) }
         profiles[name] = nil
         if active == name { active = nil }
     }
@@ -548,6 +599,10 @@ final class UserDefaultsMenuBarProfilesStore {
     private static let appTriggersKey = "menuBarProfileApps"
     private static let appSwitchedKey = "appMenuBarProfile"
     private static let beforeAppKey = "menuBarProfileBeforeApp"
+    // [name: [latitude, longitude, radius]].
+    private static let placesKey = "menuBarProfilePlaces"
+    private static let placeSwitchedKey = "placeMenuBarProfile"
+    private static let beforePlaceKey = "menuBarProfileBeforePlace"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -557,6 +612,8 @@ final class UserDefaultsMenuBarProfilesStore {
         get {
             let schedules = (defaults.dictionary(forKey: Self.schedulesKey) as? [String: [Int]] ?? [:])
                 .compactMapValues { $0.count == 2 ? ProfileSchedule(start: $0[0], end: $0[1]) : nil }
+            let places = (defaults.dictionary(forKey: Self.placesKey) as? [String: [Double]] ?? [:])
+                .compactMapValues { $0.count == 3 ? ProfilePlace(latitude: $0[0], longitude: $0[1], radius: $0[2]) : nil }
             return MenuBarProfiles(profiles: defaults.dictionary(forKey: Self.profilesKey) as? [String: [String]] ?? [:],
                                    active: defaults.string(forKey: Self.activeKey),
                                    displayProfile: defaults.string(forKey: Self.displayKey),
@@ -566,7 +623,10 @@ final class UserDefaultsMenuBarProfilesStore {
                                    beforeSchedule: defaults.string(forKey: Self.beforeScheduleKey).map { .from($0.isEmpty ? nil : $0) },
                                    appTriggers: defaults.dictionary(forKey: Self.appTriggersKey) as? [String: String] ?? [:],
                                    appSwitched: defaults.string(forKey: Self.appSwitchedKey),
-                                   beforeApp: defaults.string(forKey: Self.beforeAppKey).map { .from($0.isEmpty ? nil : $0) })
+                                   beforeApp: defaults.string(forKey: Self.beforeAppKey).map { .from($0.isEmpty ? nil : $0) },
+                                   places: places,
+                                   placeSwitched: defaults.string(forKey: Self.placeSwitchedKey),
+                                   beforePlace: defaults.string(forKey: Self.beforePlaceKey).map { .from($0.isEmpty ? nil : $0) })
         }
         set {
             defaults.set(newValue.profiles, forKey: Self.profilesKey)
@@ -590,6 +650,13 @@ final class UserDefaultsMenuBarProfilesStore {
                 defaults.set(previous ?? "", forKey: Self.beforeAppKey)
             } else {
                 defaults.removeObject(forKey: Self.beforeAppKey)
+            }
+            defaults.set(newValue.places.mapValues { [$0.latitude, $0.longitude, $0.radius] }, forKey: Self.placesKey)
+            defaults.set(newValue.placeSwitched, forKey: Self.placeSwitchedKey)
+            if case .from(let previous)? = newValue.beforePlace {
+                defaults.set(previous ?? "", forKey: Self.beforePlaceKey)
+            } else {
+                defaults.removeObject(forKey: Self.beforePlaceKey)
             }
         }
     }

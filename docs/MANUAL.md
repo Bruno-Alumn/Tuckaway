@@ -97,6 +97,15 @@ lists the profile's apps, and its times if it has a schedule, under its name.
 that profile, and when it quits, goes back to the one you had. It follows the
 same rules as a schedule.
 
+**Use at This Place…** saves where your Mac is now (say, at work) and asks how
+far from it still counts: 100 m, 250 m, 500 m or 1 km. While the Mac is that
+close, Tuckaway uses the profile, and when it leaves, goes back to the one you
+had, by the same rules as a schedule. The first time, macOS asks to let
+Tuckaway use your location; it's only checked while some profile has a place,
+to the nearest hundred meters, and never leaves your Mac. **Move Place Here…**
+replaces the saved place with where the Mac is now, and **Stop Using at a
+Place** removes it.
+
 A scheduled profile switches on when its time starts (or when the Mac wakes
 inside it) and back to the profile you were using when it ends. Picking another
 profile in between stays until the next time starts. A window that ends before
