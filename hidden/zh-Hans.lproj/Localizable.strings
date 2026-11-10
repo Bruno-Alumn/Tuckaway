@@ -279,3 +279,5 @@
 "Move Place Here…" = "将地点移到这里…";
 "Stop Using at a Place" = "停止在地点使用";
 "Within %@ of a place" = "距离地点 %@ 以内";
+"Profiles set to a place can't switch without Location access." = "没有位置访问权限，设为地点的描述文件无法切换。";
+"Turn Tuckaway on in Location Services, or stop using the profile at a place." = "在定位服务中打开 Tuckaway，或停止在地点使用该描述文件。";

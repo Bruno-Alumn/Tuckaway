@@ -24,6 +24,9 @@ struct SetupCheck {
         case nothingToHide
         // The arrow was left off screen (macOS 13–26); repairing it puts it back.
         case arrowOffScreen
+        // A profile has a place, but Location access is denied, so it never
+        // switches.
+        case missingLocation
     }
 
     struct Inputs {
@@ -36,6 +39,7 @@ struct SetupCheck {
         // Nil when the layout can't be read yet, which is not an issue by itself.
         let layoutIsReadable: Bool?
         let isArrowOnScreen: Bool
+        var placesNeedLocation = false
     }
 
     // The issues to show, most likely to matter first. A build that can't hide,
@@ -54,6 +58,9 @@ struct SetupCheck {
         }
         if inputs.layoutIsReadable == true && inputs.hiddenIconCount == 0 {
             issues.append(.nothingToHide)
+        }
+        if inputs.placesNeedLocation {
+            issues.append(.missingLocation)
         }
         return issues
     }
