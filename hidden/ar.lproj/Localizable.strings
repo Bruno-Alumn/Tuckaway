@@ -281,3 +281,5 @@
 "Move Place Here…" = "نقل المكان إلى هنا…";
 "Stop Using at a Place" = "إيقاف الاستخدام في مكان";
 "Within %@ of a place" = "ضمن %@ من مكان";
+"Profiles set to a place can't switch without Location access." = "لا يمكن للملفات الشخصية المرتبطة بمكان أن تتبدل دون الوصول إلى الموقع.";
+"Turn Tuckaway on in Location Services, or stop using the profile at a place." = "شغّل Tuckaway في خدمات الموقع، أو أوقف استخدام الملف الشخصي في مكان.";

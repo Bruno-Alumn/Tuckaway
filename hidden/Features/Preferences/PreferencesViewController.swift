@@ -272,7 +272,8 @@ final class GeneralSettingsModel: ObservableObject {
             isScreenRecordingGranted: CGPreflightScreenCaptureAccess(),
             hiddenIconCount: controller?.hiddenIconCountForSetupCheck ?? 0,
             layoutIsReadable: controller?.layoutIsReadableForSetupCheck,
-            isArrowOnScreen: controller?.isArrowOnScreenForSetupCheck ?? true
+            isArrowOnScreen: controller?.isArrowOnScreenForSetupCheck ?? true,
+            placesNeedLocation: !profilePlaces.isEmpty && controller?.locationAccessDenied == true
         )
         setupIssues = SetupCheck.issues(inputs)
     }
@@ -290,6 +291,8 @@ final class GeneralSettingsModel: ObservableObject {
             PreferencesWindowController.shared.show(tab: .items)
         case .arrowOffScreen:
             statusBarController?.repairArrowPosition()
+        case .missingLocation:
+            Self.openLocationSettings()
         }
         runSetupCheck()
     }
@@ -421,9 +424,8 @@ final class GeneralSettingsModel: ObservableObject {
             alert.addButton(withTitle: "Open Settings…".localized)
             alert.addButton(withTitle: "Cancel".localized)
             NSApp.activate(ignoringOtherApps: true)
-            if alert.runModal() == .alertFirstButtonReturn,
-               let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices") {
-                NSWorkspace.shared.open(url)
+            if alert.runModal() == .alertFirstButtonReturn {
+                Self.openLocationSettings()
             }
         } else {
             alert.messageText = "Your Mac's location couldn't be found".localized
@@ -431,6 +433,12 @@ final class GeneralSettingsModel: ObservableObject {
             alert.addButton(withTitle: "OK".localized)
             NSApp.activate(ignoringOtherApps: true)
             alert.runModal()
+        }
+    }
+
+    static func openLocationSettings() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices") {
+            NSWorkspace.shared.open(url)
         }
     }
 
@@ -935,6 +943,8 @@ struct GeneralSettingsView: View {
             return "Every icon is on the visible side, so collapsing hides nothing.".localized
         case .arrowOffScreen:
             return "The arrow is off screen, so there is no way to open Tuckaway's menu.".localized
+        case .missingLocation:
+            return "Profiles set to a place can't switch without Location access.".localized
         }
     }
 
@@ -950,6 +960,8 @@ struct GeneralSettingsView: View {
             return "Hold ⌘ and drag an icon to the left of the arrow.".localized
         case .arrowOffScreen:
             return "Repair puts the arrow back near the right side of the bar.".localized
+        case .missingLocation:
+            return "Turn Tuckaway on in Location Services, or stop using the profile at a place.".localized
         }
     }
 
@@ -962,6 +974,7 @@ struct GeneralSettingsView: View {
         case .missingScreenRecording: return "Open Settings…".localized
         case .nothingToHide: return "Menu Bar Items…".localized
         case .arrowOffScreen: return "Repair".localized
+        case .missingLocation: return "Open Settings…".localized
         }
     }
 

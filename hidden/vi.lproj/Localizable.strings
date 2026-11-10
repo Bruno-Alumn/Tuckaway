@@ -279,3 +279,5 @@
 "Move Place Here…" = "Dời nơi về đây…";
 "Stop Using at a Place" = "Ngừng dùng tại một nơi";
 "Within %@ of a place" = "Trong phạm vi %@ quanh một nơi";
+"Profiles set to a place can't switch without Location access." = "Hồ sơ gắn với một nơi không thể chuyển nếu không có quyền truy cập vị trí.";
+"Turn Tuckaway on in Location Services, or stop using the profile at a place." = "Bật Tuckaway trong Dịch vụ định vị, hoặc ngừng dùng hồ sơ tại một nơi.";

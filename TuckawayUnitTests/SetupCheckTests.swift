@@ -24,6 +24,16 @@ final class SetupCheckTests: XCTestCase {
                           isArrowOnScreen: arrowOnScreen)
     }
 
+    func testAPlaceWithoutLocationAccessIsReported() {
+        var withPlaces = inputs()
+        withPlaces.placesNeedLocation = true
+        XCTAssertEqual(SetupCheck.issues(withPlaces), [.missingLocation])
+        // Without Accessibility nothing hides at all; that comes first, alone.
+        var noAccess = inputs(accessibility: false)
+        noAccess.placesNeedLocation = true
+        XCTAssertEqual(SetupCheck.issues(noAccess), [.missingAccessibility])
+    }
+
     func testAWorkingSetupReportsNothing() {
         XCTAssertEqual(SetupCheck.issues(inputs()), [])
         XCTAssertEqual(SetupCheck.issues(inputs(runsNativeHiding: false)), [])

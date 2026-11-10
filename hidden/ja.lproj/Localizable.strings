@@ -279,3 +279,5 @@
 "Move Place Here…" = "場所をここに移動…";
 "Stop Using at a Place" = "場所での使用を停止";
 "Within %@ of a place" = "場所から%@以内";
+"Profiles set to a place can't switch without Location access." = "場所に設定したプロファイルは、位置情報へのアクセスがないと切り替わりません。";
+"Turn Tuckaway on in Location Services, or stop using the profile at a place." = "位置情報サービスでTuckawayをオンにするか、場所でのプロファイルの使用を停止してください。";

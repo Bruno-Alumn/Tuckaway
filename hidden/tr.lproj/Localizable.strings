@@ -281,3 +281,5 @@
 "Move Place Here…" = "Konumu Buraya Taşı…";
 "Stop Using at a Place" = "Bir Konumda Kullanmayı Durdur";
 "Within %@ of a place" = "Bir konuma %@ mesafede";
+"Profiles set to a place can't switch without Location access." = "Bir konuma bağlı profiller konum erişimi olmadan geçiş yapamaz.";
+"Turn Tuckaway on in Location Services, or stop using the profile at a place." = "Konum Servisleri’nde Tuckaway’i açın ya da profili bir konumda kullanmayı durdurun.";
