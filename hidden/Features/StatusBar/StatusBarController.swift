@@ -2441,7 +2441,7 @@ final class ProfileLocationMonitor: NSObject, CLLocationManagerDelegate {
     var onLocation: ((CLLocation) -> Void)?
     private let manager = CLLocationManager()
     private var isMonitoring = false
-    private var waiting: [(CLLocation?) -> Void] = []
+    private var waiting: [UUID: (CLLocation?) -> Void] = [:]
 
     override init() {
         super.init()
@@ -2466,17 +2466,30 @@ final class ProfileLocationMonitor: NSObject, CLLocationManagerDelegate {
     }
 
     func currentLocation(_ completion: @escaping (CLLocation?) -> Void) {
-        waiting.append(completion)
+        // While updates already run, a stationary Mac may not report again
+        // (the distance filter), so a fix from the last two minutes answers.
+        if isAuthorized, let recent = manager.location, recent.timestamp.timeIntervalSinceNow > -120 {
+            return completion(recent)
+        }
+        let id = UUID()
+        waiting[id] = completion
         switch manager.authorizationStatus {
         case .notDetermined: manager.requestAlwaysAuthorization()
         case .denied, .restricted: finish(nil)
         default: manager.requestLocation()
         }
+        // Never leave the caller waiting: no fix in 30 seconds counts as none.
+        // A permission prompt still open then keeps its own answer for later.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 30) { [weak self] in
+            guard let self, self.manager.authorizationStatus != .notDetermined,
+                  let late = self.waiting.removeValue(forKey: id) else { return }
+            late(nil)
+        }
     }
 
     private func finish(_ location: CLLocation?) {
-        let callbacks = waiting
-        waiting = []
+        let callbacks = waiting.values
+        waiting = [:]
         callbacks.forEach { $0(location) }
     }
 
