@@ -398,16 +398,27 @@ final class GeneralSettingsModel: ObservableObject {
             }
             let current = self.profilePlaces[name]?.radius ?? 250
             radius.selectItem(at: Self.placeRadii.firstIndex(of: current) ?? 1)
+            let label = NSTextField(string: self.profilePlaces[name]?.label ?? "")
+            label.placeholderString = "Home, Work…".localized
+            label.widthAnchor.constraint(equalToConstant: 180).isActive = true
+            let nameRow = NSStackView(views: [NSTextField(labelWithString: "Name".localized), label])
+            nameRow.spacing = 6
             let row = NSStackView(views: [NSTextField(labelWithString: "Within".localized), radius])
             row.spacing = 6
-            row.frame = NSRect(x: 0, y: 0, width: 280, height: 26)
-            alert.accessoryView = row
+            let stack = NSStackView(views: [nameRow, row])
+            stack.orientation = .vertical
+            stack.alignment = .leading
+            stack.frame = NSRect(x: 0, y: 0, width: 280, height: 60)
+            alert.accessoryView = stack
+            alert.window.initialFirstResponder = label
             alert.addButton(withTitle: "Save".localized)
             alert.addButton(withTitle: "Cancel".localized)
             NSApp.activate(ignoringOtherApps: true)
             guard alert.runModal() == .alertFirstButtonReturn else { return }
-            let place = ProfilePlace(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude,
+            var place = ProfilePlace(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude,
                                      radius: Self.placeRadii[max(0, radius.indexOfSelectedItem)])
+            let typed = label.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            place.label = typed.isEmpty ? nil : typed
             statusBarController.setPlace(place, forProfile: name)
         }
     }
@@ -1061,7 +1072,9 @@ struct GeneralSettingsView: View {
             parts.append(GeneralSettingsModel.describe(schedule))
         }
         if let place = model.profilePlaces[name] {
-            parts.append(String(format: "Within %@ of a place".localized, GeneralSettingsModel.describe(radius: place.radius)))
+            let radius = GeneralSettingsModel.describe(radius: place.radius)
+            parts.append(place.label.map { String(format: "At %@ (within %@)".localized, $0, radius) }
+                         ?? String(format: "Within %@ of a place".localized, radius))
         }
         return (parts + [apps]).joined(separator: " · ")
     }

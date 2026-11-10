@@ -287,3 +287,7 @@
 "Switched while %@ is open" = "Увімкнено, поки відкрито %@";
 "Switched by its schedule" = "Увімкнено за розкладом";
 "Switched for the connected display" = "Увімкнено для під’єднаного дисплея";
+"Name" = "Назва";
+"Home, Work…" = "Дім, Робота…";
+"At %@ (within %@)" = "У місці %@ (у межах %@)";
+"Switched at %@" = "Увімкнено в місці %@";

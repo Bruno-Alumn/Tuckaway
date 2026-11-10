@@ -22,7 +22,7 @@ enum SettingsBackup {
         "notchOverflowEnabled", "useTransparentExpandIconEnabled", "expandIconStyle",
         "automaticallyChecksForUpdates", "isAutoStart", "keptVisibleMenuBarApps",
         "showActiveAppIcon", "revealIconsOnActivity", "revealUpdatedApps", "collapseWhenLocked", "showHiddenIconCount", "menuBarSpacerCount", "menuBarSpacerWidth", "menuBarProfiles", "activeMenuBarProfile",
-        "displayMenuBarProfile", "profileShortcuts", "menuBarProfileSchedules", "menuBarProfileApps", "menuBarProfilePlaces",
+        "displayMenuBarProfile", "profileShortcuts", "menuBarProfileSchedules", "menuBarProfileApps", "menuBarProfilePlaces", "menuBarProfilePlaceLabels",
     ]
 
     enum ImportError: Error, Equatable {

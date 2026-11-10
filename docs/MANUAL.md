@@ -98,7 +98,8 @@ that profile, and when it quits, goes back to the one you had. It follows the
 same rules as a schedule.
 
 **Use at This Place…** saves where your Mac is now (say, at work) and asks how
-far from it still counts: 100 m, 250 m, 500 m or 1 km. While the Mac is that
+far from it still counts: 100 m, 250 m, 500 m or 1 km. You can name it (Home,
+Work) so the profile's row and the Profiles menu say which place. While the Mac is that
 close, Tuckaway uses the profile, and when it leaves, goes back to the one you
 had, by the same rules as a schedule. The first time, macOS asks to let
 Tuckaway use your location; it's only checked while some profile has a place,

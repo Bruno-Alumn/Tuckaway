@@ -1859,8 +1859,8 @@ extension StatusBarController {
 extension StatusBarController {
     static func describe(_ reason: MenuBarProfiles.SwitchReason) -> String {
         switch reason {
-        case .place:
-            return "Switched at this place".localized
+        case .place(let label):
+            return label.map { String(format: "Switched at %@".localized, $0) } ?? "Switched at this place".localized
         case .app(let bundle):
             let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle)
             let name = url.map { FileManager.default.displayName(atPath: $0.path).replacingOccurrences(of: ".app", with: "") } ?? bundle

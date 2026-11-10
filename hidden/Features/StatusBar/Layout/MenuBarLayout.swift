@@ -353,6 +353,8 @@ struct ProfilePlace: Equatable {
     var latitude: Double
     var longitude: Double
     var radius: Double
+    // What the user calls it ("Home", "Work"); nil when not named.
+    var label: String? = nil
 
     // Great-circle distance; plenty accurate at these scales. `margin` widens
     // the circle, so a fix that wobbles near the edge doesn't count as leaving.
@@ -501,7 +503,7 @@ struct MenuBarProfiles: Equatable {
     }
 
     enum SwitchReason: Equatable {
-        case place
+        case place(String?)
         case app(String)
         case schedule
         case display
@@ -511,7 +513,7 @@ struct MenuBarProfiles: Equatable {
     // the user picking it. Nil for any other profile.
     func switchReason(for name: String) -> SwitchReason? {
         guard active == name else { return nil }
-        if placeSwitched == name, beforePlace != nil { return .place }
+        if placeSwitched == name, beforePlace != nil { return .place(places[name]?.label) }
         if appSwitched == name, beforeApp != nil, let bundle = appTriggers[name] { return .app(bundle) }
         if scheduled == name, beforeSchedule != nil { return .schedule }
         if displayProfile == name, beforeDisplay != nil { return .display }
@@ -627,6 +629,8 @@ final class UserDefaultsMenuBarProfilesStore {
     private static let beforeAppKey = "menuBarProfileBeforeApp"
     // [name: [latitude, longitude, radius]].
     private static let placesKey = "menuBarProfilePlaces"
+    // [name: place's label], for places that have one.
+    private static let placeLabelsKey = "menuBarProfilePlaceLabels"
     private static let placeSwitchedKey = "placeMenuBarProfile"
     private static let beforePlaceKey = "menuBarProfileBeforePlace"
 
@@ -638,8 +642,12 @@ final class UserDefaultsMenuBarProfilesStore {
         get {
             let schedules = (defaults.dictionary(forKey: Self.schedulesKey) as? [String: [Int]] ?? [:])
                 .compactMapValues { $0.count == 2 ? ProfileSchedule(start: $0[0], end: $0[1]) : nil }
-            let places = (defaults.dictionary(forKey: Self.placesKey) as? [String: [Double]] ?? [:])
+            var places = (defaults.dictionary(forKey: Self.placesKey) as? [String: [Double]] ?? [:])
                 .compactMapValues { $0.count == 3 ? ProfilePlace(latitude: $0[0], longitude: $0[1], radius: $0[2]) : nil }
+            let labels = defaults.dictionary(forKey: Self.placeLabelsKey) as? [String: String] ?? [:]
+            for (name, label) in labels where places[name] != nil {
+                places[name]?.label = label
+            }
             return MenuBarProfiles(profiles: defaults.dictionary(forKey: Self.profilesKey) as? [String: [String]] ?? [:],
                                    active: defaults.string(forKey: Self.activeKey),
                                    displayProfile: defaults.string(forKey: Self.displayKey),
@@ -678,6 +686,7 @@ final class UserDefaultsMenuBarProfilesStore {
                 defaults.removeObject(forKey: Self.beforeAppKey)
             }
             defaults.set(newValue.places.mapValues { [$0.latitude, $0.longitude, $0.radius] }, forKey: Self.placesKey)
+            defaults.set(newValue.places.compactMapValues(\.label), forKey: Self.placeLabelsKey)
             defaults.set(newValue.placeSwitched, forKey: Self.placeSwitchedKey)
             if case .from(let previous)? = newValue.beforePlace {
                 defaults.set(previous ?? "", forKey: Self.beforePlaceKey)

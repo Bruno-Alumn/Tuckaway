@@ -285,3 +285,7 @@
 "Switched while %@ is open" = "%@が開いている間切り替え済み";
 "Switched by its schedule" = "スケジュールで切り替え済み";
 "Switched for the connected display" = "接続したディスプレイで切り替え済み";
+"Name" = "名前";
+"Home, Work…" = "自宅、職場…";
+"At %@ (within %@)" = "%@（%@以内）";
+"Switched at %@" = "%@で切り替え済み";

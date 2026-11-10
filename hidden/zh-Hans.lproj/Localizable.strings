@@ -285,3 +285,7 @@
 "Switched while %@ is open" = "已在 %@ 打开时切换";
 "Switched by its schedule" = "已按日程切换";
 "Switched for the connected display" = "已因连接显示器切换";
+"Name" = "名称";
+"Home, Work…" = "家、公司…";
+"At %@ (within %@)" = "在 %@（%@ 以内）";
+"Switched at %@" = "已在 %@ 切换";
