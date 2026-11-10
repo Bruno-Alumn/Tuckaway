@@ -2024,7 +2024,8 @@ extension StatusBarController {
         guard menuBarEngine is ProfileApplying else { return }
         var profiles = profilesStore.profiles
         let before = profiles
-        profiles.locationChanged(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        profiles.locationChanged(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude,
+                                 accuracy: location.horizontalAccuracy)
         if profiles != before {
             applyProfiles(profiles)
         }
@@ -2488,8 +2489,10 @@ final class ProfileLocationMonitor: NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         finish(location)
-        // A cached fix from long ago says nothing about where the Mac is now.
-        if isMonitoring && location.timestamp.timeIntervalSinceNow > -10 * 60 {
+        // A cached fix from long ago, or one only good to a kilometer or more,
+        // says too little about where the Mac is now.
+        if isMonitoring && location.timestamp.timeIntervalSinceNow > -10 * 60
+            && location.horizontalAccuracy >= 0 && location.horizontalAccuracy < 1000 {
             onLocation?(location)
         }
     }

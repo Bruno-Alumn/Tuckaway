@@ -354,15 +354,16 @@ struct ProfilePlace: Equatable {
     var longitude: Double
     var radius: Double
 
-    // Great-circle distance; plenty accurate at these scales.
-    func contains(latitude: Double, longitude: Double) -> Bool {
+    // Great-circle distance; plenty accurate at these scales. `margin` widens
+    // the circle, so a fix that wobbles near the edge doesn't count as leaving.
+    func contains(latitude: Double, longitude: Double, margin: Double = 0) -> Bool {
         let toRadians = Double.pi / 180
         let dLat = (latitude - self.latitude) * toRadians
         let dLon = (longitude - self.longitude) * toRadians
         let a = sin(dLat / 2) * sin(dLat / 2)
             + cos(self.latitude * toRadians) * cos(latitude * toRadians) * sin(dLon / 2) * sin(dLon / 2)
         let distance = 2 * 6_371_000 * atan2(sqrt(a), sqrt(1 - a))
-        return distance <= radius
+        return distance <= radius + margin
     }
 }
 
@@ -434,17 +435,24 @@ struct MenuBarProfiles: Equatable {
                     active: &active, profiles: profiles)
     }
 
-    // The first profile, in menu order, whose place holds this location.
-    func placeProfile(latitude: Double, longitude: Double) -> String? {
-        names.first { places[$0]?.contains(latitude: latitude, longitude: longitude) == true }
+    // The profile for this location. The place already in use holds until the
+    // Mac is clearly outside it (its radius plus the fix's uncertainty, at
+    // least 50 m); otherwise the first profile, in menu order, whose place
+    // holds the location.
+    func placeProfile(latitude: Double, longitude: Double, accuracy: Double = 0) -> String? {
+        if let placeSwitched, let place = places[placeSwitched],
+           place.contains(latitude: latitude, longitude: longitude, margin: max(accuracy, 50)) {
+            return placeSwitched
+        }
+        return names.first { places[$0]?.contains(latitude: latitude, longitude: longitude) == true }
     }
 
     // Called with each new location. Same rules as the schedule. An unknown
     // location (no permission, no fix) changes nothing, so the caller simply
     // doesn't call.
-    mutating func locationChanged(latitude: Double, longitude: Double) {
-        Self.follow(placeProfile(latitude: latitude, longitude: longitude), current: &placeSwitched,
-                    before: &beforePlace, active: &active, profiles: profiles)
+    mutating func locationChanged(latitude: Double, longitude: Double, accuracy: Double = 0) {
+        Self.follow(placeProfile(latitude: latitude, longitude: longitude, accuracy: accuracy),
+                    current: &placeSwitched, before: &beforePlace, active: &active, profiles: profiles)
     }
 
     mutating func setPlace(_ place: ProfilePlace?, for name: String) {
