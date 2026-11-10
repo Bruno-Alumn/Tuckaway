@@ -22,7 +22,7 @@ enum SettingsBackup {
         "notchOverflowEnabled", "useTransparentExpandIconEnabled", "expandIconStyle",
         "automaticallyChecksForUpdates", "isAutoStart", "keptVisibleMenuBarApps",
         "showActiveAppIcon", "revealIconsOnActivity", "revealUpdatedApps", "collapseWhenLocked", "showHiddenIconCount", "menuBarSpacerCount", "menuBarSpacerWidth", "menuBarProfiles", "activeMenuBarProfile",
-        "displayMenuBarProfile", "profileShortcuts", "menuBarProfileSchedules", "menuBarProfileApps",
+        "displayMenuBarProfile", "profileShortcuts", "menuBarProfileSchedules", "menuBarProfileApps", "menuBarProfilePlaces",
     ]
 
     enum ImportError: Error, Equatable {
@@ -35,6 +35,7 @@ enum SettingsBackup {
     // The same, for a switch made by a profile's schedule.
     static let beforeScheduleKey = "menuBarProfileBeforeSchedule"
     static let beforeAppKey = "menuBarProfileBeforeApp"
+    static let beforePlaceKey = "menuBarProfileBeforePlace"
 
     static func export(from defaults: UserDefaults) -> [String: Any] {
         var values: [String: Any] = [formatKey: format]
@@ -46,7 +47,7 @@ enum SettingsBackup {
         // Mid display switch, the active profile is the display's; the user's
         // own choice is the one to carry over ("" means none).
         if let before = defaults.string(forKey: beforeDisplayKey) ?? defaults.string(forKey: beforeScheduleKey)
-            ?? defaults.string(forKey: beforeAppKey) {
+            ?? defaults.string(forKey: beforeAppKey) ?? defaults.string(forKey: beforePlaceKey) {
             values["activeMenuBarProfile"] = before.isEmpty ? nil : before
         }
         return values

@@ -28,6 +28,10 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2019 Dwarves Foundation. All rights reserved.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Tuckaway uses your location only to switch to a profile you set up for a place, like home or work. It stays on your Mac.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Tuckaway uses your location only to switch to a profile you set up for a place, like home or work. It stays on your Mac.</string>
 	<key>NSMainStoryboardFile</key>
 	<string>Main</string>
 	<key>NSPrincipalClass</key>

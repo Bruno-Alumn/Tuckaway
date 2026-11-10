@@ -8,6 +8,7 @@
 
 import AppKit
 import ApplicationServices
+import CoreLocation
 
 // macOS persists status-item positions before the items are created. Larger
 // values sit further left; the required outer-to-inner order is always-hidden,
@@ -101,6 +102,7 @@ class StatusBarController: MenuBarItemProvider {
     private var nativeMenuWatchTimer: Timer?
     // Fires at the start of every minute while any profile has a schedule.
     private var profileScheduleTimer: Timer?
+    private let profileLocation = ProfileLocationMonitor()
     private var activityRevealTimer: Timer?
     private var spacerItems: [NSStatusItem] = []
     private let activityReveal = ActivityRevealMonitor()
@@ -225,6 +227,7 @@ class StatusBarController: MenuBarItemProvider {
         applyDisplayProfile()
         updateProfileSchedule()
         applyAppTriggeredProfile()
+        updateProfilePlaces()
         updateActiveAppIcon()
         updateActivityReveal()
         updateSpacers()
@@ -1989,6 +1992,48 @@ extension StatusBarController {
         applyAppTriggeredProfile()
     }
 
+    // "At a Place": follows the Mac's location while any profile has a place.
+    func updateProfilePlaces() {
+        guard menuBarEngine is ProfileApplying else { return }
+        let profiles = profilesStore.profiles
+        profileLocation.onLocation = { [weak self] location in
+            self?.applyPlaceProfile(location)
+        }
+        profileLocation.setMonitoring(!profiles.places.isEmpty || profiles.placeSwitched != nil)
+    }
+
+    private func applyPlaceProfile(_ location: CLLocation) {
+        guard menuBarEngine is ProfileApplying else { return }
+        var profiles = profilesStore.profiles
+        let before = profiles
+        profiles.locationChanged(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        if profiles != before {
+            applyProfiles(profiles)
+        }
+    }
+
+    // Asks for Location access the first time, then reports where the Mac is
+    // now, or nil if that isn't allowed or can't be found.
+    func currentLocation(_ completion: @escaping (CLLocation?) -> Void) {
+        profileLocation.currentLocation(completion)
+    }
+
+    var locationAccessDenied: Bool {
+        [.denied, .restricted].contains(profileLocation.authorizationStatus)
+    }
+
+    func setPlace(_ place: ProfilePlace?, forProfile name: String) {
+        var profiles = profilesStore.profiles
+        profiles.setPlace(place, for: name)
+        applyProfiles(profiles)
+        updateProfilePlaces()
+        if place != nil {
+            profileLocation.currentLocation { [weak self] location in
+                if let location { self?.applyPlaceProfile(location) }
+            }
+        }
+    }
+
     func setSchedule(_ schedule: ProfileSchedule?, forProfile name: String) {
         var profiles = profilesStore.profiles
         profiles.setSchedule(schedule, for: name)
@@ -2048,6 +2093,7 @@ extension StatusBarController {
         profiles.delete(name)
         applyProfiles(profiles)
         updateProfileSchedule()
+        updateProfilePlaces()
         // A later profile with the same name shouldn't inherit the shortcut.
         var shortcuts = Preferences.profileShortcuts
         if shortcuts.removeValue(forKey: name) != nil {
@@ -2366,5 +2412,71 @@ extension StatusBarController {
             }
             self.btnAlwaysHidden = nil
         }
+    }
+}
+
+// Location for profiles used at a place. Updates arrive only while some
+// profile has a place; a hundred meters is plenty to tell home from work, and
+// asks less of the hardware than a precise fix.
+final class ProfileLocationMonitor: NSObject, CLLocationManagerDelegate {
+    var onLocation: ((CLLocation) -> Void)?
+    private let manager = CLLocationManager()
+    private var isMonitoring = false
+    private var waiting: [(CLLocation?) -> Void] = []
+
+    override init() {
+        super.init()
+        manager.delegate = self
+        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        manager.distanceFilter = 50
+    }
+
+    var authorizationStatus: CLAuthorizationStatus { manager.authorizationStatus }
+
+    private var isAuthorized: Bool {
+        manager.authorizationStatus == .authorizedAlways
+    }
+
+    func setMonitoring(_ monitoring: Bool) {
+        isMonitoring = monitoring
+        if monitoring && isAuthorized {
+            manager.startUpdatingLocation()
+        } else {
+            manager.stopUpdatingLocation()
+        }
+    }
+
+    func currentLocation(_ completion: @escaping (CLLocation?) -> Void) {
+        waiting.append(completion)
+        switch manager.authorizationStatus {
+        case .notDetermined: manager.requestAlwaysAuthorization()
+        case .denied, .restricted: finish(nil)
+        default: manager.requestLocation()
+        }
+    }
+
+    private func finish(_ location: CLLocation?) {
+        let callbacks = waiting
+        waiting = []
+        callbacks.forEach { $0(location) }
+    }
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        setMonitoring(isMonitoring)
+        guard !waiting.isEmpty, manager.authorizationStatus != .notDetermined else { return }
+        if isAuthorized { manager.requestLocation() } else { finish(nil) }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        finish(location)
+        // A cached fix from long ago says nothing about where the Mac is now.
+        if isMonitoring && location.timestamp.timeIntervalSinceNow > -10 * 60 {
+            onLocation?(location)
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        finish(nil)
     }
 }

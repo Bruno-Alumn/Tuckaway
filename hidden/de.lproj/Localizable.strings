@@ -270,3 +270,14 @@
 "Tuckaway can now arrange your menu bar." = "Tuckaway kann deine Menüleiste jetzt anordnen.";
 "Choose the “com.apple.MenuBar” folder to let Tuckaway arrange your menu bar." = "Wähle den Ordner „com.apple.MenuBar“, damit Tuckaway deine Menüleiste anordnen kann.";
 "Allow" = "Erlauben";
+"Use “%@” at this place" = "„%@“ an diesem Ort verwenden";
+"Tuckaway switches to this profile while your Mac is near where it is now, and back to the one you were using when it leaves. A profile you pick in between stays." = "Tuckaway wechselt zu diesem Profil, solange dein Mac in der Nähe seines jetzigen Standorts ist, und zurück zu dem Profil, das du vorher verwendet hast, wenn er ihn verlässt. Ein Profil, das du dazwischen auswählst, bleibt.";
+"Within" = "Im Umkreis von";
+"Tuckaway can't use your location" = "Tuckaway kann deinen Standort nicht verwenden";
+"Allow Tuckaway in System Settings › Privacy & Security › Location Services, then try again." = "Erlaube Tuckaway in den Systemeinstellungen › Datenschutz & Sicherheit › Ortungsdienste und versuche es dann erneut.";
+"Your Mac's location couldn't be found" = "Der Standort deines Mac wurde nicht gefunden";
+"Check that Location Services is on and Wi-Fi is turned on, then try again." = "Prüfe, ob die Ortungsdienste und WLAN eingeschaltet sind, und versuche es dann erneut.";
+"Use at This Place…" = "An diesem Ort verwenden …";
+"Move Place Here…" = "Ort hierher verlegen …";
+"Stop Using at a Place" = "Nicht mehr an einem Ort verwenden";
+"Within %@ of a place" = "Im Umkreis von %@ um einen Ort";

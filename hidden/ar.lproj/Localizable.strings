@@ -270,3 +270,14 @@
 "Tuckaway can now arrange your menu bar." = "يمكن لـ Tuckaway الآن ترتيب شريط القائمة.";
 "Choose the “com.apple.MenuBar” folder to let Tuckaway arrange your menu bar." = "اختر المجلد “com.apple.MenuBar” للسماح لـ Tuckaway بترتيب شريط القائمة.";
 "Allow" = "سماح";
+"Use “%@” at this place" = "استخدام \"%@\" في هذا المكان";
+"Tuckaway switches to this profile while your Mac is near where it is now, and back to the one you were using when it leaves. A profile you pick in between stays." = "ينتقل Tuckaway إلى هذا الملف الشخصي ما دام جهاز Mac قريبًا من مكانه الحالي، ويعود إلى الملف الذي كنت تستخدمه عندما يغادره. يبقى الملف الذي تختاره في هذه الأثناء.";
+"Within" = "ضمن";
+"Tuckaway can't use your location" = "لا يمكن لـ Tuckaway استخدام موقعك";
+"Allow Tuckaway in System Settings › Privacy & Security › Location Services, then try again." = "اسمح لـ Tuckaway في إعدادات النظام › الخصوصية والأمن › خدمات الموقع، ثم حاول مرة أخرى.";
+"Your Mac's location couldn't be found" = "تعذر العثور على موقع جهاز Mac";
+"Check that Location Services is on and Wi-Fi is turned on, then try again." = "تحقق من تشغيل خدمات الموقع وWi-Fi، ثم حاول مرة أخرى.";
+"Use at This Place…" = "استخدام في هذا المكان…";
+"Move Place Here…" = "نقل المكان إلى هنا…";
+"Stop Using at a Place" = "إيقاف الاستخدام في مكان";
+"Within %@ of a place" = "ضمن %@ من مكان";

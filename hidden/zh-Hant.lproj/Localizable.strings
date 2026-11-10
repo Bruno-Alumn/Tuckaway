@@ -268,3 +268,14 @@
 "Tuckaway can now arrange your menu bar." = "Tuckaway 現在可以排列你的選單列了。";
 "Choose the “com.apple.MenuBar” folder to let Tuckaway arrange your menu bar." = "選擇「com.apple.MenuBar」檔案夾，以允許 Tuckaway 排列你的選單列。";
 "Allow" = "允許";
+"Use “%@” at this place" = "在此地點使用「%@」";
+"Tuckaway switches to this profile while your Mac is near where it is now, and back to the one you were using when it leaves. A profile you pick in between stays." = "當 Mac 位於目前位置附近時，Tuckaway 會切換到此設定檔，離開時切回你先前使用的設定檔。期間你選擇的設定檔會保留。";
+"Within" = "範圍";
+"Tuckaway can't use your location" = "Tuckaway 無法使用你的位置";
+"Allow Tuckaway in System Settings › Privacy & Security › Location Services, then try again." = "請在「系統設定」›「隱私權與安全性」›「定位服務」中允許 Tuckaway，然後再試一次。";
+"Your Mac's location couldn't be found" = "找不到 Mac 的位置";
+"Check that Location Services is on and Wi-Fi is turned on, then try again." = "請確認定位服務和 Wi-Fi 已開啟，然後再試一次。";
+"Use at This Place…" = "在此地點使用⋯";
+"Move Place Here…" = "將地點移到這裡⋯";
+"Stop Using at a Place" = "停止在地點使用";
+"Within %@ of a place" = "距離地點 %@ 以內";
