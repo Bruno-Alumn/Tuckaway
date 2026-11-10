@@ -1558,6 +1558,23 @@ final class MenuBarProfilesTests: XCTestCase {
         XCTAssertNil(profiles.placeSwitched)
     }
 
+    // Just outside the radius, within the fix's uncertainty: still there.
+    func testAWobblyFixNearTheEdgeDoesntLeaveThePlace() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"], "Home": ["com.b"]], active: "Home",
+                                       places: ["Work": office])
+        // About 280 m north: outside 250 m, so arriving there doesn't count.
+        profiles.locationChanged(latitude: 40.4168 + 0.0025, longitude: -3.7038, accuracy: 65)
+        XCTAssertEqual(profiles.active, "Home")
+        profiles.locationChanged(latitude: 40.4168, longitude: -3.7038, accuracy: 65)
+        XCTAssertEqual(profiles.active, "Work")
+        // Same 280 m point, now while there: within 250 + 65.
+        profiles.locationChanged(latitude: 40.4168 + 0.0025, longitude: -3.7038, accuracy: 65)
+        XCTAssertEqual(profiles.active, "Work")
+        // About 400 m north is clearly gone.
+        profiles.locationChanged(latitude: 40.4168 + 0.0036, longitude: -3.7038, accuracy: 65)
+        XCTAssertEqual(profiles.active, "Home")
+    }
+
     func testAChoiceMadeAtThePlaceStays() {
         var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"], "Home": ["com.b"]], places: ["Work": office])
         profiles.locationChanged(latitude: 40.4168, longitude: -3.7038)
