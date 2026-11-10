@@ -283,3 +283,7 @@
 "Within %@ of a place" = "Within %@ of a place";
 "Profiles set to a place can't switch without Location access." = "Profiles set to a place can't switch without Location access.";
 "Turn Tuckaway on in Location Services, or stop using the profile at a place." = "Turn Tuckaway on in Location Services, or stop using the profile at a place.";
+"Switched at this place" = "Switched at this place";
+"Switched while %@ is open" = "Switched while %@ is open";
+"Switched by its schedule" = "Switched by its schedule";
+"Switched for the connected display" = "Switched for the connected display";

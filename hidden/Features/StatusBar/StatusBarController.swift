@@ -1857,6 +1857,21 @@ extension StatusBarController {
 
 //MARK: - Profiles (macOS 27)
 extension StatusBarController {
+    static func describe(_ reason: MenuBarProfiles.SwitchReason) -> String {
+        switch reason {
+        case .place:
+            return "Switched at this place".localized
+        case .app(let bundle):
+            let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle)
+            let name = url.map { FileManager.default.displayName(atPath: $0.path).replacingOccurrences(of: ".app", with: "") } ?? bundle
+            return String(format: "Switched while %@ is open".localized, name)
+        case .schedule:
+            return "Switched by its schedule".localized
+        case .display:
+            return "Switched for the connected display".localized
+        }
+    }
+
     fileprivate func profilesMenuItem() -> NSMenuItem {
         let profiles = profilesStore.profiles
         let submenu = NSMenu()
@@ -1869,6 +1884,9 @@ extension StatusBarController {
             item.target = self
             item.representedObject = name
             item.state = profiles.active == name ? .on : .off
+            if #available(macOS 14.4, *), let reason = profiles.switchReason(for: name) {
+                item.subtitle = Self.describe(reason)
+            }
             submenu.addItem(item)
         }
         submenu.addItem(NSMenuItem.separator())

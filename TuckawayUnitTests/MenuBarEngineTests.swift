@@ -1578,6 +1578,20 @@ final class MenuBarProfilesTests: XCTestCase {
         XCTAssertNil(profiles.active)
     }
 
+    func testTheMenuSaysWhyAProfileSwitched() {
+        var profiles = MenuBarProfiles(profiles: ["Work": ["com.a"], "Home": ["com.b"]], active: "Home",
+                                       places: ["Work": office])
+        XCTAssertNil(profiles.switchReason(for: "Home"))
+        profiles.locationChanged(latitude: 40.4168, longitude: -3.7038)
+        XCTAssertEqual(profiles.switchReason(for: "Work"), .place)
+        XCTAssertNil(profiles.switchReason(for: "Home"))
+        // Picked by hand: no reason, even though the place still holds.
+        profiles.active = "Home"
+        profiles.active = "Work"
+        profiles.beforePlace = nil
+        XCTAssertNil(profiles.switchReason(for: "Work"))
+    }
+
     func testStoreRoundTripsPlaces() {
         let suite = TestDefaults("MenuBarProfilesTests")
         defer { suite.remove() }

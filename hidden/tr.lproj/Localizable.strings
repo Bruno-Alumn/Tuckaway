@@ -283,3 +283,7 @@
 "Within %@ of a place" = "Bir konuma %@ mesafede";
 "Profiles set to a place can't switch without Location access." = "Bir konuma bağlı profiller konum erişimi olmadan geçiş yapamaz.";
 "Turn Tuckaway on in Location Services, or stop using the profile at a place." = "Konum Servisleri’nde Tuckaway’i açın ya da profili bir konumda kullanmayı durdurun.";
+"Switched at this place" = "Bu konumda geçildi";
+"Switched while %@ is open" = "%@ açıkken geçildi";
+"Switched by its schedule" = "Zamanlamasına göre geçildi";
+"Switched for the connected display" = "Bağlı ekran için geçildi";
