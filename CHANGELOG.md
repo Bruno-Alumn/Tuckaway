@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v2.0.1 (2026-11-14)
+
 ### Fixed
 - **The arrow and its menu stop responding after a few days** (macOS 27): Tuckaway re-registered for microphone and camera changes on every app each time any app started or stopped using the microphone, and the registrations piled up until it used most of a CPU core and over a gigabyte of memory. It now registers once per app.
 
