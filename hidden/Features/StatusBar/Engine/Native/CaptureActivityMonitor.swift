@@ -33,19 +33,26 @@ final class CaptureActivityMonitor: CaptureActivityMonitoring {
 
     private var processes: [AudioObjectID] = []
     private var cameras: [CMIOObjectID] = []
-    private var audioListener: AudioObjectPropertyListenerBlock!
-    private var cameraListener: CMIOObjectPropertyListenerBlock!
+    // The process and camera lists change rarely; an object's running state
+    // changes whenever an app starts or stops capturing. They get separate
+    // blocks so a state change only reports, and never re-registers.
+    private var listListener: AudioObjectPropertyListenerBlock!
+    private var cameraListListener: CMIOObjectPropertyListenerBlock!
+    private var runningListener: AudioObjectPropertyListenerBlock!
+    private var cameraRunningListener: CMIOObjectPropertyListenerBlock!
 
     init() {
-        // One block for every registration, so each can be removed again.
-        audioListener = { [weak self] _, _ in self?.devicesDidChange() }
-        cameraListener = { [weak self] _, _ in self?.devicesDidChange() }
+        // One block per kind for every registration, so each can be removed again.
+        listListener = { [weak self] _, _ in self?.devicesDidChange() }
+        cameraListListener = { [weak self] _, _ in self?.devicesDidChange() }
+        runningListener = { [weak self] _, _ in self?.onChange?() }
+        cameraRunningListener = { [weak self] _, _ in self?.onChange?() }
         if #available(macOS 14.2, *) {
             var processList = Self.audioAddress(kAudioHardwarePropertyProcessObjectList)
-            AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &processList, .main, audioListener)
+            AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &processList, .main, listListener)
         }
         var cameraList = Self.cameraAddress(CMIOObjectPropertySelector(kCMIOHardwarePropertyDevices))
-        CMIOObjectAddPropertyListenerBlock(CMIOObjectID(kCMIOObjectSystemObject), &cameraList, .main, cameraListener)
+        CMIOObjectAddPropertyListenerBlock(CMIOObjectID(kCMIOObjectSystemObject), &cameraList, .main, cameraListListener)
         track()
     }
 
@@ -53,10 +60,10 @@ final class CaptureActivityMonitor: CaptureActivityMonitoring {
         untrack()
         if #available(macOS 14.2, *) {
             var processList = Self.audioAddress(kAudioHardwarePropertyProcessObjectList)
-            AudioObjectRemovePropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &processList, .main, audioListener)
+            AudioObjectRemovePropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &processList, .main, listListener)
         }
         var cameraList = Self.cameraAddress(CMIOObjectPropertySelector(kCMIOHardwarePropertyDevices))
-        CMIOObjectRemovePropertyListenerBlock(CMIOObjectID(kCMIOObjectSystemObject), &cameraList, .main, cameraListener)
+        CMIOObjectRemovePropertyListenerBlock(CMIOObjectID(kCMIOObjectSystemObject), &cameraList, .main, cameraListListener)
     }
 
     var isActive: Bool {
@@ -70,27 +77,35 @@ final class CaptureActivityMonitor: CaptureActivityMonitoring {
         return cameras.contains { Self.cameraIsRunning($0) }
     }
 
-    // Processes and cameras come and go, so any change re-registers on the
-    // current set before reporting.
     private func devicesDidChange() {
-        untrack()
         track()
         onChange?()
     }
 
+    // Registers only on objects that are new since the last call and drops the
+    // ones that are gone. Re-registering on every object each time piled up
+    // listeners until the main thread did nothing else (2.0.0 and earlier).
     private func track() {
         if #available(macOS 14.2, *) {
-            processes = Self.audioObjects(kAudioHardwarePropertyProcessObjectList)
+            let change = Self.diff(old: processes, new: Self.audioObjects(kAudioHardwarePropertyProcessObjectList))
             var running = Self.audioAddress(kAudioProcessPropertyIsRunningInput)
-            for process in processes {
-                AudioObjectAddPropertyListenerBlock(process, &running, .main, audioListener)
+            for process in change.removed {
+                AudioObjectRemovePropertyListenerBlock(process, &running, .main, runningListener)
             }
+            for process in change.added {
+                AudioObjectAddPropertyListenerBlock(process, &running, .main, runningListener)
+            }
+            processes = change.current
         }
-        cameras = Self.cameraObjects()
+        let change = Self.diff(old: cameras, new: Self.cameraObjects())
         var running = Self.cameraAddress(CMIOObjectPropertySelector(kCMIODevicePropertyDeviceIsRunningSomewhere))
-        for camera in cameras {
-            CMIOObjectAddPropertyListenerBlock(camera, &running, .main, cameraListener)
+        for camera in change.removed {
+            CMIOObjectRemovePropertyListenerBlock(camera, &running, .main, cameraRunningListener)
         }
+        for camera in change.added {
+            CMIOObjectAddPropertyListenerBlock(camera, &running, .main, cameraRunningListener)
+        }
+        cameras = change.current
     }
 
     // Removing from an object that has already gone away fails harmlessly.
@@ -98,15 +113,31 @@ final class CaptureActivityMonitor: CaptureActivityMonitoring {
         if #available(macOS 14.2, *) {
             var running = Self.audioAddress(kAudioProcessPropertyIsRunningInput)
             for process in processes {
-                AudioObjectRemovePropertyListenerBlock(process, &running, .main, audioListener)
+                AudioObjectRemovePropertyListenerBlock(process, &running, .main, runningListener)
             }
         }
         var running = Self.cameraAddress(CMIOObjectPropertySelector(kCMIODevicePropertyDeviceIsRunningSomewhere))
         for camera in cameras {
-            CMIOObjectRemovePropertyListenerBlock(camera, &running, .main, cameraListener)
+            CMIOObjectRemovePropertyListenerBlock(camera, &running, .main, cameraRunningListener)
         }
         processes = []
         cameras = []
+    }
+
+    struct ObjectChange<ID: Hashable> {
+        var added: [ID]
+        var removed: [ID]
+        var current: [ID]
+    }
+
+    // Duplicates in the new list are registered once.
+    static func diff<ID: Hashable>(old: [ID], new: [ID]) -> ObjectChange<ID> {
+        var seen = Set<ID>()
+        let current = new.filter { seen.insert($0).inserted }
+        let before = Set(old)
+        return ObjectChange(added: current.filter { !before.contains($0) },
+                            removed: old.filter { !seen.contains($0) },
+                            current: current)
     }
 
     // MARK: - CoreAudio
