@@ -797,6 +797,19 @@ final class ExpandIconStyleTests: XCTestCase {
 }
 
 final class CaptureActivityMonitorTests: XCTestCase {
+    func testDiffRegistersOnlyNewObjects() {
+        let change = CaptureActivityMonitor.diff(old: [1, 2, 3], new: [2, 3, 4, 4])
+        XCTAssertEqual(change.added, [4])
+        XCTAssertEqual(change.removed, [1])
+        XCTAssertEqual(change.current, [2, 3, 4])
+    }
+
+    func testDiffOfUnchangedListDoesNothing() {
+        let change = CaptureActivityMonitor.diff(old: [5, 6], new: [5, 6])
+        XCTAssertTrue(change.added.isEmpty)
+        XCTAssertTrue(change.removed.isEmpty)
+    }
+
     func testAlwaysOnCoreSpeechListenerIsIgnored() {
         XCTAssertTrue(CaptureActivityMonitor.isAlwaysOnSpeechListener(
             path: "/System/Library/PrivateFrameworks/CoreSpeech.framework/corespeechd"))
