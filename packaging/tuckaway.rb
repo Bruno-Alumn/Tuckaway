@@ -2,8 +2,8 @@
 # Bruno-Alumn/homebrew-tuckaway (Casks/tuckaway.rb); this copy is the source.
 # scripts/update-cask.sh sets the version and sha256 from the latest release.
 cask "tuckaway" do
-  version "1.10.0"
-  sha256 "d112f3a02318c7cece985581b4c0aedc1c81da632165ba549302575a6665509d"
+  version "2.0.0"
+  sha256 "107468f4b7161c9b676f69be3edac379bd98d1d2a500e25b295097729da417a5"
 
   url "https://github.com/Bruno-Alumn/Tuckaway/releases/download/v#{version}/Tuckaway.dmg"
   name "Tuckaway"
