@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## v2.0.0 (2026-11-14)
+
+### Changed
+- **Signed with a Developer ID and notarized by Apple**: Tuckaway now opens without the "Open Anyway" step in System Settings, and macOS knows it comes from an identified developer. If you granted Accessibility or Screen Recording to 1.9.0 or earlier, Tuckaway asks once more after this update (see Fixed below); a permission granted to 1.10.0 carries over.
+
 ### Added
 - **Profiles by place** (macOS 27): **Use at This Place…** in a profile's ⋯ menu in Settings saves where your Mac is now, say at work, and switches to that profile while the Mac is within the distance you choose (100 m to 1 km), and back to the profile you were using when it leaves. Name the place (Home, Work) and the profile's row says so. A profile you pick in between stays. Tuckaway asks for Location access the first time; it reads your location only while a profile has a place, and it never leaves your Mac.
 - **Check Your Setup notices when Location is off**: if a profile has a place but Tuckaway isn't allowed to use your location, the check says so and opens Location Services.

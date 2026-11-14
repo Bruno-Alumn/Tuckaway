@@ -60,10 +60,9 @@ brew install --cask bruno-alumn/tuckaway/tuckaway
 Runs on Apple Silicon and Intel with macOS 13 or later, and checks for updates daily.
 
 > [!NOTE]
-> Releases aren’t notarized yet, so macOS may warn on first launch. Choose
-> **Open Anyway** in System Settings › Privacy & Security. Coming from Hidden
-> Bar? Quit it first; Tuckaway imports its settings (the App Store version’s may
-> not carry over).
+> Releases are signed with a Developer ID and notarized by Apple (from 2.0.0).
+> Coming from Hidden Bar? Quit it first; Tuckaway imports its settings (the App
+> Store version’s may not carry over).
 
 ## Using Tuckaway
 

@@ -31,10 +31,6 @@ cask "tuckaway" do
   ]
 
   caveats <<~EOS
-    Tuckaway isn't notarized by Apple. The first time you open it, macOS
-    asks whether to open it: choose Open, or allow it in System Settings →
-    Privacy & Security → Open Anyway.
-
     Tuckaway needs Accessibility access (Device Control and Data Access on
     macOS 27) to find and move menu bar icons. It asks on first launch.
   EOS
