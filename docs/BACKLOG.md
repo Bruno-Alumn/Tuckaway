@@ -32,8 +32,6 @@ before merging.
 
 ## Releases and distribution
 
-- **Developer ID signing and notarization (#219).** Removes the Open Anyway step.
-  Permissions already survive updates through the self-signed release certificate.
 - **Homebrew cask in Homebrew's own repository**: Tuckaway has its own tap
   (`bruno-alumn/tuckaway`); homebrew-cask itself needs a notarized app.
 - **Upgrade-path login-item check.** Install a launcher-era Hidden Bar (v1.9 or older),
