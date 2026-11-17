@@ -11,7 +11,9 @@ import AppKit
 enum Constant {
     static let appName = "Tuckaway"
 
-    static var isUsingLTRLanguage = NSApplication.shared.userInterfaceLayoutDirection == .leftToRight
+    // Right-to-left languages such as Arabic mirror the menu bar. The layout
+    // direction is fixed for the life of the process.
+    static let isUsingLTRLanguage = NSApplication.shared.userInterfaceLayoutDirection == .leftToRight
 }
 
 extension ProcessInfo {
