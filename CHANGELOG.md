@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v2.0.2 (2026-11-17)
+
 ### Fixed
 - **Microphone and camera listeners are removed again** (macOS 27): Tuckaway's removals never matched what it had registered, so a listener could stay behind each time an app's audio session ended. It now uses registrations that can be removed.
 - **An app updated while Tuckaway runs is noticed** (macOS 27): with "Reveal updated apps" on, Tuckaway could read an app's old version from a cache and miss the update.
