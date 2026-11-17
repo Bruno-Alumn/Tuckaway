@@ -161,6 +161,21 @@ final class WindowClickCollapseTests: XCTestCase {
         XCTAssertFalse(decide(clicked: 20, frontmost: 20, regular: false), "or it came forward as an accessory app")
     }
 
+    // When the pre-check fails, no clicked app can make the answer yes, so the
+    // hit test can be skipped.
+    func testPreCheckFailingMeansNoClickCollapses() {
+        let cases: [(frontmost: pid_t?, regular: Bool)] = [(nil, true), (10, false), (99, true)]
+        for (frontmost, regular) in cases {
+            XCTAssertFalse(ExpandCollapseActionResolver.mayCollapseAfterWindowClick(
+                frontmostApp: frontmost, frontmostIsRegular: regular, ownPid: 99))
+            for clicked: pid_t? in [nil, 10, 20, 99] {
+                XCTAssertFalse(decide(clicked: clicked, frontmost: frontmost, regular: regular))
+            }
+        }
+        XCTAssertTrue(ExpandCollapseActionResolver.mayCollapseAfterWindowClick(
+            frontmostApp: 10, frontmostIsRegular: true, ownPid: 99))
+    }
+
     func testTuckawaysOwnWindowsDoNot() {
         XCTAssertFalse(decide(clicked: 99, frontmost: 99, own: 99))
     }

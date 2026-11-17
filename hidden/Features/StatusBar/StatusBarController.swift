@@ -391,11 +391,14 @@ class StatusBarController: MenuBarItemProvider {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
             guard let self, !self.isCollapsed, !self.isMouseInMenuBar, !self.isManagingItems else { return }
             let frontmost = NSWorkspace.shared.frontmostApplication
-            guard ExpandCollapseActionResolver.shouldCollapseAfterWindowClick(
-                clickedApp: self.appUnderPointer(),
-                frontmostApp: frontmost?.processIdentifier,
-                frontmostIsRegular: frontmost?.activationPolicy == .regular,
-                ownPid: ProcessInfo.processInfo.processIdentifier) else { return }
+            let frontmostApp = frontmost?.processIdentifier
+            let frontmostIsRegular = frontmost?.activationPolicy == .regular
+            let ownPid = ProcessInfo.processInfo.processIdentifier
+            guard ExpandCollapseActionResolver.mayCollapseAfterWindowClick(
+                    frontmostApp: frontmostApp, frontmostIsRegular: frontmostIsRegular, ownPid: ownPid),
+                  ExpandCollapseActionResolver.shouldCollapseAfterWindowClick(
+                    clickedApp: self.appUnderPointer(), frontmostApp: frontmostApp,
+                    frontmostIsRegular: frontmostIsRegular, ownPid: ownPid) else { return }
             self.collapseMenuBar()
         }
     }
@@ -475,7 +478,7 @@ class StatusBarController: MenuBarItemProvider {
         // icon whose menu or popover just opened.
         guard Preferences.autoCollapseOnFocusChange, !isCollapsed, !isMouseButtonDown, !isMouseInMenuBar, !isManagingItems,
               !didExpandForExternalDisplay,
-              let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+              let app = activated,
               app.bundleIdentifier != Bundle.main.bundleIdentifier else { return }
         collapseMenuBar()
     }
@@ -1060,8 +1063,11 @@ class StatusBarController: MenuBarItemProvider {
         var versions = AppVersions(known: UserDefaults.standard.dictionary(forKey: Self.appVersionsKey) as? [String: String] ?? [:])
         var updated: [String] = []
         for app in apps {
-            guard let bundle = app.bundleIdentifier, bundle != Bundle.main.bundleIdentifier,
-                  let url = app.bundleURL, let version = AppVersions.version(of: Bundle(url: url)?.infoDictionary) else { continue }
+            // Read directly: Bundle(url:) caches by path for the life of the process, so an
+            // app updated in place would keep reporting its old version.
+            guard let bundle = app.bundleIdentifier, bundle != Bundle.main.bundleIdentifier, let url = app.bundleURL,
+                  let version = AppVersions.version(of: CFBundleCopyInfoDictionaryForURL(url as CFURL) as? [String: Any])
+            else { continue }
             if versions.launched(bundle, version: version) { updated.append(bundle) }
         }
         UserDefaults.standard.set(versions.known, forKey: Self.appVersionsKey)
@@ -1352,9 +1358,13 @@ extension StatusBarController {
     }
 
     private func captureVisibleHiddenSectionItems(from windowList: [[String: Any]], separatorQuartzRect: CGRect, expandCollapseQuartzRect: CGRect, on screen: NSScreen) -> [HiddenItemsBarItem] {
-        let capturedItems = windowList.compactMap { info -> (item: HiddenItemsBarItem, quartzRect: CGRect)? in
+        // Only items in the hidden section are captured; the visible ones are
+        // skipped before the (main-thread) window capture.
+        windowList.compactMap { info -> HiddenItemsBarItem? in
             guard let windowNumber = info[kCGWindowNumber as String] as? Int,
                   let quartzRect = visibleMenuBarItemQuartzRect(from: info, on: screen),
+                  MenuBarCoordinateSpace.isInHiddenSection(quartzRect, separator: separatorQuartzRect,
+                                                           expandCollapse: expandCollapseQuartzRect),
                   let image = CGWindowListCreateImage(
                     .null,
                     [.optionIncludingWindow],
@@ -1363,26 +1373,16 @@ extension StatusBarController {
                   )
             else { return nil }
             let appKitRect = appKitRectFromQuartzRect(quartzRect, on: screen)
-            return (
-                item: HiddenItemsBarItem(
-                    image: NSImage(cgImage: image, size: appKitRect.size),
-                    sourceRect: appKitRect,
-                    windowNumber: windowNumber,
-                    name: info[kCGWindowOwnerName as String] as? String,
-                    bundleIdentifier: (info[kCGWindowOwnerPID as String] as? pid_t)
-                        .flatMap { NSRunningApplication(processIdentifier: $0)?.bundleIdentifier }
-                ),
-                quartzRect: quartzRect
+            return HiddenItemsBarItem(
+                image: NSImage(cgImage: image, size: appKitRect.size),
+                sourceRect: appKitRect,
+                windowNumber: windowNumber,
+                name: info[kCGWindowOwnerName as String] as? String,
+                bundleIdentifier: (info[kCGWindowOwnerPID as String] as? pid_t)
+                    .flatMap { NSRunningApplication(processIdentifier: $0)?.bundleIdentifier }
             )
         }
-        .sorted { $0.item.sourceRect.minX < $1.item.sourceRect.minX }
-        return capturedItems.filter {
-            hiddenSectionCandidateLocation(
-                $0.quartzRect,
-                separatorQuartzRect: separatorQuartzRect,
-                expandCollapseQuartzRect: expandCollapseQuartzRect
-            ) != nil
-        }.map { $0.item }
+        .sorted { $0.sourceRect.minX < $1.sourceRect.minX }
     }
 
     private func captureByCoveringItemsStillVisibleInMenuBar(_ capture: HiddenItemsBarCapture) -> HiddenItemsBarCapture {
@@ -1464,17 +1464,6 @@ extension StatusBarController {
               quartzRect.width > 4
         else { return nil }
         return quartzRect
-    }
-
-    private enum HiddenSectionCandidateLocation {
-        case hiddenSection
-    }
-
-    private func hiddenSectionCandidateLocation(_ quartzRect: CGRect, separatorQuartzRect: CGRect, expandCollapseQuartzRect: CGRect) -> HiddenSectionCandidateLocation? {
-        if expandCollapseQuartzRect.minX >= separatorQuartzRect.minX {
-            return quartzRect.maxX <= separatorQuartzRect.minX + 1 ? .hiddenSection : nil
-        }
-        return quartzRect.minX >= separatorQuartzRect.maxX - 1 ? .hiddenSection : nil
     }
 
     private func preferredCaptureScreens() -> [NSScreen] {
