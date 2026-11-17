@@ -102,8 +102,9 @@ reads.
    The expected tag is rejected if it differs from the app's
    `CFBundleShortVersionString`. The script builds
    `Release-Direct` (universal), refuses Debug or sandboxed builds, signs the
-   app with the **Tuckaway Release Signing** certificate, or the Developer ID
-   when `SIGN_IDENTITY` names it (see [Release signing](#release-signing)), and
+   app with the maintainer's **Developer ID** by default, or with the **Tuckaway
+   Release Signing** certificate for a test build when `SIGN_IDENTITY` names it
+   (see [Release signing](#release-signing)), and
    writes `dist/Tuckaway.dmg`. It refuses to run without the certificate. A
    Developer ID build is also notarized (`notarytool` profile
    `tuckaway-notary`) and stapled. Publish a GitHub release tagged `v<version>`
@@ -170,10 +171,11 @@ Releases up to the one that adds the combined requirement have a requirement
 naming only the release certificate, so their updater refuses a Developer ID
 build. So the move takes two releases:
 
-1. **Bridge release:** signed with Tuckaway Release Signing as usual
-   (`scripts/package-dmg.sh`), now carrying the combined requirement. Users get
+1. **Bridge release (1.10.0, done):** signed with Tuckaway Release Signing
+   (now `SIGN_IDENTITY="Tuckaway Release Signing" scripts/package-dmg.sh`),
+   carrying the combined requirement. Users get
    it through the updater.
-2. **Every release after:** `SIGN_IDENTITY="Developer ID Application: Bruno Cassina (22R95V8NA5)" scripts/package-dmg.sh`.
+2. **Every release after:** `scripts/package-dmg.sh`, which signs with the Developer ID by default.
    It's notarized and stapled, so the first-launch "Open Anyway" step goes away.
    Users on the bridge release update in place. Anyone still on an older
    release has to download it by hand.
