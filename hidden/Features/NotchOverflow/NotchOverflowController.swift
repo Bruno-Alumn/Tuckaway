@@ -272,17 +272,9 @@ class NotchOverflowController: NSObject {
     else { return [] }
 
     return children.compactMap { child in
+      guard let itemFrame = AccessibilityMenuBarInventory.frame(of: child) else { return nil }
       var titleRef: AnyObject?
       AXUIElementCopyAttributeValue(child, kAXTitleAttribute as CFString, &titleRef)
-
-      var posRef: AnyObject?
-      var sizeRef: AnyObject?
-      guard AXUIElementCopyAttributeValue(child, kAXPositionAttribute as CFString, &posRef) == .success,
-        AXUIElementCopyAttributeValue(child, kAXSizeAttribute as CFString, &sizeRef) == .success,
-        let pv = posRef, let sv = sizeRef,
-        CFGetTypeID(pv) == AXValueGetTypeID(), CFGetTypeID(sv) == AXValueGetTypeID(),
-        let itemFrame = frame(position: pv as! AXValue, size: sv as! AXValue)
-      else { return nil }
 
       return MenuBarExtraInfo(
         element: child,
@@ -297,12 +289,7 @@ class NotchOverflowController: NSObject {
   }
 
   static func frame(position positionValue: AXValue, size sizeValue: AXValue) -> CGRect? {
-    var position = CGPoint.zero
-    var size = CGSize.zero
-    guard AXValueGetValue(positionValue, .cgPoint, &position),
-      AXValueGetValue(sizeValue, .cgSize, &size)
-    else { return nil }
-    return CGRect(origin: position, size: size)
+    AccessibilityMenuBarInventory.frame(position: positionValue, size: sizeValue)
   }
 
 }

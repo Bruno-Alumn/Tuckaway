@@ -32,6 +32,15 @@ enum MenuBarCoordinateSpace {
         flipped(rect, in: space, edge: rect.maxY)
     }
 
+    // Whether a status item (Quartz rectangle) sits in the hidden section: on the
+    // far side of the separator from the arrow, allowing a point of overlap.
+    static func isInHiddenSection(_ item: CGRect, separator: CGRect, expandCollapse: CGRect) -> Bool {
+        if expandCollapse.minX >= separator.minX {
+            return item.maxX <= separator.minX + 1
+        }
+        return item.minX >= separator.maxX - 1
+    }
+
     static func quartzPoint(fromAppKit point: CGPoint, in space: Conversion) -> CGPoint {
         CGPoint(x: point.x, y: space.referenceMaxY - point.y)
     }

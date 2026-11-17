@@ -2,15 +2,16 @@
 # Builds the direct-download release and packages it as dist/Tuckaway.dmg,
 # the asset the in-app updater installs from.
 #
-# Releases are signed with the "Tuckaway Release Signing" certificate or the
-# maintainer's Developer ID, always with the same designated requirement
+# Releases are signed with the maintainer's Developer ID (the default since
+# 2.0.0) and notarized; test builds may use the "Tuckaway Release Signing"
+# certificate instead. Both are signed with the same designated requirement
 # (Updater.releaseRequirement), which accepts either. That requirement is what
 # lets macOS keep Tuckaway's permissions (and firewall rules) across updates,
 # and the updater refuses updates that don't meet it. A Developer ID build is
 # also notarized and stapled. See docs/RUNBOOK.md.
 #
-#   scripts/package-dmg.sh
-#   SIGN_IDENTITY="Developer ID Application: Bruno Cassina (22R95V8NA5)" scripts/package-dmg.sh
+#   scripts/package-dmg.sh                  # Developer ID, notarized: what gets published
+#   SIGN_IDENTITY="Tuckaway Release Signing" scripts/package-dmg.sh  # test builds only
 #   NOTARY_PROFILE=name                     # notarytool keychain profile (default tuckaway-notary)
 #   SKIP_NOTARIZE=1                         # Developer ID test builds that won't be published
 #   ALLOW_ADHOC=1 scripts/package-dmg.sh    # test builds only: resets users' permissions
@@ -18,7 +19,7 @@
 set -eu
 
 cd "$(dirname "$0")/.."
-IDENTITY="${SIGN_IDENTITY:-Tuckaway Release Signing}"
+IDENTITY="${SIGN_IDENTITY:-Developer ID Application: Bruno Cassina (22R95V8NA5)}"
 DERIVED="build/package"
 APP="$DERIVED/Build/Products/Release-Direct/Tuckaway.app"
 STAGING="build/dmg-staging"

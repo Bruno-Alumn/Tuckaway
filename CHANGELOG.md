@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Fixed
+- **Microphone and camera listeners are removed again** (macOS 27): Tuckaway's removals never matched what it had registered, so a listener could stay behind each time an app's audio session ended. It now uses registrations that can be removed.
+- **An app updated while Tuckaway runs is noticed** (macOS 27): with "Reveal updated apps" on, Tuckaway could read an app's old version from a cache and miss the update.
+
+### Changed
+- **Less work on the main thread**: activity watching reads each icon in one Accessibility call and checks apps in parallel; the separate bar captures only hidden icons; a click into a window skips its Accessibility check when it can't collapse the bar; Settings looks up each profile app's name once.
+
 ## v2.0.1 (2026-11-14)
 
 ### Fixed

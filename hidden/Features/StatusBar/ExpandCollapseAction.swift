@@ -87,8 +87,17 @@ enum ExpandCollapseActionResolver {
     // used: on macOS 27 the Dock keeps a click-through window over the screen.
     static func shouldCollapseAfterWindowClick(clickedApp: pid_t?, frontmostApp: pid_t?,
                                                frontmostIsRegular: Bool, ownPid: pid_t) -> Bool {
-        guard let clickedApp, let frontmostApp, frontmostIsRegular,
-              clickedApp == frontmostApp, clickedApp != ownPid else { return false }
+        guard let clickedApp, mayCollapseAfterWindowClick(frontmostApp: frontmostApp, frontmostIsRegular: frontmostIsRegular,
+                                                          ownPid: ownPid),
+              clickedApp == frontmostApp else { return false }
+        return true
+    }
+
+    // The part of the check that doesn't need the hit test. When it fails, no
+    // clicked app can make the answer yes, so the hit test (a synchronous
+    // Accessibility call into the app under the pointer) is skipped.
+    static func mayCollapseAfterWindowClick(frontmostApp: pid_t?, frontmostIsRegular: Bool, ownPid: pid_t) -> Bool {
+        guard let frontmostApp, frontmostIsRegular, frontmostApp != ownPid else { return false }
         return true
     }
 

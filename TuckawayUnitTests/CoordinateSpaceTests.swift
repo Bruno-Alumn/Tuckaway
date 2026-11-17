@@ -44,4 +44,20 @@ final class CoordinateSpaceTests: XCTestCase {
         let there = MenuBarCoordinateSpace.quartzRect(fromAppKit: rect, in: space)
         XCTAssertEqual(MenuBarCoordinateSpace.appKitRect(fromQuartz: there, in: space), rect)
     }
+
+    func testHiddenSectionIsTheFarSideOfTheSeparator() {
+        // Left-to-right: the arrow is right of the separator, hidden items left of it.
+        let separator = CGRect(x: 500, y: 0, width: 20, height: 24)
+        let arrow = CGRect(x: 530, y: 0, width: 20, height: 24)
+        XCTAssertTrue(MenuBarCoordinateSpace.isInHiddenSection(CGRect(x: 470, y: 0, width: 31, height: 24),
+                                                               separator: separator, expandCollapse: arrow))
+        XCTAssertFalse(MenuBarCoordinateSpace.isInHiddenSection(CGRect(x: 470, y: 0, width: 32, height: 24),
+                                                                separator: separator, expandCollapse: arrow))
+        // Right-to-left: mirrored.
+        let rtlArrow = CGRect(x: 470, y: 0, width: 20, height: 24)
+        XCTAssertTrue(MenuBarCoordinateSpace.isInHiddenSection(CGRect(x: 519, y: 0, width: 20, height: 24),
+                                                               separator: separator, expandCollapse: rtlArrow))
+        XCTAssertFalse(MenuBarCoordinateSpace.isInHiddenSection(CGRect(x: 518, y: 0, width: 20, height: 24),
+                                                                separator: separator, expandCollapse: rtlArrow))
+    }
 }

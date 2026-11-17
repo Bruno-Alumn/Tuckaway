@@ -1,5 +1,6 @@
 #!/bin/sh
-# Downloads a release DMG and verifies its actual SHA-256 against GitHub's digest.
+# Downloads a release DMG, verifies its actual SHA-256 against GitHub's digest,
+# and checks that it is signed with the Developer ID and notarized.
 set -eu
 
 TAG="${1:-$(gh release view --repo Bruno-Alumn/Tuckaway --json tagName --jq .tagName)}"
@@ -16,4 +17,11 @@ if [ "$ACTUAL" != "$EXPECTED" ]; then
   echo "error: SHA-256 mismatch for $TAG: expected $EXPECTED, got $ACTUAL" >&2
   exit 1
 fi
-echo "Verified $TAG DMG SHA-256: $ACTUAL"
+GATEKEEPER=$(spctl --assess --type open --context context:primary-signature -v "$WORK/Tuckaway.dmg" 2>&1) || true
+if ! printf '%s' "$GATEKEEPER" | grep -q 'source=Notarized Developer ID'; then
+  echo "error: $TAG DMG is not a notarized Developer ID build:" >&2
+  printf '%s\n' "$GATEKEEPER" >&2
+  exit 1
+fi
+xcrun stapler validate -q "$WORK/Tuckaway.dmg"
+echo "Verified $TAG DMG SHA-256: $ACTUAL, notarized Developer ID, ticket stapled"

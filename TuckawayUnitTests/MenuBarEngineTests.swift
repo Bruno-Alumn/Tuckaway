@@ -6,6 +6,8 @@
 //
 
 import AppKit
+import CoreAudio
+import CoreMediaIO
 import XCTest
 
 // The engine sources are compiled straight into this bundle (no host app), so
@@ -796,7 +798,36 @@ final class ExpandIconStyleTests: XCTestCase {
     }
 }
 
+final class ActivitySignatureReadingTests: XCTestCase {
+    func testMissingAttributesReadAsEmpty() {
+        let signature = ActivityRevealMonitor.signature(size: nil, texts: [nil, nil, nil, nil])
+        XCTAssertEqual(signature, ActivitySignature(width: 0, text: "\u{1F}\u{1F}\u{1F}"))
+    }
+
+    func testSizeAndTextAreRead() {
+        var size = CGSize(width: 21.6, height: 22)
+        let value = AXValueCreate(.cgSize, &size)
+        let signature = ActivityRevealMonitor.signature(size: value, texts: ["Wi-Fi" as CFString, nil, "on" as CFString, nil])
+        XCTAssertEqual(signature, ActivitySignature(width: 22, text: "Wi-Fi\u{1F}\u{1F}on\u{1F}"))
+    }
+
+    func testANonSizeValueIsIgnored() {
+        var point = CGPoint(x: 5, y: 5)
+        XCTAssertEqual(ActivityRevealMonitor.signature(size: AXValueCreate(.cgPoint, &point), texts: []).width, 0)
+    }
+}
+
 final class CaptureActivityMonitorTests: XCTestCase {
+    func testListSelectorsReRegister() {
+        XCTAssertEqual(CaptureActivityMonitor.route([kAudioHardwarePropertyProcessObjectList]), .listChanged)
+        XCTAssertEqual(CaptureActivityMonitor.route([UInt32(kCMIOHardwarePropertyDevices)]), .listChanged)
+    }
+
+    func testRunningStateOnlyReports() {
+        XCTAssertEqual(CaptureActivityMonitor.route([kAudioProcessPropertyIsRunningInput]), .stateChanged)
+        XCTAssertEqual(CaptureActivityMonitor.route([UInt32(kCMIODevicePropertyDeviceIsRunningSomewhere)]), .stateChanged)
+    }
+
     func testDiffRegistersOnlyNewObjects() {
         let change = CaptureActivityMonitor.diff(old: [1, 2, 3], new: [2, 3, 4, 4])
         XCTAssertEqual(change.added, [4])

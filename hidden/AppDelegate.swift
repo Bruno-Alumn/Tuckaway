@@ -71,11 +71,9 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         statusBarController = StatusBarController()
         setupAutoStartApp()
         setupHotKey()
-        // Read before openPreferencesIfNeeded records the launch.
         let isFirstLaunch = !UserDefaults.standard.bool(forKey: UserDefaults.Key.hasLaunchedBefore)
-        openPreferencesIfNeeded()
+        openPreferencesIfNeeded(isFirstLaunch: isFirstLaunch)
         WhatsNewWindowController.showIfNeeded(isFirstLaunch: isFirstLaunch)
-        detectLTRLang()
         Updater.shared.start()
     }
 
@@ -109,10 +107,8 @@ class AppDelegate: NSObject, NSApplicationDelegate{
     // Settings opens on the very first launch so people can find the app, and
     // afterwards only if they ask for it: logging in and every update relaunch
     // would otherwise pop the window up.
-    func openPreferencesIfNeeded() {
-        let defaults = UserDefaults.standard
-        let isFirstLaunch = !defaults.bool(forKey: UserDefaults.Key.hasLaunchedBefore)
-        defaults.set(true, forKey: UserDefaults.Key.hasLaunchedBefore)
+    private func openPreferencesIfNeeded(isFirstLaunch: Bool) {
+        UserDefaults.standard.set(true, forKey: UserDefaults.Key.hasLaunchedBefore)
         if Self.opensPreferencesOnLaunch(isFirstLaunch: isFirstLaunch, showPreferencesOnLaunch: Preferences.isShowPreference) {
             Util.showPrefWindow()
         }
@@ -170,12 +166,4 @@ class AppDelegate: NSObject, NSApplicationDelegate{
         }
         registerProfileHotKeys()
     }
-    
-    func detectLTRLang() {
-        // Languages like Arabic uses right to left (RTL) writing direction,
-        // so some behavier of the app needs to be changed in these cases
-        
-        Constant.isUsingLTRLanguage = (NSApplication.shared.userInterfaceLayoutDirection == .leftToRight)
-    }
-   
 }

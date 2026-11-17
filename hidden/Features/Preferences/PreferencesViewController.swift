@@ -506,9 +506,18 @@ final class GeneralSettingsModel: ObservableObject {
     // An app's name as Finder shows it, or its bundle ID if it isn't installed.
     // A profile stores bundle IDs; people look for an app by its name.
     func appsByName(inProfile name: String) -> [String] {
-        (profileApps[name] ?? []).sorted {
-            Self.appName($0).localizedStandardCompare(Self.appName($1)) == .orderedAscending
-        }
+        namedApps(inProfile: name).map(\.bundle)
+    }
+
+    func appNamesSorted(inProfile name: String) -> [String] {
+        namedApps(inProfile: name).map(\.name)
+    }
+
+    // Each name is looked up once (LaunchServices), not on every comparison.
+    private func namedApps(inProfile name: String) -> [(bundle: String, name: String)] {
+        (profileApps[name] ?? [])
+            .map { (bundle: $0, name: Self.appName($0)) }
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
 
     static func appName(_ bundle: String) -> String {
@@ -1070,7 +1079,7 @@ struct GeneralSettingsView: View {
 
     // "Slack, Calendar and 2 more", or "No apps", after the schedule if any.
     private func profileAppsSummary(_ name: String) -> String {
-        let names = model.appsByName(inProfile: name).map(GeneralSettingsModel.appName)
+        let names = model.appNamesSorted(inProfile: name)
         let apps: String
         if names.isEmpty {
             apps = "No apps".localized

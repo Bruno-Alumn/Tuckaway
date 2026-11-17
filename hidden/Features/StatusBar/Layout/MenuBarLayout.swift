@@ -208,9 +208,15 @@ enum HiddenIconSearch {
         let query = query.trimmingCharacters(in: .whitespaces)
         guard !query.isEmpty else { return entries }
         let options: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
-        let prefixed = entries.filter { name($0).range(of: query, options: options.union(.anchored)) != nil }
-        let containing = entries.filter {
-            name($0).range(of: query, options: options) != nil && name($0).range(of: query, options: options.union(.anchored)) == nil
+        var prefixed: [Entry] = []
+        var containing: [Entry] = []
+        for entry in entries {
+            let entryName = name(entry)
+            if entryName.range(of: query, options: options.union(.anchored)) != nil {
+                prefixed.append(entry)
+            } else if entryName.range(of: query, options: options) != nil {
+                containing.append(entry)
+            }
         }
         return prefixed + containing
     }

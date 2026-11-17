@@ -122,9 +122,19 @@ final class ActivityRevealMonitor {
             app.bundleIdentifier.map(bundles.contains) ?? false
         }.map { ($0.bundleIdentifier!, $0.processIdentifier) }
         DispatchQueue.global(qos: .utility).async {
+            // One slow app shouldn't hold up the rest; results are merged in the
+            // original order so an app with several processes keeps its order.
+            var perApp = [[ActivitySignature]](repeating: [], count: apps.count)
+            let lock = NSLock()
+            DispatchQueue.concurrentPerform(iterations: apps.count) { index in
+                let read = readSignatures(pid: apps[index].1)
+                lock.lock()
+                perApp[index] = read
+                lock.unlock()
+            }
             var signatures: [String: [ActivitySignature]] = [:]
-            for (bundle, pid) in apps {
-                signatures[bundle, default: []] += readSignatures(pid: pid)
+            for (index, (bundle, _)) in apps.enumerated() {
+                signatures[bundle, default: []] += perApp[index]
             }
             DispatchQueue.main.async { completion(signatures) }
         }
@@ -135,16 +145,35 @@ final class ActivityRevealMonitor {
         AXUIElementSetMessagingTimeout(app, 0.25)
         guard let bar = attribute(app, "AXExtrasMenuBar") else { return [] }
         let items = attribute(bar as! AXUIElement, kAXChildrenAttribute) as? [AXUIElement] ?? []
+        // One Accessibility round trip per item instead of one per attribute.
+        let names = [kAXSizeAttribute, kAXTitleAttribute, kAXDescriptionAttribute, kAXHelpAttribute, kAXValueAttribute] as CFArray
         return items.map { item in
-            var size = CGSize.zero
-            if let value = attribute(item, kAXSizeAttribute) {
-                AXValueGetValue(value as! AXValue, .cgSize, &size)
+            var raw: CFArray?
+            let values: [CFTypeRef?]
+            if AXUIElementCopyMultipleAttributeValues(item, names, AXCopyMultipleAttributeOptions(rawValue: 0), &raw) == .success {
+                values = ((raw as? [AnyObject]) ?? []).map(usable)
+            } else {
+                values = []
             }
-            let text = [kAXTitleAttribute, kAXDescriptionAttribute, kAXHelpAttribute, kAXValueAttribute]
-                .map { attribute(item, $0).map { "\($0)" } ?? "" }
-                .joined(separator: "\u{1F}")
-            return ActivitySignature(width: Int(size.width.rounded()), text: text)
+            let padded = values + Array(repeating: nil, count: max(0, 5 - values.count))
+            return signature(size: padded[0], texts: Array(padded[1..<5]))
         }
+    }
+
+    // A failed attribute comes back in place as an AXValue holding an error.
+    private static func usable(_ value: AnyObject) -> CFTypeRef? {
+        if value is NSNull { return nil }
+        if CFGetTypeID(value) == AXValueGetTypeID(), AXValueGetType(value as! AXValue) == .axError { return nil }
+        return value
+    }
+
+    static func signature(size sizeValue: CFTypeRef?, texts: [CFTypeRef?]) -> ActivitySignature {
+        var size = CGSize.zero
+        if let sizeValue, CFGetTypeID(sizeValue) == AXValueGetTypeID(), AXValueGetType(sizeValue as! AXValue) == .cgSize {
+            AXValueGetValue(sizeValue as! AXValue, .cgSize, &size)
+        }
+        let text = texts.map { $0.map { "\($0)" } ?? "" }.joined(separator: "\u{1F}")
+        return ActivitySignature(width: Int(size.width.rounded()), text: text)
     }
 
     private static func attribute(_ element: AXUIElement, _ name: String) -> CFTypeRef? {
